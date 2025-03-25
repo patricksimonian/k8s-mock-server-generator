@@ -16,12 +16,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; finalizers?: string[]; labels?: Record<string, any>; name?: string; resourceVersion?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generateName?: string; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; uid?: string; annotations?: Record<string, any>; generation?: number; namespace?: string; selfLink?: string };
+metadata?: { labels?: Record<string, any>; name?: string; deletionGracePeriodSeconds?: number; namespace?: string; finalizers?: string[]; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; selfLink?: string; deletionTimestamp?: Date; generateName?: string };
 /**
 * PodTemplateSpec describes the data a pod should have when created from a template
 * @isObject
 */
-template?: { metadata?: { annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; finalizers?: string[]; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; resourceVersion?: string; generation?: number; name?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; selfLink?: string; labels?: Record<string, any>; namespace?: string }; spec?: Record<string, any> };
+template?: { metadata?: { annotations?: Record<string, any>; generation?: number; creationTimestamp?: Date; name?: string; resourceVersion?: string; finalizers?: string[]; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generateName?: string; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; uid?: string }; spec?: Record<string, any> };
 }
 
 /**

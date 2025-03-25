@@ -5,18 +5,9 @@
 */
 export interface io_k8s_api_core_v1_Probe {
 /**
-* GRPCAction specifies an action involving a GRPC service.
-* @isObject
-*/
-grpc?: { port: number; service?: string };
-/**
 * Number of seconds after the container has started before liveness probes are initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
 */
 initialDelaySeconds?: number;
-/**
-* How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1.
-*/
-periodSeconds?: number;
 /**
 * Minimum consecutive successes for the probe to be considered successful after having failed. Defaults to 1. Must be 1 for liveness and startup. Minimum value is 1.
 */
@@ -26,28 +17,37 @@ successThreshold?: number;
 */
 terminationGracePeriodSeconds?: number;
 /**
-* Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
-*/
-timeoutSeconds?: number;
-/**
 * Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
 */
 failureThreshold?: number;
 /**
-* HTTPGetAction describes an action based on HTTP Get requests.
+* GRPCAction specifies an action involving a GRPC service.
 * @isObject
 */
-httpGet?: { host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string; scheme?: 'HTTP' | 'HTTPS' };
+grpc?: { port: number; service?: string };
+/**
+* How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1.
+*/
+periodSeconds?: number;
 /**
 * TCPSocketAction describes an action based on opening a socket
 * @isObject
 */
 tcpSocket?: { host?: string; port: string };
 /**
+* Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+*/
+timeoutSeconds?: number;
+/**
 * ExecAction describes a "run in container" action.
 * @isObject
 */
 exec?: { command?: string[] };
+/**
+* HTTPGetAction describes an action based on HTTP Get requests.
+* @isObject
+*/
+httpGet?: { host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string; scheme?: 'HTTP' | 'HTTPS' };
 }
 
 /**
@@ -57,15 +57,15 @@ exec?: { command?: string[] };
 */
 export function createio_k8s_api_core_v1_Probe(data?: Partial<io_k8s_api_core_v1_Probe>): io_k8s_api_core_v1_Probe {
  return {
-   grpc: data?.grpc !== undefined ? data.grpc : { port: 0 },
    initialDelaySeconds: data?.initialDelaySeconds !== undefined ? data.initialDelaySeconds : 0,
-   periodSeconds: data?.periodSeconds !== undefined ? data.periodSeconds : 0,
    successThreshold: data?.successThreshold !== undefined ? data.successThreshold : 0,
    terminationGracePeriodSeconds: data?.terminationGracePeriodSeconds !== undefined ? data.terminationGracePeriodSeconds : 0,
-   timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
    failureThreshold: data?.failureThreshold !== undefined ? data.failureThreshold : 0,
-   httpGet: data?.httpGet !== undefined ? data.httpGet : { port: '' },
+   grpc: data?.grpc !== undefined ? data.grpc : { port: 0 },
+   periodSeconds: data?.periodSeconds !== undefined ? data.periodSeconds : 0,
    tcpSocket: data?.tcpSocket !== undefined ? data.tcpSocket : { port: '' },
+   timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
    exec: data?.exec !== undefined ? data.exec : {},
+   httpGet: data?.httpGet !== undefined ? data.httpGet : { port: '' },
  };
 }

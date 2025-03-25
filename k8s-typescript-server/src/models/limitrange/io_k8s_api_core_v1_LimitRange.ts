@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_LimitRange {
 /**
-* LimitRangeSpec defines a min/max usage limit for resources that match on kind.
-* @isObject
-*/
-spec?: { limits: Array<{ default?: Record<string, any>; defaultRequest?: Record<string, any>; max?: Record<string, any>; maxLimitRequestRatio?: Record<string, any>; min?: Record<string, any>; type: string }> };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -21,7 +16,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { deletionGracePeriodSeconds?: number; name?: string; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; uid?: string; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; namespace?: string; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; generation?: number; labels?: Record<string, any>; creationTimestamp?: Date; selfLink?: string };
+metadata?: { annotations?: Record<string, any>; name?: string; resourceVersion?: string; uid?: string; deletionTimestamp?: Date; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; selfLink?: string; creationTimestamp?: Date; finalizers?: string[]; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; deletionGracePeriodSeconds?: number; generateName?: string; namespace?: string };
+/**
+* LimitRangeSpec defines a min/max usage limit for resources that match on kind.
+* @isObject
+*/
+spec?: { limits: Array<{ default?: Record<string, any>; defaultRequest?: Record<string, any>; max?: Record<string, any>; maxLimitRequestRatio?: Record<string, any>; min?: Record<string, any>; type: string }> };
 }
 
 /**
@@ -31,9 +31,9 @@ metadata?: { deletionGracePeriodSeconds?: number; name?: string; ownerReferences
 */
 export function createio_k8s_api_core_v1_LimitRange(data?: Partial<io_k8s_api_core_v1_LimitRange>): io_k8s_api_core_v1_LimitRange {
  return {
-   spec: data?.spec !== undefined ? data.spec : { limits: [] },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   spec: data?.spec !== undefined ? data.spec : { limits: [] },
  };
 }

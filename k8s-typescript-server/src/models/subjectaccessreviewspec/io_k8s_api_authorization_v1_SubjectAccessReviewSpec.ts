@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_authorization_v1_SubjectAccessReviewSpec {
 /**
-* User is the user you're testing for. If you specify "User" but not "Groups", then is it interpreted as "What if User were not a member of any groups
-*/
-user?: string;
-/**
 * Extra corresponds to the user.Info.GetExtra() method from the authenticator.  Since that is input to the authorizer it needs a reflection here.
 */
 extra?: Record<string, any>;
@@ -26,11 +22,15 @@ nonResourceAttributes?: { path?: string; verb?: string };
 * ResourceAttributes includes the authorization attributes available for resource requests to the Authorizer interface
 * @isObject
 */
-resourceAttributes?: { version?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; namespace?: string; resource?: string; subresource?: string; group?: string; labelSelector?: { requirements?: Array<{ key: string; operator: string; values?: string[] }>; rawSelector?: string }; verb?: string };
+resourceAttributes?: { verb?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; name?: string; subresource?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ operator: string; values?: string[]; key: string }> }; namespace?: string; resource?: string; version?: string };
 /**
 * UID information about the requesting user.
 */
 uid?: string;
+/**
+* User is the user you're testing for. If you specify "User" but not "Groups", then is it interpreted as "What if User were not a member of any groups
+*/
+user?: string;
 }
 
 /**
@@ -40,11 +40,11 @@ uid?: string;
 */
 export function createio_k8s_api_authorization_v1_SubjectAccessReviewSpec(data?: Partial<io_k8s_api_authorization_v1_SubjectAccessReviewSpec>): io_k8s_api_authorization_v1_SubjectAccessReviewSpec {
  return {
-   user: data?.user !== undefined ? data.user : '',
    extra: data?.extra !== undefined ? data.extra : {},
    groups: data?.groups !== undefined ? data.groups : [],
    nonResourceAttributes: data?.nonResourceAttributes !== undefined ? data.nonResourceAttributes : {},
    resourceAttributes: data?.resourceAttributes !== undefined ? data.resourceAttributes : {},
    uid: data?.uid !== undefined ? data.uid : '',
+   user: data?.user !== undefined ? data.user : '',
  };
 }

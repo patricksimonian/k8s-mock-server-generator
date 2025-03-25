@@ -5,6 +5,14 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentCondition {
 /**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+lastTransitionTime?: Date;
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+lastUpdateTime?: Date;
+/**
 * A human readable message indicating details about the transition.
 */
 message?: string;
@@ -22,14 +30,6 @@ status: string;
 * @required
 */
 type: string;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastTransitionTime?: Date;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastUpdateTime?: Date;
 }
 
 /**
@@ -39,11 +39,11 @@ lastUpdateTime?: Date;
 */
 export function createio_k8s_api_apps_v1_DeploymentCondition(data?: Partial<io_k8s_api_apps_v1_DeploymentCondition>): io_k8s_api_apps_v1_DeploymentCondition {
  return {
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
+   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : '',
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
-   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : '',
  };
 }

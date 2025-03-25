@@ -13,7 +13,7 @@ nonResourceRules?: Array<{ nonResourceURLs: string[]; verbs: string[] }>;
 * `resourceRules` is a slice of ResourcePolicyRules that identify matching requests according to their verb and the target resource. At least one of `resourceRules` and `nonResourceRules` has to be non-empty.
 * @isArray
 */
-resourceRules?: Array<{ namespaces?: string[]; resources: string[]; verbs: string[]; apiGroups: string[]; clusterScope?: boolean }>;
+resourceRules?: Array<{ apiGroups: string[]; clusterScope?: boolean; namespaces?: string[]; resources: string[]; verbs: string[] }>;
 /**
 * subjects is the list of normal user, serviceaccount, or group that this rule cares about. There must be at least one member in this slice. A slice that includes both the system:authenticated and system:unauthenticated user groups matches every request. Required.
 * @required

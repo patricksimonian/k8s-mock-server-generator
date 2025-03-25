@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement {
 /**
+* Specifies the set of values. Each returned container exit code (might be multiple in case of multiple containers) is checked against this set of values with respect to the operator. The list of values must be ordered and must not contain duplicates. Value '0' cannot be used for the In operator. At least one element is required. At most 255 elements are allowed.
+* @required
+* @isArray
+*/
+values: number[];
+/**
 * Restricts the check for exit codes to the container with the specified name. When null, the rule applies to all containers. When specified, it should match one the container or initContainer names in the pod template.
 */
 containerName?: string;
@@ -25,12 +31,6 @@ Possible enum values:
 * @required
 */
 operator: 'In' | 'NotIn';
-/**
-* Specifies the set of values. Each returned container exit code (might be multiple in case of multiple containers) is checked against this set of values with respect to the operator. The list of values must be ordered and must not contain duplicates. Value '0' cannot be used for the In operator. At least one element is required. At most 255 elements are allowed.
-* @required
-* @isArray
-*/
-values: number[];
 }
 
 /**
@@ -40,8 +40,8 @@ values: number[];
 */
 export function createio_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement(data?: Partial<io_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement>): io_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement {
  return {
+   values: data?.values !== undefined ? data.values : [],
    containerName: data?.containerName !== undefined ? data.containerName : '',
    operator: data?.operator !== undefined ? data.operator : '',
-   values: data?.values !== undefined ? data.values : [],
  };
 }

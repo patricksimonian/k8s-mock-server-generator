@@ -22,7 +22,7 @@ path: string;
 * ResourceFieldSelector represents container resources (cpu, memory) and their output format
 * @isObject
 */
-resourceFieldRef?: { containerName?: string; divisor?: string; resource: string };
+resourceFieldRef?: { resource: string; containerName?: string; divisor?: string };
 }
 
 /**

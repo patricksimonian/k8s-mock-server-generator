@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_EnvVar {
 * EnvVarSource represents a source for the value of an EnvVar.
 * @isObject
 */
-valueFrom?: { configMapKeyRef?: { key: string; name?: string; optional?: boolean }; fieldRef?: { apiVersion?: string; fieldPath: string }; resourceFieldRef?: { containerName?: string; divisor?: string; resource: string }; secretKeyRef?: { key: string; name?: string; optional?: boolean } };
+valueFrom?: { configMapKeyRef?: { key: string; name?: string; optional?: boolean }; fieldRef?: { fieldPath: string; apiVersion?: string }; resourceFieldRef?: { containerName?: string; divisor?: string; resource: string }; secretKeyRef?: { name?: string; optional?: boolean; key: string } };
 /**
 * Name of the environment variable. Must be a C_IDENTIFIER.
 * @required

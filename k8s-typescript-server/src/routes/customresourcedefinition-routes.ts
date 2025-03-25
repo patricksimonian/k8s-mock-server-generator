@@ -7,6 +7,28 @@ import { handleResourceError } from '../utils';
 export function createcustomresourcedefinitionRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//watch individual changes to a list of CustomResourceDefinition. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apiextensions.k8s.io/v1/watch/customresourcedefinitions', async (req, res, next) => {
+    try {
+      logger.info(`Listing customresourcedefinition`);
+      
+      const resources = await storage.listResources('customresourcedefinition');
+      
+      const response = {
+        kind: 'CustomresourcedefinitionList',
+        apiVersion: 'apiextensions.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //read the specified CustomResourceDefinition
   router.get('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name', async (req, res, next) => {
     try {
@@ -80,48 +102,38 @@ export function createcustomresourcedefinitionRoutes(storage: Storage): express.
       next(error);
     }
   });
-
-//replace status of the specified CustomResourceDefinition
-  router.put('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name/status', async (req, res, next) => {
+  router.patch('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
-      logger.info(`Updating customresourcedefinition ${name}`);
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      logger.info(`Getting customresourcedefinition ${name}`);
       
-      const resource = req.body;
+      const resource = await storage.getResource('customresourcedefinition', name);
       
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
+      if (!resource) {
+        return handleResourceError(new Error(`customresourcedefinition ${name} not found`), res);
       }
       
-      // Set name in metadata
-      resource.metadata.name = name;
-      
-      const updatedResource = await storage.updateResource('customresourcedefinition', name, resource);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
 
-//read status of the specified CustomResourceDefinition
-  router.get('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name/status', async (req, res, next) => {
-    try {
-      logger.info(`Listing customresourcedefinition`);
-      
-      const resources = await storage.listResources('customresourcedefinition');
-      
-      const response = {
-        kind: 'CustomresourcedefinitionList',
-        apiVersion: 'apiextensions.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -199,8 +211,26 @@ export function createcustomresourcedefinitionRoutes(storage: Storage): express.
     }
   });
 
-//watch individual changes to a list of CustomResourceDefinition. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apiextensions.k8s.io/v1/watch/customresourcedefinitions', async (req, res, next) => {
+//watch changes to an object of kind CustomResourceDefinition. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/apiextensions.k8s.io/v1/watch/customresourcedefinitions/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      logger.info(`Getting customresourcedefinition ${name}`);
+      
+      const resource = await storage.getResource('customresourcedefinition', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`customresourcedefinition ${name} not found`), res);
+      }
+      
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read status of the specified CustomResourceDefinition
+  router.get('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name/status', async (req, res, next) => {
     try {
       logger.info(`Listing customresourcedefinition`);
       
@@ -221,10 +251,34 @@ export function createcustomresourcedefinitionRoutes(storage: Storage): express.
     }
   });
 
-//watch changes to an object of kind CustomResourceDefinition. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/apiextensions.k8s.io/v1/watch/customresourcedefinitions/:name', async (req, res, next) => {
+//replace status of the specified CustomResourceDefinition
+  router.put('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name/status', async (req, res, next) => {
     try {
       const name = req.params.name;
+      logger.info(`Updating customresourcedefinition ${name}`);
+      
+      const resource = req.body;
+      
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      
+      // Set name in metadata
+      resource.metadata.name = name;
+      
+      const updatedResource = await storage.updateResource('customresourcedefinition', name, resource);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/apiextensions.k8s.io/v1/customresourcedefinitions/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
       logger.info(`Getting customresourcedefinition ${name}`);
       
       const resource = await storage.getResource('customresourcedefinition', name);
@@ -233,7 +287,25 @@ export function createcustomresourcedefinitionRoutes(storage: Storage): express.
         return handleResourceError(new Error(`customresourcedefinition ${name} not found`), res);
       }
       
-      res.json(resource);
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }

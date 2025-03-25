@@ -6,6 +6,42 @@ import { handleResourceError } from '../utils';
 
 export function createcsinodeRoutes(storage: Storage): express.Router {
   const router = express.Router();
+  router.patch('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      logger.info(`Getting csinode ${name}`);
+      
+      const resource = await storage.getResource('csinode', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`csinode ${name} not found`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
 
 //read the specified CSINode
   router.get('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
@@ -81,19 +117,23 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind CSINode. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/storage.k8s.io/v1/watch/csinodes/:name', async (req, res, next) => {
+//list or watch objects of kind CSINode
+  router.get('/apis/storage.k8s.io/v1/csinodes', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      logger.info(`Getting csinode ${name}`);
+      logger.info(`Listing csinode`);
       
-      const resource = await storage.getResource('csinode', name);
+      const resources = await storage.listResources('csinode');
       
-      if (!resource) {
-        return handleResourceError(new Error(`csinode ${name} not found`), res);
-      }
+      const response = {
+        kind: 'CsinodeList',
+        apiVersion: 'storage.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
       
-      res.json(resource);
+      res.json(response);
     } catch (error) {
       next(error);
     }
@@ -149,8 +189,8 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind CSINode
-  router.get('/apis/storage.k8s.io/v1/csinodes', async (req, res, next) => {
+//watch individual changes to a list of CSINode. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/storage.k8s.io/v1/watch/csinodes', async (req, res, next) => {
     try {
       logger.info(`Listing csinode`);
       
@@ -171,23 +211,19 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of CSINode. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/storage.k8s.io/v1/watch/csinodes', async (req, res, next) => {
+//watch changes to an object of kind CSINode. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/storage.k8s.io/v1/watch/csinodes/:name', async (req, res, next) => {
     try {
-      logger.info(`Listing csinode`);
+      const name = req.params.name;
+      logger.info(`Getting csinode ${name}`);
       
-      const resources = await storage.listResources('csinode');
+      const resource = await storage.getResource('csinode', name);
       
-      const response = {
-        kind: 'CsinodeList',
-        apiVersion: 'storage.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+      if (!resource) {
+        return handleResourceError(new Error(`csinode ${name} not found`), res);
+      }
       
-      res.json(response);
+      res.json(resource);
     } catch (error) {
       next(error);
     }

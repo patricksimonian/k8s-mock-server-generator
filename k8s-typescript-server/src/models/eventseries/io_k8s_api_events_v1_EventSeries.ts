@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_events_v1_EventSeries {
 /**
-* count is the number of occurrences in this series up to the last heartbeat time.
-* @required
-*/
-count: number;
-/**
 * MicroTime is version of Time with microsecond level precision.
 * @required
 */
 lastObservedTime: Date;
+/**
+* count is the number of occurrences in this series up to the last heartbeat time.
+* @required
+*/
+count: number;
 }
 
 /**
@@ -23,7 +23,7 @@ lastObservedTime: Date;
 */
 export function createio_k8s_api_events_v1_EventSeries(data?: Partial<io_k8s_api_events_v1_EventSeries>): io_k8s_api_events_v1_EventSeries {
  return {
-   count: data?.count !== undefined ? data.count : 0,
    lastObservedTime: data?.lastObservedTime !== undefined ? data.lastObservedTime : '',
+   count: data?.count !== undefined ? data.count : 0,
  };
 }

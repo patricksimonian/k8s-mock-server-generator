@@ -16,7 +16,7 @@ nodeName?: string;
 * ObjectReference contains enough information to let you inspect or modify the referred object.
 * @isObject
 */
-targetRef?: { namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string };
+targetRef?: { kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string };
 /**
 * zone is the name of the Zone this endpoint exists in.
 */

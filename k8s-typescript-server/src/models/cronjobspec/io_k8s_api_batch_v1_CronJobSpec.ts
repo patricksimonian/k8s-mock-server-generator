@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_batch_v1_CronJobSpec {
 /**
+* The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+* @required
+*/
+schedule: string;
+/**
+* Optional deadline in seconds for starting the job if it misses scheduled time for any reason.  Missed jobs executions will be counted as failed ones.
+*/
+startingDeadlineSeconds?: number;
+/**
 * The number of successful finished jobs to retain. Value must be non-negative integer. Defaults to 3.
 */
 successfulJobsHistoryLimit?: number;
@@ -36,16 +45,7 @@ failedJobsHistoryLimit?: number;
 * @required
 * @isObject
 */
-jobTemplate: { metadata?: { generateName?: string; generation?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; uid?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; namespace?: string; selfLink?: string; annotations?: Record<string, any>; creationTimestamp?: Date; deletionTimestamp?: Date; labels?: Record<string, any>; resourceVersion?: string }; spec?: Record<string, any> };
-/**
-* The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
-* @required
-*/
-schedule: string;
-/**
-* Optional deadline in seconds for starting the job if it misses scheduled time for any reason.  Missed jobs executions will be counted as failed ones.
-*/
-startingDeadlineSeconds?: number;
+jobTemplate: { metadata?: { ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; uid?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generateName?: string; namespace?: string; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; labels?: Record<string, any>; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; generation?: number; name?: string; selfLink?: string }; spec?: Record<string, any> };
 }
 
 /**
@@ -55,13 +55,13 @@ startingDeadlineSeconds?: number;
 */
 export function createio_k8s_api_batch_v1_CronJobSpec(data?: Partial<io_k8s_api_batch_v1_CronJobSpec>): io_k8s_api_batch_v1_CronJobSpec {
  return {
+   schedule: data?.schedule !== undefined ? data.schedule : '',
+   startingDeadlineSeconds: data?.startingDeadlineSeconds !== undefined ? data.startingDeadlineSeconds : 0,
    successfulJobsHistoryLimit: data?.successfulJobsHistoryLimit !== undefined ? data.successfulJobsHistoryLimit : 0,
    suspend: data?.suspend !== undefined ? data.suspend : false,
    timeZone: data?.timeZone !== undefined ? data.timeZone : '',
    concurrencyPolicy: data?.concurrencyPolicy !== undefined ? data.concurrencyPolicy : '',
    failedJobsHistoryLimit: data?.failedJobsHistoryLimit !== undefined ? data.failedJobsHistoryLimit : 0,
    jobTemplate: data?.jobTemplate !== undefined ? data.jobTemplate : {},
-   schedule: data?.schedule !== undefined ? data.schedule : '',
-   startingDeadlineSeconds: data?.startingDeadlineSeconds !== undefined ? data.startingDeadlineSeconds : 0,
  };
 }

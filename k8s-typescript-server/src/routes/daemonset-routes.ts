@@ -7,27 +7,54 @@ import { handleResourceError } from '../utils';
 export function createdaemonsetRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//read the specified DaemonSet
-  router.get('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+//watch individual changes to a list of DaemonSet. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/daemonsets', async (req, res, next) => {
     try {
       const namespace = req.params.namespace;
-      const name = req.params.name;
-      logger.info(`Getting daemonset ${name} in namespace ${namespace}`);
+      logger.info(`Listing daemonset in namespace ${namespace}`);
       
-      const resource = await storage.getResource('daemonset', name, namespace);
+      const resources = await storage.listResources('daemonset', namespace);
       
-      if (!resource) {
-        return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
-      }
+      const response = {
+        kind: 'DaemonsetList',
+        apiVersion: 'apps/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
       
-      res.json(resource);
+      res.json(response);
     } catch (error) {
       next(error);
     }
   });
 
-//replace the specified DaemonSet
-  router.put('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+//read status of the specified DaemonSet
+  router.get('/apis/apps/v1/namespaces/:namespace/daemonsets/:name/status', async (req, res, next) => {
+    try {
+      const namespace = req.params.namespace;
+      logger.info(`Listing daemonset in namespace ${namespace}`);
+      
+      const resources = await storage.listResources('daemonset', namespace);
+      
+      const response = {
+        kind: 'DaemonsetList',
+        apiVersion: 'apps/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//replace status of the specified DaemonSet
+  router.put('/apis/apps/v1/namespaces/:namespace/daemonsets/:name/status', async (req, res, next) => {
     try {
       const namespace = req.params.namespace;
       const name = req.params.name;
@@ -51,34 +78,40 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//delete a DaemonSet
-  router.delete('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+  router.patch('/apis/apps/v1/namespaces/:namespace/daemonsets/:name/status', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
       const name = req.params.name;
-      logger.info(`Deleting daemonset ${name} in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteResource('daemonset', name, namespace);
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`daemonset ${name} not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      
+      logger.info(`Patching daemonset ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('daemonset', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
       }
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          name: name,
-          kind: 'daemonset'
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
         }
-      });
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -161,13 +194,12 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of DaemonSet. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/daemonsets', async (req, res, next) => {
+//list or watch objects of kind DaemonSet
+  router.get('/apis/apps/v1/daemonsets', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
-      logger.info(`Listing daemonset in namespace ${namespace}`);
+      logger.info(`Listing daemonset`);
       
-      const resources = await storage.listResources('daemonset', namespace);
+      const resources = await storage.listResources('daemonset');
       
       const response = {
         kind: 'DaemonsetList',
@@ -179,6 +211,121 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
       };
       
       res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete a DaemonSet
+  router.delete('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+    try {
+      const namespace = req.params.namespace;
+      const name = req.params.name;
+      logger.info(`Deleting daemonset ${name} in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteResource('daemonset', name, namespace);
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`daemonset ${name} not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          name: name,
+          kind: 'daemonset'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      
+      logger.info(`Patching daemonset ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('daemonset', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read the specified DaemonSet
+  router.get('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+    try {
+      const namespace = req.params.namespace;
+      const name = req.params.name;
+      logger.info(`Getting daemonset ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('daemonset', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//replace the specified DaemonSet
+  router.put('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+    try {
+      const namespace = req.params.namespace;
+      const name = req.params.name;
+      logger.info(`Updating daemonset ${name} in namespace ${namespace}`);
+      
+      const resource = req.body;
+      
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      resource.metadata.namespace = namespace;
+      
+      const updatedResource = await storage.updateResource('daemonset', name, resource);
+      
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -220,77 +367,6 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
       }
       
       res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind DaemonSet
-  router.get('/apis/apps/v1/daemonsets', async (req, res, next) => {
-    try {
-      logger.info(`Listing daemonset`);
-      
-      const resources = await storage.listResources('daemonset');
-      
-      const response = {
-        kind: 'DaemonsetList',
-        apiVersion: 'apps/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//replace status of the specified DaemonSet
-  router.put('/apis/apps/v1/namespaces/:namespace/daemonsets/:name/status', async (req, res, next) => {
-    try {
-      const namespace = req.params.namespace;
-      const name = req.params.name;
-      logger.info(`Updating daemonset ${name} in namespace ${namespace}`);
-      
-      const resource = req.body;
-      
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      resource.metadata.namespace = namespace;
-      
-      const updatedResource = await storage.updateResource('daemonset', name, resource);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified DaemonSet
-  router.get('/apis/apps/v1/namespaces/:namespace/daemonsets/:name/status', async (req, res, next) => {
-    try {
-      const namespace = req.params.namespace;
-      logger.info(`Listing daemonset in namespace ${namespace}`);
-      
-      const resources = await storage.listResources('daemonset', namespace);
-      
-      const response = {
-        kind: 'DaemonsetList',
-        apiVersion: 'apps/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
     } catch (error) {
       next(error);
     }

@@ -9,6 +9,11 @@ The CEL expressions of a policy must have a computed CEL cost below the maximum 
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBinding {
 /**
+* ValidatingAdmissionPolicyBindingSpec is the specification of the ValidatingAdmissionPolicyBinding.
+* @isObject
+*/
+spec?: { matchResources?: { matchPolicy?: 'Equivalent' | 'Exact'; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; objectSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; resourceRules?: Array<{ resourceNames?: string[]; resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[] }>; excludeResourceRules?: Array<{ resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[] }> }; paramRef?: { name?: string; namespace?: string; parameterNotFoundAction?: string; selector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> } }; policyName?: string; validationActions?: 'Audit' | 'Deny' | 'Warn'[] };
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -20,12 +25,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; resourceVersion?: string; creationTimestamp?: Date; deletionTimestamp?: Date; selfLink?: string; generateName?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; labels?: Record<string, any>; namespace?: string; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; generation?: number; name?: string };
-/**
-* ValidatingAdmissionPolicyBindingSpec is the specification of the ValidatingAdmissionPolicyBinding.
-* @isObject
-*/
-spec?: { matchResources?: { matchPolicy?: 'Equivalent' | 'Exact'; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; objectSelector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> }; resourceRules?: Array<{ resourceNames?: string[]; resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[] }>; excludeResourceRules?: Array<{ operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[]; resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[] }> }; paramRef?: { name?: string; namespace?: string; parameterNotFoundAction?: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }; policyName?: string; validationActions?: 'Audit' | 'Deny' | 'Warn'[] };
+metadata?: { generation?: number; uid?: string; deletionTimestamp?: Date; generateName?: string; labels?: Record<string, any>; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; annotations?: Record<string, any>; creationTimestamp?: Date; finalizers?: string[]; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; deletionGracePeriodSeconds?: number; namespace?: string; resourceVersion?: string };
 }
 
 /**
@@ -35,9 +35,9 @@ spec?: { matchResources?: { matchPolicy?: 'Equivalent' | 'Exact'; namespaceSelec
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBinding(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBinding>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBinding {
  return {
+   spec: data?.spec !== undefined ? data.spec : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
  };
 }

@@ -5,24 +5,23 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSetStatus {
 /**
-* Count of hash collisions for the DaemonSet. The DaemonSet controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ControllerRevision.
+* Represents the latest available observations of a DaemonSet's current state.
+* @isArray
 */
-collisionCount?: number;
+conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>;
 /**
-* The total number of nodes that should be running the daemon pod (including nodes correctly running the daemon pod). More info: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
-* @required
+* The number of nodes that should be running the daemon pod and have one or more of the daemon pod running and available (ready for at least spec.minReadySeconds)
 */
-desiredNumberScheduled: number;
+numberAvailable?: number;
 /**
 * The number of nodes that are running the daemon pod, but are not supposed to run the daemon pod. More info: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
 * @required
 */
 numberMisscheduled: number;
 /**
-* numberReady is the number of nodes that should be running the daemon pod and have one or more of the daemon pod running with a Ready Condition.
-* @required
+* The total number of nodes that are running updated daemon pod
 */
-numberReady: number;
+updatedNumberScheduled?: number;
 /**
 * The number of nodes that should be running the daemon pod and have none of the daemon pod running and available (ready for at least spec.minReadySeconds)
 */
@@ -32,23 +31,24 @@ numberUnavailable?: number;
 */
 observedGeneration?: number;
 /**
-* The total number of nodes that are running updated daemon pod
+* Count of hash collisions for the DaemonSet. The DaemonSet controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ControllerRevision.
 */
-updatedNumberScheduled?: number;
-/**
-* Represents the latest available observations of a DaemonSet's current state.
-* @isArray
-*/
-conditions?: Array<{ reason?: string; status: string; type: string; lastTransitionTime?: Date; message?: string }>;
+collisionCount?: number;
 /**
 * The number of nodes that are running at least 1 daemon pod and are supposed to run the daemon pod. More info: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
 * @required
 */
 currentNumberScheduled: number;
 /**
-* The number of nodes that should be running the daemon pod and have one or more of the daemon pod running and available (ready for at least spec.minReadySeconds)
+* The total number of nodes that should be running the daemon pod (including nodes correctly running the daemon pod). More info: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+* @required
 */
-numberAvailable?: number;
+desiredNumberScheduled: number;
+/**
+* numberReady is the number of nodes that should be running the daemon pod and have one or more of the daemon pod running with a Ready Condition.
+* @required
+*/
+numberReady: number;
 }
 
 /**
@@ -58,15 +58,15 @@ numberAvailable?: number;
 */
 export function createio_k8s_api_apps_v1_DaemonSetStatus(data?: Partial<io_k8s_api_apps_v1_DaemonSetStatus>): io_k8s_api_apps_v1_DaemonSetStatus {
  return {
-   collisionCount: data?.collisionCount !== undefined ? data.collisionCount : 0,
-   desiredNumberScheduled: data?.desiredNumberScheduled !== undefined ? data.desiredNumberScheduled : 0,
+   conditions: data?.conditions !== undefined ? data.conditions : [],
+   numberAvailable: data?.numberAvailable !== undefined ? data.numberAvailable : 0,
    numberMisscheduled: data?.numberMisscheduled !== undefined ? data.numberMisscheduled : 0,
-   numberReady: data?.numberReady !== undefined ? data.numberReady : 0,
+   updatedNumberScheduled: data?.updatedNumberScheduled !== undefined ? data.updatedNumberScheduled : 0,
    numberUnavailable: data?.numberUnavailable !== undefined ? data.numberUnavailable : 0,
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
-   updatedNumberScheduled: data?.updatedNumberScheduled !== undefined ? data.updatedNumberScheduled : 0,
-   conditions: data?.conditions !== undefined ? data.conditions : [],
+   collisionCount: data?.collisionCount !== undefined ? data.collisionCount : 0,
    currentNumberScheduled: data?.currentNumberScheduled !== undefined ? data.currentNumberScheduled : 0,
-   numberAvailable: data?.numberAvailable !== undefined ? data.numberAvailable : 0,
+   desiredNumberScheduled: data?.desiredNumberScheduled !== undefined ? data.desiredNumberScheduled : 0,
+   numberReady: data?.numberReady !== undefined ? data.numberReady : 0,
  };
 }

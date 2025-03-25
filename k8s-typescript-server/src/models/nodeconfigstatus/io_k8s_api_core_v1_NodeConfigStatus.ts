@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_NodeConfigStatus {
 * NodeConfigSource specifies a source of node configuration. Exactly one subfield (excluding metadata) must be non-nil. This API is deprecated since 1.22
 * @isObject
 */
-active?: { configMap?: { uid?: string; kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string } };
+active?: { configMap?: { kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string; uid?: string } };
 /**
 * NodeConfigSource specifies a source of node configuration. Exactly one subfield (excluding metadata) must be non-nil. This API is deprecated since 1.22
 * @isObject

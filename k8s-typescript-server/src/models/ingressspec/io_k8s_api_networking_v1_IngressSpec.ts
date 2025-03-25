@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_networking_v1_IngressSpec {
 /**
-* tls represents the TLS configuration. Currently the Ingress only supports a single TLS port, 443. If multiple members of this list specify different hosts, they will be multiplexed on the same port according to the hostname specified through the SNI TLS extension, if the ingress controller fulfilling the ingress supports SNI.
-* @isArray
-*/
-tls?: Array<{ hosts?: string[]; secretName?: string }>;
-/**
 * IngressBackend describes all endpoints for a given service and port.
 * @isObject
 */
@@ -22,7 +17,12 @@ ingressClassName?: string;
 * rules is a list of host rules used to configure the Ingress. If unspecified, or no rule matches, all traffic is sent to the default backend.
 * @isArray
 */
-rules?: Array<{ host?: string; http?: { paths: Array<{ backend: { resource?: { apiGroup?: string; kind: string; name: string }; service?: { name: string; port?: { name?: string; number?: number } } }; path?: string; pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix' }> } }>;
+rules?: Array<{ http?: { paths: Array<{ path?: string; pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix'; backend: { resource?: { apiGroup?: string; kind: string; name: string }; service?: { name: string; port?: { name?: string; number?: number } } } }> }; host?: string }>;
+/**
+* tls represents the TLS configuration. Currently the Ingress only supports a single TLS port, 443. If multiple members of this list specify different hosts, they will be multiplexed on the same port according to the hostname specified through the SNI TLS extension, if the ingress controller fulfilling the ingress supports SNI.
+* @isArray
+*/
+tls?: Array<{ hosts?: string[]; secretName?: string }>;
 }
 
 /**
@@ -32,9 +32,9 @@ rules?: Array<{ host?: string; http?: { paths: Array<{ backend: { resource?: { a
 */
 export function createio_k8s_api_networking_v1_IngressSpec(data?: Partial<io_k8s_api_networking_v1_IngressSpec>): io_k8s_api_networking_v1_IngressSpec {
  return {
-   tls: data?.tls !== undefined ? data.tls : [],
    defaultBackend: data?.defaultBackend !== undefined ? data.defaultBackend : {},
    ingressClassName: data?.ingressClassName !== undefined ? data.ingressClassName : '',
    rules: data?.rules !== undefined ? data.rules : [],
+   tls: data?.tls !== undefined ? data.tls : [],
  };
 }

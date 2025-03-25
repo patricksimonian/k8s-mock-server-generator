@@ -22,7 +22,7 @@ selector: { matchExpressions?: Array<{ key: string; operator: string; values?: s
 * PodTemplateSpec describes the data a pod should have when created from a template
 * @isObject
 */
-template?: { metadata?: { name?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generation?: number; selfLink?: string; annotations?: Record<string, any>; labels?: Record<string, any>; namespace?: string; uid?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string }; spec?: Record<string, any> };
+template?: { metadata?: { namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; deletionGracePeriodSeconds?: number; finalizers?: string[]; resourceVersion?: string; creationTimestamp?: Date; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; uid?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; generateName?: string; generation?: number; labels?: Record<string, any>; name?: string; selfLink?: string }; spec?: Record<string, any> };
 }
 
 /**

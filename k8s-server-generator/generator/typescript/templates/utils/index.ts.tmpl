@@ -43,25 +43,22 @@ export function parseQueryParams(query: any): Record<string, any> {
 /**
  * Utility function to deep merge objects
  */
-export function deepMerge<T extends object>(target: T, source: any): T {
-  if (!source) return target;
-  
-  const output = { ...target } as any;
-  
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
-      if (isObject(source[key])) {
-        if (!(key in target)) {
-          Object.assign(output, { [key]: source[key] });
-        } else {
-          output[key] = deepMerge(output[key], source[key]);
-        }
-      } else {
-        Object.assign(output, { [key]: source[key] });
-      }
-    });
+export function merge(target, patch) {
+  if (patch === null || typeof patch !== 'object') {
+    return patch;
   }
-  
+  // Clone target to avoid mutating original directly
+  let output = Array.isArray(target) ? [...target] : { ...target };
+  Object.keys(patch).forEach(key => {
+    if (patch[key] === null) {
+      // Null means removal of the key
+      delete output[key];
+    } else if (typeof patch[key] === 'object' && typeof output[key] === 'object') {
+      output[key] = merge(output[key], patch[key]);
+    } else {
+      output[key] = patch[key];
+    }
+  });
   return output;
 }
 

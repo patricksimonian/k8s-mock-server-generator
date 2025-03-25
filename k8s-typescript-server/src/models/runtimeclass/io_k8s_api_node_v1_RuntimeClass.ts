@@ -21,7 +21,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { uid?: string; generateName?: string; labels?: Record<string, any>; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; generation?: number; name?: string; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; namespace?: string; selfLink?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[] };
+metadata?: { managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; name?: string; creationTimestamp?: Date; resourceVersion?: string; selfLink?: string; namespace?: string; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; uid?: string; annotations?: Record<string, any> };
 /**
 * Overhead structure represents the resource overhead associated with running a pod.
 * @isObject
@@ -31,7 +31,7 @@ overhead?: { podFixed?: Record<string, any> };
 * Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
 * @isObject
 */
-scheduling?: { nodeSelector?: Record<string, any>; tolerations?: Array<{ key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number; value?: string; effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule' }> };
+scheduling?: { nodeSelector?: Record<string, any>; tolerations?: Array<{ tolerationSeconds?: number; value?: string; effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists' }> };
 }
 
 /**

@@ -8,7 +8,7 @@ export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySt
 * The conditions represent the latest available observations of a policy's current state.
 * @isArray
 */
-conditions?: Array<{ message: string; observedGeneration?: number; reason: string; status: string; type: string; lastTransitionTime: Date }>;
+conditions?: Array<{ reason: string; status: string; type: string; lastTransitionTime: Date; message: string; observedGeneration?: number }>;
 /**
 * The generation observed by the controller.
 */

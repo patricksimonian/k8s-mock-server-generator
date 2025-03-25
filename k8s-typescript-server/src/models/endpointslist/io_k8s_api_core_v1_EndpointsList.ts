@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_EndpointsList {
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
-*/
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -18,11 +13,16 @@ apiVersion?: string;
 * @required
 * @isArray
 */
-items: Array<{ apiVersion?: string; kind?: string; metadata?: { generateName?: string; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; creationTimestamp?: Date; labels?: Record<string, any>; resourceVersion?: string; selfLink?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; name?: string; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; annotations?: Record<string, any>; generation?: number; uid?: string; finalizers?: string[] }; subsets?: Array<{ addresses?: Array<{ hostname?: string; ip: string; nodeName?: string; targetRef?: { fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string } }>; notReadyAddresses?: Array<{ hostname?: string; ip: string; nodeName?: string; targetRef?: { kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string } }>; ports?: Array<{ protocol?: 'SCTP' | 'TCP' | 'UDP'; appProtocol?: string; name?: string; port: number }> }> }>;
+items: Array<{ subsets?: Array<{ notReadyAddresses?: Array<{ ip: string; nodeName?: string; targetRef?: { resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string }; hostname?: string }>; ports?: Array<{ appProtocol?: string; name?: string; port: number; protocol?: 'SCTP' | 'TCP' | 'UDP' }>; addresses?: Array<{ hostname?: string; ip: string; nodeName?: string; targetRef?: { name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string } }> }>; apiVersion?: string; kind?: string; metadata?: { generateName?: string; labels?: Record<string, any>; selfLink?: string; generation?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; name?: string; uid?: string; resourceVersion?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; namespace?: string } }>;
 /**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
+* @isObject
+*/
+metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: string; continue?: string };
 }
 
 /**
@@ -32,9 +32,9 @@ kind?: string;
 */
 export function createio_k8s_api_core_v1_EndpointsList(data?: Partial<io_k8s_api_core_v1_EndpointsList>): io_k8s_api_core_v1_EndpointsList {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : [],
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : {},
  };
 }

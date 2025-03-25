@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ConfigMapNodeConfigSource {
 /**
-* ResourceVersion is the metadata.ResourceVersion of the referenced ConfigMap. This field is forbidden in Node.Spec, and required in Node.Status.
-*/
-resourceVersion?: string;
-/**
 * UID is the metadata.UID of the referenced ConfigMap. This field is forbidden in Node.Spec, and required in Node.Status.
 */
 uid?: string;
@@ -27,6 +23,10 @@ name: string;
 * @required
 */
 namespace: string;
+/**
+* ResourceVersion is the metadata.ResourceVersion of the referenced ConfigMap. This field is forbidden in Node.Spec, and required in Node.Status.
+*/
+resourceVersion?: string;
 }
 
 /**
@@ -36,10 +36,10 @@ namespace: string;
 */
 export function createio_k8s_api_core_v1_ConfigMapNodeConfigSource(data?: Partial<io_k8s_api_core_v1_ConfigMapNodeConfigSource>): io_k8s_api_core_v1_ConfigMapNodeConfigSource {
  return {
-   resourceVersion: data?.resourceVersion !== undefined ? data.resourceVersion : '',
    uid: data?.uid !== undefined ? data.uid : '',
    kubeletConfigKey: data?.kubeletConfigKey !== undefined ? data.kubeletConfigKey : '',
    name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
+   resourceVersion: data?.resourceVersion !== undefined ? data.resourceVersion : '',
  };
 }

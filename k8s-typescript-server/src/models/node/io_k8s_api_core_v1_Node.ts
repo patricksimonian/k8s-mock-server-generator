@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_core_v1_Node {
 /**
+* NodeSpec describes the attributes that a node is created with.
+* @isObject
+*/
+spec?: { taints?: Array<{ effect: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key: string; timeAdded?: Date; value?: string }>; unschedulable?: boolean; configSource?: { configMap?: { kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string; uid?: string } }; externalID?: string; podCIDR?: string; podCIDRs?: string[]; providerID?: string };
+/**
+* NodeStatus is information about the current status of a node.
+* @isObject
+*/
+status?: { images?: Array<{ names?: string[]; sizeBytes?: number }>; runtimeHandlers?: Array<{ features?: { recursiveReadOnlyMounts?: boolean; userNamespaces?: boolean }; name?: string }>; daemonEndpoints?: { kubeletEndpoint?: { Port: number } }; allocatable?: Record<string, any>; capacity?: Record<string, any>; conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string; lastHeartbeatTime?: Date }>; config?: { active?: { configMap?: { kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string; uid?: string } }; assigned?: { configMap?: { namespace: string; resourceVersion?: string; uid?: string; kubeletConfigKey: string; name: string } }; error?: string; lastKnownGood?: { configMap?: { name: string; namespace: string; resourceVersion?: string; uid?: string; kubeletConfigKey: string } } }; features?: { supplementalGroupsPolicy?: boolean }; nodeInfo?: { bootID: string; containerRuntimeVersion: string; systemUUID: string; osImage: string; architecture: string; kernelVersion: string; kubeProxyVersion: string; kubeletVersion: string; machineID: string; operatingSystem: string }; phase?: 'Pending' | 'Running' | 'Terminated'; addresses?: Array<{ address: string; type: string }>; volumesInUse?: string[]; volumesAttached?: Array<{ devicePath: string; name: string }> };
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -16,17 +26,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { deletionGracePeriodSeconds?: number; name?: string; namespace?: string; selfLink?: string; creationTimestamp?: Date; deletionTimestamp?: Date; finalizers?: string[]; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; uid?: string; generateName?: string; generation?: number; labels?: Record<string, any>; resourceVersion?: string; annotations?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }> };
-/**
-* NodeSpec describes the attributes that a node is created with.
-* @isObject
-*/
-spec?: { configSource?: { configMap?: { name: string; namespace: string; resourceVersion?: string; uid?: string; kubeletConfigKey: string } }; externalID?: string; podCIDR?: string; podCIDRs?: string[]; providerID?: string; taints?: Array<{ key: string; timeAdded?: Date; value?: string; effect: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule' }>; unschedulable?: boolean };
-/**
-* NodeStatus is information about the current status of a node.
-* @isObject
-*/
-status?: { volumesInUse?: string[]; allocatable?: Record<string, any>; capacity?: Record<string, any>; config?: { lastKnownGood?: { configMap?: { kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string; uid?: string } }; active?: { configMap?: { uid?: string; kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string } }; assigned?: { configMap?: { uid?: string; kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string } }; error?: string }; images?: Array<{ names?: string[]; sizeBytes?: number }>; phase?: 'Pending' | 'Running' | 'Terminated'; volumesAttached?: Array<{ devicePath: string; name: string }>; addresses?: Array<{ address: string; type: string }>; conditions?: Array<{ lastHeartbeatTime?: Date; lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>; daemonEndpoints?: { kubeletEndpoint?: { Port: number } }; features?: { supplementalGroupsPolicy?: boolean }; nodeInfo?: { kubeletVersion: string; systemUUID: string; kernelVersion: string; bootID: string; containerRuntimeVersion: string; kubeProxyVersion: string; machineID: string; operatingSystem: string; osImage: string; architecture: string }; runtimeHandlers?: Array<{ features?: { recursiveReadOnlyMounts?: boolean; userNamespaces?: boolean }; name?: string }> };
+metadata?: { deletionTimestamp?: Date; finalizers?: string[]; namespace?: string; deletionGracePeriodSeconds?: number; generateName?: string; selfLink?: string; annotations?: Record<string, any>; creationTimestamp?: Date; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; name?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; resourceVersion?: string; uid?: string; generation?: number; labels?: Record<string, any> };
 }
 
 /**
@@ -36,10 +36,10 @@ status?: { volumesInUse?: string[]; allocatable?: Record<string, any>; capacity?
 */
 export function createio_k8s_api_core_v1_Node(data?: Partial<io_k8s_api_core_v1_Node>): io_k8s_api_core_v1_Node {
  return {
+   spec: data?.spec !== undefined ? data.spec : {},
+   status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
  };
 }

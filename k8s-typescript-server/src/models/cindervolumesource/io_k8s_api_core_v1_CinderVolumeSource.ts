@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_CinderVolumeSource {
 /**
+* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
+* @isObject
+*/
+secretRef?: { name?: string };
+/**
 * volumeID used to identify the volume in cinder. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
 * @required
 */
@@ -17,11 +22,6 @@ fsType?: string;
 * readOnly defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
 */
 readOnly?: boolean;
-/**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @isObject
-*/
-secretRef?: { name?: string };
 }
 
 /**
@@ -31,9 +31,9 @@ secretRef?: { name?: string };
 */
 export function createio_k8s_api_core_v1_CinderVolumeSource(data?: Partial<io_k8s_api_core_v1_CinderVolumeSource>): io_k8s_api_core_v1_CinderVolumeSource {
  return {
+   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    volumeID: data?.volumeID !== undefined ? data.volumeID : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
  };
 }

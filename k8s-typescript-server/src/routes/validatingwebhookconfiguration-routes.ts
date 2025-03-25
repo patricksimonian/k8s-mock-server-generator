@@ -7,24 +7,6 @@ import { handleResourceError } from '../utils';
 export function createvalidatingwebhookconfigurationRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//read the specified ValidatingWebhookConfiguration
-  router.get('/apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      logger.info(`Getting validatingwebhookconfiguration ${name}`);
-      
-      const resource = await storage.getResource('validatingwebhookconfiguration', name);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`validatingwebhookconfiguration ${name} not found`), res);
-      }
-      
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //replace the specified ValidatingWebhookConfiguration
   router.put('/apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
@@ -80,9 +62,45 @@ export function createvalidatingwebhookconfigurationRoutes(storage: Storage): ex
       next(error);
     }
   });
+  router.patch('/apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      logger.info(`Getting validatingwebhookconfiguration ${name}`);
+      
+      const resource = await storage.getResource('validatingwebhookconfiguration', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`validatingwebhookconfiguration ${name} not found`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
 
-//watch changes to an object of kind ValidatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingwebhookconfigurations/:name', async (req, res, next) => {
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read the specified ValidatingWebhookConfiguration
+  router.get('/apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
       logger.info(`Getting validatingwebhookconfiguration ${name}`);
@@ -99,23 +117,19 @@ export function createvalidatingwebhookconfigurationRoutes(storage: Storage): ex
     }
   });
 
-//watch individual changes to a list of ValidatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingwebhookconfigurations', async (req, res, next) => {
+//watch changes to an object of kind ValidatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
-      logger.info(`Listing validatingwebhookconfiguration`);
+      const name = req.params.name;
+      logger.info(`Getting validatingwebhookconfiguration ${name}`);
       
-      const resources = await storage.listResources('validatingwebhookconfiguration');
+      const resource = await storage.getResource('validatingwebhookconfiguration', name);
       
-      const response = {
-        kind: 'ValidatingwebhookconfigurationList',
-        apiVersion: 'admissionregistration.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+      if (!resource) {
+        return handleResourceError(new Error(`validatingwebhookconfiguration ${name} not found`), res);
+      }
       
-      res.json(response);
+      res.json(resource);
     } catch (error) {
       next(error);
     }
@@ -188,6 +202,28 @@ export function createvalidatingwebhookconfigurationRoutes(storage: Storage): ex
           kind: 'validatingwebhookconfiguration'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ValidatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingwebhookconfigurations', async (req, res, next) => {
+    try {
+      logger.info(`Listing validatingwebhookconfiguration`);
+      
+      const resources = await storage.listResources('validatingwebhookconfiguration');
+      
+      const response = {
+        kind: 'ValidatingwebhookconfigurationList',
+        apiVersion: 'admissionregistration.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
     } catch (error) {
       next(error);
     }

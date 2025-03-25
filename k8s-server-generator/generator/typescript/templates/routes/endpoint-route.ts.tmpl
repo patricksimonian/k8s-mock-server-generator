@@ -8,6 +8,56 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
   const router = express.Router();
 
   {{- range .Endpoints }}
+  {{- if eq .Method "patch" }}
+  router.patch('{{ .Path }}', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      {{- if .Namespaced }}
+      const namespace = req.params.namespace;
+      
+      logger.info(`Patching {{ $.ResourceType }} ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('{{ $.ResourceType }}', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`{{ $.ResourceType }} ${name} not found in namespace ${namespace}`), res);
+      }
+      {{- else }}
+      logger.info(`Getting {{ $.ResourceType }} ${name}`);
+      
+      const resource = await storage.getResource('{{ $.ResourceType }}', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`{{ $.ResourceType }} ${name} not found`), res);
+      }
+      {{- end }}
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  {{- end }}
   {{- if eq .Method "get" }}
     {{- $parts := split .Path "/" }}
   {{- $lastPart := index $parts (sub (len $parts) 1) }}

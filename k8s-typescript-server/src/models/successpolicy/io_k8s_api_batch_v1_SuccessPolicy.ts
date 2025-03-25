@@ -9,7 +9,7 @@ export interface io_k8s_api_batch_v1_SuccessPolicy {
 * @required
 * @isArray
 */
-rules: Array<{ succeededIndexes?: string; succeededCount?: number }>;
+rules: Array<{ succeededCount?: number; succeededIndexes?: string }>;
 }
 
 /**

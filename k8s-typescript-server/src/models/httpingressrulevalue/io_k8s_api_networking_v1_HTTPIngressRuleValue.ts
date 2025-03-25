@@ -9,7 +9,7 @@ export interface io_k8s_api_networking_v1_HTTPIngressRuleValue {
 * @required
 * @isArray
 */
-paths: Array<{ path?: string; pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix'; backend: { resource?: { apiGroup?: string; kind: string; name: string }; service?: { name: string; port?: { name?: string; number?: number } } } }>;
+paths: Array<{ pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix'; backend: { service?: { name: string; port?: { name?: string; number?: number } }; resource?: { apiGroup?: string; kind: string; name: string } }; path?: string }>;
 }
 
 /**

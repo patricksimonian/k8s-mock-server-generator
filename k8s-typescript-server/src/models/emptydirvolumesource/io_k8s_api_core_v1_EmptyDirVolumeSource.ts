@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_EmptyDirVolumeSource {
 /**
+* medium represents what type of storage medium should back this directory. The default is "" which means to use the node's default medium. Must be an empty string (default) or Memory. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
+*/
+medium?: string;
+/**
 * Quantity is a fixed-point representation of a number. It provides convenient marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64() accessors.
 
 The serialization format is:
@@ -44,10 +48,6 @@ Non-canonical values will still parse as long as they are well formed, but will 
 This format is intended to make it difficult to use these numbers without writing some sort of special handling code in the hopes that that will cause implementors to also use a fixed point implementation.
 */
 sizeLimit?: string;
-/**
-* medium represents what type of storage medium should back this directory. The default is "" which means to use the node's default medium. Must be an empty string (default) or Memory. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
-*/
-medium?: string;
 }
 
 /**
@@ -57,7 +57,7 @@ medium?: string;
 */
 export function createio_k8s_api_core_v1_EmptyDirVolumeSource(data?: Partial<io_k8s_api_core_v1_EmptyDirVolumeSource>): io_k8s_api_core_v1_EmptyDirVolumeSource {
  return {
-   sizeLimit: data?.sizeLimit !== undefined ? data.sizeLimit : '',
    medium: data?.medium !== undefined ? data.medium : '',
+   sizeLimit: data?.sizeLimit !== undefined ? data.sizeLimit : '',
  };
 }

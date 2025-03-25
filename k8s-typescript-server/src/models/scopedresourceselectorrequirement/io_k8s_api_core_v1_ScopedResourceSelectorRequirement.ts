@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ScopedResourceSelectorRequirement {
 /**
-* An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
-* @isArray
-*/
-values?: string[];
-/**
 * Represents a scope's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist.
 
 Possible enum values:
@@ -33,6 +28,11 @@ Possible enum values:
 * @required
 */
 scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating';
+/**
+* An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+* @isArray
+*/
+values?: string[];
 }
 
 /**
@@ -42,8 +42,8 @@ scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTe
 */
 export function createio_k8s_api_core_v1_ScopedResourceSelectorRequirement(data?: Partial<io_k8s_api_core_v1_ScopedResourceSelectorRequirement>): io_k8s_api_core_v1_ScopedResourceSelectorRequirement {
  return {
-   values: data?.values !== undefined ? data.values : [],
    operator: data?.operator !== undefined ? data.operator : '',
    scopeName: data?.scopeName !== undefined ? data.scopeName : '',
+   values: data?.values !== undefined ? data.values : [],
  };
 }

@@ -12,7 +12,7 @@ controller?: string;
 * IngressClassParametersReference identifies an API object. This can be used to specify a cluster or namespace-scoped resource.
 * @isObject
 */
-parameters?: { scope?: string; apiGroup?: string; kind: string; name: string; namespace?: string };
+parameters?: { name: string; namespace?: string; scope?: string; apiGroup?: string; kind: string };
 }
 
 /**

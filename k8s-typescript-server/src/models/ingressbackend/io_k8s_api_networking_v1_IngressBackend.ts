@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_networking_v1_IngressBackend {
 /**
+* TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.
+* @isObject
+*/
+resource?: { name: string; apiGroup?: string; kind: string };
+/**
 * IngressServiceBackend references a Kubernetes Service as a Backend.
 * @isObject
 */
 service?: { name: string; port?: { name?: string; number?: number } };
-/**
-* TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.
-* @isObject
-*/
-resource?: { apiGroup?: string; kind: string; name: string };
 }
 
 /**
@@ -23,7 +23,7 @@ resource?: { apiGroup?: string; kind: string; name: string };
 */
 export function createio_k8s_api_networking_v1_IngressBackend(data?: Partial<io_k8s_api_networking_v1_IngressBackend>): io_k8s_api_networking_v1_IngressBackend {
  return {
+   resource: data?.resource !== undefined ? data.resource : { kind: '', name: '' },
    service: data?.service !== undefined ? data.service : { name: '' },
-   resource: data?.resource !== undefined ? data.resource : { name: '', kind: '' },
  };
 }

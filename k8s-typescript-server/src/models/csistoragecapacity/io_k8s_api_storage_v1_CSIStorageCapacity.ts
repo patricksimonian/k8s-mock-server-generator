@@ -13,6 +13,11 @@ They are consumed by the kube-scheduler when a CSI driver opts into capacity-awa
 */
 export interface io_k8s_api_storage_v1_CSIStorageCapacity {
 /**
+* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
+* @isObject
+*/
+nodeTopology?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+/**
 * storageClassName represents the name of the StorageClass that the reported capacity applies to. It must meet the same requirements as the name of a StorageClass object (non-empty, DNS subdomain). If that object no longer exists, the CSIStorageCapacity object is obsolete and should be removed by its creator. This field is immutable.
 * @required
 */
@@ -109,12 +114,7 @@ maximumVolumeSize?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { deletionGracePeriodSeconds?: number; finalizers?: string[]; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; resourceVersion?: string; generation?: number; labels?: Record<string, any>; namespace?: string; annotations?: Record<string, any>; creationTimestamp?: Date; deletionTimestamp?: Date; selfLink?: string; uid?: string; generateName?: string; name?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }> };
-/**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
-*/
-nodeTopology?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+metadata?: { deletionGracePeriodSeconds?: number; generateName?: string; resourceVersion?: string; selfLink?: string; uid?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; labels?: Record<string, any>; name?: string; annotations?: Record<string, any>; creationTimestamp?: Date; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string };
 }
 
 /**
@@ -124,12 +124,12 @@ nodeTopology?: { matchExpressions?: Array<{ key: string; operator: string; value
 */
 export function createio_k8s_api_storage_v1_CSIStorageCapacity(data?: Partial<io_k8s_api_storage_v1_CSIStorageCapacity>): io_k8s_api_storage_v1_CSIStorageCapacity {
  return {
+   nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : {},
    storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    capacity: data?.capacity !== undefined ? data.capacity : '',
    kind: data?.kind !== undefined ? data.kind : '',
    maximumVolumeSize: data?.maximumVolumeSize !== undefined ? data.maximumVolumeSize : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : {},
  };
 }

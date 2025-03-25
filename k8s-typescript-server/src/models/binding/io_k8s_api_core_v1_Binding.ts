@@ -16,13 +16,13 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; selfLink?: string; labels?: Record<string, any>; resourceVersion?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; generateName?: string; namespace?: string; uid?: string; creationTimestamp?: Date; name?: string };
+metadata?: { annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; finalizers?: string[]; namespace?: string; selfLink?: string; deletionTimestamp?: Date; name?: string; creationTimestamp?: Date; labels?: Record<string, any>; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; uid?: string; generateName?: string; generation?: number; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; resourceVersion?: string };
 /**
 * ObjectReference contains enough information to let you inspect or modify the referred object.
 * @required
 * @isObject
 */
-target: { uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string };
+target: { kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string };
 }
 
 /**

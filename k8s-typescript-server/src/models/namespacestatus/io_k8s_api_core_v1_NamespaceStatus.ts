@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_NamespaceStatus {
 * Represents the latest available observations of a namespace's current state.
 * @isArray
 */
-conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date }>;
+conditions?: Array<{ status: string; type: string; lastTransitionTime?: Date; message?: string; reason?: string }>;
 /**
 * Phase is the current lifecycle phase of the namespace. More info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
 

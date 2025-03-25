@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_StorageOSPersistentVolumeSource {
 /**
+* readOnly defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
+*/
+readOnly?: boolean;
+/**
 * ObjectReference contains enough information to let you inspect or modify the referred object.
 * @isObject
 */
@@ -21,10 +25,6 @@ volumeNamespace?: string;
 * fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 */
 fsType?: string;
-/**
-* readOnly defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
-*/
-readOnly?: boolean;
 }
 
 /**
@@ -34,10 +34,10 @@ readOnly?: boolean;
 */
 export function createio_k8s_api_core_v1_StorageOSPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_StorageOSPersistentVolumeSource>): io_k8s_api_core_v1_StorageOSPersistentVolumeSource {
  return {
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    volumeName: data?.volumeName !== undefined ? data.volumeName : '',
    volumeNamespace: data?.volumeNamespace !== undefined ? data.volumeNamespace : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
  };
 }

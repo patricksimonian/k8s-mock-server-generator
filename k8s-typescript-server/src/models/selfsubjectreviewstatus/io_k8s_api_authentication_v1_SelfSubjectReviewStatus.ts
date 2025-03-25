@@ -8,7 +8,7 @@ export interface io_k8s_api_authentication_v1_SelfSubjectReviewStatus {
 * UserInfo holds the information about the user needed to implement the user.Info interface.
 * @isObject
 */
-userInfo?: { extra?: Record<string, any>; groups?: string[]; uid?: string; username?: string };
+userInfo?: { username?: string; extra?: Record<string, any>; groups?: string[]; uid?: string };
 }
 
 /**

@@ -2,111 +2,121 @@
 * Storage interface for Kubernetes resources
 */
 export interface Storage {
- /**
-  * Check if the storage has been initialized
-  */
- isInitialized(): Promise<boolean>;
- 
- /**
-  * Mark the storage as initialized
-  */
- markInitialized(): Promise<void>;
- 
- /**
-  * Get a resource by kind, name, and namespace
-  * 
-  * @param kind Kind of the resource
-  * @param name Name of the resource
-  * @param namespace Namespace of the resource
-  */
- getResource(kind: string, name: string, namespace?: string): Promise<any>;
- 
- /**
-  * List resources by kind and namespace
-  * 
-  * @param kind Kind of the resources to list
-  * @param namespace Namespace to list resources in
-  * @param labelSelector Label selector to filter resources
-  */
- listResources(kind: string, namespace?: string, labelSelector?: string): Promise<any[]>;
- 
- /**
-  * Create a resource
-  * 
-  * @param resource Resource to create
-  * @param namespace Namespace to create the resource in
-  */
- createResource(resource: any, namespace?: string): Promise<any>;
- 
- /**
-  * Update a resource
-  * 
-  * @param kind Kind of the resource
-  * @param name Name of the resource
-  * @param resource Updated resource
-  * @param namespace Namespace of the resource
-  */
- updateResource(kind: string, name: string, resource: any, namespace?: string): Promise<any>;
- 
- /**
-  * Patch a resource
-  * 
-  * @param kind Kind of the resource
-  * @param name Name of the resource
-  * @param patch Patch to apply to the resource
-  * @param namespace Namespace of the resource
-  */
- patchResource(kind: string, name: string, patch: any, namespace?: string): Promise<any>;
- 
- /**
-  * Delete a resource
-  * 
-  * @param kind Kind of the resource
-  * @param name Name of the resource
-  * @param namespace Namespace of the resource
-  */
- deleteResource(kind: string, name: string, namespace?: string): Promise<boolean>;
- 
- /**
-  * Delete all resources of a specific kind
-  * 
-  * @param kind Kind of the resource
-  * @param namespace Namespace of the resource
-  */
- deleteAllResources(kind: string, namespace?: string): Promise<boolean>;
- 
- /**
-  * Watch resources of a specific kind in a namespace
-  * 
-  * @param kind Kind of the resources to watch
-  * @param namespace Namespace to watch resources in
-  * @param labelSelector Label selector to filter resources
-  * @param resourceVersion Resource version to start watching from
-  * @param onEvent Callback function to handle watch events
-  */
- watchResources(
-   kind: string, 
-   namespace?: string, 
-   labelSelector?: string, 
-   resourceVersion?: string,
-   onEvent?: (type: 'ADDED' | 'MODIFIED' | 'DELETED', resource: any) => void
- ): Promise<() => void>;
+  /**
+   * Check if the storage has been initialized
+   */
+  isInitialized(): Promise<boolean>;
+
+  /**
+   * Mark the storage as initialized
+   */
+  markInitialized(): Promise<void>;
+
+  /**
+   * Get a resource by kind, name, and namespace
+   * 
+   * @param kind Kind of the resource
+   * @param name Name of the resource
+   * @param namespace Namespace of the resource
+   */
+  getResource(kind: string, name: string, namespace?: string | null): Promise<any>;
+
+  /**
+   * List resources by kind and namespace
+   * 
+   * @param kind Kind of the resources to list
+   * @param namespace Namespace to list resources in
+   * @param labelSelector Label selector to filter resources
+   */
+  listResources(kind: string, namespace?: string | null, labelSelector?: string): Promise<any[]>;
+
+  /**
+   * Create a resource
+   * 
+   * @param resource Resource to create
+   * @param namespace Namespace to create the resource in
+   */
+  createResource(resource: any, namespace?: string | null): Promise<any>;
+
+  /**
+   * Update a resource
+   * 
+   * @param kind Kind of the resource
+   * @param name Name of the resource
+   * @param resource Updated resource
+   * @param namespace Namespace of the resource
+   */
+  updateResource(kind: string, name: string, resource: any, namespace?: string | null): Promise<any>;
+
+  /**
+      * Merge Patch a resource
+      * 
+      * @param kind Kind of the resource
+      * @param name Name of the resource
+      * @param patch Patch to apply to the resource
+      * @param namespace Namespace of the resource
+      */
+  mergePatchResource(kind: string, name: string, patch: any, namespace?: string | null): Promise<any>
+
+  /**
+   * JSON Patch a resource
+   * 
+   * @param kind Kind of the resource
+   * @param name Name of the resource
+   * @param patch Patch to apply to the resource
+   * @param namespace Namespace of the resource
+   */
+  jsonPatchResource(kind: string, name: string, patch: any, namespace?: string | null): Promise<any>
+
+  /**
+   * Delete a resource
+   * 
+   * @param kind Kind of the resource
+   * @param name Name of the resource
+   * @param namespace Namespace of the resource
+   */
+  deleteResource(kind: string, name: string, namespace?: string | null): Promise<boolean>;
+
+  /**
+   * Delete all resources of a specific kind
+   * 
+   * @param kind Kind of the resource
+   * @param namespace Namespace of the resource
+   */
+  deleteAllResources(kind: string, namespace?: string | null): Promise<boolean>;
+
+  /**
+   * Watch resources of a specific kind in a namespace
+   * 
+   * @param kind Kind of the resources to watch
+   * @param namespace Namespace to watch resources in
+   * @param labelSelector Label selector to filter resources
+   * @param resourceVersion Resource version to start watching from
+   * @param onEvent Callback function to handle watch events
+   */
+  watchResources(
+    kind: string,
+    namespace?: string | null,
+    labelSelector?: string,
+    resourceVersion?: string,
+    onEvent?: (type: 'ADDED' | 'MODIFIED' | 'DELETED', resource: any) => void
+  ): Promise<() => void>;
 }
 
 /**
 * Watch event types
 */
 export enum WatchEventType {
- ADDED = 'ADDED',
- MODIFIED = 'MODIFIED',
- DELETED = 'DELETED',
- ERROR = 'ERROR'
+  ADDED = 'ADDED',
+  MODIFIED = 'MODIFIED',
+  DELETED = 'DELETED',
+  ERROR = 'ERROR'
 }
 
 /**
 * Watch event interface
 */
 export interface WatchEvent {
- type: WatchEventType;
- object: any;
+  type: WatchEventType;
+  object: any;
 }

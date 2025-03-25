@@ -5,14 +5,6 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeStatus {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastPhaseTransitionTime?: Date;
-/**
-* message is a human-readable message indicating details about why the volume is in this state.
-*/
-message?: string;
-/**
 * phase indicates if a volume is available, bound to a claim, or released by a claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#phase
 
 Possible enum values:
@@ -27,6 +19,14 @@ phase?: 'Available' | 'Bound' | 'Failed' | 'Pending' | 'Released';
 * reason is a brief CamelCase string that describes any failure and is meant for machine parsing and tidy display in the CLI.
 */
 reason?: string;
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+lastPhaseTransitionTime?: Date;
+/**
+* message is a human-readable message indicating details about why the volume is in this state.
+*/
+message?: string;
 }
 
 /**
@@ -36,9 +36,9 @@ reason?: string;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeStatus(data?: Partial<io_k8s_api_core_v1_PersistentVolumeStatus>): io_k8s_api_core_v1_PersistentVolumeStatus {
  return {
-   lastPhaseTransitionTime: data?.lastPhaseTransitionTime !== undefined ? data.lastPhaseTransitionTime : '',
-   message: data?.message !== undefined ? data.message : '',
    phase: data?.phase !== undefined ? data.phase : '',
    reason: data?.reason !== undefined ? data.reason : '',
+   lastPhaseTransitionTime: data?.lastPhaseTransitionTime !== undefined ? data.lastPhaseTransitionTime : '',
+   message: data?.message !== undefined ? data.message : '',
  };
 }

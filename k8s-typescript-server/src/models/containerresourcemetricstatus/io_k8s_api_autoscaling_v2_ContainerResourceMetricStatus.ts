@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus {
 /**
+* MetricValueStatus holds the current value for a metric
+* @required
+* @isObject
+*/
+current: { averageUtilization?: number; averageValue?: string; value?: string };
+/**
 * name is the name of the resource in question.
 * @required
 */
@@ -14,12 +20,6 @@ name: string;
 * @required
 */
 container: string;
-/**
-* MetricValueStatus holds the current value for a metric
-* @required
-* @isObject
-*/
-current: { value?: string; averageUtilization?: number; averageValue?: string };
 }
 
 /**
@@ -29,8 +29,8 @@ current: { value?: string; averageUtilization?: number; averageValue?: string };
 */
 export function createio_k8s_api_autoscaling_v2_ContainerResourceMetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus>): io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus {
  return {
+   current: data?.current !== undefined ? data.current : {},
    name: data?.name !== undefined ? data.name : '',
    container: data?.container !== undefined ? data.container : '',
-   current: data?.current !== undefined ? data.current : {},
  };
 }

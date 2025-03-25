@@ -5,18 +5,6 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaimCondition {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastProbeTime?: Date;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastTransitionTime?: Date;
-/**
-* message is the human-readable message indicating details about last transition.
-*/
-message?: string;
-/**
 * reason is a unique, this should be a short, machine understandable string that gives the reason for condition's last transition. If it reports "Resizing" that means the underlying persistent volume is being resized.
 */
 reason?: string;
@@ -30,6 +18,18 @@ status: string;
 * @required
 */
 type: string;
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+lastProbeTime?: Date;
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+lastTransitionTime?: Date;
+/**
+* message is the human-readable message indicating details about last transition.
+*/
+message?: string;
 }
 
 /**
@@ -39,11 +39,11 @@ type: string;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaimCondition(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaimCondition>): io_k8s_api_core_v1_PersistentVolumeClaimCondition {
  return {
-   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
-   message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
+   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
+   message: data?.message !== undefined ? data.message : '',
  };
 }

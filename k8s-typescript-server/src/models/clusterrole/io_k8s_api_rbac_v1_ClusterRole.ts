@@ -21,12 +21,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { generateName?: string; name?: string; uid?: string; deletionTimestamp?: Date; finalizers?: string[]; namespace?: string; resourceVersion?: string; deletionGracePeriodSeconds?: number; generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; creationTimestamp?: Date; labels?: Record<string, any>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; selfLink?: string; annotations?: Record<string, any> };
+metadata?: { resourceVersion?: string; uid?: string; namespace?: string; deletionTimestamp?: Date; labels?: Record<string, any>; deletionGracePeriodSeconds?: number; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; creationTimestamp?: Date; generateName?: string; name?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; selfLink?: string; annotations?: Record<string, any> };
 /**
 * Rules holds all the PolicyRules for this ClusterRole
 * @isArray
 */
-rules?: Array<{ apiGroups?: string[]; nonResourceURLs?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[] }>;
+rules?: Array<{ nonResourceURLs?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[]; apiGroups?: string[] }>;
 }
 
 /**

@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_policy_v1_PodDisruptionBudgetSpec {
 /**
+* IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
+*/
+minAvailable?: string;
+/**
+* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
+* @isObject
+*/
+selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+/**
 * UnhealthyPodEvictionPolicy defines the criteria for when unhealthy pods should be considered for eviction. Current implementation considers healthy pods, as pods that have status.conditions item with type="Ready",status="True".
 
 Valid policies are IfHealthyBudget and AlwaysAllow. If no policy is specified, the default behavior will be used, which corresponds to the IfHealthyBudget policy.
@@ -26,15 +35,6 @@ unhealthyPodEvictionPolicy?: 'AlwaysAllow' | 'IfHealthyBudget';
 * IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
 */
 maxUnavailable?: string;
-/**
-* IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
-*/
-minAvailable?: string;
-/**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
-*/
-selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
 }
 
 /**
@@ -44,9 +44,9 @@ selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: 
 */
 export function createio_k8s_api_policy_v1_PodDisruptionBudgetSpec(data?: Partial<io_k8s_api_policy_v1_PodDisruptionBudgetSpec>): io_k8s_api_policy_v1_PodDisruptionBudgetSpec {
  return {
-   unhealthyPodEvictionPolicy: data?.unhealthyPodEvictionPolicy !== undefined ? data.unhealthyPodEvictionPolicy : '',
-   maxUnavailable: data?.maxUnavailable !== undefined ? data.maxUnavailable : '',
    minAvailable: data?.minAvailable !== undefined ? data.minAvailable : '',
    selector: data?.selector !== undefined ? data.selector : {},
+   unhealthyPodEvictionPolicy: data?.unhealthyPodEvictionPolicy !== undefined ? data.unhealthyPodEvictionPolicy : '',
+   maxUnavailable: data?.maxUnavailable !== undefined ? data.maxUnavailable : '',
  };
 }

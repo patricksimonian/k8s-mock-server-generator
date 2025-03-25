@@ -15,7 +15,7 @@ metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; ope
 * @required
 * @isObject
 */
-target: { type: string; value?: string; averageUtilization?: number; averageValue?: string };
+target: { averageUtilization?: number; averageValue?: string; type: string; value?: string };
 }
 
 /**

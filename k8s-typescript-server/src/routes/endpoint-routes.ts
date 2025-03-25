@@ -7,29 +7,6 @@ import { handleResourceError } from '../utils';
 export function createendpointRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch individual changes to a list of Endpoints. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/endpoints', async (req, res, next) => {
-    try {
-      const namespace = req.params.namespace;
-      logger.info(`Listing endpoint in namespace ${namespace}`);
-      
-      const resources = await storage.listResources('endpoint', namespace);
-      
-      const response = {
-        kind: 'EndpointList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //read the specified Endpoints
   router.get('/api/v1/namespaces/:namespace/endpoints/:name', async (req, res, next) => {
     try {
@@ -106,9 +83,47 @@ export function createendpointRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
+  router.patch('/api/v1/namespaces/:namespace/endpoints/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      
+      logger.info(`Patching endpoint ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('endpoint', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`endpoint ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
 
-//watch individual changes to a list of Endpoints. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/endpoints', async (req, res, next) => {
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind Endpoints
+  router.get('/api/v1/endpoints', async (req, res, next) => {
     try {
       logger.info(`Listing endpoint`);
       
@@ -225,8 +240,31 @@ export function createendpointRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind Endpoints
-  router.get('/api/v1/endpoints', async (req, res, next) => {
+//watch individual changes to a list of Endpoints. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/endpoints', async (req, res, next) => {
+    try {
+      const namespace = req.params.namespace;
+      logger.info(`Listing endpoint in namespace ${namespace}`);
+      
+      const resources = await storage.listResources('endpoint', namespace);
+      
+      const response = {
+        kind: 'EndpointList',
+        apiVersion: 'v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of Endpoints. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/endpoints', async (req, res, next) => {
     try {
       logger.info(`Listing endpoint`);
       

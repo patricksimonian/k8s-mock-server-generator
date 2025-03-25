@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_core_v1_Pod {
 /**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { namespace?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; deletionTimestamp?: Date; labels?: Record<string, any>; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; generateName?: string; selfLink?: string; creationTimestamp?: Date; finalizers?: string[]; resourceVersion?: string; generation?: number; name?: string };
-/**
 * PodSpec is a description of a pod.
 * @isObject
 */
@@ -27,6 +18,15 @@ status?: Record<string, any>;
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
+/**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
+*/
+metadata?: { generateName?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; namespace?: string; uid?: string; finalizers?: string[]; labels?: Record<string, any>; deletionTimestamp?: Date; generation?: number; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; name?: string; resourceVersion?: string; selfLink?: string; creationTimestamp?: Date; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }> };
 }
 
 /**
@@ -36,10 +36,10 @@ apiVersion?: string;
 */
 export function createio_k8s_api_core_v1_Pod(data?: Partial<io_k8s_api_core_v1_Pod>): io_k8s_api_core_v1_Pod {
  return {
-   kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
    spec: data?.spec !== undefined ? data.spec : { containers: [] },
    status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : {},
  };
 }

@@ -12,7 +12,7 @@ rawSelector?: string;
 * requirements is the parsed interpretation of a field selector. All requirements must be met for a resource instance to match the selector. Webhook implementations should handle requirements, but how to handle them is up to the webhook. Since requirements can only limit the request, it is safe to authorize as unlimited request if the requirements are not understood.
 * @isArray
 */
-requirements?: Array<{ key: string; operator: string; values?: string[] }>;
+requirements?: Array<{ values?: string[]; key: string; operator: string }>;
 }
 
 /**

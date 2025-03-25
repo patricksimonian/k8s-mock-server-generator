@@ -5,23 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ServicePort {
 /**
-* IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
-*/
-targetPort?: string;
-/**
-* The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:
-
-* Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).
-
-* Kubernetes-defined prefixed names:
-  * 'kubernetes.io/h2c' - HTTP/2 prior knowledge over cleartext as described in https://www.rfc-editor.org/rfc/rfc9113.html#name-starting-http-2-with-prior-
-  * 'kubernetes.io/ws'  - WebSocket over cleartext as described in https://www.rfc-editor.org/rfc/rfc6455
-  * 'kubernetes.io/wss' - WebSocket over TLS as described in https://www.rfc-editor.org/rfc/rfc6455
-
-* Other protocols should use implementation-defined prefixed names such as mycompany.com/my-custom-protocol.
-*/
-appProtocol?: string;
-/**
 * The name of this port within the service. This must be a DNS_LABEL. All ports within a ServiceSpec must have unique names. When considering the endpoints for a Service, this must match the 'name' field in the EndpointPort. Optional if only one ServicePort is defined on this service.
 */
 name?: string;
@@ -43,6 +26,23 @@ Possible enum values:
  - `"UDP"` is the UDP protocol.
 */
 protocol?: 'SCTP' | 'TCP' | 'UDP';
+/**
+* IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
+*/
+targetPort?: string;
+/**
+* The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:
+
+* Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).
+
+* Kubernetes-defined prefixed names:
+  * 'kubernetes.io/h2c' - HTTP/2 prior knowledge over cleartext as described in https://www.rfc-editor.org/rfc/rfc9113.html#name-starting-http-2-with-prior-
+  * 'kubernetes.io/ws'  - WebSocket over cleartext as described in https://www.rfc-editor.org/rfc/rfc6455
+  * 'kubernetes.io/wss' - WebSocket over TLS as described in https://www.rfc-editor.org/rfc/rfc6455
+
+* Other protocols should use implementation-defined prefixed names such as mycompany.com/my-custom-protocol.
+*/
+appProtocol?: string;
 }
 
 /**
@@ -52,11 +52,11 @@ protocol?: 'SCTP' | 'TCP' | 'UDP';
 */
 export function createio_k8s_api_core_v1_ServicePort(data?: Partial<io_k8s_api_core_v1_ServicePort>): io_k8s_api_core_v1_ServicePort {
  return {
-   targetPort: data?.targetPort !== undefined ? data.targetPort : '',
-   appProtocol: data?.appProtocol !== undefined ? data.appProtocol : '',
    name: data?.name !== undefined ? data.name : '',
    nodePort: data?.nodePort !== undefined ? data.nodePort : 0,
    port: data?.port !== undefined ? data.port : 0,
    protocol: data?.protocol !== undefined ? data.protocol : '',
+   targetPort: data?.targetPort !== undefined ? data.targetPort : '',
+   appProtocol: data?.appProtocol !== undefined ? data.appProtocol : '',
  };
 }

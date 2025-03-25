@@ -5,32 +5,35 @@
 */
 export interface io_k8s_api_core_v1_ScaleIOVolumeSource {
 /**
-* gateway is the host address of the ScaleIO API Gateway.
-* @required
+* fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Default is "xfs".
 */
-gateway: string;
-/**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @required
-* @isObject
-*/
-secretRef: { name?: string };
-/**
-* sslEnabled Flag enable/disable SSL communication with Gateway, default false
-*/
-sslEnabled?: boolean;
+fsType?: string;
 /**
 * storagePool is the ScaleIO Storage Pool associated with the protection domain.
 */
 storagePool?: string;
 /**
+* system is the name of the storage system as configured in ScaleIO.
+* @required
+*/
+system: string;
+/**
 * volumeName is the name of a volume already created in the ScaleIO system that is associated with this volume source.
 */
 volumeName?: string;
 /**
-* fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Default is "xfs".
+* sslEnabled Flag enable/disable SSL communication with Gateway, default false
 */
-fsType?: string;
+sslEnabled?: boolean;
+/**
+* storageMode indicates whether the storage for a volume should be ThickProvisioned or ThinProvisioned. Default is ThinProvisioned.
+*/
+storageMode?: string;
+/**
+* gateway is the host address of the ScaleIO API Gateway.
+* @required
+*/
+gateway: string;
 /**
 * protectionDomain is the name of the ScaleIO Protection Domain for the configured storage.
 */
@@ -40,14 +43,11 @@ protectionDomain?: string;
 */
 readOnly?: boolean;
 /**
-* storageMode indicates whether the storage for a volume should be ThickProvisioned or ThinProvisioned. Default is ThinProvisioned.
-*/
-storageMode?: string;
-/**
-* system is the name of the storage system as configured in ScaleIO.
+* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
 * @required
+* @isObject
 */
-system: string;
+secretRef: { name?: string };
 }
 
 /**
@@ -57,15 +57,15 @@ system: string;
 */
 export function createio_k8s_api_core_v1_ScaleIOVolumeSource(data?: Partial<io_k8s_api_core_v1_ScaleIOVolumeSource>): io_k8s_api_core_v1_ScaleIOVolumeSource {
  return {
-   gateway: data?.gateway !== undefined ? data.gateway : '',
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
-   sslEnabled: data?.sslEnabled !== undefined ? data.sslEnabled : false,
-   storagePool: data?.storagePool !== undefined ? data.storagePool : '',
-   volumeName: data?.volumeName !== undefined ? data.volumeName : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
+   storagePool: data?.storagePool !== undefined ? data.storagePool : '',
+   system: data?.system !== undefined ? data.system : '',
+   volumeName: data?.volumeName !== undefined ? data.volumeName : '',
+   sslEnabled: data?.sslEnabled !== undefined ? data.sslEnabled : false,
+   storageMode: data?.storageMode !== undefined ? data.storageMode : '',
+   gateway: data?.gateway !== undefined ? data.gateway : '',
    protectionDomain: data?.protectionDomain !== undefined ? data.protectionDomain : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   storageMode: data?.storageMode !== undefined ? data.storageMode : '',
-   system: data?.system !== undefined ? data.system : '',
+   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
  };
 }

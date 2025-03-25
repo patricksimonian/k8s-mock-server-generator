@@ -16,7 +16,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { generation?: number; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; selfLink?: string; resourceVersion?: string; generateName?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; name?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; labels?: Record<string, any>; namespace?: string; uid?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[] };
+metadata?: { namespace?: string; annotations?: Record<string, any>; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; resourceVersion?: string; selfLink?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generation?: number; name?: string; deletionGracePeriodSeconds?: number };
 /**
 * IngressClassSpec provides information about the class of an Ingress.
 * @isObject

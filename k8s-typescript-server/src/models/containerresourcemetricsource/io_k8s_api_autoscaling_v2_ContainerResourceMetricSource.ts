@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v2_ContainerResourceMetricSource {
 /**
-* container is the name of the container in the pods of the scaling target
-* @required
-*/
-container: string;
-/**
 * name is the name of the resource in question.
 * @required
 */
@@ -19,7 +14,12 @@ name: string;
 * @required
 * @isObject
 */
-target: { averageUtilization?: number; averageValue?: string; type: string; value?: string };
+target: { type: string; value?: string; averageUtilization?: number; averageValue?: string };
+/**
+* container is the name of the container in the pods of the scaling target
+* @required
+*/
+container: string;
 }
 
 /**
@@ -29,8 +29,8 @@ target: { averageUtilization?: number; averageValue?: string; type: string; valu
 */
 export function createio_k8s_api_autoscaling_v2_ContainerResourceMetricSource(data?: Partial<io_k8s_api_autoscaling_v2_ContainerResourceMetricSource>): io_k8s_api_autoscaling_v2_ContainerResourceMetricSource {
  return {
-   container: data?.container !== undefined ? data.container : '',
    name: data?.name !== undefined ? data.name : '',
    target: data?.target !== undefined ? data.target : { type: '' },
+   container: data?.container !== undefined ? data.container : '',
  };
 }

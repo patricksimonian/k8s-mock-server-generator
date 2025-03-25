@@ -12,7 +12,7 @@ nodeSelector?: Record<string, any>;
 * tolerations are appended (excluding duplicates) to pods running with this RuntimeClass during admission, effectively unioning the set of nodes tolerated by the pod and the RuntimeClass.
 * @isArray
 */
-tolerations?: Array<{ effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number; value?: string }>;
+tolerations?: Array<{ value?: string; effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number }>;
 }
 
 /**

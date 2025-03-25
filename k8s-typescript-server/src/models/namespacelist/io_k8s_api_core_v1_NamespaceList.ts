@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_NamespaceList {
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
 * Items is the list of Namespace objects in the list. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
 * @required
 * @isArray
@@ -19,11 +23,7 @@ kind?: string;
 * ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 * @isObject
 */
-metadata?: { selfLink?: string; continue?: string; remainingItemCount?: number; resourceVersion?: string };
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
+metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: string; continue?: string };
 }
 
 /**
@@ -33,10 +33,10 @@ apiVersion?: string;
 */
 export function createio_k8s_api_core_v1_NamespaceList(data?: Partial<io_k8s_api_core_v1_NamespaceList>): io_k8s_api_core_v1_NamespaceList {
  return {
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

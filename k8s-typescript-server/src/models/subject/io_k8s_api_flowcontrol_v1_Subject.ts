@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_flowcontrol_v1_Subject {
 /**
-* UserSubject holds detailed information for user-kind subject.
-* @isObject
-*/
-user?: { name: string };
-/**
 * GroupSubject holds detailed information for group-kind subject.
 * @isObject
 */
@@ -23,7 +18,12 @@ kind: string;
 * ServiceAccountSubject holds detailed information for service-account-kind subject.
 * @isObject
 */
-serviceAccount?: { namespace: string; name: string };
+serviceAccount?: { name: string; namespace: string };
+/**
+* UserSubject holds detailed information for user-kind subject.
+* @isObject
+*/
+user?: { name: string };
 }
 
 /**
@@ -33,9 +33,9 @@ serviceAccount?: { namespace: string; name: string };
 */
 export function createio_k8s_api_flowcontrol_v1_Subject(data?: Partial<io_k8s_api_flowcontrol_v1_Subject>): io_k8s_api_flowcontrol_v1_Subject {
  return {
-   user: data?.user !== undefined ? data.user : { name: '' },
    group: data?.group !== undefined ? data.group : { name: '' },
    kind: data?.kind !== undefined ? data.kind : '',
-   serviceAccount: data?.serviceAccount !== undefined ? data.serviceAccount : { namespace: '', name: '' },
+   serviceAccount: data?.serviceAccount !== undefined ? data.serviceAccount : { name: '', namespace: '' },
+   user: data?.user !== undefined ? data.user : { name: '' },
  };
 }

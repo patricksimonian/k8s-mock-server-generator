@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_rbac_v1_ClusterRoleBinding {
 /**
+* Subjects holds references to the objects the role applies to.
+* @isArray
+*/
+subjects?: Array<{ apiGroup?: string; kind: string; name: string; namespace?: string }>;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -16,18 +21,13 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { resourceVersion?: string; selfLink?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string; name?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; uid?: string; finalizers?: string[]; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; namespace?: string };
+metadata?: { generateName?: string; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; creationTimestamp?: Date; selfLink?: string; annotations?: Record<string, any>; labels?: Record<string, any>; namespace?: string; resourceVersion?: string; uid?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; name?: string };
 /**
 * RoleRef contains information that points to the role being used
 * @required
 * @isObject
 */
 roleRef: { apiGroup: string; kind: string; name: string };
-/**
-* Subjects holds references to the objects the role applies to.
-* @isArray
-*/
-subjects?: Array<{ apiGroup?: string; kind: string; name: string; namespace?: string }>;
 }
 
 /**
@@ -37,10 +37,10 @@ subjects?: Array<{ apiGroup?: string; kind: string; name: string; namespace?: st
 */
 export function createio_k8s_api_rbac_v1_ClusterRoleBinding(data?: Partial<io_k8s_api_rbac_v1_ClusterRoleBinding>): io_k8s_api_rbac_v1_ClusterRoleBinding {
  return {
+   subjects: data?.subjects !== undefined ? data.subjects : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   roleRef: data?.roleRef !== undefined ? data.roleRef : { kind: '', name: '', apiGroup: '' },
-   subjects: data?.subjects !== undefined ? data.subjects : [],
+   roleRef: data?.roleRef !== undefined ? data.roleRef : { apiGroup: '', kind: '', name: '' },
  };
 }

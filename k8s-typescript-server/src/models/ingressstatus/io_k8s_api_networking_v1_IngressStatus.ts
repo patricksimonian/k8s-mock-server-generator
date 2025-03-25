@@ -8,7 +8,7 @@ export interface io_k8s_api_networking_v1_IngressStatus {
 * IngressLoadBalancerStatus represents the status of a load-balancer.
 * @isObject
 */
-loadBalancer?: { ingress?: Array<{ ip?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>; hostname?: string }> };
+loadBalancer?: { ingress?: Array<{ hostname?: string; ip?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }> }> };
 }
 
 /**

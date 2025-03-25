@@ -7,19 +7,23 @@ import { handleResourceError } from '../utils';
 export function createingressclassRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch changes to an object of kind IngressClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses/:name', async (req, res, next) => {
+//watch individual changes to a list of IngressClass. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      logger.info(`Getting ingressclass ${name}`);
+      logger.info(`Listing ingressclass`);
       
-      const resource = await storage.getResource('ingressclass', name);
+      const resources = await storage.listResources('ingressclass');
       
-      if (!resource) {
-        return handleResourceError(new Error(`ingressclass ${name} not found`), res);
-      }
+      const response = {
+        kind: 'IngressclassList',
+        apiVersion: 'networking.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
       
-      res.json(resource);
+      res.json(response);
     } catch (error) {
       next(error);
     }
@@ -96,24 +100,38 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//watch individual changes to a list of IngressClass. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses', async (req, res, next) => {
+  router.patch('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
     try {
-      logger.info(`Listing ingressclass`);
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      logger.info(`Getting ingressclass ${name}`);
       
-      const resources = await storage.listResources('ingressclass');
+      const resource = await storage.getResource('ingressclass', name);
       
-      const response = {
-        kind: 'IngressclassList',
-        apiVersion: 'networking.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+      if (!resource) {
+        return handleResourceError(new Error(`ingressclass ${name} not found`), res);
+      }
       
-      res.json(response);
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -188,6 +206,24 @@ export function createingressclassRoutes(storage: Storage): express.Router {
           kind: 'ingressclass'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind IngressClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      logger.info(`Getting ingressclass ${name}`);
+      
+      const resource = await storage.getResource('ingressclass', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`ingressclass ${name} not found`), res);
+      }
+      
+      res.json(resource);
     } catch (error) {
       next(error);
     }

@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_DownwardAPIProjection {
 * Items is a list of DownwardAPIVolume file
 * @isArray
 */
-items?: Array<{ fieldRef?: { apiVersion?: string; fieldPath: string }; mode?: number; path: string; resourceFieldRef?: { containerName?: string; divisor?: string; resource: string } }>;
+items?: Array<{ fieldRef?: { apiVersion?: string; fieldPath: string }; mode?: number; path: string; resourceFieldRef?: { resource: string; containerName?: string; divisor?: string } }>;
 }
 
 /**

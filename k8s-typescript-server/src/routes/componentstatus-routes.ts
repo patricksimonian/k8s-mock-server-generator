@@ -7,6 +7,24 @@ import { handleResourceError } from '../utils';
 export function createcomponentstatusRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//read the specified ComponentStatus
+  router.get('/api/v1/componentstatuses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      logger.info(`Getting componentstatus ${name}`);
+      
+      const resource = await storage.getResource('componentstatus', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`componentstatus ${name} not found`), res);
+      }
+      
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //list objects of kind ComponentStatus
   router.get('/api/v1/componentstatuses', async (req, res, next) => {
     try {
@@ -24,24 +42,6 @@ export function createcomponentstatusRoutes(storage: Storage): express.Router {
       };
       
       res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified ComponentStatus
-  router.get('/api/v1/componentstatuses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      logger.info(`Getting componentstatus ${name}`);
-      
-      const resource = await storage.getResource('componentstatus', name);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`componentstatus ${name} not found`), res);
-      }
-      
-      res.json(resource);
     } catch (error) {
       next(error);
     }

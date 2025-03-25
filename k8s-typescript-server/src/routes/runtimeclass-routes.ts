@@ -29,8 +29,8 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind RuntimeClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/node.k8s.io/v1/watch/runtimeclasses/:name', async (req, res, next) => {
+//read the specified RuntimeClass
+  router.get('/apis/node.k8s.io/v1/runtimeclasses/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
       logger.info(`Getting runtimeclass ${name}`);
@@ -102,11 +102,11 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//read the specified RuntimeClass
-  router.get('/apis/node.k8s.io/v1/runtimeclasses/:name', async (req, res, next) => {
+  router.patch('/apis/node.k8s.io/v1/runtimeclasses/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
       logger.info(`Getting runtimeclass ${name}`);
       
       const resource = await storage.getResource('runtimeclass', name);
@@ -115,7 +115,47 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
         return handleResourceError(new Error(`runtimeclass ${name} not found`), res);
       }
       
-      res.json(resource);
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind RuntimeClass
+  router.get('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
+    try {
+      logger.info(`Listing runtimeclass`);
+      
+      const resources = await storage.listResources('runtimeclass');
+      
+      const response = {
+        kind: 'RuntimeclassList',
+        apiVersion: 'node.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
     } catch (error) {
       next(error);
     }
@@ -171,23 +211,19 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind RuntimeClass
-  router.get('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
+//watch changes to an object of kind RuntimeClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/node.k8s.io/v1/watch/runtimeclasses/:name', async (req, res, next) => {
     try {
-      logger.info(`Listing runtimeclass`);
+      const name = req.params.name;
+      logger.info(`Getting runtimeclass ${name}`);
       
-      const resources = await storage.listResources('runtimeclass');
+      const resource = await storage.getResource('runtimeclass', name);
       
-      const response = {
-        kind: 'RuntimeclassList',
-        apiVersion: 'node.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+      if (!resource) {
+        return handleResourceError(new Error(`runtimeclass ${name} not found`), res);
+      }
       
-      res.json(response);
+      res.json(resource);
     } catch (error) {
       next(error);
     }

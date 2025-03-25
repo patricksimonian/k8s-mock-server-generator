@@ -5,6 +5,18 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry {
 /**
+* FieldsType is the discriminator for the different fields format and version. There is currently only one possible value: "FieldsV1"
+*/
+fieldsType?: string;
+/**
+* FieldsV1 stores a set of fields in a data structure like a Trie, in JSON format.
+
+Each key is either a '.' representing the field itself, and will always map to an empty set, or a string representing a sub-field or item. The string will follow one of these four formats: 'f:<name>', where <name> is the name of a field in a struct, or key in a map 'v:<value>', where <value> is the exact json formatted value of a list item 'i:<index>', where <index> is position of a item in a list 'k:<keys>', where <keys> is a map of  a list item's key fields to their unique values If a key maps to an empty Fields value, the field that key represents is part of the set.
+
+The exact format is defined in sigs.k8s.io/structured-merge-diff
+*/
+fieldsV1?: Record<string, any>;
+/**
 * Manager is an identifier of the workflow managing these fields.
 */
 manager?: string;
@@ -24,18 +36,6 @@ time?: Date;
 * APIVersion defines the version of this resource that this field set applies to. The format is "group/version" just like the top-level APIVersion field. It is necessary to track the version of a field set because it cannot be automatically converted.
 */
 apiVersion?: string;
-/**
-* FieldsType is the discriminator for the different fields format and version. There is currently only one possible value: "FieldsV1"
-*/
-fieldsType?: string;
-/**
-* FieldsV1 stores a set of fields in a data structure like a Trie, in JSON format.
-
-Each key is either a '.' representing the field itself, and will always map to an empty set, or a string representing a sub-field or item. The string will follow one of these four formats: 'f:<name>', where <name> is the name of a field in a struct, or key in a map 'v:<value>', where <value> is the exact json formatted value of a list item 'i:<index>', where <index> is position of a item in a list 'k:<keys>', where <keys> is a map of  a list item's key fields to their unique values If a key maps to an empty Fields value, the field that key represents is part of the set.
-
-The exact format is defined in sigs.k8s.io/structured-merge-diff
-*/
-fieldsV1?: Record<string, any>;
 }
 
 /**
@@ -45,12 +45,12 @@ fieldsV1?: Record<string, any>;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry>): io_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry {
  return {
+   fieldsType: data?.fieldsType !== undefined ? data.fieldsType : '',
+   fieldsV1: data?.fieldsV1 !== undefined ? data.fieldsV1 : {},
    manager: data?.manager !== undefined ? data.manager : '',
    operation: data?.operation !== undefined ? data.operation : '',
    subresource: data?.subresource !== undefined ? data.subresource : '',
    time: data?.time !== undefined ? data.time : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   fieldsType: data?.fieldsType !== undefined ? data.fieldsType : '',
-   fieldsV1: data?.fieldsV1 !== undefined ? data.fieldsV1 : {},
  };
 }

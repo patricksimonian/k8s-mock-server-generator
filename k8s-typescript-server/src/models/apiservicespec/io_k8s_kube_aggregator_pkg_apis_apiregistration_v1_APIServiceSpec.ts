@@ -25,7 +25,7 @@ insecureSkipTLSVerify?: boolean;
 * ServiceReference holds a reference to Service.legacy.k8s.io
 * @isObject
 */
-service?: { name?: string; namespace?: string; port?: number };
+service?: { port?: number; name?: string; namespace?: string };
 /**
 * Version is the API version this server hosts.  For example, "v1"
 */

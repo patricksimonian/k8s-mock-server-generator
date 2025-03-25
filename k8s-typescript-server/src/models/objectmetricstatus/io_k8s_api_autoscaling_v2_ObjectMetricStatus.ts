@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_autoscaling_v2_ObjectMetricStatus {
 /**
+* MetricValueStatus holds the current value for a metric
+* @required
+* @isObject
+*/
+current: { averageUtilization?: number; averageValue?: string; value?: string };
+/**
 * CrossVersionObjectReference contains enough information to let you identify the referred resource.
 * @required
 * @isObject
@@ -15,13 +21,7 @@ describedObject: { apiVersion?: string; kind: string; name: string };
 * @required
 * @isObject
 */
-metric: { name: string; selector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> } };
-/**
-* MetricValueStatus holds the current value for a metric
-* @required
-* @isObject
-*/
-current: { averageUtilization?: number; averageValue?: string; value?: string };
+metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } };
 }
 
 /**
@@ -31,8 +31,8 @@ current: { averageUtilization?: number; averageValue?: string; value?: string };
 */
 export function createio_k8s_api_autoscaling_v2_ObjectMetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_ObjectMetricStatus>): io_k8s_api_autoscaling_v2_ObjectMetricStatus {
  return {
+   current: data?.current !== undefined ? data.current : {},
    describedObject: data?.describedObject !== undefined ? data.describedObject : { kind: '', name: '' },
    metric: data?.metric !== undefined ? data.metric : { name: '' },
-   current: data?.current !== undefined ? data.current : {},
  };
 }

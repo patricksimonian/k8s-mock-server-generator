@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_CSINode {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
@@ -16,13 +12,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { generateName?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; namespace?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; annotations?: Record<string, any>; deletionTimestamp?: Date; labels?: Record<string, any>; selfLink?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generation?: number; name?: string; resourceVersion?: string; creationTimestamp?: Date; uid?: string };
+metadata?: { deletionGracePeriodSeconds?: number; labels?: Record<string, any>; namespace?: string; resourceVersion?: string; creationTimestamp?: Date; generation?: number; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; selfLink?: string; uid?: string; finalizers?: string[]; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; name?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; generateName?: string };
 /**
 * CSINodeSpec holds information about the specification of all CSI drivers installed on a node
 * @required
 * @isObject
 */
 spec: { drivers: Array<{ allocatable?: { count?: number }; name: string; nodeID: string; topologyKeys?: string[] }> };
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -32,9 +32,9 @@ spec: { drivers: Array<{ allocatable?: { count?: number }; name: string; nodeID:
 */
 export function createio_k8s_api_storage_v1_CSINode(data?: Partial<io_k8s_api_storage_v1_CSINode>): io_k8s_api_storage_v1_CSINode {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
    spec: data?.spec !== undefined ? data.spec : { drivers: [] },
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ComponentCondition {
 /**
-* Type of condition for a component. Valid value: "Healthy"
-* @required
-*/
-type: string;
-/**
 * Condition error code for a component. For example, a health check error code.
 */
 error?: string;
@@ -22,6 +17,11 @@ message?: string;
 * @required
 */
 status: string;
+/**
+* Type of condition for a component. Valid value: "Healthy"
+* @required
+*/
+type: string;
 }
 
 /**
@@ -31,9 +31,9 @@ status: string;
 */
 export function createio_k8s_api_core_v1_ComponentCondition(data?: Partial<io_k8s_api_core_v1_ComponentCondition>): io_k8s_api_core_v1_ComponentCondition {
  return {
-   type: data?.type !== undefined ? data.type : '',
    error: data?.error !== undefined ? data.error : '',
    message: data?.message !== undefined ? data.message : '',
    status: data?.status !== undefined ? data.status : '',
+   type: data?.type !== undefined ? data.type : '',
  };
 }

@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_core_v1_Secret {
 /**
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
+*/
+metadata?: { generateName?: string; labels?: Record<string, any>; namespace?: string; deletionTimestamp?: Date; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; annotations?: Record<string, any>; generation?: number; name?: string; selfLink?: string; uid?: string };
+/**
+* stringData allows specifying non-binary secret data in string form. It is provided as a write-only input field for convenience. All keys and values are merged into the data field on write, overwriting any existing values. The stringData field is never output when reading from the API.
+*/
+stringData?: Record<string, any>;
+/**
 * Used to facilitate programmatic handling of secret data. More info: https://kubernetes.io/docs/concepts/configuration/secret/#secret-types
 */
 type?: string;
@@ -24,15 +33,6 @@ immutable?: boolean;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { uid?: string; labels?: Record<string, any>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; name?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; namespace?: string; resourceVersion?: string; deletionTimestamp?: Date; generateName?: string; generation?: number };
-/**
-* stringData allows specifying non-binary secret data in string form. It is provided as a write-only input field for convenience. All keys and values are merged into the data field on write, overwriting any existing values. The stringData field is never output when reading from the API.
-*/
-stringData?: Record<string, any>;
 }
 
 /**
@@ -42,12 +42,12 @@ stringData?: Record<string, any>;
 */
 export function createio_k8s_api_core_v1_Secret(data?: Partial<io_k8s_api_core_v1_Secret>): io_k8s_api_core_v1_Secret {
  return {
+   metadata: data?.metadata !== undefined ? data.metadata : {},
+   stringData: data?.stringData !== undefined ? data.stringData : {},
    type: data?.type !== undefined ? data.type : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    data: data?.data !== undefined ? data.data : {},
    immutable: data?.immutable !== undefined ? data.immutable : false,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   stringData: data?.stringData !== undefined ? data.stringData : {},
  };
 }

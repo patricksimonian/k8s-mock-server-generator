@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_FCVolumeSource {
 /**
+* wwids Optional: FC volume world wide identifiers (wwids) Either wwids or combination of targetWWNs and lun must be set, but not both simultaneously.
+* @isArray
+*/
+wwids?: string[];
+/**
 * fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 */
 fsType?: string;
@@ -21,11 +26,6 @@ readOnly?: boolean;
 * @isArray
 */
 targetWWNs?: string[];
-/**
-* wwids Optional: FC volume world wide identifiers (wwids) Either wwids or combination of targetWWNs and lun must be set, but not both simultaneously.
-* @isArray
-*/
-wwids?: string[];
 }
 
 /**
@@ -35,10 +35,10 @@ wwids?: string[];
 */
 export function createio_k8s_api_core_v1_FCVolumeSource(data?: Partial<io_k8s_api_core_v1_FCVolumeSource>): io_k8s_api_core_v1_FCVolumeSource {
  return {
+   wwids: data?.wwids !== undefined ? data.wwids : [],
    fsType: data?.fsType !== undefined ? data.fsType : '',
    lun: data?.lun !== undefined ? data.lun : 0,
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    targetWWNs: data?.targetWWNs !== undefined ? data.targetWWNs : [],
-   wwids: data?.wwids !== undefined ? data.wwids : [],
  };
 }

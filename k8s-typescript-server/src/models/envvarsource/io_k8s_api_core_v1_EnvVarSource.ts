@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_EnvVarSource {
 /**
-* Selects a key from a ConfigMap.
-* @isObject
-*/
-configMapKeyRef?: { optional?: boolean; key: string; name?: string };
-/**
 * ObjectFieldSelector selects an APIVersioned field of an object.
 * @isObject
 */
@@ -24,6 +19,11 @@ resourceFieldRef?: { containerName?: string; divisor?: string; resource: string 
 * @isObject
 */
 secretKeyRef?: { key: string; name?: string; optional?: boolean };
+/**
+* Selects a key from a ConfigMap.
+* @isObject
+*/
+configMapKeyRef?: { optional?: boolean; key: string; name?: string };
 }
 
 /**
@@ -33,9 +33,9 @@ secretKeyRef?: { key: string; name?: string; optional?: boolean };
 */
 export function createio_k8s_api_core_v1_EnvVarSource(data?: Partial<io_k8s_api_core_v1_EnvVarSource>): io_k8s_api_core_v1_EnvVarSource {
  return {
-   configMapKeyRef: data?.configMapKeyRef !== undefined ? data.configMapKeyRef : { key: '' },
    fieldRef: data?.fieldRef !== undefined ? data.fieldRef : { fieldPath: '' },
    resourceFieldRef: data?.resourceFieldRef !== undefined ? data.resourceFieldRef : { resource: '' },
    secretKeyRef: data?.secretKeyRef !== undefined ? data.secretKeyRef : { key: '' },
+   configMapKeyRef: data?.configMapKeyRef !== undefined ? data.configMapKeyRef : { key: '' },
  };
 }

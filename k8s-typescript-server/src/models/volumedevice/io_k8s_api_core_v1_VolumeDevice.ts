@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_core_v1_VolumeDevice {
 /**
-* name must match the name of a persistentVolumeClaim in the pod
-* @required
-*/
-name: string;
-/**
 * devicePath is the path inside of the container that the device will be mapped to.
 * @required
 */
 devicePath: string;
+/**
+* name must match the name of a persistentVolumeClaim in the pod
+* @required
+*/
+name: string;
 }
 
 /**
@@ -23,7 +23,7 @@ devicePath: string;
 */
 export function createio_k8s_api_core_v1_VolumeDevice(data?: Partial<io_k8s_api_core_v1_VolumeDevice>): io_k8s_api_core_v1_VolumeDevice {
  return {
-   name: data?.name !== undefined ? data.name : '',
    devicePath: data?.devicePath !== undefined ? data.devicePath : '',
+   name: data?.name !== undefined ? data.name : '',
  };
 }

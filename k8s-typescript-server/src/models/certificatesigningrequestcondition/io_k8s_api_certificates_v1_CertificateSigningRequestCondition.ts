@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequestCondition {
 /**
+* reason indicates a brief reason for the request state
+*/
+reason?: string;
+/**
+* status of the condition, one of True, False, Unknown. Approved, Denied, and Failed conditions may not be "False" or "Unknown".
+* @required
+*/
+status: string;
+/**
 * type of the condition. Known conditions are "Approved", "Denied", and "Failed".
 
 An "Approved" condition is added via the /approval subresource, indicating the request was approved and should be issued by the signer.
@@ -31,15 +40,6 @@ lastUpdateTime?: Date;
 * message contains a human readable message with details about the request state
 */
 message?: string;
-/**
-* reason indicates a brief reason for the request state
-*/
-reason?: string;
-/**
-* status of the condition, one of True, False, Unknown. Approved, Denied, and Failed conditions may not be "False" or "Unknown".
-* @required
-*/
-status: string;
 }
 
 /**
@@ -49,11 +49,11 @@ status: string;
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequestCondition(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequestCondition>): io_k8s_api_certificates_v1_CertificateSigningRequestCondition {
  return {
+   reason: data?.reason !== undefined ? data.reason : '',
+   status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : '',
    message: data?.message !== undefined ? data.message : '',
-   reason: data?.reason !== undefined ? data.reason : '',
-   status: data?.status !== undefined ? data.status : '',
  };
 }

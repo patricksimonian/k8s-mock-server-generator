@@ -16,18 +16,18 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; deletionTimestamp?: Date; generation?: number; resourceVersion?: string; deletionGracePeriodSeconds?: number; labels?: Record<string, any>; name?: string; annotations?: Record<string, any>; namespace?: string; selfLink?: string; uid?: string; finalizers?: string[]; generateName?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }> };
+metadata?: { finalizers?: string[]; labels?: Record<string, any>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; deletionTimestamp?: Date; generateName?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; selfLink?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generation?: number; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; name?: string; namespace?: string };
 /**
 * TokenRequestSpec contains client provided parameters of a token request.
 * @required
 * @isObject
 */
-spec: { audiences: string[]; boundObjectRef?: { name?: string; uid?: string; apiVersion?: string; kind?: string }; expirationSeconds?: number };
+spec: { audiences: string[]; boundObjectRef?: { apiVersion?: string; kind?: string; name?: string; uid?: string }; expirationSeconds?: number };
 /**
 * TokenRequestStatus is the result of a token request.
 * @isObject
 */
-status?: { token: string; expirationTimestamp: Date };
+status?: { expirationTimestamp: Date; token: string };
 }
 
 /**

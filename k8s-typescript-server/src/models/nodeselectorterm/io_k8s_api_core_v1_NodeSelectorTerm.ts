@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_NodeSelectorTerm {
 * A list of node selector requirements by node's labels.
 * @isArray
 */
-matchExpressions?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>;
+matchExpressions?: Array<{ operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[]; key: string }>;
 /**
 * A list of node selector requirements by node's fields.
 * @isArray

@@ -12,7 +12,7 @@ ipMode?: string;
 * Ports is a list of records of service ports If used, every port defined in the service should have an entry in it
 * @isArray
 */
-ports?: Array<{ protocol: 'SCTP' | 'TCP' | 'UDP'; error?: string; port: number }>;
+ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>;
 /**
 * Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
 */

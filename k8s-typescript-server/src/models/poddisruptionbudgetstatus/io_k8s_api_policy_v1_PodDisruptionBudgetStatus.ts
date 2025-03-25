@@ -20,7 +20,7 @@ observedGeneration?: number;
                   disruptions are provided by the disruptionsAllowed property.
 * @isArray
 */
-conditions?: Array<{ status: string; type: string; lastTransitionTime: Date; message: string; observedGeneration?: number; reason: string }>;
+conditions?: Array<{ reason: string; status: string; type: string; lastTransitionTime: Date; message: string; observedGeneration?: number }>;
 /**
 * current number of healthy pods
 * @required

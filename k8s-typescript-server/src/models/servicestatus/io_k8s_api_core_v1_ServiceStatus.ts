@@ -13,7 +13,7 @@ conditions?: Array<{ message: string; observedGeneration?: number; reason: strin
 * LoadBalancerStatus represents the status of a load-balancer.
 * @isObject
 */
-loadBalancer?: { ingress?: Array<{ hostname?: string; ip?: string; ipMode?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }> }> };
+loadBalancer?: { ingress?: Array<{ ipMode?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>; hostname?: string; ip?: string }> };
 }
 
 /**

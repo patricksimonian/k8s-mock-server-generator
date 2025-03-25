@@ -18,7 +18,7 @@ export interface io_k8s_api_core_v1_EndpointSubset {
 * IP addresses which offer the related ports but are not currently marked as ready because they have not yet finished starting, have recently failed a readiness check, or have recently failed a liveness check.
 * @isArray
 */
-notReadyAddresses?: Array<{ targetRef?: { namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string }; hostname?: string; ip: string; nodeName?: string }>;
+notReadyAddresses?: Array<{ hostname?: string; ip: string; nodeName?: string; targetRef?: { resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string } }>;
 /**
 * Port numbers available on the related IP addresses.
 * @isArray
@@ -28,7 +28,7 @@ ports?: Array<{ appProtocol?: string; name?: string; port: number; protocol?: 'S
 * IP addresses which offer the related ports that are marked as ready. These endpoints should be considered safe for load balancers and clients to utilize.
 * @isArray
 */
-addresses?: Array<{ ip: string; nodeName?: string; targetRef?: { apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string }; hostname?: string }>;
+addresses?: Array<{ nodeName?: string; targetRef?: { name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string }; hostname?: string; ip: string }>;
 }
 
 /**

@@ -5,17 +5,6 @@
 */
 export interface io_k8s_api_authorization_v1_SelfSubjectRulesReview {
 /**
-* SelfSubjectRulesReviewSpec defines the specification for SelfSubjectRulesReview.
-* @required
-* @isObject
-*/
-spec: { namespace?: string };
-/**
-* SubjectRulesReviewStatus contains the result of a rules check. This check can be incomplete depending on the set of authorizers the server is configured with and any errors experienced during evaluation. Because authorization rules are additive, if a rule appears in a list it's safe to assume the subject has that permission, even if that list is incomplete.
-* @isObject
-*/
-status?: { evaluationError?: string; incomplete: boolean; nonResourceRules: Array<{ nonResourceURLs?: string[]; verbs: string[] }>; resourceRules: Array<{ verbs: string[]; apiGroups?: string[]; resourceNames?: string[]; resources?: string[] }> };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -27,7 +16,18 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; deletionTimestamp?: Date; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; resourceVersion?: string; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; name?: string; namespace?: string; selfLink?: string; deletionGracePeriodSeconds?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; uid?: string };
+metadata?: { labels?: Record<string, any>; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; name?: string; namespace?: string; deletionGracePeriodSeconds?: number; generation?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; creationTimestamp?: Date; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; selfLink?: string; uid?: string };
+/**
+* SelfSubjectRulesReviewSpec defines the specification for SelfSubjectRulesReview.
+* @required
+* @isObject
+*/
+spec: { namespace?: string };
+/**
+* SubjectRulesReviewStatus contains the result of a rules check. This check can be incomplete depending on the set of authorizers the server is configured with and any errors experienced during evaluation. Because authorization rules are additive, if a rule appears in a list it's safe to assume the subject has that permission, even if that list is incomplete.
+* @isObject
+*/
+status?: { evaluationError?: string; incomplete: boolean; nonResourceRules: Array<{ nonResourceURLs?: string[]; verbs: string[] }>; resourceRules: Array<{ apiGroups?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[] }> };
 }
 
 /**
@@ -37,10 +37,10 @@ metadata?: { annotations?: Record<string, any>; deletionTimestamp?: Date; creati
 */
 export function createio_k8s_api_authorization_v1_SelfSubjectRulesReview(data?: Partial<io_k8s_api_authorization_v1_SelfSubjectRulesReview>): io_k8s_api_authorization_v1_SelfSubjectRulesReview {
  return {
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { resourceRules: [], incomplete: false, nonResourceRules: [] },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   spec: data?.spec !== undefined ? data.spec : {},
+   status: data?.status !== undefined ? data.status : { nonResourceRules: [], resourceRules: [], incomplete: false },
  };
 }

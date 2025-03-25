@@ -3,7 +3,8 @@ import { StorageError } from './StorageError';
 import { logger } from '../logger';
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter } from 'events';
-
+import { applyPatch } from 'fast-json-patch';
+import { merge } from '../utils';
 /**
 * In-memory implementation of the Storage interface
 */
@@ -106,7 +107,65 @@ export class InMemoryStorage implements Storage {
    
    return resources;
  }
- 
+ async mergePatchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
+    const collection = this.getOrCreateCollection(namespace, kind);
+
+    // Check if resource exists
+    if (!collection[name]) {
+      throw StorageError.notFound(kind, name, namespace);
+    }
+
+    // Get existing resource
+    const existing = collection[name];
+
+    // Apply patch (simple deep merge)
+    const patched = merge(existing, patch);
+
+    // Update resource metadata
+    patched.metadata = {
+      ...patched.metadata,
+      resourceVersion: uuidv4()
+    };
+
+    // Store patched resource
+    collection[name] = patched;
+
+    // Emit watch event
+    this.emitWatchEvent(WatchEventType.MODIFIED, patched, namespace);
+
+    return { ...patched };
+  }
+  /**
+   * Patch a resource with a JSON patch application/json-patch+json
+   */
+  async jsonPatchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
+    const collection = this.getOrCreateCollection(namespace, kind);
+
+    // Check if resource exists
+    if (!collection[name]) {
+      throw StorageError.notFound(kind, name, namespace);
+    }
+
+    // Get existing resource
+    const existing = collection[name];
+
+    // Apply patch (simple deep merge)
+    const patched = applyPatch(existing, patch).newDocument;
+
+    // Update resource metadata
+    patched.metadata = {
+      ...patched.metadata,
+      resourceVersion: uuidv4()
+    };
+
+    // Store patched resource
+    collection[name] = patched;
+
+    // Emit watch event
+    this.emitWatchEvent(WatchEventType.MODIFIED, patched, namespace);
+
+    return { ...patched };
+  }
  /**
   * Create a resource
   */

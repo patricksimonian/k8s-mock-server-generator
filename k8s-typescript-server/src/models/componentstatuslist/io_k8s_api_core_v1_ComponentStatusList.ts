@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_ComponentStatusList {
 /**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
 * ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 * @isObject
 */
@@ -20,10 +24,6 @@ apiVersion?: string;
 * @references io.k8s.api.core.v1.ComponentStatus
 */
 items: io_k8s_api_core_v1_ComponentStatus[];
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
 }
 
 /**
@@ -33,10 +33,10 @@ kind?: string;
 */
 export function createio_k8s_api_core_v1_ComponentStatusList(data?: Partial<io_k8s_api_core_v1_ComponentStatusList>): io_k8s_api_core_v1_ComponentStatusList {
  return {
+   kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
-   kind: data?.kind !== undefined ? data.kind : '',
  };
 }
 // Required imports

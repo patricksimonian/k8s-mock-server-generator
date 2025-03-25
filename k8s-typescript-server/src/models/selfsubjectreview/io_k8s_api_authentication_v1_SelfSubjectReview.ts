@@ -16,7 +16,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; selfLink?: string; finalizers?: string[]; name?: string; deletionGracePeriodSeconds?: number; generateName?: string; generation?: number; labels?: Record<string, any>; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; resourceVersion?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; namespace?: string };
+metadata?: { deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; resourceVersion?: string; selfLink?: string; uid?: string; finalizers?: string[]; deletionTimestamp?: Date; name?: string; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; annotations?: Record<string, any> };
 /**
 * SelfSubjectReviewStatus is filled by the kube-apiserver and sent back to a user.
 * @isObject

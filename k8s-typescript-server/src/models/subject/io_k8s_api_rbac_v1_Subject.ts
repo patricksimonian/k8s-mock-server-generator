@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_rbac_v1_Subject {
 /**
-* Kind of object being referenced. Values defined by this API group are "User", "Group", and "ServiceAccount". If the Authorizer does not recognized the kind value, the Authorizer should report an error.
-* @required
-*/
-kind: string;
-/**
 * Name of the object being referenced.
 * @required
 */
@@ -22,6 +17,11 @@ namespace?: string;
 * APIGroup holds the API group of the referenced subject. Defaults to "" for ServiceAccount subjects. Defaults to "rbac.authorization.k8s.io" for User and Group subjects.
 */
 apiGroup?: string;
+/**
+* Kind of object being referenced. Values defined by this API group are "User", "Group", and "ServiceAccount". If the Authorizer does not recognized the kind value, the Authorizer should report an error.
+* @required
+*/
+kind: string;
 }
 
 /**
@@ -31,9 +31,9 @@ apiGroup?: string;
 */
 export function createio_k8s_api_rbac_v1_Subject(data?: Partial<io_k8s_api_rbac_v1_Subject>): io_k8s_api_rbac_v1_Subject {
  return {
-   kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
    apiGroup: data?.apiGroup !== undefined ? data.apiGroup : '',
+   kind: data?.kind !== undefined ? data.kind : '',
  };
 }

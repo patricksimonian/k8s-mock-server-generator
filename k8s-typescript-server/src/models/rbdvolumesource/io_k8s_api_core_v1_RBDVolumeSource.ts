@@ -5,6 +5,19 @@
 */
 export interface io_k8s_api_core_v1_RBDVolumeSource {
 /**
+* pool is the rados pool name. Default is rbd. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+*/
+pool?: string;
+/**
+* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+*/
+readOnly?: boolean;
+/**
+* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
+* @isObject
+*/
+secretRef?: { name?: string };
+/**
 * user is the rados user name. Default is admin. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
 */
 user?: string;
@@ -27,19 +40,6 @@ keyring?: string;
 * @isArray
 */
 monitors: string[];
-/**
-* pool is the rados pool name. Default is rbd. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-*/
-pool?: string;
-/**
-* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-*/
-readOnly?: boolean;
-/**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @isObject
-*/
-secretRef?: { name?: string };
 }
 
 /**
@@ -49,13 +49,13 @@ secretRef?: { name?: string };
 */
 export function createio_k8s_api_core_v1_RBDVolumeSource(data?: Partial<io_k8s_api_core_v1_RBDVolumeSource>): io_k8s_api_core_v1_RBDVolumeSource {
  return {
+   pool: data?.pool !== undefined ? data.pool : '',
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    user: data?.user !== undefined ? data.user : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    image: data?.image !== undefined ? data.image : '',
    keyring: data?.keyring !== undefined ? data.keyring : '',
    monitors: data?.monitors !== undefined ? data.monitors : [],
-   pool: data?.pool !== undefined ? data.pool : '',
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
  };
 }

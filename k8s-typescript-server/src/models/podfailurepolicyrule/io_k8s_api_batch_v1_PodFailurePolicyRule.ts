@@ -31,12 +31,12 @@ action: 'Count' | 'FailIndex' | 'FailJob' | 'Ignore';
 * PodFailurePolicyOnExitCodesRequirement describes the requirement for handling a failed pod based on its container exit codes. In particular, it lookups the .state.terminated.exitCode for each app container and init container status, represented by the .status.containerStatuses and .status.initContainerStatuses fields in the Pod status, respectively. Containers completed with success (exit code 0) are excluded from the requirement check.
 * @isObject
 */
-onExitCodes?: { containerName?: string; operator: 'In' | 'NotIn'; values: number[] };
+onExitCodes?: { values: number[]; containerName?: string; operator: 'In' | 'NotIn' };
 /**
 * Represents the requirement on the pod conditions. The requirement is represented as a list of pod condition patterns. The requirement is satisfied if at least one pattern matches an actual pod condition. At most 20 elements are allowed.
 * @isArray
 */
-onPodConditions?: Array<{ status: string; type: string }>;
+onPodConditions?: Array<{ type: string; status: string }>;
 }
 
 /**

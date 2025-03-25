@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_core_v1_ISCSIPersistentVolumeSource {
 /**
+* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
+*/
+readOnly?: boolean;
+/**
+* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
+* @isObject
+*/
+secretRef?: { name?: string; namespace?: string };
+/**
 * chapAuthDiscovery defines whether support iSCSI Discovery CHAP authentication
 */
 chapAuthDiscovery?: boolean;
@@ -21,6 +30,20 @@ fsType?: string;
 */
 initiatorName?: string;
 /**
+* iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
+*/
+iscsiInterface?: string;
+/**
+* portals is the iSCSI Target Portal List. The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
+* @isArray
+*/
+portals?: string[];
+/**
+* targetPortal is iSCSI Target Portal. The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
+* @required
+*/
+targetPortal: string;
+/**
 * iqn is Target iSCSI Qualified Name.
 * @required
 */
@@ -30,29 +53,6 @@ iqn: string;
 * @required
 */
 lun: number;
-/**
-* portals is the iSCSI Target Portal List. The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
-* @isArray
-*/
-portals?: string[];
-/**
-* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
-* @isObject
-*/
-secretRef?: { name?: string; namespace?: string };
-/**
-* iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
-*/
-iscsiInterface?: string;
-/**
-* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
-*/
-readOnly?: boolean;
-/**
-* targetPortal is iSCSI Target Portal. The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
-* @required
-*/
-targetPortal: string;
 }
 
 /**
@@ -62,16 +62,16 @@ targetPortal: string;
 */
 export function createio_k8s_api_core_v1_ISCSIPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_ISCSIPersistentVolumeSource>): io_k8s_api_core_v1_ISCSIPersistentVolumeSource {
  return {
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    chapAuthDiscovery: data?.chapAuthDiscovery !== undefined ? data.chapAuthDiscovery : false,
    chapAuthSession: data?.chapAuthSession !== undefined ? data.chapAuthSession : false,
    fsType: data?.fsType !== undefined ? data.fsType : '',
    initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
+   iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
+   portals: data?.portals !== undefined ? data.portals : [],
+   targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
    iqn: data?.iqn !== undefined ? data.iqn : '',
    lun: data?.lun !== undefined ? data.lun : 0,
-   portals: data?.portals !== undefined ? data.portals : [],
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
-   iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
  };
 }

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler {
 /**
-* current status of a horizontal pod autoscaler
-* @isObject
-*/
-status?: { currentCPUUtilizationPercentage?: number; currentReplicas: number; desiredReplicas: number; lastScaleTime?: Date; observedGeneration?: number };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -21,12 +16,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string; generation?: number; finalizers?: string[]; labels?: Record<string, any>; name?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; namespace?: string; deletionGracePeriodSeconds?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; selfLink?: string; uid?: string };
+metadata?: { labels?: Record<string, any>; selfLink?: string; deletionTimestamp?: Date; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; resourceVersion?: string; uid?: string; generateName?: string };
 /**
 * specification of a horizontal pod autoscaler.
 * @isObject
 */
 spec?: { scaleTargetRef: { apiVersion?: string; kind: string; name: string }; targetCPUUtilizationPercentage?: number; maxReplicas: number; minReplicas?: number };
+/**
+* current status of a horizontal pod autoscaler
+* @isObject
+*/
+status?: { currentCPUUtilizationPercentage?: number; currentReplicas: number; desiredReplicas: number; lastScaleTime?: Date; observedGeneration?: number };
 }
 
 /**
@@ -36,10 +36,10 @@ spec?: { scaleTargetRef: { apiVersion?: string; kind: string; name: string }; ta
 */
 export function createio_k8s_api_autoscaling_v1_HorizontalPodAutoscaler(data?: Partial<io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler>): io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler {
  return {
-   status: data?.status !== undefined ? data.status : { currentReplicas: 0, desiredReplicas: 0 },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { scaleTargetRef: { kind: '', name: '' }, maxReplicas: 0 },
+   spec: data?.spec !== undefined ? data.spec : { maxReplicas: 0, scaleTargetRef: { kind: '', name: '' } },
+   status: data?.status !== undefined ? data.status : { currentReplicas: 0, desiredReplicas: 0 },
  };
 }

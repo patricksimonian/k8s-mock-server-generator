@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_admissionregistration_v1_NamedRuleWithOperations {
 /**
-* Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added. If '*' is present, the length of the slice must be one. Required.
-* @isArray
-*/
-operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[];
-/**
 * ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.
 * @isArray
 */
@@ -39,6 +34,11 @@ apiGroups?: string[];
 * @isArray
 */
 apiVersions?: string[];
+/**
+* Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added. If '*' is present, the length of the slice must be one. Required.
+* @isArray
+*/
+operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[];
 }
 
 /**
@@ -48,11 +48,11 @@ apiVersions?: string[];
 */
 export function createio_k8s_api_admissionregistration_v1_NamedRuleWithOperations(data?: Partial<io_k8s_api_admissionregistration_v1_NamedRuleWithOperations>): io_k8s_api_admissionregistration_v1_NamedRuleWithOperations {
  return {
-   operations: data?.operations !== undefined ? data.operations : [],
    resourceNames: data?.resourceNames !== undefined ? data.resourceNames : [],
    resources: data?.resources !== undefined ? data.resources : [],
    scope: data?.scope !== undefined ? data.scope : '',
    apiGroups: data?.apiGroups !== undefined ? data.apiGroups : [],
    apiVersions: data?.apiVersions !== undefined ? data.apiVersions : [],
+   operations: data?.operations !== undefined ? data.operations : [],
  };
 }

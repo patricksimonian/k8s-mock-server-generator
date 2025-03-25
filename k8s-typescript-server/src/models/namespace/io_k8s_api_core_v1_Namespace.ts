@@ -16,7 +16,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; generateName?: string; name?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; deletionTimestamp?: Date; generation?: number; labels?: Record<string, any>; namespace?: string; resourceVersion?: string; selfLink?: string; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; finalizers?: string[]; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }> };
+metadata?: { deletionGracePeriodSeconds?: number; generateName?: string; creationTimestamp?: Date; deletionTimestamp?: Date; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; annotations?: Record<string, any>; finalizers?: string[]; generation?: number; namespace?: string; resourceVersion?: string; selfLink?: string; uid?: string };
 /**
 * NamespaceSpec describes the attributes on a Namespace.
 * @isObject
@@ -26,7 +26,7 @@ spec?: { finalizers?: string[] };
 * NamespaceStatus is information about the current status of a Namespace.
 * @isObject
 */
-status?: { conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>; phase?: 'Active' | 'Terminating' };
+status?: { conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date }>; phase?: 'Active' | 'Terminating' };
 }
 
 /**

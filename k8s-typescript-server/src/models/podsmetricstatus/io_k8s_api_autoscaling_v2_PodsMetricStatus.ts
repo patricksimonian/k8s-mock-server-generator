@@ -9,7 +9,7 @@ export interface io_k8s_api_autoscaling_v2_PodsMetricStatus {
 * @required
 * @isObject
 */
-current: { value?: string; averageUtilization?: number; averageValue?: string };
+current: { averageUtilization?: number; averageValue?: string; value?: string };
 /**
 * MetricIdentifier defines the name and optionally selector for a metric
 * @required

@@ -7,33 +7,41 @@ import { handleResourceError } from '../utils';
 export function createmutatingwebhookconfigurationRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//delete a MutatingWebhookConfiguration
-  router.delete('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/:name', async (req, res, next) => {
+//watch individual changes to a list of MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations', async (req, res, next) => {
+    try {
+      logger.info(`Listing mutatingwebhookconfiguration`);
+      
+      const resources = await storage.listResources('mutatingwebhookconfiguration');
+      
+      const response = {
+        kind: 'MutatingwebhookconfigurationList',
+        apiVersion: 'admissionregistration.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
-      logger.info(`Deleting mutatingwebhookconfiguration ${name}`);
+      logger.info(`Getting mutatingwebhookconfiguration ${name}`);
       
-      try {
-
-        const deleted = await storage.deleteResource('mutatingwebhookconfiguration', name);
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not deleted. Error: ${(e as Error).message}`), res);
+      const resource = await storage.getResource('mutatingwebhookconfiguration', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found`), res);
       }
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          name: name,
-          kind: 'mutatingwebhookconfiguration'
-        }
-      });
+      res.json(resource);
     } catch (error) {
       next(error);
     }
@@ -81,20 +89,21 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
     }
   });
 
-//delete collection of MutatingWebhookConfiguration
-  router.delete('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations', async (req, res, next) => {
+//delete a MutatingWebhookConfiguration
+  router.delete('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
-
+      const name = req.params.name;
+      logger.info(`Deleting mutatingwebhookconfiguration ${name}`);
       
       try {
 
-        const deleted = await storage.deleteAllResources('mutatingwebhookconfiguration');
+        const deleted = await storage.deleteResource('mutatingwebhookconfiguration', name);
         
         if (!deleted) {
-          return handleResourceError(new Error(`mutatingwebhookconfiguration not found}`), res);
+          return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found}`), res);
         }
       } catch(e) {
-          return handleResourceError(new Error(`mutatingwebhookconfiguration not deleted. Error: ${(e as Error).message}`), res);
+          return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not deleted. Error: ${(e as Error).message}`), res);
       }
       
       res.status(200).json({
@@ -103,9 +112,46 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
         metadata: {},
         status: 'Success',
         details: {
+          name: name,
           kind: 'mutatingwebhookconfiguration'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      logger.info(`Getting mutatingwebhookconfiguration ${name}`);
+      
+      const resource = await storage.getResource('mutatingwebhookconfiguration', name);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -153,41 +199,31 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
     }
   });
 
-//watch changes to an object of kind MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations/:name', async (req, res, next) => {
+//delete collection of MutatingWebhookConfiguration
+  router.delete('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      logger.info(`Getting mutatingwebhookconfiguration ${name}`);
+
       
-      const resource = await storage.getResource('mutatingwebhookconfiguration', name);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found`), res);
+      try {
+
+        const deleted = await storage.deleteAllResources('mutatingwebhookconfiguration');
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`mutatingwebhookconfiguration not found}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`mutatingwebhookconfiguration not deleted. Error: ${(e as Error).message}`), res);
       }
       
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations', async (req, res, next) => {
-    try {
-      logger.info(`Listing mutatingwebhookconfiguration`);
-      
-      const resources = await storage.listResources('mutatingwebhookconfiguration');
-      
-      const response = {
-        kind: 'MutatingwebhookconfigurationList',
-        apiVersion: 'admissionregistration.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'mutatingwebhookconfiguration'
+        }
+      });
     } catch (error) {
       next(error);
     }

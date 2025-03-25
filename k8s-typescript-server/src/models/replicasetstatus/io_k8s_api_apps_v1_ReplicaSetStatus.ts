@@ -12,7 +12,7 @@ availableReplicas?: number;
 * Represents the latest available observations of a replica set's current state.
 * @isArray
 */
-conditions?: Array<{ type: string; lastTransitionTime?: Date; message?: string; reason?: string; status: string }>;
+conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>;
 /**
 * The number of pods that have labels matching the labels of the pod template of the replicaset.
 */

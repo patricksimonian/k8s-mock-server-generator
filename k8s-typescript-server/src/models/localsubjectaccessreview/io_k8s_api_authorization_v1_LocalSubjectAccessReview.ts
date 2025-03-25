@@ -5,17 +5,6 @@
 */
 export interface io_k8s_api_authorization_v1_LocalSubjectAccessReview {
 /**
-* SubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
-* @required
-* @isObject
-*/
-spec: { groups?: string[]; nonResourceAttributes?: { path?: string; verb?: string }; resourceAttributes?: { fieldSelector?: { requirements?: Array<{ key: string; operator: string; values?: string[] }>; rawSelector?: string }; group?: string; resource?: string; verb?: string; version?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; namespace?: string; subresource?: string }; uid?: string; user?: string; extra?: Record<string, any> };
-/**
-* SubjectAccessReviewStatus
-* @isObject
-*/
-status?: { allowed: boolean; denied?: boolean; evaluationError?: string; reason?: string };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -27,7 +16,18 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; labels?: Record<string, any>; resourceVersion?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; finalizers?: string[]; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; namespace?: string; uid?: string; deletionTimestamp?: Date; generateName?: string; generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }> };
+metadata?: { selfLink?: string; annotations?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generation?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; resourceVersion?: string; name?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; labels?: Record<string, any>; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string };
+/**
+* SubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+* @required
+* @isObject
+*/
+spec: { extra?: Record<string, any>; groups?: string[]; nonResourceAttributes?: { path?: string; verb?: string }; resourceAttributes?: { namespace?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; resource?: string; subresource?: string; verb?: string; version?: string }; uid?: string; user?: string };
+/**
+* SubjectAccessReviewStatus
+* @isObject
+*/
+status?: { allowed: boolean; denied?: boolean; evaluationError?: string; reason?: string };
 }
 
 /**
@@ -37,10 +37,10 @@ metadata?: { creationTimestamp?: Date; labels?: Record<string, any>; resourceVer
 */
 export function createio_k8s_api_authorization_v1_LocalSubjectAccessReview(data?: Partial<io_k8s_api_authorization_v1_LocalSubjectAccessReview>): io_k8s_api_authorization_v1_LocalSubjectAccessReview {
  return {
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { allowed: false },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   spec: data?.spec !== undefined ? data.spec : {},
+   status: data?.status !== undefined ? data.status : { allowed: false },
  };
 }

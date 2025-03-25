@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_CSIVolumeSource {
 /**
+* driver is the name of the CSI driver that handles this volume. Consult with your admin for the correct name as registered in the cluster.
+* @required
+*/
+driver: string;
+/**
 * fsType to mount. Ex. "ext4", "xfs", "ntfs". If not provided, the empty value is passed to the associated CSI driver which will determine the default filesystem to apply.
 */
 fsType?: string;
@@ -21,11 +26,6 @@ readOnly?: boolean;
 * volumeAttributes stores driver-specific properties that are passed to the CSI driver. Consult your driver's documentation for supported values.
 */
 volumeAttributes?: Record<string, any>;
-/**
-* driver is the name of the CSI driver that handles this volume. Consult with your admin for the correct name as registered in the cluster.
-* @required
-*/
-driver: string;
 }
 
 /**
@@ -35,10 +35,10 @@ driver: string;
 */
 export function createio_k8s_api_core_v1_CSIVolumeSource(data?: Partial<io_k8s_api_core_v1_CSIVolumeSource>): io_k8s_api_core_v1_CSIVolumeSource {
  return {
+   driver: data?.driver !== undefined ? data.driver : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    nodePublishSecretRef: data?.nodePublishSecretRef !== undefined ? data.nodePublishSecretRef : {},
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    volumeAttributes: data?.volumeAttributes !== undefined ? data.volumeAttributes : {},
-   driver: data?.driver !== undefined ? data.driver : '',
  };
 }

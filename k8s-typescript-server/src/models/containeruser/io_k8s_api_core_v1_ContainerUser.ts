@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_ContainerUser {
 * LinuxContainerUser represents user identity information in Linux containers
 * @isObject
 */
-linux?: { supplementalGroups?: number[]; uid: number; gid: number };
+linux?: { gid: number; supplementalGroups?: number[]; uid: number };
 }
 
 /**
@@ -18,6 +18,6 @@ linux?: { supplementalGroups?: number[]; uid: number; gid: number };
 */
 export function createio_k8s_api_core_v1_ContainerUser(data?: Partial<io_k8s_api_core_v1_ContainerUser>): io_k8s_api_core_v1_ContainerUser {
  return {
-   linux: data?.linux !== undefined ? data.linux : { uid: 0, gid: 0 },
+   linux: data?.linux !== undefined ? data.linux : { gid: 0, uid: 0 },
  };
 }

@@ -5,12 +5,6 @@
 */
 export interface io_k8s_api_rbac_v1_RoleBinding {
 /**
-* RoleRef contains information that points to the role being used
-* @required
-* @isObject
-*/
-roleRef: { kind: string; name: string; apiGroup: string };
-/**
 * Subjects holds references to the objects the role applies to.
 * @isArray
 */
@@ -27,7 +21,13 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; finalizers?: string[]; generateName?: string; resourceVersion?: string; deletionTimestamp?: Date; namespace?: string; deletionGracePeriodSeconds?: number; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; annotations?: Record<string, any>; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; name?: string; selfLink?: string; uid?: string };
+metadata?: { deletionGracePeriodSeconds?: number; finalizers?: string[]; deletionTimestamp?: Date; generation?: number; labels?: Record<string, any>; selfLink?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; uid?: string; annotations?: Record<string, any>; creationTimestamp?: Date; generateName?: string; name?: string; resourceVersion?: string };
+/**
+* RoleRef contains information that points to the role being used
+* @required
+* @isObject
+*/
+roleRef: { apiGroup: string; kind: string; name: string };
 }
 
 /**
@@ -37,10 +37,10 @@ metadata?: { creationTimestamp?: Date; finalizers?: string[]; generateName?: str
 */
 export function createio_k8s_api_rbac_v1_RoleBinding(data?: Partial<io_k8s_api_rbac_v1_RoleBinding>): io_k8s_api_rbac_v1_RoleBinding {
  return {
-   roleRef: data?.roleRef !== undefined ? data.roleRef : { apiGroup: '', kind: '', name: '' },
    subjects: data?.subjects !== undefined ? data.subjects : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   roleRef: data?.roleRef !== undefined ? data.roleRef : { apiGroup: '', kind: '', name: '' },
  };
 }

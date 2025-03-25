@@ -16,13 +16,13 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { namespace?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generateName?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generation?: number; labels?: Record<string, any>; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; annotations?: Record<string, any>; resourceVersion?: string; uid?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }> };
+metadata?: { name?: string; namespace?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; uid?: string; annotations?: Record<string, any>; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; generateName?: string; selfLink?: string; generation?: number; resourceVersion?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date };
 /**
 * CSIDriverSpec is the specification of a CSIDriver.
 * @required
 * @isObject
 */
-spec: { seLinuxMount?: boolean; storageCapacity?: boolean; tokenRequests?: Array<{ audience: string; expirationSeconds?: number }>; volumeLifecycleModes?: string[]; attachRequired?: boolean; fsGroupPolicy?: string; podInfoOnMount?: boolean; requiresRepublish?: boolean };
+spec: { podInfoOnMount?: boolean; requiresRepublish?: boolean; seLinuxMount?: boolean; storageCapacity?: boolean; tokenRequests?: Array<{ audience: string; expirationSeconds?: number }>; volumeLifecycleModes?: string[]; attachRequired?: boolean; fsGroupPolicy?: string };
 }
 
 /**

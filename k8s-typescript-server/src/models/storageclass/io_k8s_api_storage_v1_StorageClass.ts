@@ -11,14 +11,22 @@ export interface io_k8s_api_storage_v1_StorageClass {
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* volumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.  When unset, VolumeBindingImmediate is used. This field is only honored by servers that enable the VolumeScheduling feature.
+
+Possible enum values:
+ - `"Immediate"` indicates that PersistentVolumeClaims should be immediately provisioned and bound. This is the default mode.
+ - `"WaitForFirstConsumer"` indicates that PersistentVolumeClaims should not be provisioned and bound until the first Pod is created that references the PeristentVolumeClaim. The volume provisioning and binding will occur during Pod scheduing.
 */
-metadata?: { creationTimestamp?: Date; deletionTimestamp?: Date; name?: string; namespace?: string; finalizers?: string[]; generateName?: string; annotations?: Record<string, any>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; uid?: string; deletionGracePeriodSeconds?: number; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; resourceVersion?: string };
+volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
 /**
-* parameters holds the parameters for the provisioner that should create volumes of this storage class.
+* reclaimPolicy controls the reclaimPolicy for dynamically provisioned PersistentVolumes of this storage class. Defaults to Delete.
+
+Possible enum values:
+ - `"Delete"` means the volume will be deleted from Kubernetes on release from its claim. The volume plugin must support Deletion.
+ - `"Recycle"` means the volume will be recycled back into the pool of unbound persistent volumes on release from its claim. The volume plugin must support Recycling.
+ - `"Retain"` means the volume will be left in its current phase (Released) for manual reclamation by the administrator. The default policy is Retain.
 */
-parameters?: Record<string, any>;
+reclaimPolicy?: 'Delete' | 'Recycle' | 'Retain';
 /**
 * allowVolumeExpansion shows whether the storage class allow volume expand.
 */
@@ -33,32 +41,24 @@ allowedTopologies?: Array<{ matchLabelExpressions?: Array<{ key: string; values:
 */
 apiVersion?: string;
 /**
-* volumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.  When unset, VolumeBindingImmediate is used. This field is only honored by servers that enable the VolumeScheduling feature.
-
-Possible enum values:
- - `"Immediate"` indicates that PersistentVolumeClaims should be immediately provisioned and bound. This is the default mode.
- - `"WaitForFirstConsumer"` indicates that PersistentVolumeClaims should not be provisioned and bound until the first Pod is created that references the PeristentVolumeClaim. The volume provisioning and binding will occur during Pod scheduing.
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
 */
-volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
+metadata?: { deletionGracePeriodSeconds?: number; generateName?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; selfLink?: string; uid?: string; creationTimestamp?: Date; name?: string; namespace?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; annotations?: Record<string, any>; labels?: Record<string, any>; finalizers?: string[]; generation?: number; resourceVersion?: string; deletionTimestamp?: Date };
 /**
 * mountOptions controls the mountOptions for dynamically provisioned PersistentVolumes of this storage class. e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
 * @isArray
 */
 mountOptions?: string[];
 /**
+* parameters holds the parameters for the provisioner that should create volumes of this storage class.
+*/
+parameters?: Record<string, any>;
+/**
 * provisioner indicates the type of the provisioner.
 * @required
 */
 provisioner: string;
-/**
-* reclaimPolicy controls the reclaimPolicy for dynamically provisioned PersistentVolumes of this storage class. Defaults to Delete.
-
-Possible enum values:
- - `"Delete"` means the volume will be deleted from Kubernetes on release from its claim. The volume plugin must support Deletion.
- - `"Recycle"` means the volume will be recycled back into the pool of unbound persistent volumes on release from its claim. The volume plugin must support Recycling.
- - `"Retain"` means the volume will be left in its current phase (Released) for manual reclamation by the administrator. The default policy is Retain.
-*/
-reclaimPolicy?: 'Delete' | 'Recycle' | 'Retain';
 }
 
 /**
@@ -69,14 +69,14 @@ reclaimPolicy?: 'Delete' | 'Recycle' | 'Retain';
 export function createio_k8s_api_storage_v1_StorageClass(data?: Partial<io_k8s_api_storage_v1_StorageClass>): io_k8s_api_storage_v1_StorageClass {
  return {
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   parameters: data?.parameters !== undefined ? data.parameters : {},
+   volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
+   reclaimPolicy: data?.reclaimPolicy !== undefined ? data.reclaimPolicy : '',
    allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
    allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
+   metadata: data?.metadata !== undefined ? data.metadata : {},
    mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
+   parameters: data?.parameters !== undefined ? data.parameters : {},
    provisioner: data?.provisioner !== undefined ? data.provisioner : '',
-   reclaimPolicy: data?.reclaimPolicy !== undefined ? data.reclaimPolicy : '',
  };
 }

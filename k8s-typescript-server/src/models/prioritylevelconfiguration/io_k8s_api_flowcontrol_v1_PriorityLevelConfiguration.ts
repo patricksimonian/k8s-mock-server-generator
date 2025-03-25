@@ -16,17 +16,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generateName?: string; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; creationTimestamp?: Date; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; resourceVersion?: string; annotations?: Record<string, any>; generation?: number; selfLink?: string; finalizers?: string[]; uid?: string };
+metadata?: { uid?: string; name?: string; resourceVersion?: string; selfLink?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; finalizers?: string[]; creationTimestamp?: Date; generateName?: string; namespace?: string; annotations?: Record<string, any>; generation?: number; labels?: Record<string, any> };
 /**
 * PriorityLevelConfigurationSpec specifies the configuration of a priority level.
 * @isObject
 */
-spec?: { exempt?: { lendablePercent?: number; nominalConcurrencyShares?: number }; limited?: { borrowingLimitPercent?: number; lendablePercent?: number; limitResponse?: { queuing?: { handSize?: number; queueLengthLimit?: number; queues?: number }; type: string }; nominalConcurrencyShares?: number }; type: string };
+spec?: { exempt?: { lendablePercent?: number; nominalConcurrencyShares?: number }; limited?: { borrowingLimitPercent?: number; lendablePercent?: number; limitResponse?: { queuing?: { queueLengthLimit?: number; queues?: number; handSize?: number }; type: string }; nominalConcurrencyShares?: number }; type: string };
 /**
 * PriorityLevelConfigurationStatus represents the current state of a "request-priority".
 * @isObject
 */
-status?: { conditions?: Array<{ message?: string; reason?: string; status?: string; type?: string; lastTransitionTime?: Date }> };
+status?: { conditions?: Array<{ reason?: string; status?: string; type?: string; lastTransitionTime?: Date; message?: string }> };
 }
 
 /**

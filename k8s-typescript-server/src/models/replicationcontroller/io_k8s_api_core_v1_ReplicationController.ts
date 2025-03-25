@@ -16,17 +16,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { selfLink?: string; uid?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generateName?: string; generation?: number; name?: string; creationTimestamp?: Date; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; labels?: Record<string, any>; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string };
+metadata?: { deletionGracePeriodSeconds?: number; uid?: string; finalizers?: string[]; generation?: number; labels?: Record<string, any>; resourceVersion?: string; selfLink?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; creationTimestamp?: Date; generateName?: string; name?: string; namespace?: string };
 /**
 * ReplicationControllerSpec is the specification of a replication controller.
 * @isObject
 */
-spec?: { template?: { spec?: Record<string, any>; metadata?: { generateName?: string; name?: string; uid?: string; deletionTimestamp?: Date; labels?: Record<string, any>; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; selfLink?: string; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string } }; minReadySeconds?: number; replicas?: number; selector?: Record<string, any> };
+spec?: { replicas?: number; selector?: Record<string, any>; template?: { metadata?: { annotations?: Record<string, any>; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; finalizers?: string[]; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; resourceVersion?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generateName?: string; name?: string; namespace?: string; uid?: string; creationTimestamp?: Date; generation?: number; labels?: Record<string, any>; selfLink?: string }; spec?: Record<string, any> }; minReadySeconds?: number };
 /**
 * ReplicationControllerStatus represents the current status of a replication controller.
 * @isObject
 */
-status?: { fullyLabeledReplicas?: number; observedGeneration?: number; readyReplicas?: number; replicas: number; availableReplicas?: number; conditions?: Array<{ status: string; type: string; lastTransitionTime?: Date; message?: string; reason?: string }> };
+status?: { availableReplicas?: number; conditions?: Array<{ status: string; type: string; lastTransitionTime?: Date; message?: string; reason?: string }>; fullyLabeledReplicas?: number; observedGeneration?: number; readyReplicas?: number; replicas: number };
 }
 
 /**

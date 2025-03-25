@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerCondition {
 /**
-* type describes the current condition
-* @required
-*/
-type: string;
-/**
 * Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 */
 lastTransitionTime?: Date;
@@ -26,6 +21,11 @@ reason?: string;
 * @required
 */
 status: string;
+/**
+* type describes the current condition
+* @required
+*/
+type: string;
 }
 
 /**
@@ -35,10 +35,10 @@ status: string;
 */
 export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerCondition(data?: Partial<io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerCondition>): io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerCondition {
  return {
-   type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
+   type: data?.type !== undefined ? data.type : '',
  };
 }

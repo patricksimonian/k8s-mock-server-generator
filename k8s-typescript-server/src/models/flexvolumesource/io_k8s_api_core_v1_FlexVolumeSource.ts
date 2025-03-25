@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_FlexVolumeSource {
 /**
+* driver is the name of the driver to use for this volume.
+* @required
+*/
+driver: string;
+/**
 * fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". The default filesystem depends on FlexVolume script.
 */
 fsType?: string;
@@ -21,11 +26,6 @@ readOnly?: boolean;
 * @isObject
 */
 secretRef?: { name?: string };
-/**
-* driver is the name of the driver to use for this volume.
-* @required
-*/
-driver: string;
 }
 
 /**
@@ -35,10 +35,10 @@ driver: string;
 */
 export function createio_k8s_api_core_v1_FlexVolumeSource(data?: Partial<io_k8s_api_core_v1_FlexVolumeSource>): io_k8s_api_core_v1_FlexVolumeSource {
  return {
+   driver: data?.driver !== undefined ? data.driver : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    options: data?.options !== undefined ? data.options : {},
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    secretRef: data?.secretRef !== undefined ? data.secretRef : {},
-   driver: data?.driver !== undefined ? data.driver : '',
  };
 }

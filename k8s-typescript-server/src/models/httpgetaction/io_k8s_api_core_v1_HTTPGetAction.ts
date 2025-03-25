@@ -12,7 +12,7 @@ host?: string;
 * Custom headers to set in the request. HTTP allows repeated headers.
 * @isArray
 */
-httpHeaders?: Array<{ name: string; value: string }>;
+httpHeaders?: Array<{ value: string; name: string }>;
 /**
 * Path to access on the HTTP server.
 */

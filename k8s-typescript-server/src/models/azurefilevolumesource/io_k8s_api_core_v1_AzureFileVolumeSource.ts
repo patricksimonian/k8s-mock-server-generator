@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_AzureFileVolumeSource {
 /**
+* shareName is the azure share Name
+* @required
+*/
+shareName: string;
+/**
 * readOnly defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
 */
 readOnly?: boolean;
@@ -13,11 +18,6 @@ readOnly?: boolean;
 * @required
 */
 secretName: string;
-/**
-* shareName is the azure share Name
-* @required
-*/
-shareName: string;
 }
 
 /**
@@ -27,8 +27,8 @@ shareName: string;
 */
 export function createio_k8s_api_core_v1_AzureFileVolumeSource(data?: Partial<io_k8s_api_core_v1_AzureFileVolumeSource>): io_k8s_api_core_v1_AzureFileVolumeSource {
  return {
+   shareName: data?.shareName !== undefined ? data.shareName : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    secretName: data?.secretName !== undefined ? data.secretName : '',
-   shareName: data?.shareName !== undefined ? data.shareName : '',
  };
 }

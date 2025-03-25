@@ -49,15 +49,25 @@ export interface Storage {
  updateResource(kind: string, name: string, resource: any, namespace?: string): Promise<any>;
  
  /**
-  * Patch a resource
-  * 
-  * @param kind Kind of the resource
-  * @param name Name of the resource
-  * @param patch Patch to apply to the resource
-  * @param namespace Namespace of the resource
-  */
- patchResource(kind: string, name: string, patch: any, namespace?: string): Promise<any>;
- 
+     * Merge Patch a resource
+     * 
+     * @param kind Kind of the resource
+     * @param name Name of the resource
+     * @param patch Patch to apply to the resource
+     * @param namespace Namespace of the resource
+     */
+  mergePatchResource(kind: string, name: string, patch: any, namespace?: string): Promise<any>
+
+  /**
+   * JSON Patch a resource
+   * 
+   * @param kind Kind of the resource
+   * @param name Name of the resource
+   * @param patch Patch to apply to the resource
+   * @param namespace Namespace of the resource
+   */
+  jsonPatchResource(kind: string, name: string, patch: any, namespace?: string): Promise<any>
+
  /**
   * Delete a resource
   * 

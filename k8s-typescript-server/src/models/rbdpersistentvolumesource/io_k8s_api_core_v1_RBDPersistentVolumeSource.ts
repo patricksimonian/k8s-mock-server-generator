@@ -35,7 +35,7 @@ readOnly?: boolean;
 * SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
 * @isObject
 */
-secretRef?: { namespace?: string; name?: string };
+secretRef?: { name?: string; namespace?: string };
 /**
 * user is the rados user name. Default is admin. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
 */

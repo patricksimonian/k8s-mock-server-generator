@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_rbac_v1_ClusterRoleBindingList {
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
 * Items is a list of ClusterRoleBindings
 * @required
 * @isArray
@@ -20,10 +24,6 @@ kind?: string;
 * @isObject
 */
 metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
 }
 
 /**
@@ -33,10 +33,10 @@ apiVersion?: string;
 */
 export function createio_k8s_api_rbac_v1_ClusterRoleBindingList(data?: Partial<io_k8s_api_rbac_v1_ClusterRoleBindingList>): io_k8s_api_rbac_v1_ClusterRoleBindingList {
  return {
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

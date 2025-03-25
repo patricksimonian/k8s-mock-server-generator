@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_batch_v1_PodFailurePolicyOnPodConditionsPattern {
 /**
-* Specifies the required Pod condition status. To match a pod condition it is required that the specified status equals the pod condition status. Defaults to True.
-* @required
-*/
-status: string;
-/**
 * Specifies the required Pod condition type. To match a pod condition it is required that specified type equals the pod condition type.
 * @required
 */
 type: string;
+/**
+* Specifies the required Pod condition status. To match a pod condition it is required that the specified status equals the pod condition status. Defaults to True.
+* @required
+*/
+status: string;
 }
 
 /**
@@ -23,7 +23,7 @@ type: string;
 */
 export function createio_k8s_api_batch_v1_PodFailurePolicyOnPodConditionsPattern(data?: Partial<io_k8s_api_batch_v1_PodFailurePolicyOnPodConditionsPattern>): io_k8s_api_batch_v1_PodFailurePolicyOnPodConditionsPattern {
  return {
-   status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
+   status: data?.status !== undefined ? data.status : '',
  };
 }

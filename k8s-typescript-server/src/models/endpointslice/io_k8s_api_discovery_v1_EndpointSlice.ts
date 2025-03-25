@@ -5,6 +5,20 @@
 */
 export interface io_k8s_api_discovery_v1_EndpointSlice {
 /**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
+*/
+metadata?: { creationTimestamp?: Date; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; name?: string; uid?: string; finalizers?: string[]; resourceVersion?: string; selfLink?: string; generateName?: string; namespace?: string; annotations?: Record<string, any>; generation?: number; labels?: Record<string, any>; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }> };
+/**
+* ports specifies the list of network ports exposed by each endpoint in this slice. Each port must have a unique name. When ports is empty, it indicates that there are no defined ports. When a port is defined with a nil port value, it indicates "all ports". Each slice may include a maximum of 100 ports.
+* @isArray
+*/
+ports?: Array<{ appProtocol?: string; name?: string; port?: number; protocol?: 'SCTP' | 'TCP' | 'UDP' }>;
+/**
 * addressType specifies the type of address carried by this EndpointSlice. All addresses in this slice must be the same type. This field is immutable after creation. The following address types are currently supported: * IPv4: Represents an IPv4 Address. * IPv6: Represents an IPv6 Address. * FQDN: Represents a Fully Qualified Domain Name.
 
 Possible enum values:
@@ -23,21 +37,7 @@ apiVersion?: string;
 * @required
 * @isArray
 */
-endpoints: Array<{ addresses: string[]; conditions?: { serving?: boolean; terminating?: boolean; ready?: boolean }; deprecatedTopology?: Record<string, any>; hints?: { forZones?: Array<{ name: string }> }; hostname?: string; nodeName?: string; targetRef?: { apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string }; zone?: string }>;
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { labels?: Record<string, any>; selfLink?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; uid?: string; creationTimestamp?: Date; generateName?: string; annotations?: Record<string, any>; name?: string; finalizers?: string[]; generation?: number; resourceVersion?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date };
-/**
-* ports specifies the list of network ports exposed by each endpoint in this slice. Each port must have a unique name. When ports is empty, it indicates that there are no defined ports. When a port is defined with a nil port value, it indicates "all ports". Each slice may include a maximum of 100 ports.
-* @isArray
-*/
-ports?: Array<{ appProtocol?: string; name?: string; port?: number; protocol?: 'SCTP' | 'TCP' | 'UDP' }>;
+endpoints: Array<{ hints?: { forZones?: Array<{ name: string }> }; hostname?: string; nodeName?: string; targetRef?: { uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string }; zone?: string; addresses: string[]; conditions?: { ready?: boolean; serving?: boolean; terminating?: boolean }; deprecatedTopology?: Record<string, any> }>;
 }
 
 /**
@@ -47,11 +47,11 @@ ports?: Array<{ appProtocol?: string; name?: string; port?: number; protocol?: '
 */
 export function createio_k8s_api_discovery_v1_EndpointSlice(data?: Partial<io_k8s_api_discovery_v1_EndpointSlice>): io_k8s_api_discovery_v1_EndpointSlice {
  return {
-   addressType: data?.addressType !== undefined ? data.addressType : '',
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   endpoints: data?.endpoints !== undefined ? data.endpoints : [],
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
    ports: data?.ports !== undefined ? data.ports : [],
+   addressType: data?.addressType !== undefined ? data.addressType : '',
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   endpoints: data?.endpoints !== undefined ? data.endpoints : [],
  };
 }

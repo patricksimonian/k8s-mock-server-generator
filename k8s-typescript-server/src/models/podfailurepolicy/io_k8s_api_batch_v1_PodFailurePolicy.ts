@@ -9,7 +9,7 @@ export interface io_k8s_api_batch_v1_PodFailurePolicy {
 * @required
 * @isArray
 */
-rules: Array<{ action: 'Count' | 'FailIndex' | 'FailJob' | 'Ignore'; onExitCodes?: { operator: 'In' | 'NotIn'; values: number[]; containerName?: string }; onPodConditions?: Array<{ status: string; type: string }> }>;
+rules: Array<{ action: 'Count' | 'FailIndex' | 'FailJob' | 'Ignore'; onExitCodes?: { containerName?: string; operator: 'In' | 'NotIn'; values: number[] }; onPodConditions?: Array<{ status: string; type: string }> }>;
 }
 
 /**
