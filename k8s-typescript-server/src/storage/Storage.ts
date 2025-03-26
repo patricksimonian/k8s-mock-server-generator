@@ -1,122 +1,162 @@
-/**
-* Storage interface for Kubernetes resources
-*/
-export interface Storage {
-  /**
-   * Check if the storage has been initialized
-   */
-  isInitialized(): Promise<boolean>;
+// A standard Kubernetes Status object for errors or system-level responses.
+export interface Status {
+  kind: "Status";
+  apiVersion: "v1";
+  metadata: Record<string, any>;
+  status: "Success" | "Failure";
+  message?: string;
+  reason?: string;
+  code?: number;
+}
 
-  /**
-   * Mark the storage as initialized
-   */
+// A generic representation of a Kubernetes resource with minimal required fields.
+export interface KubeResource {
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    name: string;
+    namespace?: string;
+    resourceVersion?: string;
+    creationTimestamp?: string;
+    deletionTimestamp?: string;   // for graceful deletion
+    finalizers?: string[];        // for finalizers
+    labels?: Record<string, string>;
+    [key: string]: any;           // any other metadata fields
+  };
+  spec?: any;   // vary by resource kind
+  status?: any; // vary by resource kind
+  [key: string]: any; // additional top-level fields (subresources, etc.)
+}
+
+// A standard List object in Kubernetes
+export interface KubeList<T = KubeResource> {
+  kind: string;          // e.g., "PodList", "DeploymentList"
+  apiVersion: string;    // e.g., "v1"
+  metadata: {
+    resourceVersion?: string;
+    continue?: string;    // pagination token
+  };
+  items: T[];
+}
+
+// Options for listing resources (label/field selectors, pagination).
+export interface ListOptions {
+  labelSelector?: string;
+  fieldSelector?: string;
+  limit?: number;
+  continue?: string; // base64-encoded pagination token
+}
+
+// Options for watching resources.
+export interface WatchOptions {
+  labelSelector?: string;
+  fieldSelector?: string;
+  resourceVersion?: string;
+  timeoutSeconds?: number;
+  allowBookmarks?: boolean;
+}
+
+// The main watch event types
+export enum WatchEventType {
+  ADDED = "ADDED",
+  MODIFIED = "MODIFIED",
+  DELETED = "DELETED",
+  BOOKMARK = "BOOKMARK",
+  ERROR = "ERROR"
+}
+
+// The "Scale" object used by the /scale subresource in real K8s
+export interface KubeScale {
+  apiVersion: "autoscaling/v1";
+  kind: "Scale";
+  metadata: {
+    name: string;
+    namespace?: string;
+    [key: string]: any;
+  };
+  spec?: {
+    replicas?: number;
+  };
+  status?: {
+    replicas?: number;
+    selector?: string;
+    [key: string]: any;
+  };
+}
+
+// Our storage interface
+export interface Storage {
+  isInitialized(): Promise<boolean>;
   markInitialized(): Promise<void>;
 
-  /**
-   * Get a resource by kind, name, and namespace
-   * 
-   * @param kind Kind of the resource
-   * @param name Name of the resource
-   * @param namespace Namespace of the resource
-   */
-  getResource(kind: string, name: string, namespace?: string | null): Promise<any>;
+  getResource(kind: string, name: string, namespace?: string | null): Promise<KubeResource | Status>;
 
-  /**
-   * List resources by kind and namespace
-   * 
-   * @param kind Kind of the resources to list
-   * @param namespace Namespace to list resources in
-   * @param labelSelector Label selector to filter resources
-   */
-  listResources(kind: string, namespace?: string | null, labelSelector?: string): Promise<any[]>;
+  listResources(
+    kind: string,
+    namespace?: string | null,
+    options?: ListOptions
+  ): Promise<KubeList<KubeResource> | Status>;
 
-  /**
-   * Create a resource
-   * 
-   * @param resource Resource to create
-   * @param namespace Namespace to create the resource in
-   */
-  createResource(resource: any, namespace?: string | null): Promise<any>;
+  createResource(
+    resource: KubeResource,
+    namespace?: string | null
+  ): Promise<KubeResource | Status>;
 
-  /**
-   * Update a resource
-   * 
-   * @param kind Kind of the resource
-   * @param name Name of the resource
-   * @param resource Updated resource
-   * @param namespace Namespace of the resource
-   */
-  updateResource(kind: string, name: string, resource: any, namespace?: string | null): Promise<any>;
+  updateResource(
+    kind: string,
+    name: string,
+    resource: KubeResource,
+    namespace?: string | null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | Status>;
 
-  /**
-      * Merge Patch a resource
-      * 
-      * @param kind Kind of the resource
-      * @param name Name of the resource
-      * @param patch Patch to apply to the resource
-      * @param namespace Namespace of the resource
-      */
-  mergePatchResource(kind: string, name: string, patch: any, namespace?: string | null): Promise<any>
+  mergePatchResource(
+    kind: string,
+    name: string,
+    patch: any,
+    namespace?: string | null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | Status>;
 
-  /**
-   * JSON Patch a resource
-   * 
-   * @param kind Kind of the resource
-   * @param name Name of the resource
-   * @param patch Patch to apply to the resource
-   * @param namespace Namespace of the resource
-   */
-  jsonPatchResource(kind: string, name: string, patch: any, namespace?: string | null): Promise<any>
+  jsonPatchResource(
+    kind: string,
+    name: string,
+    patch: any,
+    namespace?: string | null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | Status>;
 
-  /**
-   * Delete a resource
-   * 
-   * @param kind Kind of the resource
-   * @param name Name of the resource
-   * @param namespace Namespace of the resource
-   */
-  deleteResource(kind: string, name: string, namespace?: string | null): Promise<boolean>;
+  updateSubresource(
+    kind: string,
+    name: string,
+    subresource: string,
+    patch: any,
+    namespace?: string | null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | KubeScale | Status>;
 
-  /**
-   * Delete all resources of a specific kind
-   * 
-   * @param kind Kind of the resource
-   * @param namespace Namespace of the resource
-   */
-  deleteAllResources(kind: string, namespace?: string | null): Promise<boolean>;
+  deleteResource(
+    kind: string,
+    name: string,
+    namespace?: string | null
+  ): Promise<true | Status>;
 
-  /**
-   * Watch resources of a specific kind in a namespace
-   * 
-   * @param kind Kind of the resources to watch
-   * @param namespace Namespace to watch resources in
-   * @param labelSelector Label selector to filter resources
-   * @param resourceVersion Resource version to start watching from
-   * @param onEvent Callback function to handle watch events
-   */
+  deleteAllResources(
+    kind: string,
+    namespace?: string | null,
+    opts?: { labelSelector?: string; fieldSelector?: string }
+  ): Promise<true | Status>;
+
   watchResources(
     kind: string,
     namespace?: string | null,
-    labelSelector?: string,
-    resourceVersion?: string,
-    onEvent?: (type: 'ADDED' | 'MODIFIED' | 'DELETED', resource: any) => void
+    options?: WatchOptions,
+    onEvent?: (eventType: WatchEventType, resource: KubeResource | Status) => void
   ): Promise<() => void>;
 }
 
 /**
-* Watch event types
-*/
-export enum WatchEventType {
-  ADDED = 'ADDED',
-  MODIFIED = 'MODIFIED',
-  DELETED = 'DELETED',
-  ERROR = 'ERROR'
-}
-
-/**
-* Watch event interface
-*/
-export interface WatchEvent {
-  type: WatchEventType;
-  object: any;
-}
+ * A simple set of cluster-scoped resource kinds.
+ * Real K8s has more (e.g. ClusterRole, PersistentVolume, etc.).
+ */
+export const clusterScopedKinds = new Set(["Namespace", "Node", "ClusterRole", "ClusterRoleBinding"]);

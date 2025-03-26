@@ -1,6 +1,6 @@
 // endpoint-route.ts.tmpl
 import express from 'express';
-import { Storage } from '../storage/Storage';
+import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
@@ -145,7 +145,7 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       resource.metadata.namespace = namespace;
       {{- else }}
       logger.info(`Creating {{ $.ResourceType }}`);
-      
+      const namespace = null;
       const resource = req.body;
       
       // Ensure resource has metadata
@@ -154,7 +154,7 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       }
       {{- end }}
       
-      const createdResource = await storage.createResource('{{ $.ResourceType }}', resource);
+      const createdResource = await storage.createResource(resource, namespace);
       
       res.status(201).json(createdResource);
     } catch (error) {

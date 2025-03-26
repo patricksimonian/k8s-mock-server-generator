@@ -1,433 +1,663 @@
-import { Storage, WatchEvent, WatchEventType } from './Storage';
-import { StorageError } from './StorageError';
-import { logger } from '../logger';
-import { v4 as uuidv4 } from 'uuid';
-import { EventEmitter } from 'events';
-import { applyPatch } from 'fast-json-patch';
-import { merge } from '../utils';
-/**
-* In-memory implementation of the Storage interface
-*/
+import {
+  Storage,
+  KubeResource,
+  KubeList,
+  Status,
+  ListOptions,
+  WatchOptions,
+  WatchEventType,
+  KubeScale,
+
+} from "./Storage"; // Adjust import paths as needed
+import { EventEmitter } from "events";
+import { v4 as uuidv4 } from "uuid";
+import { applyPatch } from "fast-json-patch";
+import { isClusterScoped, createStatusFailure, matchesFieldSelector, matchesLabelSelector, merge } from "../utils";
+
+// ----------------------------------------------------------------
+// Pagination: base64-encoded tokens with offset + resourceVersion
+// ----------------------------------------------------------------
+function createContinueToken(offset: number, resourceVersion: string): string {
+  const payload = JSON.stringify({ offset, rv: resourceVersion });
+  return Buffer.from(payload).toString("base64");
+}
+
+function parseContinueToken(token?: string): { offset: number; rv: string } | null {
+  if (!token) return null;
+  try {
+    const decoded = Buffer.from(token, "base64").toString("utf8");
+    const parsed = JSON.parse(decoded);
+    if (typeof parsed.offset !== "number" || typeof parsed.rv !== "string") {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+// ----------------------------------------------------------------
+// The main InMemoryStorage class
+// ----------------------------------------------------------------
 export class InMemoryStorage implements Storage {
- private data: Record<string, Record<string, Record<string, any>>> = {};
- private initialized: boolean = false;
- private eventEmitter: EventEmitter = new EventEmitter();
+  private initialized = false;
+  private eventEmitter = new EventEmitter();
 
- constructor() {
-   // Initialize data structure
-   this.data = {
-     namespaces: {}
-   };
-   
-   // Create default namespace
-   this.data.namespaces['default'] = {};
-   
-   // Set max listeners to avoid memory leak warnings
-   this.eventEmitter.setMaxListeners(100);
-   
-   logger.info('In-memory storage initialized');
- }
-
- /**
-  * Check if the storage has been initialized
-  */
- async isInitialized(): Promise<boolean> {
-   return this.initialized;
- }
-
- /**
-  * Mark the storage as initialized
-  */
- async markInitialized(): Promise<void> {
-   this.initialized = true;
- }
-
- /**
-  * Get a namespace or create it if it doesn't exist
-  */
- private getOrCreateNamespace(namespace: string): Record<string, Record<string, any>> {
-   if (!this.data.namespaces[namespace]) {
-     this.data.namespaces[namespace] = {};
-   }
-   return this.data.namespaces[namespace];
- }
-
- /**
-  * Get or create a collection in a namespace
-  */
- private getOrCreateCollection(namespace: string, kind: string): Record<string, any> {
-   const ns = this.getOrCreateNamespace(namespace);
-   const collectionName = `${kind.toLowerCase()}s`;
-   
-   if (!ns[collectionName]) {
-     ns[collectionName] = {};
-   }
-   return ns[collectionName];
- }
-
- /**
-  * delete a collection in a namespace
-  */
- private deleteCollection( kind: string, namespace?: string): void {
-  
-   const collectionName = `${kind.toLowerCase()}s`;
-    if(namespace && this.data.namespaces[namespace]){
-      delete this.data.namespaces[namespace][collectionName];
-    }else{
-    delete this.data[collectionName];
-    }
-   
- }
-
- /**
-  * Get a resource by kind, name, and namespace
-  */
- async getResource(kind: string, name: string, namespace: string = 'default'): Promise<any> {
-   const collection = this.getOrCreateCollection(namespace, kind);
-   const resource = collection[name];
-   
-   if (!resource) {
-     throw StorageError.notFound(kind, name, namespace);
-   }
-   
-   return { ...resource };
- }
- 
- /**
-  * List resources by kind and namespace
-  */
- async listResources(kind: string, namespace: string = 'default', labelSelector?: string): Promise<any[]> {
-   const collection = this.getOrCreateCollection(namespace, kind);
-   let resources = Object.values(collection).map(resource => ({ ...resource }));
-   
-   // Apply label selector if provided
-   if (labelSelector) {
-     resources = this.filterByLabelSelector(resources, labelSelector);
-   }
-   
-   return resources;
- }
- async mergePatchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
-    const collection = this.getOrCreateCollection(namespace, kind);
-
-    // Check if resource exists
-    if (!collection[name]) {
-      throw StorageError.notFound(kind, name, namespace);
-    }
-
-    // Get existing resource
-    const existing = collection[name];
-
-    // Apply patch (simple deep merge)
-    const patched = merge(existing, patch);
-
-    // Update resource metadata
-    patched.metadata = {
-      ...patched.metadata,
-      resourceVersion: uuidv4()
-    };
-
-    // Store patched resource
-    collection[name] = patched;
-
-    // Emit watch event
-    this.emitWatchEvent(WatchEventType.MODIFIED, patched, namespace);
-
-    return { ...patched };
-  }
   /**
-   * Patch a resource with a JSON patch application/json-patch+json
+   * data layout:
+   * {
+   *   "__cluster__": {
+   *      "node": { "<name>": KubeResource },
+   *      "namespace": { "<name>": KubeResource },
+   *      ...
+   *   },
+   *   "default": {
+   *      "pods": { "<name>": KubeResource },
+   *      "deployments": { "<name>": KubeResource },
+   *      ...
+   *   }
+   * }
    */
-  async jsonPatchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
-    const collection = this.getOrCreateCollection(namespace, kind);
+  private data: Record<string, Record<string, Record<string, KubeResource>>> = {
+    "__cluster__": {}
+  };
 
-    // Check if resource exists
-    if (!collection[name]) {
-      throw StorageError.notFound(kind, name, namespace);
+  constructor() {
+    this.eventEmitter.setMaxListeners(100);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Basic checks
+  // ---------------------------------------------------------------------------
+  async isInitialized(): Promise<boolean> {
+    return this.initialized;
+  }
+
+  async markInitialized(): Promise<void> {
+    this.initialized = true;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Namespace resolution: cluster-scoped vs. namespaced
+  // ---------------------------------------------------------------------------
+  private resolveNamespace(kind: string, requestedNS: string | null): string | Status {
+    const clusterScoped = isClusterScoped(kind);
+    if (clusterScoped && requestedNS) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
+    }
+    if (!clusterScoped && !requestedNS) {
+      // default
+      return "default";
+    }
+    if (clusterScoped) {
+      return "__cluster__";
+    }
+    return requestedNS || "default";
+  }
+
+  private getOrCreateNamespace(ns: string) {
+    if (!this.data[ns]) {
+      this.data[ns] = {};
+    }
+    return this.data[ns];
+  }
+
+  private getCollection(ns: string, kind: string) {
+    const nsData = this.data[ns];
+    if (!nsData) return undefined;
+    return nsData[kind.toLowerCase()];
+  }
+
+  private getOrCreateCollection(ns: string, kind: string) {
+    const nsData = this.getOrCreateNamespace(ns);
+    const key = kind.toLowerCase();
+    if (!nsData[key]) {
+      nsData[key] = {};
+    }
+    return nsData[key];
+  }
+
+  private generateResourceVersion(): string {
+    return uuidv4();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Finalizer logic: if resource is marked for deletion (deletionTimestamp)
+  // and has no finalizers left, remove it from store and emit DELETED.
+  // ---------------------------------------------------------------------------
+  private finalizeIfNeeded(ns: string, kind: string, name: string): boolean {
+    const collection = this.getCollection(ns, kind);
+    if (!collection) return false;
+
+    const existing = collection[name];
+    if (!existing) return false;
+
+    const finalizers = existing.metadata.finalizers || [];
+    const deletionTimestamp = existing.metadata.deletionTimestamp;
+    if (deletionTimestamp && finalizers.length === 0) {
+      // remove now
+      const copy = JSON.parse(JSON.stringify(existing));
+      delete collection[name];
+      this.emitWatchEvent(WatchEventType.DELETED, copy);
+      return true;
     }
 
-    // Get existing resource
-    const existing = collection[name];
+    return false;
+  }
 
-    // Apply patch (simple deep merge)
-    const patched = applyPatch(existing, patch).newDocument;
+  // ---------------------------------------------------------------------------
+  // GET RESOURCE
+  // ---------------------------------------------------------------------------
+  async getResource(kind: string, name: string, namespace: string | null = null): Promise<KubeResource | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") {
+      return resolved;
+    }
+    const collection = this.getCollection(resolved, kind);
+    if (!collection || !collection[name]) {
+      return createStatusFailure(
+        `Resource ${kind}/${name} not found in ${resolved === "__cluster__" ? "(cluster)" : resolved}`,
+        404,
+        "NotFound"
+      );
+    }
+    return JSON.parse(JSON.stringify(collection[name]));
+  }
 
-    // Update resource metadata
-    patched.metadata = {
-      ...patched.metadata,
-      resourceVersion: uuidv4()
+  // ---------------------------------------------------------------------------
+  // LIST RESOURCES
+  // ---------------------------------------------------------------------------
+  async listResources(
+    kind: string,
+    namespace: string | null = null,
+    options?: ListOptions
+  ): Promise<KubeList<KubeResource> | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") {
+      return resolved;
+    }
+
+    const collection = this.getCollection(resolved, kind) || {};
+    let allItems = Object.values(collection);
+
+    // Filter by labelSelector
+    if (options?.labelSelector) {
+      allItems = allItems.filter(item => matchesLabelSelector(item, options.labelSelector!));
+    }
+    // Filter by fieldSelector
+    if (options?.fieldSelector) {
+      allItems = allItems.filter(item => matchesFieldSelector(item, options.fieldSelector!));
+    }
+
+    // Sort for stable pagination (e.g. by creationTimestamp => name)
+    allItems.sort((a, b) => {
+      const aTime = a.metadata.creationTimestamp || "";
+      const bTime = b.metadata.creationTimestamp || "";
+      if (aTime === bTime) {
+        return a.metadata.name.localeCompare(b.metadata.name);
+      }
+      return aTime.localeCompare(bTime);
+    });
+
+    // Parse continue token
+    const parsedToken = parseContinueToken(options?.continue);
+    let startIndex = 0;
+    if (parsedToken) {
+      startIndex = parsedToken.offset;
+      // Could compare parsedToken.rv with some store rv if implementing consistent reads
+    }
+
+    let endIndex = allItems.length;
+    if (typeof options?.limit === "number") {
+      endIndex = Math.min(endIndex, startIndex + options.limit);
+    }
+
+    const paginated = allItems.slice(startIndex, endIndex);
+
+    // ResourceVersion can be the highest among the returned items
+    let highestRV = "0";
+    for (const item of paginated) {
+      const rv = item.metadata.resourceVersion || "0";
+      if (rv.localeCompare(highestRV) > 0) {
+        highestRV = rv;
+      }
+    }
+    if (highestRV === "0") {
+      highestRV = this.generateResourceVersion();
+    }
+
+    let nextContinue: string | undefined;
+    if (endIndex < allItems.length) {
+      nextContinue = createContinueToken(endIndex, highestRV);
+    }
+
+    const list: KubeList<KubeResource> = {
+      kind: `${kind}List`,
+      apiVersion: "v1",
+      metadata: {
+        resourceVersion: highestRV,
+        continue: nextContinue
+      },
+      items: paginated.map(r => JSON.parse(JSON.stringify(r)))
     };
 
-    // Store patched resource
-    collection[name] = patched;
-
-    // Emit watch event
-    this.emitWatchEvent(WatchEventType.MODIFIED, patched, namespace);
-
-    return { ...patched };
+    return list;
   }
- /**
-  * Create a resource
-  */
- async createResource(resource: any, namespace: string = 'default'): Promise<any> {
-   const kind = resource.kind;
-   if (!kind) {
-     throw StorageError.missingField('kind');
-   }
-   
-   const name = resource.metadata?.name;
-   if (!name) {
-     throw StorageError.missingField('metadata.name');
-   }
-   
-   const collection = this.getOrCreateCollection(namespace, kind);
-   
-   // Check if resource already exists
-   if (collection[name]) {
-     throw StorageError.alreadyExists(kind, name, namespace);
-   }
-   
-   // Add resource metadata
-   const now = new Date().toISOString();
-   const newResource = {
-     ...resource,
-     metadata: {
-       ...resource.metadata,
-       creationTimestamp: now,
-       resourceVersion: uuidv4(),
-       namespace: namespace
-     }
-   };
-   
-   // Store resource
-   collection[name] = newResource;
-   
-   // Emit watch event
-   this.emitWatchEvent(WatchEventType.ADDED, newResource, namespace);
-   
-   return { ...newResource };
- }
- 
- /**
-  * Update a resource
-  */
- async updateResource(kind: string, name: string, resource: any, namespace: string = 'default'): Promise<any> {
-   const collection = this.getOrCreateCollection(namespace, kind);
-   
-   // Check if resource exists
-   if (!collection[name]) {
-     throw StorageError.notFound(kind, name, namespace);
-   }
-   
-   // Update resource metadata
-   const existing = collection[name];
-   const updatedResource = {
-     ...resource,
-     metadata: {
-       ...resource.metadata,
-       creationTimestamp: existing.metadata.creationTimestamp,
-       resourceVersion: uuidv4(),
-       namespace: namespace
-     }
-   };
-   
-   // Store updated resource
-   collection[name] = updatedResource;
-   
-   // Emit watch event
-   this.emitWatchEvent(WatchEventType.MODIFIED, updatedResource, namespace);
-   
-   return { ...updatedResource };
- }
- 
- /**
-  * Patch a resource
-  */
- async patchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
-   const collection = this.getOrCreateCollection(namespace, kind);
-   
-   // Check if resource exists
-   if (!collection[name]) {
-     throw StorageError.notFound(kind, name, namespace);
-   }
-   
-   // Get existing resource
-   const existing = collection[name];
-   
-   // Apply patch (simple deep merge)
-   const patched = this.deepMerge(existing, patch);
-   
-   // Update resource metadata
-   patched.metadata = {
-     ...patched.metadata,
-     resourceVersion: uuidv4()
-   };
-   
-   // Store patched resource
-   collection[name] = patched;
-   
-   // Emit watch event
-   this.emitWatchEvent(WatchEventType.MODIFIED, patched, namespace);
-   
-   return { ...patched };
- }
- 
- /**
-  * Deep merge two objects
-  */
- private deepMerge(target: any, source: any): any {
-   const output = { ...target };
-   
-   if (isObject(target) && isObject(source)) {
-     Object.keys(source).forEach(key => {
-       if (isObject(source[key])) {
-         if (!(key in target)) {
-           Object.assign(output, { [key]: source[key] });
-         } else {
-           output[key] = this.deepMerge(target[key], source[key]);
-         }
-       } else {
-         Object.assign(output, { [key]: source[key] });
-       }
-     });
-   }
-   
-   return output;
-   
-   function isObject(item: any): boolean {
-     return item && typeof item === 'object' && !Array.isArray(item);
-   }
- }
- 
- /**
-  * Delete a resource
-  */
- async deleteResource(kind: string, name: string, namespace: string = 'default'): Promise<boolean> {
-   const collection = this.getOrCreateCollection(namespace, kind);
-   
-   // Check if resource exists
-   if (!collection[name]) {
-     throw StorageError.notFound(kind, name, namespace);
-   }
-   
-   // Get the resource before deleting it
-   const resource = { ...collection[name] };
-   
-   // Delete resource
-   delete collection[name];
-   
-   // Emit watch event
-   this.emitWatchEvent(WatchEventType.DELETED, resource, namespace);
 
-   return true;
- }
- 
- /**
-  * Delete all resources 
-  */
-  async deleteAllResources(kind: string, namespace: string = 'default'): Promise<boolean> {
-    const resources = await this.listResources(kind, namespace);
-    this.deleteCollection(kind, namespace);
-   
-    // Emit watch event
-    for (const resource of resources) {
-      this.emitWatchEvent(WatchEventType.DELETED, resource, namespace);
+  // ---------------------------------------------------------------------------
+  // CREATE RESOURCE
+  // ---------------------------------------------------------------------------
+  async createResource(resource: KubeResource, namespace: string | null = null): Promise<KubeResource | Status> {
+    if (!resource.kind) {
+      return createStatusFailure(`Missing resource.kind`, 400, "BadRequest");
+    }
+    if (!resource.metadata?.name) {
+      return createStatusFailure(`Missing resource.metadata.name`, 400, "BadRequest");
     }
 
-   return true;
- }
- 
- /**
-  * Watch resources of a specific kind in a namespace
-  */
- async watchResources(
-   kind: string, 
-   namespace: string = 'default', 
-   labelSelector?: string, 
-   resourceVersion?: string,
-   onEvent?: (type: 'ADDED' | 'MODIFIED' | 'DELETED', resource: any) => void
- ): Promise<() => void> {
-   const eventName = this.getWatchEventName(kind, namespace);
-   
-   // Create event handler
-   const handler = (event: WatchEvent) => {
-     // Apply label selector if provided
-     if (labelSelector && !this.matchesLabelSelector(event.object, labelSelector)) {
-       return;
-     }
-     
-     // Check resource version if provided
-     if (resourceVersion && event.object.metadata?.resourceVersion <= resourceVersion) {
-       return;
-     }
-     
-     // Call onEvent callback if provided
-     if (onEvent) {
-       onEvent(event.type as any, event.object);
-     }
-   };
-   
-   // Register event handler
-   this.eventEmitter.on(eventName, handler);
-   
-   // Send initial ADDED events for existing resources
-   const resources = await this.listResources(kind, namespace, labelSelector);
-   for (const resource of resources) {
-     if (!resourceVersion || resource.metadata?.resourceVersion > resourceVersion) {
-       if (onEvent) {
-         onEvent(WatchEventType.ADDED, resource);
-       }
-     }
-   }
-   
-   // Return function to stop watching
-   return () => {
-     this.eventEmitter.removeListener(eventName, handler);
-   };
- }
- 
- /**
-  * Emit a watch event
-  */
- private emitWatchEvent(type: WatchEventType, resource: any, namespace: string = 'default'): void {
-   const kind = resource.kind;
-   if (!kind) {
-     return;
-   }
-   
-   const eventName = this.getWatchEventName(kind, namespace);
-   const event: WatchEvent = { type, object: resource };
-   
-   this.eventEmitter.emit(eventName, event);
- }
- 
- /**
-  * Get the event name for a watch event
-  */
- private getWatchEventName(kind: string, namespace: string): string {
-   return `${namespace}:${kind}`;
- }
- 
- /**
-  * Filter resources by label selector
-  */
- private filterByLabelSelector(resources: any[], labelSelector: string): any[] {
-   return resources.filter(resource => this.matchesLabelSelector(resource, labelSelector));
- }
- 
- /**
-  * Check if a resource matches a label selector
-  */
- private matchesLabelSelector(resource: any, labelSelector: string): boolean {
-   const labels = resource.metadata?.labels || {};
-   
-   // Parse label selector (simple implementation for now)
-   const selectors = labelSelector.split(',').map(s => s.trim());
-   
-   // Check if all selectors match
-   return selectors.every(selector => {
-     const [key, value] = selector.split('=').map(s => s.trim());
-     return labels[key] === value;
-   });
- }
+    // Resolve final namespace
+    const resolved = this.resolveNamespace(resource.kind, namespace ?? resource.metadata.namespace ?? null);
+    if (typeof resolved !== "string") {
+      return resolved;
+    }
+
+    const name = resource.metadata.name;
+    const collection = this.getOrCreateCollection(resolved, resource.kind);
+
+    if (collection[name]) {
+      return createStatusFailure(
+        `Resource ${resource.kind}/${name} already exists in ${resolved === "__cluster__" ? "(cluster)" : resolved}`,
+        409,
+        "AlreadyExists"
+      );
+    }
+
+    // Set final metadata fields
+    resource.metadata.namespace = isClusterScoped(resource.kind) ? undefined : resolved;
+    resource.metadata.creationTimestamp = new Date().toISOString();
+    resource.metadata.resourceVersion = this.generateResourceVersion();
+
+    collection[name] = JSON.parse(JSON.stringify(resource));
+    this.emitWatchEvent(WatchEventType.ADDED, resource);
+    return JSON.parse(JSON.stringify(resource));
+  }
+
+  // ---------------------------------------------------------------------------
+  // UPDATE RESOURCE
+  // ---------------------------------------------------------------------------
+  async updateResource(
+    kind: string,
+    name: string,
+    resource: KubeResource,
+    namespace: string | null = null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | Status> {
+    const resolved = this.resolveNamespace(kind, namespace ?? resource.metadata.namespace ?? null);
+    if (typeof resolved !== "string") {
+      return resolved;
+    }
+
+    const collection = this.getOrCreateCollection(resolved, kind);
+    const existing = collection[name];
+    if (!existing) {
+      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+    }
+
+    // concurrency check
+    if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
+      return createStatusFailure(
+        `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
+        409,
+        "Conflict"
+      );
+    }
+
+    // preserve creationTimestamp, deletionTimestamp if set
+    resource.metadata.creationTimestamp = existing.metadata.creationTimestamp;
+    if (existing.metadata.deletionTimestamp) {
+      resource.metadata.deletionTimestamp = existing.metadata.deletionTimestamp;
+    }
+    // preserve existing finalizers if not provided
+    if (!resource.metadata.finalizers) {
+      resource.metadata.finalizers = existing.metadata.finalizers || [];
+    }
+
+    resource.metadata.resourceVersion = this.generateResourceVersion();
+    resource.metadata.namespace = isClusterScoped(kind) ? undefined : resolved;
+
+    collection[name] = JSON.parse(JSON.stringify(resource));
+    this.emitWatchEvent(WatchEventType.MODIFIED, resource);
+
+    // check finalizers if resource is pending deletion
+    this.finalizeIfNeeded(resolved, kind, name);
+    return JSON.parse(JSON.stringify(resource));
+  }
+
+  // ---------------------------------------------------------------------------
+  // MERGE PATCH
+  // ---------------------------------------------------------------------------
+  async mergePatchResource(
+    kind: string,
+    name: string,
+    patch: any,
+    namespace: string | null = null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") return resolved;
+
+    const collection = this.getCollection(resolved, kind);
+    if (!collection || !collection[name]) {
+      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+    }
+
+    const existing = collection[name];
+    if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
+      return createStatusFailure(
+        `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
+        409,
+        "Conflict"
+      );
+    }
+
+    const merged = merge(existing, patch);
+    merged.metadata.resourceVersion = this.generateResourceVersion();
+
+    // preserve deletionTimestamp if any
+    if (existing.metadata.deletionTimestamp) {
+      merged.metadata.deletionTimestamp = existing.metadata.deletionTimestamp;
+    }
+    // preserve finalizers if patch didn't provide them
+    if (!merged.metadata.finalizers) {
+      merged.metadata.finalizers = existing.metadata.finalizers || [];
+    }
+
+    merged.metadata.namespace = isClusterScoped(kind) ? undefined : resolved;
+    collection[name] = JSON.parse(JSON.stringify(merged));
+
+    this.emitWatchEvent(WatchEventType.MODIFIED, merged);
+    this.finalizeIfNeeded(resolved, kind, name);
+    return JSON.parse(JSON.stringify(merged));
+  }
+
+  // ---------------------------------------------------------------------------
+  // JSON PATCH
+  // ---------------------------------------------------------------------------
+  async jsonPatchResource(
+    kind: string,
+    name: string,
+    patch: any,
+    namespace: string | null = null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") return resolved;
+
+    const collection = this.getCollection(resolved, kind);
+    if (!collection || !collection[name]) {
+      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+    }
+
+    const existing = collection[name];
+    if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
+      return createStatusFailure(
+        `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
+        409,
+        "Conflict"
+      );
+    }
+
+    const patched = applyPatch(existing, patch).newDocument;
+    patched.metadata.resourceVersion = this.generateResourceVersion();
+
+    if (existing.metadata.deletionTimestamp) {
+      patched.metadata.deletionTimestamp = existing.metadata.deletionTimestamp;
+    }
+    if (!patched.metadata.finalizers) {
+      patched.metadata.finalizers = existing.metadata.finalizers || [];
+    }
+
+    patched.metadata.namespace = isClusterScoped(kind) ? undefined : resolved;
+    collection[name] = JSON.parse(JSON.stringify(patched));
+
+    this.emitWatchEvent(WatchEventType.MODIFIED, patched);
+    this.finalizeIfNeeded(resolved, kind, name);
+    return JSON.parse(JSON.stringify(patched));
+  }
+
+  // ---------------------------------------------------------------------------
+  // SUBRESOURCE (status, scale, etc.)
+  // ---------------------------------------------------------------------------
+  async updateSubresource(
+    kind: string,
+    name: string,
+    subresource: string,
+    patch: any,
+    namespace: string | null = null,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | KubeScale | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") return resolved;
+
+    const collection = this.getCollection(resolved, kind);
+    if (!collection || !collection[name]) {
+      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+    }
+    const existing = collection[name];
+
+    if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
+      return createStatusFailure(
+        `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
+        409,
+        "Conflict"
+      );
+    }
+
+    if (subresource === "status") {
+      // only patch the status field
+      existing.status = merge(existing.status || {}, patch);
+      existing.metadata.resourceVersion = this.generateResourceVersion();
+
+      collection[name] = JSON.parse(JSON.stringify(existing));
+      this.emitWatchEvent(WatchEventType.MODIFIED, existing);
+      this.finalizeIfNeeded(resolved, kind, name);
+      return JSON.parse(JSON.stringify(existing));
+    } else if (subresource === "scale") {
+      // interpret patch as a Scale object
+      // e.g. { apiVersion: "autoscaling/v1", kind: "Scale", spec: { replicas: 5 } }
+      if (patch.spec && typeof patch.spec.replicas === "number") {
+        existing.spec = existing.spec || {};
+        existing.spec.replicas = patch.spec.replicas;
+        existing.status = existing.status || {};
+        existing.status.replicas = patch.spec.replicas; // optional
+      }
+
+      existing.metadata.resourceVersion = this.generateResourceVersion();
+      collection[name] = JSON.parse(JSON.stringify(existing));
+      this.emitWatchEvent(WatchEventType.MODIFIED, existing);
+      this.finalizeIfNeeded(resolved, kind, name);
+
+      // Return a KubeScale object (mimicking real K8s)
+      const scale: KubeScale = {
+        apiVersion: "autoscaling/v1",
+        kind: "Scale",
+        metadata: {
+          name: existing.metadata.name,
+          namespace: existing.metadata.namespace
+        },
+        spec: {
+          replicas: existing.spec?.replicas
+        },
+        status: {
+          replicas: existing.status?.replicas
+          // you could also set a .selector here, etc.
+        }
+      };
+      return scale;
+    } else {
+      // default subresource => store it under existing[subresource]
+      if (!existing[subresource]) {
+        existing[subresource] = {};
+      }
+      existing[subresource] = merge(existing[subresource], patch);
+      existing.metadata.resourceVersion = this.generateResourceVersion();
+
+      collection[name] = JSON.parse(JSON.stringify(existing));
+      this.emitWatchEvent(WatchEventType.MODIFIED, existing);
+      this.finalizeIfNeeded(resolved, kind, name);
+
+      return JSON.parse(JSON.stringify(existing));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // DELETE RESOURCE
+  // ---------------------------------------------------------------------------
+  async deleteResource(
+    kind: string,
+    name: string,
+    namespace: string | null = null
+  ): Promise<true | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") return resolved;
+
+    const collection = this.getCollection(resolved, kind);
+    if (!collection || !collection[name]) {
+      return createStatusFailure(
+        `Resource ${kind}/${name} not found in ${resolved === "__cluster__" ? "(cluster)" : resolved}`,
+        404,
+        "NotFound"
+      );
+    }
+
+    const existing = collection[name];
+    const finalizers = existing.metadata.finalizers || [];
+    if (finalizers.length === 0) {
+      // remove immediately
+      const copy = JSON.parse(JSON.stringify(existing));
+      delete collection[name];
+      this.emitWatchEvent(WatchEventType.DELETED, copy);
+      return true;
+    } else {
+      // mark deletionTimestamp if not set
+      if (!existing.metadata.deletionTimestamp) {
+        existing.metadata.deletionTimestamp = new Date().toISOString();
+        existing.metadata.resourceVersion = this.generateResourceVersion();
+        collection[name] = JSON.parse(JSON.stringify(existing));
+        this.emitWatchEvent(WatchEventType.MODIFIED, existing);
+      }
+      return true;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // DELETE ALL RESOURCES
+  // ---------------------------------------------------------------------------
+  async deleteAllResources(
+    kind: string,
+    namespace: string | null = null,
+    opts?: { labelSelector?: string; fieldSelector?: string }
+  ): Promise<true | Status> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") return resolved;
+
+    const collection = this.getCollection(resolved, kind);
+    if (!collection) {
+      return true; // no resources to delete
+    }
+
+    let resources = Object.values(collection);
+    if (opts?.labelSelector) {
+      resources = resources.filter(r => matchesLabelSelector(r, opts.labelSelector!));
+    }
+    if (opts?.fieldSelector) {
+      resources = resources.filter(r => matchesFieldSelector(r, opts.fieldSelector!));
+    }
+
+    for (const r of resources) {
+      const finalizers = r.metadata.finalizers || [];
+      if (finalizers.length === 0) {
+        // remove now
+        const copy = JSON.parse(JSON.stringify(r));
+        delete collection[r.metadata.name];
+        this.emitWatchEvent(WatchEventType.DELETED, copy);
+      } else {
+        // set deletionTimestamp
+        if (!r.metadata.deletionTimestamp) {
+          r.metadata.deletionTimestamp = new Date().toISOString();
+          r.metadata.resourceVersion = this.generateResourceVersion();
+          collection[r.metadata.name] = JSON.parse(JSON.stringify(r));
+          this.emitWatchEvent(WatchEventType.MODIFIED, r);
+        }
+      }
+    }
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  // WATCH RESOURCES
+  // ---------------------------------------------------------------------------
+  async watchResources(
+    kind: string,
+    namespace: string | null = null,
+    options?: WatchOptions,
+    onEvent?: (eventType: WatchEventType, resource: KubeResource | Status) => void
+  ): Promise<() => void> {
+    const resolved = this.resolveNamespace(kind, namespace);
+    if (typeof resolved !== "string") {
+      // invalid watch target => no-op
+      return async () => { };
+    }
+
+    const eventName = `${resolved}:${kind.toLowerCase()}`;
+    const handler = (evtType: WatchEventType, resource: KubeResource) => {
+      // labelSelector
+      if (options?.labelSelector && !matchesLabelSelector(resource, options.labelSelector)) {
+        return;
+      }
+      // fieldSelector
+      if (options?.fieldSelector && !matchesFieldSelector(resource, options.fieldSelector)) {
+        return;
+      }
+      // resourceVersion
+      if (options?.resourceVersion && resource.metadata.resourceVersion! <= options.resourceVersion) {
+        return;
+      }
+
+      onEvent?.(evtType, JSON.parse(JSON.stringify(resource)));
+    };
+
+    this.eventEmitter.on(eventName, handler);
+
+    // Send initial ADDED events for existing resources matching selectors
+    const listResp = await this.listResources(kind, namespace, {
+      labelSelector: options?.labelSelector,
+      fieldSelector: options?.fieldSelector
+    });
+    if ("items" in listResp) {
+      for (const item of listResp.items) {
+        if (!options?.resourceVersion || item.metadata.resourceVersion! > options.resourceVersion) {
+          onEvent?.(WatchEventType.ADDED, item);
+        }
+      }
+    }
+
+    // Return unsubscribe
+    return () => {
+      this.eventEmitter.removeListener(eventName, handler);
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // INTERNAL: EMIT WATCH EVENTS
+  // ---------------------------------------------------------------------------
+  private emitWatchEvent(type: WatchEventType, resource: KubeResource) {
+    const ns = resource.metadata.namespace || "__cluster__";
+    const eventName = `${ns}:${resource.kind.toLowerCase()}`;
+    this.eventEmitter.emit(eventName, type, resource);
+  }
 }

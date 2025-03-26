@@ -1,70 +1,41 @@
-// Export utility functions
-export * from './resource-utils';
-export * from './watch';
+import config from '../config';
+import { Storage } from './Storage';
+import { StorageError } from './StorageError';
+import { logger } from '../logger';
+
+// Export the Storage interface and StorageError
+export * from './Storage';
+export * from './StorageError';
+
+// Dynamically import storage implementations based on configuration
+import { InMemoryStorage } from './InMemoryStorage';
+export * from './InMemoryStorage';
 
 /**
- * Utility function to generate a random string
+ * Create and return the appropriate storage implementation based on configuration
  */
-export function generateRandomString(length: number = 8): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-/**
- * Utility function to parse query parameters
- */
-export function parseQueryParams(query: any): Record<string, any> {
-  const result: Record<string, any> = {};
+export function createStorage(): Storage {
+  const storageType = config.storage.type;
   
-  for (const key in query) {
-    if (Object.prototype.hasOwnProperty.call(query, key)) {
-      const value = query[key];
+  logger.info(`Initializing ${storageType} storage`);
+  
+  switch (storageType) {
+    case 'memory':
+      return new InMemoryStorage();
       
-      // Try to parse numbers and booleans
-      if (value === 'true') {
-        result[key] = true;
-      } else if (value === 'false') {
-        result[key] = false;
-      } else if (!isNaN(Number(value)) && value !== '') {
-        result[key] = Number(value);
-      } else {
-        result[key] = value;
-      }
-    }
+    case 'file':
+      throw new Error('File storage is not available. Please regenerate the server with file storage support.');
+      
+    case 'firestore':
+      throw new Error('Firestore storage is not available. Please regenerate the server with Firestore support.');
+      
+    default:
+      throw new Error(`Unsupported storage type: ${storageType}`);
   }
-  
-  return result;
 }
 
-/**
- * Utility function to deep merge objects
- */
-export function merge(target, patch) {
-  if (patch === null || typeof patch !== 'object') {
-    return patch;
-  }
-  // Clone target to avoid mutating original directly
-  let output = Array.isArray(target) ? [...target] : { ...target };
-  Object.keys(patch).forEach(key => {
-    if (patch[key] === null) {
-      // Null means removal of the key
-      delete output[key];
-    } else if (typeof patch[key] === 'object' && typeof output[key] === 'object') {
-      output[key] = merge(output[key], patch[key]);
-    } else {
-      output[key] = patch[key];
-    }
-  });
-  return output;
-}
+// Create the storage instance
+const storage = createStorage();
 
-/**
- * Helper function to check if a value is an object
- */
-function isObject(item: any): boolean {
-  return item && typeof item === 'object' && !Array.isArray(item);
-}
+// Export the storage instance as default
+export default storage;
