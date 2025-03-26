@@ -68,8 +68,10 @@ export async function watch(req: Request<RequestParams, any, any, RequestQuery>,
         stopWatching = await storage.watchResources(
             resourceType,
             namespace,
-            labelSelector,
-            resourceVersion,
+            {
+              labelSelector,
+              resourceVersion,
+            },
             (type, resource) => {
                 // Send watch event
                 const event: WatchEvent = {

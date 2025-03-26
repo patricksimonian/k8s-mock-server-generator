@@ -5,14 +5,15 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresources {
 /**
-* CustomResourceSubresourceScale defines how to serve the scale subresource for CustomResources.
-* @isObject
+* status indicates the custom resource should serve a `/status` subresource. When enabled: 1. requests to the custom resource primary endpoint ignore changes to the `status` stanza of the object. 2. requests to the custom resource `/status` subresource ignore changes to anything other than the `status` stanza of the object.
+* @references io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresourceStatus
 */
-scale?: { statusReplicasPath: string; labelSelectorPath?: string; specReplicasPath: string };
+status?: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceStatus;
 /**
-* CustomResourceSubresourceStatus defines how to serve the status subresource for CustomResources. Status is represented by the `.status` JSON path inside of a CustomResource. When set, * exposes a /status subresource for the custom resource * PUT requests to the /status subresource take a custom resource object, and ignore changes to anything except the status stanza * PUT/POST/PATCH requests to the custom resource ignore changes to the status stanza
+* scale indicates the custom resource should serve a `/scale` subresource that returns an `autoscaling/v1` Scale object.
+* @references io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresourceScale
 */
-status?: Record<string, any>;
+scale?: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceScale;
 }
 
 /**
@@ -22,7 +23,10 @@ status?: Record<string, any>;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresources(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresources>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresources {
  return {
-   scale: data?.scale !== undefined ? data.scale : { specReplicasPath: '', statusReplicasPath: '' },
-   status: data?.status !== undefined ? data.status : {},
+   status: data?.status !== undefined ? data.status : createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceStatus(),
+   scale: data?.scale !== undefined ? data.scale : createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceScale(),
  };
 }
+// Required imports
+import { io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceScale, createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceScale } from '../customresourcesubresourcescale/io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceScale';
+import { io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceStatus, createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceStatus } from '../customresourcesubresourcestatus/io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceSubresourceStatus';

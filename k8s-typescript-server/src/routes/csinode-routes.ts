@@ -7,6 +7,87 @@ import { handleResourceError } from '../utils';
 export function createcsinodeRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//watch changes to an object of kind CSINode. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/storage.k8s.io/v1/watch/csinodes/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting csinode ${name}`);
+      
+      const resource = await storage.getResource('csinode', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`csinode ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of CSINode. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/storage.k8s.io/v1/watch/csinodes', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing csinode`);
+      
+      const resourceList = await storage.listResources('csinode', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read the specified CSINode
+  router.get('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting csinode ${name}`);
+      
+      const resource = await storage.getResource('csinode', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`csinode ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace the specified CSINode
+  router.put('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating csinode ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('csinode', name, resource, namespace, resource.metadata.resourceVersion);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //delete a CSINode
   router.delete('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
     try {
@@ -45,7 +126,6 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting csinode ${name}`);
-
       const resource = await storage.getResource('csinode', name, namespace);
       
       if (!resource) {
@@ -62,7 +142,7 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('csinode', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -71,47 +151,6 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified CSINode
-  router.get('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting csinode ${name}`);
-      
-      const resource = await storage.getResource('csinode', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`csinode ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace the specified CSINode
-  router.put('/apis/storage.k8s.io/v1/csinodes/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating csinode ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      
-      const updatedResource = await storage.updateResource('csinode', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -180,65 +219,11 @@ export function createcsinodeRoutes(storage: Storage): express.Router {
       const namespace = null;
       logger.info(`Listing csinode`);
       
-      const resources = await storage.listResources('csinode', namespace, listOpts);
+      const resourceList = await storage.listResources('csinode', namespace, listOpts);
       
-      const response = {
-        kind: 'CsinodeList',
-        apiVersion: 'storage.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
 
-//watch individual changes to a list of CSINode. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/storage.k8s.io/v1/watch/csinodes', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing csinode`);
       
-      const resources = await storage.listResources('csinode', namespace, listOpts);
-      
-      const response = {
-        kind: 'CsinodeList',
-        apiVersion: 'storage.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind CSINode. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/storage.k8s.io/v1/watch/csinodes/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting csinode ${name}`);
-      
-      const resource = await storage.getResource('csinode', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`csinode ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

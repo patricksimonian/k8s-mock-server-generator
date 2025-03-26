@@ -9,7 +9,7 @@ export interface io_k8s_api_batch_v1_PodFailurePolicy {
 * @required
 * @isArray
 */
-rules: Array<{ action: 'Count' | 'FailIndex' | 'FailJob' | 'Ignore'; onExitCodes?: { containerName?: string; operator: 'In' | 'NotIn'; values: number[] }; onPodConditions?: Array<{ status: string; type: string }> }>;
+rules: io_k8s_api_batch_v1_PodFailurePolicyRule[];
 }
 
 /**
@@ -22,3 +22,5 @@ export function createio_k8s_api_batch_v1_PodFailurePolicy(data?: Partial<io_k8s
    rules: data?.rules !== undefined ? data.rules : [],
  };
 }
+// Required imports
+import { io_k8s_api_batch_v1_PodFailurePolicyRule, createio_k8s_api_batch_v1_PodFailurePolicyRule } from '../io.k8s.api.batch.v1.PodFailurePolicyRule';

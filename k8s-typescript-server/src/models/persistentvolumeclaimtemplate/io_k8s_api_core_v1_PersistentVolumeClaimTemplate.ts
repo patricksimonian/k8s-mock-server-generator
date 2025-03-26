@@ -5,16 +5,16 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaimTemplate {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* May contain labels and annotations that will be copied into the PVC when creating it. No other fields are allowed and will be rejected during validation.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { selfLink?: string; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; resourceVersion?: string; namespace?: string; annotations?: Record<string, any>; finalizers?: string[]; generateName?: string; generation?: number; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; name?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; uid?: string; creationTimestamp?: Date; labels?: Record<string, any> };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* PersistentVolumeClaimSpec describes the common attributes of storage devices and allows a Source for provider-specific attributes
+* The specification for the PersistentVolumeClaim. The entire content is copied unchanged into the PVC that gets created from this template. The same fields as in a PersistentVolumeClaim are also valid here.
 * @required
-* @isObject
+* @references io.k8s.api.core.v1.PersistentVolumeClaimSpec
 */
-spec: { dataSourceRef?: { kind: string; name: string; namespace?: string; apiGroup?: string }; storageClassName?: string; volumeMode?: 'Block' | 'Filesystem'; volumeName?: string; accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[]; dataSource?: { apiGroup?: string; kind: string; name: string }; resources?: { requests?: Record<string, any>; limits?: Record<string, any> }; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; volumeAttributesClassName?: string };
+spec: io_k8s_api_core_v1_PersistentVolumeClaimSpec;
 }
 
 /**
@@ -24,7 +24,10 @@ spec: { dataSourceRef?: { kind: string; name: string; namespace?: string; apiGro
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaimTemplate(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaimTemplate>): io_k8s_api_core_v1_PersistentVolumeClaimTemplate {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_PersistentVolumeClaimSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PersistentVolumeClaimSpec, createio_k8s_api_core_v1_PersistentVolumeClaimSpec } from '../persistentvolumeclaimspec/io_k8s_api_core_v1_PersistentVolumeClaimSpec';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

@@ -17,10 +17,10 @@ replicas?: number;
 */
 selector?: Record<string, any>;
 /**
-* PodTemplateSpec describes the data a pod should have when created from a template
-* @isObject
+* Template is the object that describes the pod that will be created if insufficient replicas are detected. This takes precedence over a TemplateRef. The only allowed template.spec.restartPolicy value is "Always". More info: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template
+* @references io.k8s.api.core.v1.PodTemplateSpec
 */
-template?: { metadata?: { creationTimestamp?: Date; generateName?: string; labels?: Record<string, any>; name?: string; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generation?: number; namespace?: string; selfLink?: string; deletionGracePeriodSeconds?: number }; spec?: Record<string, any> };
+template?: io_k8s_api_core_v1_PodTemplateSpec;
 }
 
 /**
@@ -33,6 +33,8 @@ export function createio_k8s_api_core_v1_ReplicationControllerSpec(data?: Partia
    minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
    replicas: data?.replicas !== undefined ? data.replicas : 0,
    selector: data?.selector !== undefined ? data.selector : {},
-   template: data?.template !== undefined ? data.template : {},
+   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PodTemplateSpec, createio_k8s_api_core_v1_PodTemplateSpec } from '../podtemplatespec/io_k8s_api_core_v1_PodTemplateSpec';

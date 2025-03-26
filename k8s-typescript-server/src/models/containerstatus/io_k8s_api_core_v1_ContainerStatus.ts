@@ -5,49 +5,18 @@
 */
 export interface io_k8s_api_core_v1_ContainerStatus {
 /**
-* ContainerState holds a possible state of container. Only one of its members may be specified. If none of them is specified, the default one is ContainerStateWaiting.
-* @isObject
+* Started indicates whether the container has finished its postStart lifecycle hook and passed its startup probe. Initialized as false, becomes true after startupProbe is considered successful. Resets to false when the container is restarted, or if kubelet loses state temporarily. In both cases, startup probes will run again. Is always true when no startupProbe is defined and container is running and has passed the postStart lifecycle hook. The null value must be treated the same as false.
 */
-state?: { running?: { startedAt?: Date }; terminated?: { signal?: number; startedAt?: Date; containerID?: string; exitCode: number; finishedAt?: Date; message?: string; reason?: string }; waiting?: { message?: string; reason?: string } };
-/**
-* RestartCount holds the number of times the container has been restarted. Kubelet makes an effort to always increment the value, but there are cases when the state may be lost due to node restarts and then the value may be reset to 0. The value is never negative.
-* @required
-*/
-restartCount: number;
-/**
-* ContainerUser represents user identity information
-* @isObject
-*/
-user?: { linux?: { gid: number; supplementalGroups?: number[]; uid: number } };
+started?: boolean;
 /**
 * AllocatedResources represents the compute resources allocated for this container by the node. Kubelet sets this value to Container.Resources.Requests upon successful pod admission and after successfully admitting desired pod resize.
 */
 allocatedResources?: Record<string, any>;
 /**
-* Name is a DNS_LABEL representing the unique name of the container. Each container in a pod must have a unique name across all container types. Cannot be updated.
-* @required
-*/
-name: string;
-/**
-* ImageID is the image ID of the container's image. The image ID may not match the image ID of the image used in the PodSpec, as it may have been resolved by the runtime.
-* @required
-*/
-imageID: string;
-/**
-* ResourceRequirements describes the compute resource requirements.
-* @isObject
-*/
-resources?: { claims?: Array<{ name: string; request?: string }>; limits?: Record<string, any>; requests?: Record<string, any> };
-/**
 * Image is the name of container image that the container is running. The container image may not match the image used in the PodSpec, as it may have been resolved by the runtime. More info: https://kubernetes.io/docs/concepts/containers/images.
 * @required
 */
 image: string;
-/**
-* ContainerState holds a possible state of container. Only one of its members may be specified. If none of them is specified, the default one is ContainerStateWaiting.
-* @isObject
-*/
-lastState?: { terminated?: { reason?: string; signal?: number; startedAt?: Date; containerID?: string; exitCode: number; finishedAt?: Date; message?: string }; waiting?: { message?: string; reason?: string }; running?: { startedAt?: Date } };
 /**
 * Ready specifies whether the container is currently passing its readiness check. The value will change as readiness probes keep executing. If no readiness probes are specified, this field defaults to true once the container is fully started (see Started field).
 
@@ -56,23 +25,54 @@ The value is typically used to determine whether a container is ready to accept 
 */
 ready: boolean;
 /**
-* Started indicates whether the container has finished its postStart lifecycle hook and passed its startup probe. Initialized as false, becomes true after startupProbe is considered successful. Resets to false when the container is restarted, or if kubelet loses state temporarily. In both cases, startup probes will run again. Is always true when no startupProbe is defined and container is running and has passed the postStart lifecycle hook. The null value must be treated the same as false.
+* Resources represents the compute resource requests and limits that have been successfully enacted on the running container after it has been started or has been successfully resized.
+* @references io.k8s.api.core.v1.ResourceRequirements
 */
-started?: boolean;
+resources?: io_k8s_api_core_v1_ResourceRequirements;
 /**
-* Status of volume mounts.
-* @isArray
+* RestartCount holds the number of times the container has been restarted. Kubelet makes an effort to always increment the value, but there are cases when the state may be lost due to node restarts and then the value may be reset to 0. The value is never negative.
+* @required
 */
-volumeMounts?: Array<{ readOnly?: boolean; recursiveReadOnly?: string; mountPath: string; name: string }>;
-/**
-* AllocatedResourcesStatus represents the status of various resources allocated for this Pod.
-* @isArray
-*/
-allocatedResourcesStatus?: Array<{ name: string; resources?: Array<{ health?: string; resourceID: string }> }>;
+restartCount: number;
 /**
 * ContainerID is the ID of the container in the format '<type>://<container_id>'. Where type is a container runtime identifier, returned from Version call of CRI API (for example "containerd").
 */
 containerID?: string;
+/**
+* ImageID is the image ID of the container's image. The image ID may not match the image ID of the image used in the PodSpec, as it may have been resolved by the runtime.
+* @required
+*/
+imageID: string;
+/**
+* LastTerminationState holds the last termination state of the container to help debug container crashes and restarts. This field is not populated if the container is still running and RestartCount is 0.
+* @references io.k8s.api.core.v1.ContainerState
+*/
+lastState?: io_k8s_api_core_v1_ContainerState;
+/**
+* Name is a DNS_LABEL representing the unique name of the container. Each container in a pod must have a unique name across all container types. Cannot be updated.
+* @required
+*/
+name: string;
+/**
+* State holds details about the container's current condition.
+* @references io.k8s.api.core.v1.ContainerState
+*/
+state?: io_k8s_api_core_v1_ContainerState;
+/**
+* AllocatedResourcesStatus represents the status of various resources allocated for this Pod.
+* @isArray
+*/
+allocatedResourcesStatus?: io_k8s_api_core_v1_ResourceStatus[];
+/**
+* User represents user identity information initially attached to the first process of the container
+* @references io.k8s.api.core.v1.ContainerUser
+*/
+user?: io_k8s_api_core_v1_ContainerUser;
+/**
+* Status of volume mounts.
+* @isArray
+*/
+volumeMounts?: io_k8s_api_core_v1_VolumeMountStatus[];
 }
 
 /**
@@ -82,19 +82,25 @@ containerID?: string;
 */
 export function createio_k8s_api_core_v1_ContainerStatus(data?: Partial<io_k8s_api_core_v1_ContainerStatus>): io_k8s_api_core_v1_ContainerStatus {
  return {
-   state: data?.state !== undefined ? data.state : {},
-   restartCount: data?.restartCount !== undefined ? data.restartCount : 0,
-   user: data?.user !== undefined ? data.user : {},
-   allocatedResources: data?.allocatedResources !== undefined ? data.allocatedResources : {},
-   name: data?.name !== undefined ? data.name : '',
-   imageID: data?.imageID !== undefined ? data.imageID : '',
-   resources: data?.resources !== undefined ? data.resources : {},
-   image: data?.image !== undefined ? data.image : '',
-   lastState: data?.lastState !== undefined ? data.lastState : {},
-   ready: data?.ready !== undefined ? data.ready : false,
    started: data?.started !== undefined ? data.started : false,
-   volumeMounts: data?.volumeMounts !== undefined ? data.volumeMounts : [],
-   allocatedResourcesStatus: data?.allocatedResourcesStatus !== undefined ? data.allocatedResourcesStatus : [],
+   allocatedResources: data?.allocatedResources !== undefined ? data.allocatedResources : {},
+   image: data?.image !== undefined ? data.image : '',
+   ready: data?.ready !== undefined ? data.ready : false,
+   resources: data?.resources !== undefined ? data.resources : createio_k8s_api_core_v1_ResourceRequirements(),
+   restartCount: data?.restartCount !== undefined ? data.restartCount : 0,
    containerID: data?.containerID !== undefined ? data.containerID : '',
+   imageID: data?.imageID !== undefined ? data.imageID : '',
+   lastState: data?.lastState !== undefined ? data.lastState : createio_k8s_api_core_v1_ContainerState(),
+   name: data?.name !== undefined ? data.name : '',
+   state: data?.state !== undefined ? data.state : createio_k8s_api_core_v1_ContainerState(),
+   allocatedResourcesStatus: data?.allocatedResourcesStatus !== undefined ? data.allocatedResourcesStatus : [],
+   user: data?.user !== undefined ? data.user : createio_k8s_api_core_v1_ContainerUser(),
+   volumeMounts: data?.volumeMounts !== undefined ? data.volumeMounts : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ContainerState, createio_k8s_api_core_v1_ContainerState } from '../containerstate/io_k8s_api_core_v1_ContainerState';
+import { io_k8s_api_core_v1_ContainerUser, createio_k8s_api_core_v1_ContainerUser } from '../containeruser/io_k8s_api_core_v1_ContainerUser';
+import { io_k8s_api_core_v1_ResourceRequirements, createio_k8s_api_core_v1_ResourceRequirements } from '../resourcerequirement/io_k8s_api_core_v1_ResourceRequirements';
+import { io_k8s_api_core_v1_ResourceStatus, createio_k8s_api_core_v1_ResourceStatus } from '../io.k8s.api.core.v1.ResourceStatus';
+import { io_k8s_api_core_v1_VolumeMountStatus, createio_k8s_api_core_v1_VolumeMountStatus } from '../io.k8s.api.core.v1.VolumeMountStatus';

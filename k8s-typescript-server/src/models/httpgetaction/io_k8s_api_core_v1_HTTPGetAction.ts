@@ -5,19 +5,15 @@
 */
 export interface io_k8s_api_core_v1_HTTPGetAction {
 /**
-* Custom headers to set in the request. HTTP allows repeated headers.
-* @isArray
-*/
-httpHeaders?: Array<{ value: string; name: string }>;
-/**
 * Path to access on the HTTP server.
 */
 path?: string;
 /**
-* IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
+* Name or number of the port to access on the container. Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
 * @required
+* @references io.k8s.apimachinery.pkg.util.intstr.IntOrString
 */
-port: string;
+port: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
 /**
 * Scheme to use for connecting to the host. Defaults to HTTP.
 
@@ -30,6 +26,11 @@ scheme?: 'HTTP' | 'HTTPS';
 * Host name to connect to, defaults to the pod IP. You probably want to set "Host" in httpHeaders instead.
 */
 host?: string;
+/**
+* Custom headers to set in the request. HTTP allows repeated headers.
+* @isArray
+*/
+httpHeaders?: io_k8s_api_core_v1_HTTPHeader[];
 }
 
 /**
@@ -39,10 +40,13 @@ host?: string;
 */
 export function createio_k8s_api_core_v1_HTTPGetAction(data?: Partial<io_k8s_api_core_v1_HTTPGetAction>): io_k8s_api_core_v1_HTTPGetAction {
  return {
-   httpHeaders: data?.httpHeaders !== undefined ? data.httpHeaders : [],
    path: data?.path !== undefined ? data.path : '',
-   port: data?.port !== undefined ? data.port : '',
+   port: data?.port !== undefined ? data.port : createio_k8s_apimachinery_pkg_util_intstr_IntOrString(),
    scheme: data?.scheme !== undefined ? data.scheme : '',
    host: data?.host !== undefined ? data.host : '',
+   httpHeaders: data?.httpHeaders !== undefined ? data.httpHeaders : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_HTTPHeader, createio_k8s_api_core_v1_HTTPHeader } from '../io.k8s.api.core.v1.HTTPHeader';
+import { io_k8s_apimachinery_pkg_util_intstr_IntOrString, createio_k8s_apimachinery_pkg_util_intstr_IntOrString } from '../intorstring/io_k8s_apimachinery_pkg_util_intstr_IntOrString';

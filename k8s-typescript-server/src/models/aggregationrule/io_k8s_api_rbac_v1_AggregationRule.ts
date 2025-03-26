@@ -8,7 +8,7 @@ export interface io_k8s_api_rbac_v1_AggregationRule {
 * ClusterRoleSelectors holds a list of selectors which will be used to find ClusterRoles and create the rules. If any of the selectors match, then the ClusterRole's permissions will be added
 * @isArray
 */
-clusterRoleSelectors?: Array<{ matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }>;
+clusterRoleSelectors?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_rbac_v1_AggregationRule(data?: Partial<io_k8s_a
    clusterRoleSelectors: data?.clusterRoleSelectors !== undefined ? data.clusterRoleSelectors : [],
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector';

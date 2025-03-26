@@ -5,6 +5,29 @@
 */
 export interface io_k8s_api_batch_v1_CronJobSpec {
 /**
+* The number of failed finished jobs to retain. Value must be non-negative integer. Defaults to 1.
+*/
+failedJobsHistoryLimit?: number;
+/**
+* Specifies the job that will be created when executing a CronJob.
+* @required
+* @references io.k8s.api.batch.v1.JobTemplateSpec
+*/
+jobTemplate: io_k8s_api_batch_v1_JobTemplateSpec;
+/**
+* The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+* @required
+*/
+schedule: string;
+/**
+* Optional deadline in seconds for starting the job if it misses scheduled time for any reason.  Missed jobs executions will be counted as failed ones.
+*/
+startingDeadlineSeconds?: number;
+/**
+* The number of successful finished jobs to retain. Value must be non-negative integer. Defaults to 3.
+*/
+successfulJobsHistoryLimit?: number;
+/**
 * This flag tells the controller to suspend subsequent executions, it does not apply to already started executions.  Defaults to false.
 */
 suspend?: boolean;
@@ -23,29 +46,6 @@ Possible enum values:
  - `"Replace"` cancels currently running job and replaces it with a new one.
 */
 concurrencyPolicy?: 'Allow' | 'Forbid' | 'Replace';
-/**
-* The number of failed finished jobs to retain. Value must be non-negative integer. Defaults to 1.
-*/
-failedJobsHistoryLimit?: number;
-/**
-* JobTemplateSpec describes the data a Job should have when created from a template
-* @required
-* @isObject
-*/
-jobTemplate: { metadata?: { finalizers?: string[]; generation?: number; name?: string; resourceVersion?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; deletionGracePeriodSeconds?: number; selfLink?: string; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; annotations?: Record<string, any>; generateName?: string }; spec?: Record<string, any> };
-/**
-* The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
-* @required
-*/
-schedule: string;
-/**
-* Optional deadline in seconds for starting the job if it misses scheduled time for any reason.  Missed jobs executions will be counted as failed ones.
-*/
-startingDeadlineSeconds?: number;
-/**
-* The number of successful finished jobs to retain. Value must be non-negative integer. Defaults to 3.
-*/
-successfulJobsHistoryLimit?: number;
 }
 
 /**
@@ -55,13 +55,15 @@ successfulJobsHistoryLimit?: number;
 */
 export function createio_k8s_api_batch_v1_CronJobSpec(data?: Partial<io_k8s_api_batch_v1_CronJobSpec>): io_k8s_api_batch_v1_CronJobSpec {
  return {
-   suspend: data?.suspend !== undefined ? data.suspend : false,
-   timeZone: data?.timeZone !== undefined ? data.timeZone : '',
-   concurrencyPolicy: data?.concurrencyPolicy !== undefined ? data.concurrencyPolicy : '',
    failedJobsHistoryLimit: data?.failedJobsHistoryLimit !== undefined ? data.failedJobsHistoryLimit : 0,
-   jobTemplate: data?.jobTemplate !== undefined ? data.jobTemplate : {},
+   jobTemplate: data?.jobTemplate !== undefined ? data.jobTemplate : createio_k8s_api_batch_v1_JobTemplateSpec(),
    schedule: data?.schedule !== undefined ? data.schedule : '',
    startingDeadlineSeconds: data?.startingDeadlineSeconds !== undefined ? data.startingDeadlineSeconds : 0,
    successfulJobsHistoryLimit: data?.successfulJobsHistoryLimit !== undefined ? data.successfulJobsHistoryLimit : 0,
+   suspend: data?.suspend !== undefined ? data.suspend : false,
+   timeZone: data?.timeZone !== undefined ? data.timeZone : '',
+   concurrencyPolicy: data?.concurrencyPolicy !== undefined ? data.concurrencyPolicy : '',
  };
 }
+// Required imports
+import { io_k8s_api_batch_v1_JobTemplateSpec, createio_k8s_api_batch_v1_JobTemplateSpec } from '../jobtemplatespec/io_k8s_api_batch_v1_JobTemplateSpec';

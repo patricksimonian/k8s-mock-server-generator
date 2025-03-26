@@ -20,10 +20,10 @@ items: io_k8s_api_core_v1_PersistentVolumeClaim[];
 */
 kind?: string;
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
 */
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta;
 }
 
 /**
@@ -36,8 +36,9 @@ export function createio_k8s_api_core_v1_PersistentVolumeClaimList(data?: Partia
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
  };
 }
 // Required imports
 import { io_k8s_api_core_v1_PersistentVolumeClaim, createio_k8s_api_core_v1_PersistentVolumeClaim } from '../persistentvolumeclaim/io_k8s_api_core_v1_PersistentVolumeClaim';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

@@ -5,32 +5,17 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec {
 /**
-* MatchResources decides whether to run the admission control policy on an object based on whether it meets the match criteria. The exclude rules take precedence over include rules (if a resource matches both, it is excluded)
-* @isObject
-*/
-matchConstraints?: { excludeResourceRules?: Array<{ scope?: string; apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[]; resources?: string[] }>; matchPolicy?: 'Equivalent' | 'Exact'; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; objectSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; resourceRules?: Array<{ apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[]; resources?: string[]; scope?: string }> };
-/**
-* ParamKind is a tuple of Group Kind and Version.
-* @isObject
-*/
-paramKind?: { apiVersion?: string; kind?: string };
-/**
-* Validations contain CEL expressions which is used to apply the validation. Validations and AuditAnnotations may not both be empty; a minimum of one Validations or AuditAnnotations is required.
-* @isArray
-*/
-validations?: Array<{ reason?: string; expression: string; message?: string; messageExpression?: string }>;
-/**
 * Variables contain definitions of variables that can be used in composition of other expressions. Each variable is defined as a named CEL expression. The variables defined here will be available under `variables` in other expressions of the policy except MatchConditions because MatchConditions are evaluated before the rest of the policy.
 
 The expression of a variable can refer to other variables defined earlier in the list but not those after. Thus, Variables must be sorted by the order of first appearance and acyclic.
 * @isArray
 */
-variables?: Array<{ expression: string; name: string }>;
+variables?: io_k8s_api_admissionregistration_v1_Variable[];
 /**
 * auditAnnotations contains CEL expressions which are used to produce audit annotations for the audit event of the API request. validations and auditAnnotations may not both be empty; a least one of validations or auditAnnotations is required.
 * @isArray
 */
-auditAnnotations?: Array<{ key: string; valueExpression: string }>;
+auditAnnotations?: io_k8s_api_admissionregistration_v1_AuditAnnotation[];
 /**
 * failurePolicy defines how to handle failures for the admission policy. Failures can occur from CEL expression parse errors, type check errors, runtime errors and invalid or mis-configured policy definitions or bindings.
 
@@ -60,7 +45,22 @@ The exact matching logic is (in order):
      - If failurePolicy=Ignore, the policy is skipped
 * @isArray
 */
-matchConditions?: Array<{ expression: string; name: string }>;
+matchConditions?: io_k8s_api_admissionregistration_v1_MatchCondition[];
+/**
+* MatchConstraints specifies what resources this policy is designed to validate. The AdmissionPolicy cares about a request if it matches _all_ Constraints. However, in order to prevent clusters from being put into an unstable state that cannot be recovered from via the API ValidatingAdmissionPolicy cannot match ValidatingAdmissionPolicy and ValidatingAdmissionPolicyBinding. Required.
+* @references io.k8s.api.admissionregistration.v1.MatchResources
+*/
+matchConstraints?: io_k8s_api_admissionregistration_v1_MatchResources;
+/**
+* ParamKind specifies the kind of resources used to parameterize this policy. If absent, there are no parameters for this policy and the param CEL variable will not be provided to validation expressions. If ParamKind refers to a non-existent kind, this policy definition is mis-configured and the FailurePolicy is applied. If paramKind is specified but paramRef is unset in ValidatingAdmissionPolicyBinding, the params variable will be null.
+* @references io.k8s.api.admissionregistration.v1.ParamKind
+*/
+paramKind?: io_k8s_api_admissionregistration_v1_ParamKind;
+/**
+* Validations contain CEL expressions which is used to apply the validation. Validations and AuditAnnotations may not both be empty; a minimum of one Validations or AuditAnnotations is required.
+* @isArray
+*/
+validations?: io_k8s_api_admissionregistration_v1_Validation[];
 }
 
 /**
@@ -70,12 +70,19 @@ matchConditions?: Array<{ expression: string; name: string }>;
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec {
  return {
-   matchConstraints: data?.matchConstraints !== undefined ? data.matchConstraints : {},
-   paramKind: data?.paramKind !== undefined ? data.paramKind : {},
-   validations: data?.validations !== undefined ? data.validations : [],
    variables: data?.variables !== undefined ? data.variables : [],
    auditAnnotations: data?.auditAnnotations !== undefined ? data.auditAnnotations : [],
    failurePolicy: data?.failurePolicy !== undefined ? data.failurePolicy : '',
    matchConditions: data?.matchConditions !== undefined ? data.matchConditions : [],
+   matchConstraints: data?.matchConstraints !== undefined ? data.matchConstraints : createio_k8s_api_admissionregistration_v1_MatchResources(),
+   paramKind: data?.paramKind !== undefined ? data.paramKind : createio_k8s_api_admissionregistration_v1_ParamKind(),
+   validations: data?.validations !== undefined ? data.validations : [],
  };
 }
+// Required imports
+import { io_k8s_api_admissionregistration_v1_AuditAnnotation, createio_k8s_api_admissionregistration_v1_AuditAnnotation } from '../io.k8s.api.admissionregistration.v1.AuditAnnotation';
+import { io_k8s_api_admissionregistration_v1_MatchCondition, createio_k8s_api_admissionregistration_v1_MatchCondition } from '../io.k8s.api.admissionregistration.v1.MatchCondition';
+import { io_k8s_api_admissionregistration_v1_MatchResources, createio_k8s_api_admissionregistration_v1_MatchResources } from '../matchresource/io_k8s_api_admissionregistration_v1_MatchResources';
+import { io_k8s_api_admissionregistration_v1_ParamKind, createio_k8s_api_admissionregistration_v1_ParamKind } from '../paramkind/io_k8s_api_admissionregistration_v1_ParamKind';
+import { io_k8s_api_admissionregistration_v1_Validation, createio_k8s_api_admissionregistration_v1_Validation } from '../io.k8s.api.admissionregistration.v1.Validation';
+import { io_k8s_api_admissionregistration_v1_Variable, createio_k8s_api_admissionregistration_v1_Variable } from '../io.k8s.api.admissionregistration.v1.Variable';

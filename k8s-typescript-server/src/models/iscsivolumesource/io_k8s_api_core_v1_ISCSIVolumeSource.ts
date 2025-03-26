@@ -18,10 +18,10 @@ iqn: string;
 */
 iscsiInterface?: string;
 /**
-* portals is the iSCSI Target Portal List. The portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
-* @isArray
+* secretRef is the CHAP Secret for iSCSI target and initiator authentication
+* @references io.k8s.api.core.v1.LocalObjectReference
 */
-portals?: string[];
+secretRef?: io_k8s_api_core_v1_LocalObjectReference;
 /**
 * targetPortal is iSCSI Target Portal. The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
 * @required
@@ -36,15 +36,6 @@ chapAuthDiscovery?: boolean;
 */
 chapAuthSession?: boolean;
 /**
-* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
-*/
-readOnly?: boolean;
-/**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @isObject
-*/
-secretRef?: { name?: string };
-/**
 * initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
 */
 initiatorName?: string;
@@ -53,6 +44,15 @@ initiatorName?: string;
 * @required
 */
 lun: number;
+/**
+* portals is the iSCSI Target Portal List. The portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
+* @isArray
+*/
+portals?: string[];
+/**
+* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
+*/
+readOnly?: boolean;
 }
 
 /**
@@ -65,13 +65,15 @@ export function createio_k8s_api_core_v1_ISCSIVolumeSource(data?: Partial<io_k8s
    fsType: data?.fsType !== undefined ? data.fsType : '',
    iqn: data?.iqn !== undefined ? data.iqn : '',
    iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
-   portals: data?.portals !== undefined ? data.portals : [],
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
    targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
    chapAuthDiscovery: data?.chapAuthDiscovery !== undefined ? data.chapAuthDiscovery : false,
    chapAuthSession: data?.chapAuthSession !== undefined ? data.chapAuthSession : false,
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
    lun: data?.lun !== undefined ? data.lun : 0,
+   portals: data?.portals !== undefined ? data.portals : [],
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LocalObjectReference, createio_k8s_api_core_v1_LocalObjectReference } from '../localobjectreference/io_k8s_api_core_v1_LocalObjectReference';

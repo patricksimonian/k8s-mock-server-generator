@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_networking_v1_NetworkPolicy {
 /**
+* spec represents the specification of the desired behavior for this NetworkPolicy.
+* @references io.k8s.api.networking.v1.NetworkPolicySpec
+*/
+spec?: io_k8s_api_networking_v1_NetworkPolicySpec;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -13,15 +18,10 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { finalizers?: string[]; namespace?: string; selfLink?: string; deletionGracePeriodSeconds?: number; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; annotations?: Record<string, any>; generation?: number; uid?: string; deletionTimestamp?: Date; generateName?: string; labels?: Record<string, any>; name?: string; resourceVersion?: string; creationTimestamp?: Date };
-/**
-* NetworkPolicySpec provides the specification of a NetworkPolicy
-* @isObject
-*/
-spec?: { policyTypes?: 'Egress' | 'Ingress'[]; egress?: Array<{ ports?: Array<{ endPort?: number; port?: string; protocol?: 'SCTP' | 'TCP' | 'UDP' }>; to?: Array<{ ipBlock?: { except?: string[]; cidr: string }; namespaceSelector?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> }; podSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }> }>; ingress?: Array<{ from?: Array<{ ipBlock?: { except?: string[]; cidr: string }; namespaceSelector?: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> }; podSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }>; ports?: Array<{ protocol?: 'SCTP' | 'TCP' | 'UDP'; endPort?: number; port?: string }> }>; podSelector: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> } };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -31,9 +31,12 @@ spec?: { policyTypes?: 'Egress' | 'Ingress'[]; egress?: Array<{ ports?: Array<{ 
 */
 export function createio_k8s_api_networking_v1_NetworkPolicy(data?: Partial<io_k8s_api_networking_v1_NetworkPolicy>): io_k8s_api_networking_v1_NetworkPolicy {
  return {
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_networking_v1_NetworkPolicySpec(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { podSelector: {} },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_NetworkPolicySpec, createio_k8s_api_networking_v1_NetworkPolicySpec } from '../networkpolicyspec/io_k8s_api_networking_v1_NetworkPolicySpec';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

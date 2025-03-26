@@ -5,23 +5,23 @@
 */
 export interface io_k8s_api_autoscaling_v2_ObjectMetricSource {
 /**
-* CrossVersionObjectReference contains enough information to let you identify the referred resource.
+* describedObject specifies the descriptions of a object,such as kind,name apiVersion
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.CrossVersionObjectReference
 */
-describedObject: { apiVersion?: string; kind: string; name: string };
+describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
 /**
-* MetricIdentifier defines the name and optionally selector for a metric
+* metric identifies the target metric by name and selector
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricIdentifier
 */
-metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } };
+metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 /**
-* MetricTarget defines the target value, average value, or average utilization of a specific metric
+* target specifies the target value for the given metric
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricTarget
 */
-target: { value?: string; averageUtilization?: number; averageValue?: string; type: string };
+target: io_k8s_api_autoscaling_v2_MetricTarget;
 }
 
 /**
@@ -31,8 +31,12 @@ target: { value?: string; averageUtilization?: number; averageValue?: string; ty
 */
 export function createio_k8s_api_autoscaling_v2_ObjectMetricSource(data?: Partial<io_k8s_api_autoscaling_v2_ObjectMetricSource>): io_k8s_api_autoscaling_v2_ObjectMetricSource {
  return {
-   describedObject: data?.describedObject !== undefined ? data.describedObject : { kind: '', name: '' },
-   metric: data?.metric !== undefined ? data.metric : { name: '' },
-   target: data?.target !== undefined ? data.target : { type: '' },
+   describedObject: data?.describedObject !== undefined ? data.describedObject : createio_k8s_api_autoscaling_v2_CrossVersionObjectReference(),
+   metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
+   target: data?.target !== undefined ? data.target : createio_k8s_api_autoscaling_v2_MetricTarget(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_CrossVersionObjectReference, createio_k8s_api_autoscaling_v2_CrossVersionObjectReference } from '../crossversionobjectreference/io_k8s_api_autoscaling_v2_CrossVersionObjectReference';
+import { io_k8s_api_autoscaling_v2_MetricIdentifier, createio_k8s_api_autoscaling_v2_MetricIdentifier } from '../metricidentifier/io_k8s_api_autoscaling_v2_MetricIdentifier';
+import { io_k8s_api_autoscaling_v2_MetricTarget, createio_k8s_api_autoscaling_v2_MetricTarget } from '../metrictarget/io_k8s_api_autoscaling_v2_MetricTarget';

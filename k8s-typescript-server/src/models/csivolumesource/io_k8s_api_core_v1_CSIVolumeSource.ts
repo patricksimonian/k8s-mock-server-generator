@@ -14,10 +14,10 @@ driver: string;
 */
 fsType?: string;
 /**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @isObject
+* nodePublishSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodePublishVolume and NodeUnpublishVolume calls. This field is optional, and  may be empty if no secret is required. If the secret object contains more than one secret, all secret references are passed.
+* @references io.k8s.api.core.v1.LocalObjectReference
 */
-nodePublishSecretRef?: { name?: string };
+nodePublishSecretRef?: io_k8s_api_core_v1_LocalObjectReference;
 /**
 * readOnly specifies a read-only configuration for the volume. Defaults to false (read/write).
 */
@@ -37,8 +37,10 @@ export function createio_k8s_api_core_v1_CSIVolumeSource(data?: Partial<io_k8s_a
  return {
    driver: data?.driver !== undefined ? data.driver : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
-   nodePublishSecretRef: data?.nodePublishSecretRef !== undefined ? data.nodePublishSecretRef : {},
+   nodePublishSecretRef: data?.nodePublishSecretRef !== undefined ? data.nodePublishSecretRef : createio_k8s_api_core_v1_LocalObjectReference(),
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    volumeAttributes: data?.volumeAttributes !== undefined ? data.volumeAttributes : {},
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LocalObjectReference, createio_k8s_api_core_v1_LocalObjectReference } from '../localobjectreference/io_k8s_api_core_v1_LocalObjectReference';

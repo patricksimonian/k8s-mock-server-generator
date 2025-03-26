@@ -14,19 +14,19 @@ gateway: string;
 */
 protectionDomain?: string;
 /**
-* readOnly Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
+* secretRef references to the secret for ScaleIO user and other sensitive information. If this is not provided, Login operation will fail.
+* @required
+* @references io.k8s.api.core.v1.LocalObjectReference
 */
-readOnly?: boolean;
+secretRef: io_k8s_api_core_v1_LocalObjectReference;
 /**
 * fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Default is "xfs".
 */
 fsType?: string;
 /**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @required
-* @isObject
+* readOnly Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
 */
-secretRef: { name?: string };
+readOnly?: boolean;
 /**
 * sslEnabled Flag enable/disable SSL communication with Gateway, default false
 */
@@ -59,9 +59,9 @@ export function createio_k8s_api_core_v1_ScaleIOVolumeSource(data?: Partial<io_k
  return {
    gateway: data?.gateway !== undefined ? data.gateway : '',
    protectionDomain: data?.protectionDomain !== undefined ? data.protectionDomain : '',
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
    fsType: data?.fsType !== undefined ? data.fsType : '',
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    sslEnabled: data?.sslEnabled !== undefined ? data.sslEnabled : false,
    storageMode: data?.storageMode !== undefined ? data.storageMode : '',
    storagePool: data?.storagePool !== undefined ? data.storagePool : '',
@@ -69,3 +69,5 @@ export function createio_k8s_api_core_v1_ScaleIOVolumeSource(data?: Partial<io_k
    volumeName: data?.volumeName !== undefined ? data.volumeName : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LocalObjectReference, createio_k8s_api_core_v1_LocalObjectReference } from '../localobjectreference/io_k8s_api_core_v1_LocalObjectReference';

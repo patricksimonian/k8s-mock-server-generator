@@ -13,21 +13,21 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { uid?: string; deletionTimestamp?: Date; namespace?: string; generateName?: string; labels?: Record<string, any>; finalizers?: string[]; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; selfLink?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; name?: string; resourceVersion?: string; annotations?: Record<string, any>; generation?: number };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* SelfSubjectRulesReviewSpec defines the specification for SelfSubjectRulesReview.
+* Spec holds information about the request being evaluated.
 * @required
-* @isObject
+* @references io.k8s.api.authorization.v1.SelfSubjectRulesReviewSpec
 */
-spec: { namespace?: string };
+spec: io_k8s_api_authorization_v1_SelfSubjectRulesReviewSpec;
 /**
-* SubjectRulesReviewStatus contains the result of a rules check. This check can be incomplete depending on the set of authorizers the server is configured with and any errors experienced during evaluation. Because authorization rules are additive, if a rule appears in a list it's safe to assume the subject has that permission, even if that list is incomplete.
-* @isObject
+* Status is filled in by the server and indicates the set of actions a user can perform.
+* @references io.k8s.api.authorization.v1.SubjectRulesReviewStatus
 */
-status?: { evaluationError?: string; incomplete: boolean; nonResourceRules: Array<{ nonResourceURLs?: string[]; verbs: string[] }>; resourceRules: Array<{ apiGroups?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[] }> };
+status?: io_k8s_api_authorization_v1_SubjectRulesReviewStatus;
 }
 
 /**
@@ -39,8 +39,12 @@ export function createio_k8s_api_authorization_v1_SelfSubjectRulesReview(data?: 
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { nonResourceRules: [], resourceRules: [], incomplete: false },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authorization_v1_SelfSubjectRulesReviewSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authorization_v1_SubjectRulesReviewStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_authorization_v1_SelfSubjectRulesReviewSpec, createio_k8s_api_authorization_v1_SelfSubjectRulesReviewSpec } from '../selfsubjectrulesreviewspec/io_k8s_api_authorization_v1_SelfSubjectRulesReviewSpec';
+import { io_k8s_api_authorization_v1_SubjectRulesReviewStatus, createio_k8s_api_authorization_v1_SubjectRulesReviewStatus } from '../subjectrulesreviewstatus/io_k8s_api_authorization_v1_SubjectRulesReviewStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

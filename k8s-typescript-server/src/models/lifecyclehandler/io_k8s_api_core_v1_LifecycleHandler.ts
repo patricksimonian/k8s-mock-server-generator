@@ -5,25 +5,25 @@
 */
 export interface io_k8s_api_core_v1_LifecycleHandler {
 /**
-* ExecAction describes a "run in container" action.
-* @isObject
+* HTTPGet specifies an HTTP GET request to perform.
+* @references io.k8s.api.core.v1.HTTPGetAction
 */
-exec?: { command?: string[] };
+httpGet?: io_k8s_api_core_v1_HTTPGetAction;
 /**
-* HTTPGetAction describes an action based on HTTP Get requests.
-* @isObject
+* Sleep represents a duration that the container should sleep.
+* @references io.k8s.api.core.v1.SleepAction
 */
-httpGet?: { host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string; scheme?: 'HTTP' | 'HTTPS' };
+sleep?: io_k8s_api_core_v1_SleepAction;
 /**
-* SleepAction describes a "sleep" action.
-* @isObject
+* Deprecated. TCPSocket is NOT supported as a LifecycleHandler and kept for backward compatibility. There is no validation of this field and lifecycle hooks will fail at runtime when it is specified.
+* @references io.k8s.api.core.v1.TCPSocketAction
 */
-sleep?: { seconds: number };
+tcpSocket?: io_k8s_api_core_v1_TCPSocketAction;
 /**
-* TCPSocketAction describes an action based on opening a socket
-* @isObject
+* Exec specifies a command to execute in the container.
+* @references io.k8s.api.core.v1.ExecAction
 */
-tcpSocket?: { host?: string; port: string };
+exec?: io_k8s_api_core_v1_ExecAction;
 }
 
 /**
@@ -33,9 +33,14 @@ tcpSocket?: { host?: string; port: string };
 */
 export function createio_k8s_api_core_v1_LifecycleHandler(data?: Partial<io_k8s_api_core_v1_LifecycleHandler>): io_k8s_api_core_v1_LifecycleHandler {
  return {
-   exec: data?.exec !== undefined ? data.exec : {},
-   httpGet: data?.httpGet !== undefined ? data.httpGet : { port: '' },
-   sleep: data?.sleep !== undefined ? data.sleep : { seconds: 0 },
-   tcpSocket: data?.tcpSocket !== undefined ? data.tcpSocket : { port: '' },
+   httpGet: data?.httpGet !== undefined ? data.httpGet : createio_k8s_api_core_v1_HTTPGetAction(),
+   sleep: data?.sleep !== undefined ? data.sleep : createio_k8s_api_core_v1_SleepAction(),
+   tcpSocket: data?.tcpSocket !== undefined ? data.tcpSocket : createio_k8s_api_core_v1_TCPSocketAction(),
+   exec: data?.exec !== undefined ? data.exec : createio_k8s_api_core_v1_ExecAction(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ExecAction, createio_k8s_api_core_v1_ExecAction } from '../execaction/io_k8s_api_core_v1_ExecAction';
+import { io_k8s_api_core_v1_HTTPGetAction, createio_k8s_api_core_v1_HTTPGetAction } from '../httpgetaction/io_k8s_api_core_v1_HTTPGetAction';
+import { io_k8s_api_core_v1_SleepAction, createio_k8s_api_core_v1_SleepAction } from '../sleepaction/io_k8s_api_core_v1_SleepAction';
+import { io_k8s_api_core_v1_TCPSocketAction, createio_k8s_api_core_v1_TCPSocketAction } from '../tcpsocketaction/io_k8s_api_core_v1_TCPSocketAction';

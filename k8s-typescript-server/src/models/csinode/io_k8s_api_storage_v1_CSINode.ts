@@ -5,24 +5,24 @@
 */
 export interface io_k8s_api_storage_v1_CSINode {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. metadata.name must be the Kubernetes node name.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { namespace?: string; resourceVersion?: string; selfLink?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; creationTimestamp?: Date; finalizers?: string[]; generation?: number; generateName?: string; labels?: Record<string, any>; name?: string; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* CSINodeSpec holds information about the specification of all CSI drivers installed on a node
+* spec is the specification of CSINode
 * @required
-* @isObject
+* @references io.k8s.api.storage.v1.CSINodeSpec
 */
-spec: { drivers: Array<{ name: string; nodeID: string; topologyKeys?: string[]; allocatable?: { count?: number } }> };
+spec: io_k8s_api_storage_v1_CSINodeSpec;
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -32,9 +32,12 @@ spec: { drivers: Array<{ name: string; nodeID: string; topologyKeys?: string[]; 
 */
 export function createio_k8s_api_storage_v1_CSINode(data?: Partial<io_k8s_api_storage_v1_CSINode>): io_k8s_api_storage_v1_CSINode {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { drivers: [] },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_storage_v1_CSINodeSpec(),
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
+// Required imports
+import { io_k8s_api_storage_v1_CSINodeSpec, createio_k8s_api_storage_v1_CSINodeSpec } from '../csinodespec/io_k8s_api_storage_v1_CSINodeSpec';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

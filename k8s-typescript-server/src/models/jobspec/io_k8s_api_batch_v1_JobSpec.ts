@@ -5,6 +5,25 @@
 */
 export interface io_k8s_api_batch_v1_JobSpec {
 /**
+* ManagedBy field indicates the controller that manages a Job. The k8s Job controller reconciles jobs which don't have this field at all or the field value is the reserved string `kubernetes.io/job-controller`, but skips reconciling Jobs with a custom value for this field. The value must be a valid domain-prefixed path (e.g. acme.io/foo) - all characters before the first "/" must be a valid subdomain as defined by RFC 1123. All characters trailing the first "/" must be valid HTTP Path characters as defined by RFC 3986. The value cannot exceed 63 characters. This field is immutable.
+
+This field is beta-level. The job controller accepts setting the field when the feature gate JobManagedBy is enabled (enabled by default).
+*/
+managedBy?: string;
+/**
+* manualSelector controls generation of pod labels and pod selectors. Leave `manualSelector` unset unless you are certain what you are doing. When false or unset, the system pick labels unique to this job and appends those labels to the pod template.  When true, the user is responsible for picking unique labels and specifying the selector.  Failure to pick a unique label may cause this and other jobs to not function correctly.  However, You may see `manualSelector=true` in jobs that were created with the old `extensions/v1beta1` API. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#specifying-your-own-pod-selector
+*/
+manualSelector?: boolean;
+/**
+* Specifies the maximum desired number of pods the job should run at any given time. The actual number of pods running in steady state will be less than this number when ((.spec.completions - .status.successful) < .spec.parallelism), i.e. when the work left to do is less than max parallelism. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+*/
+parallelism?: number;
+/**
+* Specifies the policy of handling failed pods. In particular, it allows to specify the set of actions and conditions which need to be satisfied to take the associated action. If empty, the default behaviour applies - the counter of failed pods, represented by the jobs's .status.failed field, is incremented and it is checked against the backoffLimit. This field cannot be used in combination with restartPolicy=OnFailure.
+* @references io.k8s.api.batch.v1.PodFailurePolicy
+*/
+podFailurePolicy?: io_k8s_api_batch_v1_PodFailurePolicy;
+/**
 * podReplacementPolicy specifies when to create replacement Pods. Possible values are: - TerminatingOrFailed means that we recreate pods
   when they are terminating (has a metadata.deletionTimestamp) or failed.
 - Failed means to wait until a previously created Pod is fully terminated (has phase
@@ -18,9 +37,38 @@ Possible enum values:
 */
 podReplacementPolicy?: 'Failed' | 'TerminatingOrFailed';
 /**
+* Describes the pod that will be created when executing a job. The only allowed template.spec.restartPolicy values are "Never" or "OnFailure". More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+* @required
+* @references io.k8s.api.core.v1.PodTemplateSpec
+*/
+template: io_k8s_api_core_v1_PodTemplateSpec;
+/**
+* Specifies the duration in seconds relative to the startTime that the job may be continuously active before the system tries to terminate it; value must be positive integer. If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.
+*/
+activeDeadlineSeconds?: number;
+/**
 * Specifies the number of retries before marking this job failed. Defaults to 6
 */
 backoffLimit?: number;
+/**
+* Specifies the maximal number of failed indexes before marking the Job as failed, when backoffLimitPerIndex is set. Once the number of failed indexes exceeds this number the entire Job is marked as Failed and its execution is terminated. When left as null the job continues execution of all of its indexes and is marked with the `Complete` Job condition. It can only be specified when backoffLimitPerIndex is set. It can be null or up to completions. It is required and must be less than or equal to 10^4 when is completions greater than 10^5. This field is beta-level. It can be used when the `JobBackoffLimitPerIndex` feature gate is enabled (enabled by default).
+*/
+maxFailedIndexes?: number;
+/**
+* successPolicy specifies the policy when the Job can be declared as succeeded. If empty, the default behavior applies - the Job is declared as succeeded only when the number of succeeded pods equals to the completions. When the field is specified, it must be immutable and works only for the Indexed Jobs. Once the Job meets the SuccessPolicy, the lingering pods are terminated.
+
+This field is beta-level. To use this field, you must enable the `JobSuccessPolicy` feature gate (enabled by default).
+* @references io.k8s.api.batch.v1.SuccessPolicy
+*/
+successPolicy?: io_k8s_api_batch_v1_SuccessPolicy;
+/**
+* suspend specifies whether the Job controller should create Pods or not. If a Job is created with suspend set to true, no Pods are created by the Job controller. If a Job is suspended after creation (i.e. the flag goes from false to true), the Job controller will delete all active Pods associated with this Job. Users must design their workload to gracefully handle this. Suspending a Job will reset the StartTime field of the Job, effectively resetting the ActiveDeadlineSeconds timer too. Defaults to false.
+*/
+suspend?: boolean;
+/**
+* Specifies the limit for the number of retries within an index before marking this index as failed. When enabled the number of failures per index is kept in the pod's batch.kubernetes.io/job-index-failure-count annotation. It can only be set when Job's completionMode=Indexed, and the Pod's restart policy is Never. The field is immutable. This field is beta-level. It can be used when the `JobBackoffLimitPerIndex` feature gate is enabled (enabled by default).
+*/
+backoffLimitPerIndex?: number;
 /**
 * completionMode specifies how Pod completions are tracked. It can be `NonIndexed` (default) or `Indexed`.
 
@@ -40,60 +88,14 @@ completionMode?: 'Indexed' | 'NonIndexed';
 */
 completions?: number;
 /**
-* Specifies the maximal number of failed indexes before marking the Job as failed, when backoffLimitPerIndex is set. Once the number of failed indexes exceeds this number the entire Job is marked as Failed and its execution is terminated. When left as null the job continues execution of all of its indexes and is marked with the `Complete` Job condition. It can only be specified when backoffLimitPerIndex is set. It can be null or up to completions. It is required and must be less than or equal to 10^4 when is completions greater than 10^5. This field is beta-level. It can be used when the `JobBackoffLimitPerIndex` feature gate is enabled (enabled by default).
+* A label query over pods that should match the pod count. Normally, the system sets this field for you. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-maxFailedIndexes?: number;
-/**
-* PodTemplateSpec describes the data a pod should have when created from a template
-* @required
-* @isObject
-*/
-template: { metadata?: { generateName?: string; namespace?: string; resourceVersion?: string; selfLink?: string; uid?: string; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; deletionTimestamp?: Date; finalizers?: string[] }; spec?: Record<string, any> };
-/**
-* ManagedBy field indicates the controller that manages a Job. The k8s Job controller reconciles jobs which don't have this field at all or the field value is the reserved string `kubernetes.io/job-controller`, but skips reconciling Jobs with a custom value for this field. The value must be a valid domain-prefixed path (e.g. acme.io/foo) - all characters before the first "/" must be a valid subdomain as defined by RFC 1123. All characters trailing the first "/" must be valid HTTP Path characters as defined by RFC 3986. The value cannot exceed 63 characters. This field is immutable.
-
-This field is beta-level. The job controller accepts setting the field when the feature gate JobManagedBy is enabled (enabled by default).
-*/
-managedBy?: string;
-/**
-* manualSelector controls generation of pod labels and pod selectors. Leave `manualSelector` unset unless you are certain what you are doing. When false or unset, the system pick labels unique to this job and appends those labels to the pod template.  When true, the user is responsible for picking unique labels and specifying the selector.  Failure to pick a unique label may cause this and other jobs to not function correctly.  However, You may see `manualSelector=true` in jobs that were created with the old `extensions/v1beta1` API. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#specifying-your-own-pod-selector
-*/
-manualSelector?: boolean;
-/**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
-*/
-selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
-/**
-* SuccessPolicy describes when a Job can be declared as succeeded based on the success of some indexes.
-* @isObject
-*/
-successPolicy?: { rules: Array<{ succeededIndexes?: string; succeededCount?: number }> };
-/**
-* Specifies the limit for the number of retries within an index before marking this index as failed. When enabled the number of failures per index is kept in the pod's batch.kubernetes.io/job-index-failure-count annotation. It can only be set when Job's completionMode=Indexed, and the Pod's restart policy is Never. The field is immutable. This field is beta-level. It can be used when the `JobBackoffLimitPerIndex` feature gate is enabled (enabled by default).
-*/
-backoffLimitPerIndex?: number;
-/**
-* Specifies the maximum desired number of pods the job should run at any given time. The actual number of pods running in steady state will be less than this number when ((.spec.completions - .status.successful) < .spec.parallelism), i.e. when the work left to do is less than max parallelism. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
-*/
-parallelism?: number;
-/**
-* PodFailurePolicy describes how failed pods influence the backoffLimit.
-* @isObject
-*/
-podFailurePolicy?: { rules: Array<{ onPodConditions?: Array<{ status: string; type: string }>; action: 'Count' | 'FailIndex' | 'FailJob' | 'Ignore'; onExitCodes?: { operator: 'In' | 'NotIn'; values: number[]; containerName?: string } }> };
+selector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 /**
 * ttlSecondsAfterFinished limits the lifetime of a Job that has finished execution (either Complete or Failed). If this field is set, ttlSecondsAfterFinished after the Job finishes, it is eligible to be automatically deleted. When the Job is being deleted, its lifecycle guarantees (e.g. finalizers) will be honored. If this field is unset, the Job won't be automatically deleted. If this field is set to zero, the Job becomes eligible to be deleted immediately after it finishes.
 */
 ttlSecondsAfterFinished?: number;
-/**
-* Specifies the duration in seconds relative to the startTime that the job may be continuously active before the system tries to terminate it; value must be positive integer. If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.
-*/
-activeDeadlineSeconds?: number;
-/**
-* suspend specifies whether the Job controller should create Pods or not. If a Job is created with suspend set to true, no Pods are created by the Job controller. If a Job is suspended after creation (i.e. the flag goes from false to true), the Job controller will delete all active Pods associated with this Job. Users must design their workload to gracefully handle this. Suspending a Job will reset the StartTime field of the Job, effectively resetting the ActiveDeadlineSeconds timer too. Defaults to false.
-*/
-suspend?: boolean;
 }
 
 /**
@@ -103,21 +105,26 @@ suspend?: boolean;
 */
 export function createio_k8s_api_batch_v1_JobSpec(data?: Partial<io_k8s_api_batch_v1_JobSpec>): io_k8s_api_batch_v1_JobSpec {
  return {
-   podReplacementPolicy: data?.podReplacementPolicy !== undefined ? data.podReplacementPolicy : '',
-   backoffLimit: data?.backoffLimit !== undefined ? data.backoffLimit : 0,
-   completionMode: data?.completionMode !== undefined ? data.completionMode : '',
-   completions: data?.completions !== undefined ? data.completions : 0,
-   maxFailedIndexes: data?.maxFailedIndexes !== undefined ? data.maxFailedIndexes : 0,
-   template: data?.template !== undefined ? data.template : {},
    managedBy: data?.managedBy !== undefined ? data.managedBy : '',
    manualSelector: data?.manualSelector !== undefined ? data.manualSelector : false,
-   selector: data?.selector !== undefined ? data.selector : {},
-   successPolicy: data?.successPolicy !== undefined ? data.successPolicy : { rules: [] },
-   backoffLimitPerIndex: data?.backoffLimitPerIndex !== undefined ? data.backoffLimitPerIndex : 0,
    parallelism: data?.parallelism !== undefined ? data.parallelism : 0,
-   podFailurePolicy: data?.podFailurePolicy !== undefined ? data.podFailurePolicy : { rules: [] },
-   ttlSecondsAfterFinished: data?.ttlSecondsAfterFinished !== undefined ? data.ttlSecondsAfterFinished : 0,
+   podFailurePolicy: data?.podFailurePolicy !== undefined ? data.podFailurePolicy : createio_k8s_api_batch_v1_PodFailurePolicy(),
+   podReplacementPolicy: data?.podReplacementPolicy !== undefined ? data.podReplacementPolicy : '',
+   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
    activeDeadlineSeconds: data?.activeDeadlineSeconds !== undefined ? data.activeDeadlineSeconds : 0,
+   backoffLimit: data?.backoffLimit !== undefined ? data.backoffLimit : 0,
+   maxFailedIndexes: data?.maxFailedIndexes !== undefined ? data.maxFailedIndexes : 0,
+   successPolicy: data?.successPolicy !== undefined ? data.successPolicy : createio_k8s_api_batch_v1_SuccessPolicy(),
    suspend: data?.suspend !== undefined ? data.suspend : false,
+   backoffLimitPerIndex: data?.backoffLimitPerIndex !== undefined ? data.backoffLimitPerIndex : 0,
+   completionMode: data?.completionMode !== undefined ? data.completionMode : '',
+   completions: data?.completions !== undefined ? data.completions : 0,
+   selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   ttlSecondsAfterFinished: data?.ttlSecondsAfterFinished !== undefined ? data.ttlSecondsAfterFinished : 0,
  };
 }
+// Required imports
+import { io_k8s_api_batch_v1_PodFailurePolicy, createio_k8s_api_batch_v1_PodFailurePolicy } from '../podfailurepolicy/io_k8s_api_batch_v1_PodFailurePolicy';
+import { io_k8s_api_batch_v1_SuccessPolicy, createio_k8s_api_batch_v1_SuccessPolicy } from '../successpolicy/io_k8s_api_batch_v1_SuccessPolicy';
+import { io_k8s_api_core_v1_PodTemplateSpec, createio_k8s_api_core_v1_PodTemplateSpec } from '../podtemplatespec/io_k8s_api_core_v1_PodTemplateSpec';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';

@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_StorageOSVolumeSource {
 /**
+* volumeName is the human-readable name of the StorageOS volume.  Volume names are only unique within a namespace.
+*/
+volumeName?: string;
+/**
 * volumeNamespace specifies the scope of the volume within StorageOS.  If no namespace is specified then the Pod's namespace will be used.  This allows the Kubernetes name scoping to be mirrored within StorageOS for tighter integration. Set VolumeName to any name to override the default behaviour. Set to "default" if you are not using namespaces within StorageOS. Namespaces that do not pre-exist within StorageOS will be created.
 */
 volumeNamespace?: string;
@@ -17,14 +21,10 @@ fsType?: string;
 */
 readOnly?: boolean;
 /**
-* LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
-* @isObject
+* secretRef specifies the secret to use for obtaining the StorageOS API credentials.  If not specified, default values will be attempted.
+* @references io.k8s.api.core.v1.LocalObjectReference
 */
-secretRef?: { name?: string };
-/**
-* volumeName is the human-readable name of the StorageOS volume.  Volume names are only unique within a namespace.
-*/
-volumeName?: string;
+secretRef?: io_k8s_api_core_v1_LocalObjectReference;
 }
 
 /**
@@ -34,10 +34,12 @@ volumeName?: string;
 */
 export function createio_k8s_api_core_v1_StorageOSVolumeSource(data?: Partial<io_k8s_api_core_v1_StorageOSVolumeSource>): io_k8s_api_core_v1_StorageOSVolumeSource {
  return {
+   volumeName: data?.volumeName !== undefined ? data.volumeName : '',
    volumeNamespace: data?.volumeNamespace !== undefined ? data.volumeNamespace : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
-   volumeName: data?.volumeName !== undefined ? data.volumeName : '',
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LocalObjectReference, createio_k8s_api_core_v1_LocalObjectReference } from '../localobjectreference/io_k8s_api_core_v1_LocalObjectReference';

@@ -33,7 +33,7 @@ certificate?: string;
 * conditions applied to the request. Known conditions are "Approved", "Denied", and "Failed".
 * @isArray
 */
-conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date; lastUpdateTime?: Date }>;
+conditions?: io_k8s_api_certificates_v1_CertificateSigningRequestCondition[];
 }
 
 /**
@@ -47,3 +47,5 @@ export function createio_k8s_api_certificates_v1_CertificateSigningRequestStatus
    conditions: data?.conditions !== undefined ? data.conditions : [],
  };
 }
+// Required imports
+import { io_k8s_api_certificates_v1_CertificateSigningRequestCondition, createio_k8s_api_certificates_v1_CertificateSigningRequestCondition } from '../io.k8s.api.certificates.v1.CertificateSigningRequestCondition';

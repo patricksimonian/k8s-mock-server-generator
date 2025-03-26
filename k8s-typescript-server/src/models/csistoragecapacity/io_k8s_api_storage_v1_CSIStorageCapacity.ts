@@ -13,15 +13,37 @@ They are consumed by the kube-scheduler when a CSI driver opts into capacity-awa
 */
 export interface io_k8s_api_storage_v1_CSIStorageCapacity {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* capacity is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
+
+The semantic is currently (CSI spec 1.2) defined as: The available capacity, in bytes, of the storage that can be used to provision volumes. If not set, that information is currently unavailable.
+* @references io.k8s.apimachinery.pkg.api.resource.Quantity
 */
-metadata?: { creationTimestamp?: Date; finalizers?: string[]; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionTimestamp?: Date; generateName?: string; namespace?: string; resourceVersion?: string; deletionGracePeriodSeconds?: number; uid?: string; annotations?: Record<string, any>; generation?: number; name?: string; selfLink?: string };
+capacity?: io_k8s_apimachinery_pkg_api_resource_Quantity;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
-nodeTopology?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> };
+kind?: string;
+/**
+* maximumVolumeSize is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
+
+This is defined since CSI spec 1.4.0 as the largest size that may be used in a CreateVolumeRequest.capacity_range.required_bytes field to create a volume with the same parameters as those in GetCapacityRequest. The corresponding value in the Kubernetes API is ResourceRequirements.Requests in a volume claim.
+* @references io.k8s.apimachinery.pkg.api.resource.Quantity
+*/
+maximumVolumeSize?: io_k8s_apimachinery_pkg_api_resource_Quantity;
+/**
+* Standard object's metadata. The name has no particular meaning. It must be a DNS subdomain (dots allowed, 253 characters). To ensure that there are no conflicts with other CSI drivers on the cluster, the recommendation is to use csisc-<uuid>, a generated name, or a reverse-domain name which ends with the unique CSI driver name.
+
+Objects are namespaced.
+
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* nodeTopology defines which nodes have access to the storage for which capacity was reported. If not set, the storage is not accessible from any node in the cluster. If empty, the storage is accessible from all nodes. This field is immutable.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
+*/
+nodeTopology?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 /**
 * storageClassName represents the name of the StorageClass that the reported capacity applies to. It must meet the same requirements as the name of a StorageClass object (non-empty, DNS subdomain). If that object no longer exists, the CSIStorageCapacity object is obsolete and should be removed by its creator. This field is immutable.
 * @required
@@ -31,90 +53,6 @@ storageClassName: string;
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
-/**
-* Quantity is a fixed-point representation of a number. It provides convenient marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64() accessors.
-
-The serialization format is:
-
-``` <quantity>        ::= <signedNumber><suffix>
-
-	(Note that <suffix> may be empty, from the "" case in <decimalSI>.)
-
-<digit>           ::= 0 | 1 | ... | 9 <digits>          ::= <digit> | <digit><digits> <number>          ::= <digits> | <digits>.<digits> | <digits>. | .<digits> <sign>            ::= "+" | "-" <signedNumber>    ::= <number> | <sign><number> <suffix>          ::= <binarySI> | <decimalExponent> | <decimalSI> <binarySI>        ::= Ki | Mi | Gi | Ti | Pi | Ei
-
-	(International System of units; See: http://physics.nist.gov/cuu/Units/binary.html)
-
-<decimalSI>       ::= m | "" | k | M | G | T | P | E
-
-	(Note that 1024 = 1Ki but 1000 = 1k; I didn't choose the capitalization.)
-
-<decimalExponent> ::= "e" <signedNumber> | "E" <signedNumber> ```
-
-No matter which of the three exponent forms is used, no quantity may represent a number greater than 2^63-1 in magnitude, nor may it have more than 3 decimal places. Numbers larger or more precise will be capped or rounded up. (E.g.: 0.1m will rounded up to 1m.) This may be extended in the future if we require larger or smaller quantities.
-
-When a Quantity is parsed from a string, it will remember the type of suffix it had, and will use the same type again when it is serialized.
-
-Before serializing, Quantity will be put in "canonical form". This means that Exponent/suffix will be adjusted up or down (with a corresponding increase or decrease in Mantissa) such that:
-
-- No precision is lost - No fractional digits will be emitted - The exponent (or suffix) is as large as possible.
-
-The sign will be omitted unless the number is negative.
-
-Examples:
-
-- 1.5 will be serialized as "1500m" - 1.5Gi will be serialized as "1536Mi"
-
-Note that the quantity will NEVER be internally represented by a floating point number. That is the whole point of this exercise.
-
-Non-canonical values will still parse as long as they are well formed, but will be re-emitted in their canonical form. (So always use canonical form, or don't diff.)
-
-This format is intended to make it difficult to use these numbers without writing some sort of special handling code in the hopes that that will cause implementors to also use a fixed point implementation.
-*/
-capacity?: string;
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
-* Quantity is a fixed-point representation of a number. It provides convenient marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64() accessors.
-
-The serialization format is:
-
-``` <quantity>        ::= <signedNumber><suffix>
-
-	(Note that <suffix> may be empty, from the "" case in <decimalSI>.)
-
-<digit>           ::= 0 | 1 | ... | 9 <digits>          ::= <digit> | <digit><digits> <number>          ::= <digits> | <digits>.<digits> | <digits>. | .<digits> <sign>            ::= "+" | "-" <signedNumber>    ::= <number> | <sign><number> <suffix>          ::= <binarySI> | <decimalExponent> | <decimalSI> <binarySI>        ::= Ki | Mi | Gi | Ti | Pi | Ei
-
-	(International System of units; See: http://physics.nist.gov/cuu/Units/binary.html)
-
-<decimalSI>       ::= m | "" | k | M | G | T | P | E
-
-	(Note that 1024 = 1Ki but 1000 = 1k; I didn't choose the capitalization.)
-
-<decimalExponent> ::= "e" <signedNumber> | "E" <signedNumber> ```
-
-No matter which of the three exponent forms is used, no quantity may represent a number greater than 2^63-1 in magnitude, nor may it have more than 3 decimal places. Numbers larger or more precise will be capped or rounded up. (E.g.: 0.1m will rounded up to 1m.) This may be extended in the future if we require larger or smaller quantities.
-
-When a Quantity is parsed from a string, it will remember the type of suffix it had, and will use the same type again when it is serialized.
-
-Before serializing, Quantity will be put in "canonical form". This means that Exponent/suffix will be adjusted up or down (with a corresponding increase or decrease in Mantissa) such that:
-
-- No precision is lost - No fractional digits will be emitted - The exponent (or suffix) is as large as possible.
-
-The sign will be omitted unless the number is negative.
-
-Examples:
-
-- 1.5 will be serialized as "1500m" - 1.5Gi will be serialized as "1536Mi"
-
-Note that the quantity will NEVER be internally represented by a floating point number. That is the whole point of this exercise.
-
-Non-canonical values will still parse as long as they are well formed, but will be re-emitted in their canonical form. (So always use canonical form, or don't diff.)
-
-This format is intended to make it difficult to use these numbers without writing some sort of special handling code in the hopes that that will cause implementors to also use a fixed point implementation.
-*/
-maximumVolumeSize?: string;
 }
 
 /**
@@ -124,12 +62,16 @@ maximumVolumeSize?: string;
 */
 export function createio_k8s_api_storage_v1_CSIStorageCapacity(data?: Partial<io_k8s_api_storage_v1_CSIStorageCapacity>): io_k8s_api_storage_v1_CSIStorageCapacity {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : {},
+   capacity: data?.capacity !== undefined ? data.capacity : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
+   kind: data?.kind !== undefined ? data.kind : '',
+   maximumVolumeSize: data?.maximumVolumeSize !== undefined ? data.maximumVolumeSize : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   capacity: data?.capacity !== undefined ? data.capacity : '',
-   kind: data?.kind !== undefined ? data.kind : '',
-   maximumVolumeSize: data?.maximumVolumeSize !== undefined ? data.maximumVolumeSize : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_api_resource_Quantity, createio_k8s_apimachinery_pkg_api_resource_Quantity } from '../quantity/io_k8s_apimachinery_pkg_api_resource_Quantity';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

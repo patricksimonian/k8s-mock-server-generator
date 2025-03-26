@@ -7,81 +7,6 @@ import { handleResourceError } from '../utils';
 export function createruntimeclassRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch individual changes to a list of RuntimeClass. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/node.k8s.io/v1/watch/runtimeclasses', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing runtimeclass`);
-      
-      const resources = await storage.listResources('runtimeclass', namespace, listOpts);
-      
-      const response = {
-        kind: 'RuntimeclassList',
-        apiVersion: 'node.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind RuntimeClass
-  router.get('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing runtimeclass`);
-      
-      const resources = await storage.listResources('runtimeclass', namespace, listOpts);
-      
-      const response = {
-        kind: 'RuntimeclassList',
-        apiVersion: 'node.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a RuntimeClass
-  router.post('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      logger.info(`Creating runtimeclass`);
-      const namespace = null;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //delete collection of RuntimeClass
   router.delete('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
     try {
@@ -115,39 +40,41 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind RuntimeClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/node.k8s.io/v1/watch/runtimeclasses/:name', async (req, res, next) => {
+//list or watch objects of kind RuntimeClass
+  router.get('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
     try {
-      const name = req.params.name;
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = null;
-      logger.info(`Getting runtimeclass ${name}`);
+      logger.info(`Listing runtimeclass`);
       
-      const resource = await storage.getResource('runtimeclass', name, namespace);
+      const resourceList = await storage.listResources('runtimeclass', namespace, listOpts);
       
-      if (!resource) {
-        return handleResourceError(new Error(`runtimeclass ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
   });
-
-//read the specified RuntimeClass
-  router.get('/apis/node.k8s.io/v1/runtimeclasses/:name', async (req, res, next) => {
+  //create a RuntimeClass
+  router.post('/apis/node.k8s.io/v1/runtimeclasses', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting runtimeclass ${name}`);
-      
-      const resource = await storage.getResource('runtimeclass', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`runtimeclass ${name} not found in namespace ${namespace}`), res);
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
       }
-  
-      res.json(resource);
+      logger.info(`Creating runtimeclass`);
+      const namespace = null;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
     } catch (error) {
       next(error);
     }
@@ -166,7 +93,7 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('runtimeclass', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -213,7 +140,6 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting runtimeclass ${name}`);
-
       const resource = await storage.getResource('runtimeclass', name, namespace);
       
       if (!resource) {
@@ -230,7 +156,7 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('runtimeclass', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -239,6 +165,65 @@ export function createruntimeclassRoutes(storage: Storage): express.Router {
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read the specified RuntimeClass
+  router.get('/apis/node.k8s.io/v1/runtimeclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting runtimeclass ${name}`);
+      
+      const resource = await storage.getResource('runtimeclass', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`runtimeclass ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind RuntimeClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/node.k8s.io/v1/watch/runtimeclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting runtimeclass ${name}`);
+      
+      const resource = await storage.getResource('runtimeclass', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`runtimeclass ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of RuntimeClass. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/node.k8s.io/v1/watch/runtimeclasses', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing runtimeclass`);
+      
+      const resourceList = await storage.listResources('runtimeclass', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

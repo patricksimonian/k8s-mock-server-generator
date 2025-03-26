@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_LoadBalancerStatus {
 * Ingress is a list containing ingress points for the load-balancer. Traffic intended for the service should be sent to these ingress points.
 * @isArray
 */
-ingress?: Array<{ hostname?: string; ip?: string; ipMode?: string; ports?: Array<{ port: number; protocol: 'SCTP' | 'TCP' | 'UDP'; error?: string }> }>;
+ingress?: io_k8s_api_core_v1_LoadBalancerIngress[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_core_v1_LoadBalancerStatus(data?: Partial<io_k8
    ingress: data?.ingress !== undefined ? data.ingress : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LoadBalancerIngress, createio_k8s_api_core_v1_LoadBalancerIngress } from '../io.k8s.api.core.v1.LoadBalancerIngress';

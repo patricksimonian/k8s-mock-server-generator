@@ -5,10 +5,16 @@
 */
 export interface io_k8s_api_core_v1_EphemeralVolumeSource {
 /**
-* PersistentVolumeClaimTemplate is used to produce PersistentVolumeClaim objects as part of an EphemeralVolumeSource.
-* @isObject
+* Will be used to create a stand-alone PVC to provision the volume. The pod in which this EphemeralVolumeSource is embedded will be the owner of the PVC, i.e. the PVC will be deleted together with the pod.  The name of the PVC will be `<pod name>-<volume name>` where `<volume name>` is the name from the `PodSpec.Volumes` array entry. Pod validation will reject the pod if the concatenated name is not valid for a PVC (for example, too long).
+
+An existing PVC with that name that is not owned by the pod will *not* be used for the pod to avoid using an unrelated volume by mistake. Starting the pod is then blocked until the unrelated PVC is removed. If such a pre-created PVC is meant to be used by the pod, the PVC has to updated with an owner reference to the pod once the pod exists. Normally this should not be necessary, but it may be useful when manually reconstructing a broken cluster.
+
+This field is read-only and no changes will be made by Kubernetes to the PVC after it has been created.
+
+Required, must not be nil.
+* @references io.k8s.api.core.v1.PersistentVolumeClaimTemplate
 */
-volumeClaimTemplate?: { metadata?: { generation?: number; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; name?: string; resourceVersion?: string; uid?: string; selfLink?: string; annotations?: Record<string, any>; creationTimestamp?: Date; generateName?: string; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; finalizers?: string[]; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }> }; spec: { selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; storageClassName?: string; volumeMode?: 'Block' | 'Filesystem'; accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[]; dataSourceRef?: { name: string; namespace?: string; apiGroup?: string; kind: string }; resources?: { limits?: Record<string, any>; requests?: Record<string, any> }; dataSource?: { apiGroup?: string; kind: string; name: string }; volumeAttributesClassName?: string; volumeName?: string } };
+volumeClaimTemplate?: io_k8s_api_core_v1_PersistentVolumeClaimTemplate;
 }
 
 /**
@@ -18,6 +24,8 @@ volumeClaimTemplate?: { metadata?: { generation?: number; deletionGracePeriodSec
 */
 export function createio_k8s_api_core_v1_EphemeralVolumeSource(data?: Partial<io_k8s_api_core_v1_EphemeralVolumeSource>): io_k8s_api_core_v1_EphemeralVolumeSource {
  return {
-   volumeClaimTemplate: data?.volumeClaimTemplate !== undefined ? data.volumeClaimTemplate : { spec: {} },
+   volumeClaimTemplate: data?.volumeClaimTemplate !== undefined ? data.volumeClaimTemplate : createio_k8s_api_core_v1_PersistentVolumeClaimTemplate(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PersistentVolumeClaimTemplate, createio_k8s_api_core_v1_PersistentVolumeClaimTemplate } from '../persistentvolumeclaimtemplate/io_k8s_api_core_v1_PersistentVolumeClaimTemplate';

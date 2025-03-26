@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_rbac_v1_RoleRef {
 /**
-* Name is the name of resource being referenced
-* @required
-*/
-name: string;
-/**
 * APIGroup is the group for the resource being referenced
 * @required
 */
@@ -19,6 +14,11 @@ apiGroup: string;
 * @required
 */
 kind: string;
+/**
+* Name is the name of resource being referenced
+* @required
+*/
+name: string;
 }
 
 /**
@@ -28,8 +28,8 @@ kind: string;
 */
 export function createio_k8s_api_rbac_v1_RoleRef(data?: Partial<io_k8s_api_rbac_v1_RoleRef>): io_k8s_api_rbac_v1_RoleRef {
  return {
-   name: data?.name !== undefined ? data.name : '',
    apiGroup: data?.apiGroup !== undefined ? data.apiGroup : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   name: data?.name !== undefined ? data.name : '',
  };
 }

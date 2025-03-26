@@ -7,8 +7,8 @@ import { handleResourceError } from '../utils';
 export function createmutatingwebhookconfigurationRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list or watch objects of kind MutatingWebhookConfiguration
-  router.get('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations', async (req, res, next) => {
+//watch individual changes to a list of MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -18,37 +18,11 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
       const namespace = null;
       logger.info(`Listing mutatingwebhookconfiguration`);
       
-      const resources = await storage.listResources('mutatingwebhookconfiguration', namespace, listOpts);
+      const resourceList = await storage.listResources('mutatingwebhookconfiguration', namespace, listOpts);
       
-      const response = {
-        kind: 'MutatingwebhookconfigurationList',
-        apiVersion: 'admissionregistration.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a MutatingWebhookConfiguration
-  router.post('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      logger.info(`Creating mutatingwebhookconfiguration`);
-      const namespace = null;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -87,6 +61,46 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
     }
   });
 
+//list or watch objects of kind MutatingWebhookConfiguration
+  router.get('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing mutatingwebhookconfiguration`);
+      
+      const resourceList = await storage.listResources('mutatingwebhookconfiguration', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a MutatingWebhookConfiguration
+  router.post('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations', async (req, res, next) => {
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      logger.info(`Creating mutatingwebhookconfiguration`);
+      const namespace = null;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //read the specified MutatingWebhookConfiguration
   router.get('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
@@ -119,7 +133,7 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('mutatingwebhookconfiguration', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -166,7 +180,6 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting mutatingwebhookconfiguration ${name}`);
-
       const resource = await storage.getResource('mutatingwebhookconfiguration', name, namespace);
       
       if (!resource) {
@@ -183,7 +196,7 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('mutatingwebhookconfiguration', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -211,34 +224,6 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
       }
   
       res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing mutatingwebhookconfiguration`);
-      
-      const resources = await storage.listResources('mutatingwebhookconfiguration', namespace, listOpts);
-      
-      const response = {
-        kind: 'MutatingwebhookconfigurationList',
-        apiVersion: 'admissionregistration.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
     } catch (error) {
       next(error);
     }

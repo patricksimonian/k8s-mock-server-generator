@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_ScopeSelector {
 * A list of scope selector requirements by scope of the resources.
 * @isArray
 */
-matchExpressions?: Array<{ values?: string[]; operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn'; scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating' }>;
+matchExpressions?: io_k8s_api_core_v1_ScopedResourceSelectorRequirement[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_core_v1_ScopeSelector(data?: Partial<io_k8s_api
    matchExpressions: data?.matchExpressions !== undefined ? data.matchExpressions : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ScopedResourceSelectorRequirement, createio_k8s_api_core_v1_ScopedResourceSelectorRequirement } from '../io.k8s.api.core.v1.ScopedResourceSelectorRequirement';

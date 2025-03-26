@@ -5,19 +5,6 @@
 */
 export interface io_k8s_api_core_v1_NodeSpec {
 /**
-* NodeConfigSource specifies a source of node configuration. Exactly one subfield (excluding metadata) must be non-nil. This API is deprecated since 1.22
-* @isObject
-*/
-configSource?: { configMap?: { resourceVersion?: string; uid?: string; kubeletConfigKey: string; name: string; namespace: string } };
-/**
-* Deprecated. Not all kubelets will set this field. Remove field after 1.13. see: https://issues.k8s.io/61966
-*/
-externalID?: string;
-/**
-* PodCIDR represents the pod IP range assigned to the node.
-*/
-podCIDR?: string;
-/**
 * podCIDRs represents the IP ranges assigned to the node for usage by Pods on that node. If this field is specified, the 0th entry must match the podCIDR field. It may contain at most 1 value for each of IPv4 and IPv6.
 * @isArray
 */
@@ -30,11 +17,24 @@ providerID?: string;
 * If specified, the node's taints.
 * @isArray
 */
-taints?: Array<{ timeAdded?: Date; value?: string; effect: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key: string }>;
+taints?: io_k8s_api_core_v1_Taint[];
 /**
 * Unschedulable controls node schedulability of new pods. By default, node is schedulable. More info: https://kubernetes.io/docs/concepts/nodes/node/#manual-node-administration
 */
 unschedulable?: boolean;
+/**
+* Deprecated: Previously used to specify the source of the node's configuration for the DynamicKubeletConfig feature. This feature is removed.
+* @references io.k8s.api.core.v1.NodeConfigSource
+*/
+configSource?: io_k8s_api_core_v1_NodeConfigSource;
+/**
+* Deprecated. Not all kubelets will set this field. Remove field after 1.13. see: https://issues.k8s.io/61966
+*/
+externalID?: string;
+/**
+* PodCIDR represents the pod IP range assigned to the node.
+*/
+podCIDR?: string;
 }
 
 /**
@@ -44,12 +44,15 @@ unschedulable?: boolean;
 */
 export function createio_k8s_api_core_v1_NodeSpec(data?: Partial<io_k8s_api_core_v1_NodeSpec>): io_k8s_api_core_v1_NodeSpec {
  return {
-   configSource: data?.configSource !== undefined ? data.configSource : {},
-   externalID: data?.externalID !== undefined ? data.externalID : '',
-   podCIDR: data?.podCIDR !== undefined ? data.podCIDR : '',
    podCIDRs: data?.podCIDRs !== undefined ? data.podCIDRs : [],
    providerID: data?.providerID !== undefined ? data.providerID : '',
    taints: data?.taints !== undefined ? data.taints : [],
    unschedulable: data?.unschedulable !== undefined ? data.unschedulable : false,
+   configSource: data?.configSource !== undefined ? data.configSource : createio_k8s_api_core_v1_NodeConfigSource(),
+   externalID: data?.externalID !== undefined ? data.externalID : '',
+   podCIDR: data?.podCIDR !== undefined ? data.podCIDR : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NodeConfigSource, createio_k8s_api_core_v1_NodeConfigSource } from '../nodeconfigsource/io_k8s_api_core_v1_NodeConfigSource';
+import { io_k8s_api_core_v1_Taint, createio_k8s_api_core_v1_Taint } from '../io.k8s.api.core.v1.Taint';

@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_core_v1_ContainerUser {
 /**
-* LinuxContainerUser represents user identity information in Linux containers
-* @isObject
+* Linux holds user identity information initially attached to the first process of the containers in Linux. Note that the actual running identity can be changed if the process has enough privilege to do so.
+* @references io.k8s.api.core.v1.LinuxContainerUser
 */
-linux?: { gid: number; supplementalGroups?: number[]; uid: number };
+linux?: io_k8s_api_core_v1_LinuxContainerUser;
 }
 
 /**
@@ -18,6 +18,8 @@ linux?: { gid: number; supplementalGroups?: number[]; uid: number };
 */
 export function createio_k8s_api_core_v1_ContainerUser(data?: Partial<io_k8s_api_core_v1_ContainerUser>): io_k8s_api_core_v1_ContainerUser {
  return {
-   linux: data?.linux !== undefined ? data.linux : { gid: 0, uid: 0 },
+   linux: data?.linux !== undefined ? data.linux : createio_k8s_api_core_v1_LinuxContainerUser(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LinuxContainerUser, createio_k8s_api_core_v1_LinuxContainerUser } from '../linuxcontaineruser/io_k8s_api_core_v1_LinuxContainerUser';

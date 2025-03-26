@@ -14,15 +14,15 @@ extra?: Record<string, any>;
 */
 groups?: string[];
 /**
-* NonResourceAttributes includes the authorization attributes available for non-resource requests to the Authorizer interface
-* @isObject
+* NonResourceAttributes describes information for a non-resource access request
+* @references io.k8s.api.authorization.v1.NonResourceAttributes
 */
-nonResourceAttributes?: { path?: string; verb?: string };
+nonResourceAttributes?: io_k8s_api_authorization_v1_NonResourceAttributes;
 /**
-* ResourceAttributes includes the authorization attributes available for resource requests to the Authorizer interface
-* @isObject
+* ResourceAuthorizationAttributes describes information for a resource access request
+* @references io.k8s.api.authorization.v1.ResourceAttributes
 */
-resourceAttributes?: { fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; resource?: string; subresource?: string; version?: string; namespace?: string; verb?: string };
+resourceAttributes?: io_k8s_api_authorization_v1_ResourceAttributes;
 /**
 * UID information about the requesting user.
 */
@@ -42,9 +42,12 @@ export function createio_k8s_api_authorization_v1_SubjectAccessReviewSpec(data?:
  return {
    extra: data?.extra !== undefined ? data.extra : {},
    groups: data?.groups !== undefined ? data.groups : [],
-   nonResourceAttributes: data?.nonResourceAttributes !== undefined ? data.nonResourceAttributes : {},
-   resourceAttributes: data?.resourceAttributes !== undefined ? data.resourceAttributes : {},
+   nonResourceAttributes: data?.nonResourceAttributes !== undefined ? data.nonResourceAttributes : createio_k8s_api_authorization_v1_NonResourceAttributes(),
+   resourceAttributes: data?.resourceAttributes !== undefined ? data.resourceAttributes : createio_k8s_api_authorization_v1_ResourceAttributes(),
    uid: data?.uid !== undefined ? data.uid : '',
    user: data?.user !== undefined ? data.user : '',
  };
 }
+// Required imports
+import { io_k8s_api_authorization_v1_NonResourceAttributes, createio_k8s_api_authorization_v1_NonResourceAttributes } from '../nonresourceattribute/io_k8s_api_authorization_v1_NonResourceAttributes';
+import { io_k8s_api_authorization_v1_ResourceAttributes, createio_k8s_api_authorization_v1_ResourceAttributes } from '../resourceattribute/io_k8s_api_authorization_v1_ResourceAttributes';

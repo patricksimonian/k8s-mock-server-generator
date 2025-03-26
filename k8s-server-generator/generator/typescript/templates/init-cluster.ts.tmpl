@@ -1,5 +1,5 @@
 import { logger } from './logger';
-import storage from './storage';
+import storage, { KubeResource } from './storage';
 import config from './config';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -60,7 +60,7 @@ async function createResourcesFromState(state: any): Promise<void> {
     for (const [namespaceName, namespaceResource] of Object.entries(state.cluster.namespaces)) {
       logger.info(`Creating namespace ${namespaceName}`);
       try {
-        await storage.createResource(namespaceResource);
+        await storage.createResource(namespaceResource as KubeResource);
       } catch (error) {
         logger.error(`Failed to create namespace ${namespaceName}:`, error);
       }

@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_NamespaceStatus {
 * Represents the latest available observations of a namespace's current state.
 * @isArray
 */
-conditions?: Array<{ type: string; lastTransitionTime?: Date; message?: string; reason?: string; status: string }>;
+conditions?: io_k8s_api_core_v1_NamespaceCondition[];
 /**
 * Phase is the current lifecycle phase of the namespace. More info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
 
@@ -30,3 +30,5 @@ export function createio_k8s_api_core_v1_NamespaceStatus(data?: Partial<io_k8s_a
    phase: data?.phase !== undefined ? data.phase : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NamespaceCondition, createio_k8s_api_core_v1_NamespaceCondition } from '../io.k8s.api.core.v1.NamespaceCondition';

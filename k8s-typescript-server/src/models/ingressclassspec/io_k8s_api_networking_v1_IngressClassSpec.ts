@@ -9,10 +9,10 @@ export interface io_k8s_api_networking_v1_IngressClassSpec {
 */
 controller?: string;
 /**
-* IngressClassParametersReference identifies an API object. This can be used to specify a cluster or namespace-scoped resource.
-* @isObject
+* parameters is a link to a custom resource containing additional configuration for the controller. This is optional if the controller does not require extra parameters.
+* @references io.k8s.api.networking.v1.IngressClassParametersReference
 */
-parameters?: { scope?: string; apiGroup?: string; kind: string; name: string; namespace?: string };
+parameters?: io_k8s_api_networking_v1_IngressClassParametersReference;
 }
 
 /**
@@ -23,6 +23,8 @@ parameters?: { scope?: string; apiGroup?: string; kind: string; name: string; na
 export function createio_k8s_api_networking_v1_IngressClassSpec(data?: Partial<io_k8s_api_networking_v1_IngressClassSpec>): io_k8s_api_networking_v1_IngressClassSpec {
  return {
    controller: data?.controller !== undefined ? data.controller : '',
-   parameters: data?.parameters !== undefined ? data.parameters : { kind: '', name: '' },
+   parameters: data?.parameters !== undefined ? data.parameters : createio_k8s_api_networking_v1_IngressClassParametersReference(),
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_IngressClassParametersReference, createio_k8s_api_networking_v1_IngressClassParametersReference } from '../ingressclassparametersreference/io_k8s_api_networking_v1_IngressClassParametersReference';

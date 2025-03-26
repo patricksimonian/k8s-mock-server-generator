@@ -9,10 +9,15 @@ The StatefulSet guarantees that a given network identity will always map to the 
 */
 export interface io_k8s_api_apps_v1_StatefulSet {
 /**
-* StatefulSetStatus represents the current state of a StatefulSet.
-* @isObject
+* Spec defines the desired identities of pods in this set.
+* @references io.k8s.api.apps.v1.StatefulSetSpec
 */
-status?: { collisionCount?: number; conditions?: Array<{ reason?: string; status: string; type: string; lastTransitionTime?: Date; message?: string }>; currentReplicas?: number; currentRevision?: string; replicas: number; availableReplicas?: number; observedGeneration?: number; readyReplicas?: number; updateRevision?: string; updatedReplicas?: number };
+spec?: io_k8s_api_apps_v1_StatefulSetSpec;
+/**
+* Status is the current status of Pods in this StatefulSet. This data may be out of date by some window of time.
+* @references io.k8s.api.apps.v1.StatefulSetStatus
+*/
+status?: io_k8s_api_apps_v1_StatefulSetStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -22,15 +27,10 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; selfLink?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; labels?: Record<string, any>; uid?: string; generateName?: string; name?: string; namespace?: string; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[] };
-/**
-* A StatefulSetSpec is the specification of a StatefulSet.
-* @isObject
-*/
-spec?: { ordinals?: { start?: number }; persistentVolumeClaimRetentionPolicy?: { whenDeleted?: string; whenScaled?: string }; updateStrategy?: { rollingUpdate?: { maxUnavailable?: string; partition?: number }; type?: 'OnDelete' | 'RollingUpdate' }; minReadySeconds?: number; replicas?: number; revisionHistoryLimit?: number; selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; serviceName: string; template: { metadata?: { managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; generateName?: string; finalizers?: string[]; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; deletionTimestamp?: Date; creationTimestamp?: Date; labels?: Record<string, any>; selfLink?: string; uid?: string; annotations?: Record<string, any>; generation?: number; namespace?: string; deletionGracePeriodSeconds?: number }; spec?: Record<string, any> }; volumeClaimTemplates?: Array<{ apiVersion?: string; kind?: string; metadata?: { annotations?: Record<string, any>; finalizers?: string[]; name?: string; deletionGracePeriodSeconds?: number; namespace?: string; uid?: string; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; selfLink?: string; creationTimestamp?: Date; deletionTimestamp?: Date; labels?: Record<string, any>; resourceVersion?: string; generateName?: string; generation?: number; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }> }; spec?: { resources?: { limits?: Record<string, any>; requests?: Record<string, any> }; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; storageClassName?: string; volumeAttributesClassName?: string; accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[]; dataSource?: { apiGroup?: string; kind: string; name: string }; dataSourceRef?: { namespace?: string; apiGroup?: string; kind: string; name: string }; volumeMode?: 'Block' | 'Filesystem'; volumeName?: string }; status?: { modifyVolumeStatus?: { status: 'InProgress' | 'Infeasible' | 'Pending'; targetVolumeAttributesClassName?: string }; phase?: 'Bound' | 'Lost' | 'Pending'; accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[]; allocatedResourceStatuses?: Record<string, any>; allocatedResources?: Record<string, any>; capacity?: Record<string, any>; conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string; lastProbeTime?: Date }>; currentVolumeAttributesClassName?: string } }>; podManagementPolicy?: 'OrderedReady' | 'Parallel' };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -40,10 +40,14 @@ spec?: { ordinals?: { start?: number }; persistentVolumeClaimRetentionPolicy?: {
 */
 export function createio_k8s_api_apps_v1_StatefulSet(data?: Partial<io_k8s_api_apps_v1_StatefulSet>): io_k8s_api_apps_v1_StatefulSet {
  return {
-   status: data?.status !== undefined ? data.status : { replicas: 0 },
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_apps_v1_StatefulSetSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_apps_v1_StatefulSetStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { template: {}, selector: {}, serviceName: '' },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_StatefulSetSpec, createio_k8s_api_apps_v1_StatefulSetSpec } from '../statefulsetspec/io_k8s_api_apps_v1_StatefulSetSpec';
+import { io_k8s_api_apps_v1_StatefulSetStatus, createio_k8s_api_apps_v1_StatefulSetStatus } from '../statefulsetstatus/io_k8s_api_apps_v1_StatefulSetStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

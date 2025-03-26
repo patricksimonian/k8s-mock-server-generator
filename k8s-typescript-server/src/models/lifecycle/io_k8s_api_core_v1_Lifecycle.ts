@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_core_v1_Lifecycle {
 /**
-* LifecycleHandler defines a specific action that should be taken in a lifecycle hook. One and only one of the fields, except TCPSocket must be specified.
-* @isObject
+* PostStart is called immediately after a container is created. If the handler fails, the container is terminated and restarted according to its restart policy. Other management of the container blocks until the hook completes. More info: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
+* @references io.k8s.api.core.v1.LifecycleHandler
 */
-preStop?: { httpGet?: { scheme?: 'HTTP' | 'HTTPS'; host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string }; sleep?: { seconds: number }; tcpSocket?: { host?: string; port: string }; exec?: { command?: string[] } };
+postStart?: io_k8s_api_core_v1_LifecycleHandler;
 /**
-* LifecycleHandler defines a specific action that should be taken in a lifecycle hook. One and only one of the fields, except TCPSocket must be specified.
-* @isObject
+* PreStop is called immediately before a container is terminated due to an API request or management event such as liveness/startup probe failure, preemption, resource contention, etc. The handler is not called if the container crashes or exits. The Pod's termination grace period countdown begins before the PreStop hook is executed. Regardless of the outcome of the handler, the container will eventually terminate within the Pod's termination grace period (unless delayed by finalizers). Other management of the container blocks until the hook completes or until the termination grace period is reached. More info: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
+* @references io.k8s.api.core.v1.LifecycleHandler
 */
-postStart?: { httpGet?: { host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string; scheme?: 'HTTP' | 'HTTPS' }; sleep?: { seconds: number }; tcpSocket?: { host?: string; port: string }; exec?: { command?: string[] } };
+preStop?: io_k8s_api_core_v1_LifecycleHandler;
 }
 
 /**
@@ -23,7 +23,9 @@ postStart?: { httpGet?: { host?: string; httpHeaders?: Array<{ name: string; val
 */
 export function createio_k8s_api_core_v1_Lifecycle(data?: Partial<io_k8s_api_core_v1_Lifecycle>): io_k8s_api_core_v1_Lifecycle {
  return {
-   preStop: data?.preStop !== undefined ? data.preStop : {},
-   postStart: data?.postStart !== undefined ? data.postStart : {},
+   postStart: data?.postStart !== undefined ? data.postStart : createio_k8s_api_core_v1_LifecycleHandler(),
+   preStop: data?.preStop !== undefined ? data.preStop : createio_k8s_api_core_v1_LifecycleHandler(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LifecycleHandler, createio_k8s_api_core_v1_LifecycleHandler } from '../lifecyclehandler/io_k8s_api_core_v1_LifecycleHandler';

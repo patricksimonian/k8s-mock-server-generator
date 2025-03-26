@@ -18,17 +18,17 @@ export interface io_k8s_api_core_v1_EndpointSubset {
 * IP addresses which offer the related ports that are marked as ready. These endpoints should be considered safe for load balancers and clients to utilize.
 * @isArray
 */
-addresses?: Array<{ hostname?: string; ip: string; nodeName?: string; targetRef?: { apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string } }>;
+addresses?: io_k8s_api_core_v1_EndpointAddress[];
 /**
 * IP addresses which offer the related ports but are not currently marked as ready because they have not yet finished starting, have recently failed a readiness check, or have recently failed a liveness check.
 * @isArray
 */
-notReadyAddresses?: Array<{ hostname?: string; ip: string; nodeName?: string; targetRef?: { apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string } }>;
+notReadyAddresses?: io_k8s_api_core_v1_EndpointAddress[];
 /**
 * Port numbers available on the related IP addresses.
 * @isArray
 */
-ports?: Array<{ protocol?: 'SCTP' | 'TCP' | 'UDP'; appProtocol?: string; name?: string; port: number }>;
+ports?: io_k8s_api_core_v1_EndpointPort[];
 }
 
 /**
@@ -43,3 +43,6 @@ export function createio_k8s_api_core_v1_EndpointSubset(data?: Partial<io_k8s_ap
    ports: data?.ports !== undefined ? data.ports : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_EndpointAddress, createio_k8s_api_core_v1_EndpointAddress } from '../io.k8s.api.core.v1.EndpointAddress';
+import { io_k8s_api_core_v1_EndpointPort, createio_k8s_api_core_v1_EndpointPort } from '../io.k8s.api.core.v1.EndpointPort';

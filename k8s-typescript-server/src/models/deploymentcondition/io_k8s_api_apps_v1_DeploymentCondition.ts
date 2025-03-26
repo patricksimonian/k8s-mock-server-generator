@@ -5,13 +5,20 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentCondition {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Type of deployment condition.
+* @required
 */
-lastTransitionTime?: Date;
+type: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Last time the condition transitioned from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastUpdateTime?: Date;
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* The last time this condition was updated.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastUpdateTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * A human readable message indicating details about the transition.
 */
@@ -25,11 +32,6 @@ reason?: string;
 * @required
 */
 status: string;
-/**
-* Type of deployment condition.
-* @required
-*/
-type: string;
 }
 
 /**
@@ -39,11 +41,13 @@ type: string;
 */
 export function createio_k8s_api_apps_v1_DeploymentCondition(data?: Partial<io_k8s_api_apps_v1_DeploymentCondition>): io_k8s_api_apps_v1_DeploymentCondition {
  return {
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
-   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : '',
+   type: data?.type !== undefined ? data.type : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
-   type: data?.type !== undefined ? data.type : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

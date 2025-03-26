@@ -8,15 +8,17 @@ export interface io_k8s_api_batch_v1_CronJobStatus {
 * A list of pointers to currently running jobs.
 * @isArray
 */
-active?: Array<{ apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string }>;
+active?: io_k8s_api_core_v1_ObjectReference[];
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Information when was the last time the job was successfully scheduled.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastScheduleTime?: Date;
+lastScheduleTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Information when was the last time the job successfully completed.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastSuccessfulTime?: Date;
+lastSuccessfulTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -27,7 +29,10 @@ lastSuccessfulTime?: Date;
 export function createio_k8s_api_batch_v1_CronJobStatus(data?: Partial<io_k8s_api_batch_v1_CronJobStatus>): io_k8s_api_batch_v1_CronJobStatus {
  return {
    active: data?.active !== undefined ? data.active : [],
-   lastScheduleTime: data?.lastScheduleTime !== undefined ? data.lastScheduleTime : '',
-   lastSuccessfulTime: data?.lastSuccessfulTime !== undefined ? data.lastSuccessfulTime : '',
+   lastScheduleTime: data?.lastScheduleTime !== undefined ? data.lastScheduleTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   lastSuccessfulTime: data?.lastSuccessfulTime !== undefined ? data.lastSuccessfulTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ObjectReference, createio_k8s_api_core_v1_ObjectReference } from '../io.k8s.api.core.v1.ObjectReference';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

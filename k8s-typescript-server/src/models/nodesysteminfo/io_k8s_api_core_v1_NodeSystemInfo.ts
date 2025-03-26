@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_core_v1_NodeSystemInfo {
 /**
-* Deprecated: KubeProxy Version reported by the node.
+* Kernel Version reported by the node from 'uname -r' (e.g. 3.16.0-0.bpo.4-amd64).
 * @required
 */
-kubeProxyVersion: string;
+kernelVersion: string;
 /**
 * Kubelet Version reported by the node.
 * @required
@@ -35,10 +35,10 @@ bootID: string;
 */
 containerRuntimeVersion: string;
 /**
-* Kernel Version reported by the node from 'uname -r' (e.g. 3.16.0-0.bpo.4-amd64).
+* Deprecated: KubeProxy Version reported by the node.
 * @required
 */
-kernelVersion: string;
+kubeProxyVersion: string;
 /**
 * MachineID reported by the node. For unique machine identification in the cluster this field is preferred. Learn more from man(5) machine-id: http://man7.org/linux/man-pages/man5/machine-id.5.html
 * @required
@@ -63,13 +63,13 @@ systemUUID: string;
 */
 export function createio_k8s_api_core_v1_NodeSystemInfo(data?: Partial<io_k8s_api_core_v1_NodeSystemInfo>): io_k8s_api_core_v1_NodeSystemInfo {
  return {
-   kubeProxyVersion: data?.kubeProxyVersion !== undefined ? data.kubeProxyVersion : '',
+   kernelVersion: data?.kernelVersion !== undefined ? data.kernelVersion : '',
    kubeletVersion: data?.kubeletVersion !== undefined ? data.kubeletVersion : '',
    operatingSystem: data?.operatingSystem !== undefined ? data.operatingSystem : '',
    architecture: data?.architecture !== undefined ? data.architecture : '',
    bootID: data?.bootID !== undefined ? data.bootID : '',
    containerRuntimeVersion: data?.containerRuntimeVersion !== undefined ? data.containerRuntimeVersion : '',
-   kernelVersion: data?.kernelVersion !== undefined ? data.kernelVersion : '',
+   kubeProxyVersion: data?.kubeProxyVersion !== undefined ? data.kubeProxyVersion : '',
    machineID: data?.machineID !== undefined ? data.machineID : '',
    osImage: data?.osImage !== undefined ? data.osImage : '',
    systemUUID: data?.systemUUID !== undefined ? data.systemUUID : '',

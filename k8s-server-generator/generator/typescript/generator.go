@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	"github.com/patricksimonian/k8s-mock-server-generator/k8s-server-generator/generator/config"
+	"github.com/patricksimonian/k8s-mock-server-generator/k8s-server-generator/generator/helpers"
 	"github.com/patricksimonian/k8s-mock-server-generator/openapi-ir-processor/ir"
 )
 
@@ -368,6 +369,7 @@ func (g *Generator) loadTemplates() error {
 		"tsconfig.json.tmpl",
 		"routes/discovery-routes.ts.tmpl",
 		"routes/endpoint-route.ts.tmpl",
+		"routes/openapi-routes.ts.tmpl",
 	}
 
 	// Load each template
@@ -502,7 +504,22 @@ func (g *Generator) Generate() error {
 	if err := g.generateTSConfig(); err != nil {
 		return fmt.Errorf("failed to generate tsconfig.json: %w", err)
 	}
+	// copy the openapi spec if present
+	if g.Config.OpenAPISpecPath != "" {
+		// 1) Create the "openapi" directory under g.OutputDir
+		openapiDir := filepath.Join(g.OutputDir, "openapi")
+		if err := os.MkdirAll(openapiDir, 0755); err != nil {
+			return fmt.Errorf("failed to create openapi directory: %w", err)
+		}
 
+		// 2) Copy the file from config.OpenAPISpecPath to "openapi/openapi.json"
+		dstPath := filepath.Join(openapiDir, "openapi.json")
+		if err := helpers.CopyFile(g.Config.OpenAPISpecPath, dstPath); err != nil {
+			return fmt.Errorf("failed to copy OpenAPI spec: %w", err)
+		}
+
+		fmt.Printf("Copied OpenAPI spec from %s to %s\n", g.Config.OpenAPISpecPath, dstPath)
+	}
 	return nil
 }
 
@@ -1188,6 +1205,11 @@ func (g *Generator) generateRoutes() error {
 		return fmt.Errorf("failed to generate discovery routes: %w", err)
 	}
 
+	// Generate openapi routes file
+	if err := g.generateOpenAPIRoutes(); err != nil {
+		return fmt.Errorf("failed to generate openapi routes: %w", err)
+	}
+
 	// Generate individual route files for each endpoint
 	if err := g.generateEndpointRoutes(); err != nil {
 		return fmt.Errorf("failed to generate endpoint routes: %w", err)
@@ -1260,6 +1282,29 @@ func (g *Generator) generateDiscoveryRoutes() error {
 
 	if err := tmpl.Execute(file, data); err != nil {
 		return fmt.Errorf("failed to execute template for discovery routes: %w", err)
+	}
+
+	return nil
+}
+
+// generateOpenAPIRoutes generates the API discovery routes file
+func (g *Generator) generateOpenAPIRoutes() error {
+	// Get the template
+	tmpl, ok := g.Templates["routes/openapi-routes.ts.tmpl"]
+	if !ok {
+		return fmt.Errorf("template routes/openapi-routes.ts.tmpl not found")
+	}
+
+	// Create file
+	filePath := filepath.Join(g.OutputDir, "src", "routes", "openapi-routes.ts")
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", filePath, err)
+	}
+	defer file.Close()
+
+	if err := tmpl.Execute(file, nil); err != nil {
+		return fmt.Errorf("failed to execute template for openapi routes: %w", err)
 	}
 
 	return nil

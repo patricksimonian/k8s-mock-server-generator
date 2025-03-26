@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_apps_v1_StatefulSetUpdateStrategy {
 /**
-* RollingUpdateStatefulSetStrategy is used to communicate parameter for RollingUpdateStatefulSetStrategyType.
-* @isObject
+* RollingUpdate is used to communicate parameters when Type is RollingUpdateStatefulSetStrategyType.
+* @references io.k8s.api.apps.v1.RollingUpdateStatefulSetStrategy
 */
-rollingUpdate?: { maxUnavailable?: string; partition?: number };
+rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy;
 /**
 * Type indicates the type of the StatefulSetUpdateStrategy. Default is RollingUpdate.
 
@@ -26,7 +26,9 @@ type?: 'OnDelete' | 'RollingUpdate';
 */
 export function createio_k8s_api_apps_v1_StatefulSetUpdateStrategy(data?: Partial<io_k8s_api_apps_v1_StatefulSetUpdateStrategy>): io_k8s_api_apps_v1_StatefulSetUpdateStrategy {
  return {
-   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : {},
+   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy(),
    type: data?.type !== undefined ? data.type : '',
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy, createio_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy } from '../rollingupdatestatefulsetstrategy/io_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy';

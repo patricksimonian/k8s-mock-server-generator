@@ -9,22 +9,89 @@ export interface io_k8s_api_core_v1_PodSpec {
 */
 automountServiceAccountToken?: boolean;
 /**
-* Host networking requested for this pod. Use the host's network namespace. If this option is set, the ports that will be used must be specified. Default to false.
+* NodeName indicates in which node this pod is scheduled. If empty, this pod is a candidate for scheduling by the scheduler defined in schedulerName. Once this field is set, the kubelet for this node becomes responsible for the lifecycle of this pod. This field should not be used to express a desire for the pod to be scheduled on a specific node. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodename
 */
-hostNetwork?: boolean;
+nodeName?: string;
 /**
-* Optional duration in seconds the pod needs to terminate gracefully. May be decreased in delete request. Value must be non-negative integer. The value zero indicates stop immediately via the kill signal (no opportunity to shut down). If this value is nil, the default grace period will be used instead. The grace period is the duration in seconds after the processes running in the pod are sent a termination signal and the time when the processes are forcibly halted with a kill signal. Set this value longer than the expected cleanup time for your process. Defaults to 30 seconds.
+* PreemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
+
+Possible enum values:
+ - `"Never"` means that pod never preempts other pods with lower priority.
+ - `"PreemptLowerPriority"` means that pod can preempt other pods with lower priority.
 */
-terminationGracePeriodSeconds?: number;
+preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
 /**
-* The priority value. Various system components use this field to find the priority of the pod. When Priority Admission Controller is enabled, it prevents users from setting this field. The admission controller populates this field from PriorityClassName. The higher the value, the higher the priority.
+* RuntimeClassName refers to a RuntimeClass object in the node.k8s.io group, which should be used to run this pod.  If no RuntimeClass resource matches the named class, the pod will not be run. If unset or empty, the "legacy" RuntimeClass will be used, which is an implicit class with an empty definition that uses the default runtime handler. More info: https://git.k8s.io/enhancements/keps/sig-node/585-runtime-class
 */
-priority?: number;
+runtimeClassName?: string;
 /**
-* ResourceRequirements describes the compute resource requirements.
-* @isObject
+* SchedulingGates is an opaque list of values that if specified will block scheduling the pod. If schedulingGates is not empty, the pod will stay in the SchedulingGated state and the scheduler will not attempt to schedule the pod.
+
+SchedulingGates can only be set at pod creation time, and be removed only afterwards.
+* @isArray
 */
-resources?: { claims?: Array<{ name: string; request?: string }>; limits?: Record<string, any>; requests?: Record<string, any> };
+schedulingGates?: io_k8s_api_core_v1_PodSchedulingGate[];
+/**
+* If specified, indicates the pod's priority. "system-node-critical" and "system-cluster-critical" are two special keywords which indicate the highest priorities with the former being the highest priority. Any other name must be defined by creating a PriorityClass object with that name. If not specified, the pod priority will be default or zero if there is no default.
+*/
+priorityClassName?: string;
+/**
+* Resources is the total amount of CPU and Memory resources required by all containers in the pod. It supports specifying Requests and Limits for "cpu" and "memory" resource names only. ResourceClaims are not supported.
+
+This field enables fine-grained control over resource allocation for the entire pod, allowing resource sharing among containers in a pod.
+
+This is an alpha field and requires enabling the PodLevelResources feature gate.
+* @references io.k8s.api.core.v1.ResourceRequirements
+*/
+resources?: io_k8s_api_core_v1_ResourceRequirements;
+/**
+* Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers. Value must be a positive integer.
+*/
+activeDeadlineSeconds?: number;
+/**
+* EnableServiceLinks indicates whether information about services should be injected into pod's environment variables, matching the syntax of Docker links. Optional: Defaults to true.
+*/
+enableServiceLinks?: boolean;
+/**
+* List of ephemeral containers run in this pod. Ephemeral containers may be run in an existing pod to perform user-initiated actions such as debugging. This list cannot be specified when creating a pod, and it cannot be modified by updating the pod spec. In order to add an ephemeral container to an existing pod, use the pod's ephemeralcontainers subresource.
+* @isArray
+*/
+ephemeralContainers?: io_k8s_api_core_v1_EphemeralContainer[];
+/**
+* Use the host's pid namespace. Optional: Default to false.
+*/
+hostPID?: boolean;
+/**
+* Specifies the OS of the containers in the pod. Some pod and container fields are restricted if this is set.
+
+If the OS field is set to linux, the following fields must be unset: -securityContext.windowsOptions
+
+If the OS field is set to windows, following fields must be unset: - spec.hostPID - spec.hostIPC - spec.hostUsers - spec.securityContext.appArmorProfile - spec.securityContext.seLinuxOptions - spec.securityContext.seccompProfile - spec.securityContext.fsGroup - spec.securityContext.fsGroupChangePolicy - spec.securityContext.sysctls - spec.shareProcessNamespace - spec.securityContext.runAsUser - spec.securityContext.runAsGroup - spec.securityContext.supplementalGroups - spec.securityContext.supplementalGroupsPolicy - spec.containers[*].securityContext.appArmorProfile - spec.containers[*].securityContext.seLinuxOptions - spec.containers[*].securityContext.seccompProfile - spec.containers[*].securityContext.capabilities - spec.containers[*].securityContext.readOnlyRootFilesystem - spec.containers[*].securityContext.privileged - spec.containers[*].securityContext.allowPrivilegeEscalation - spec.containers[*].securityContext.procMount - spec.containers[*].securityContext.runAsUser - spec.containers[*].securityContext.runAsGroup
+* @references io.k8s.api.core.v1.PodOS
+*/
+os?: io_k8s_api_core_v1_PodOS;
+/**
+* Use the host's user namespace. Optional: Default to true. If set to true or not present, the pod will be run in the host user namespace, useful for when the pod needs a feature only available to the host user namespace, such as loading a kernel module with CAP_SYS_MODULE. When set to false, a new userns is created for the pod. Setting false is useful for mitigating container breakout vulnerabilities even allowing users to run their containers as root without actually having root privileges on the host. This field is alpha-level and is only honored by servers that enable the UserNamespacesSupport feature.
+*/
+hostUsers?: boolean;
+/**
+* ResourceClaims defines which ResourceClaims must be allocated and reserved before the Pod is allowed to start. The resources will be made available to those containers which consume them by name.
+
+This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
+
+This field is immutable.
+* @isArray
+*/
+resourceClaims?: io_k8s_api_core_v1_PodResourceClaim[];
+/**
+* DeprecatedServiceAccount is a deprecated alias for ServiceAccountName. Deprecated: Use serviceAccountName instead.
+*/
+serviceAccount?: string;
+/**
+* If specified, the pod's scheduling constraints
+* @references io.k8s.api.core.v1.Affinity
+*/
+affinity?: io_k8s_api_core_v1_Affinity;
 /**
 * Restart policy for all containers within the pod. One of Always, OnFailure, Never. In some contexts, only a subset of those values may be permitted. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
 
@@ -35,137 +102,20 @@ Possible enum values:
 */
 restartPolicy?: 'Always' | 'Never' | 'OnFailure';
 /**
-* Share a single process namespace between all of the containers in a pod. When this is set containers will be able to view and signal processes from other containers in the same pod, and the first process in each container will not be assigned PID 1. HostPID and ShareProcessNamespace cannot both be set. Optional: Default to false.
-*/
-shareProcessNamespace?: boolean;
-/**
-* Affinity is a group of affinity scheduling rules.
-* @isObject
-*/
-affinity?: { nodeAffinity?: { preferredDuringSchedulingIgnoredDuringExecution?: Array<{ preference: { matchExpressions?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>; matchFields?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }> }; weight: number }>; requiredDuringSchedulingIgnoredDuringExecution?: { nodeSelectorTerms: Array<{ matchExpressions?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>; matchFields?: Array<{ values?: string[]; key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn' }> }> } }; podAffinity?: { preferredDuringSchedulingIgnoredDuringExecution?: Array<{ podAffinityTerm: { labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[]; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string }; weight: number }>; requiredDuringSchedulingIgnoredDuringExecution?: Array<{ labelSelector?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[]; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string }> }; podAntiAffinity?: { requiredDuringSchedulingIgnoredDuringExecution?: Array<{ mismatchLabelKeys?: string[]; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string; labelSelector?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[] }>; preferredDuringSchedulingIgnoredDuringExecution?: Array<{ weight: number; podAffinityTerm: { namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string; labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[] } }> } };
-/**
-* List of containers belonging to the pod. Containers cannot currently be added or removed. There must be at least one container in a Pod. Cannot be updated.
-* @required
+* If specified, the pod's tolerations.
 * @isArray
 */
-containers: Array<Record<string, any>>;
+tolerations?: io_k8s_api_core_v1_Toleration[];
 /**
-* List of ephemeral containers run in this pod. Ephemeral containers may be run in an existing pod to perform user-initiated actions such as debugging. This list cannot be specified when creating a pod, and it cannot be modified by updating the pod spec. In order to add an ephemeral container to an existing pod, use the pod's ephemeralcontainers subresource.
-* @isArray
+* Specifies the DNS parameters of a pod. Parameters specified here will be merged to the generated DNS configuration based on DNSPolicy.
+* @references io.k8s.api.core.v1.PodDNSConfig
 */
-ephemeralContainers?: Array<Record<string, any>>;
-/**
-* Use the host's ipc namespace. Optional: Default to false.
-*/
-hostIPC?: boolean;
-/**
-* Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers. Value must be a positive integer.
-*/
-activeDeadlineSeconds?: number;
-/**
-* Overhead represents the resource overhead associated with running a pod for a given RuntimeClass. This field will be autopopulated at admission time by the RuntimeClass admission controller. If the RuntimeClass admission controller is enabled, overhead must not be set in Pod create requests. The RuntimeClass admission controller will reject Pod create requests which have the overhead already set. If RuntimeClass is configured and selected in the PodSpec, Overhead will be set to the value defined in the corresponding RuntimeClass, otherwise it will remain unset and treated as zero. More info: https://git.k8s.io/enhancements/keps/sig-node/688-pod-overhead/README.md
-*/
-overhead?: Record<string, any>;
-/**
-* PreemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
-
-Possible enum values:
- - `"Never"` means that pod never preempts other pods with lower priority.
- - `"PreemptLowerPriority"` means that pod can preempt other pods with lower priority.
-*/
-preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
+dnsConfig?: io_k8s_api_core_v1_PodDNSConfig;
 /**
 * If specified, all readiness gates will be evaluated for pod readiness. A pod is ready when all its containers are ready AND all conditions specified in the readiness gates have status equal to "True" More info: https://git.k8s.io/enhancements/keps/sig-network/580-pod-readiness-gates
 * @isArray
 */
-readinessGates?: Array<{ conditionType: string }>;
-/**
-* SchedulingGates is an opaque list of values that if specified will block scheduling the pod. If schedulingGates is not empty, the pod will stay in the SchedulingGated state and the scheduler will not attempt to schedule the pod.
-
-SchedulingGates can only be set at pod creation time, and be removed only afterwards.
-* @isArray
-*/
-schedulingGates?: Array<{ name: string }>;
-/**
-* If specified, the fully qualified Pod hostname will be "<hostname>.<subdomain>.<pod namespace>.svc.<cluster domain>". If not specified, the pod will not have a domainname at all.
-*/
-subdomain?: string;
-/**
-* HostAliases is an optional list of hosts and IPs that will be injected into the pod's hosts file if specified.
-* @isArray
-*/
-hostAliases?: Array<{ hostnames?: string[]; ip: string }>;
-/**
-* Specifies the hostname of the Pod If not specified, the pod's hostname will be set to a system-defined value.
-*/
-hostname?: string;
-/**
-* NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-*/
-nodeSelector?: Record<string, any>;
-/**
-* If specified, indicates the pod's priority. "system-node-critical" and "system-cluster-critical" are two special keywords which indicate the highest priorities with the former being the highest priority. Any other name must be defined by creating a PriorityClass object with that name. If not specified, the pod priority will be default or zero if there is no default.
-*/
-priorityClassName?: string;
-/**
-* List of initialization containers belonging to the pod. Init containers are executed in order prior to containers being started. If any init container fails, the pod is considered to have failed and is handled according to its restartPolicy. The name for an init container or normal container must be unique among all containers. Init containers may not have Lifecycle actions, Readiness probes, Liveness probes, or Startup probes. The resourceRequirements of an init container are taken into account during scheduling by finding the highest request/limit for each resource type, and then using the max of of that value or the sum of the normal containers. Limits are applied to init containers in a similar fashion. Init containers cannot currently be added or removed. Cannot be updated. More info: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-* @isArray
-*/
-initContainers?: Array<Record<string, any>>;
-/**
-* DeprecatedServiceAccount is a deprecated alias for ServiceAccountName. Deprecated: Use serviceAccountName instead.
-*/
-serviceAccount?: string;
-/**
-* TopologySpreadConstraints describes how a group of pods ought to spread across topology domains. Scheduler will schedule pods in a way which abides by the constraints. All topologySpreadConstraints are ANDed.
-* @isArray
-*/
-topologySpreadConstraints?: Array<{ whenUnsatisfiable: 'DoNotSchedule' | 'ScheduleAnyway'; labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; maxSkew: number; minDomains?: number; nodeAffinityPolicy?: 'Honor' | 'Ignore'; nodeTaintsPolicy?: 'Honor' | 'Ignore'; topologyKey: string }>;
-/**
-* If true the pod's hostname will be configured as the pod's FQDN, rather than the leaf name (the default). In Linux containers, this means setting the FQDN in the hostname field of the kernel (the nodename field of struct utsname). In Windows containers, this means setting the registry value of hostname for the registry key HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters to FQDN. If a pod does not have FQDN, this has no effect. Default to false.
-*/
-setHostnameAsFQDN?: boolean;
-/**
-* If specified, the pod's tolerations.
-* @isArray
-*/
-tolerations?: Array<{ effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number; value?: string }>;
-/**
-* PodDNSConfig defines the DNS parameters of a pod in addition to those generated from DNSPolicy.
-* @isObject
-*/
-dnsConfig?: { nameservers?: string[]; options?: Array<{ name?: string; value?: string }>; searches?: string[] };
-/**
-* Use the host's pid namespace. Optional: Default to false.
-*/
-hostPID?: boolean;
-/**
-* RuntimeClassName refers to a RuntimeClass object in the node.k8s.io group, which should be used to run this pod.  If no RuntimeClass resource matches the named class, the pod will not be run. If unset or empty, the "legacy" RuntimeClass will be used, which is an implicit class with an empty definition that uses the default runtime handler. More info: https://git.k8s.io/enhancements/keps/sig-node/585-runtime-class
-*/
-runtimeClassName?: string;
-/**
-* PodSecurityContext holds pod-level security attributes and common container settings. Some fields are also present in container.securityContext.  Field values of container.securityContext take precedence over field values of PodSecurityContext.
-* @isObject
-*/
-securityContext?: { sysctls?: Array<{ name: string; value: string }>; windowsOptions?: { gmsaCredentialSpec?: string; gmsaCredentialSpecName?: string; hostProcess?: boolean; runAsUserName?: string }; fsGroup?: number; runAsGroup?: number; runAsNonRoot?: boolean; runAsUser?: number; supplementalGroups?: number[]; supplementalGroupsPolicy?: 'Merge' | 'Strict'; appArmorProfile?: { localhostProfile?: string; type: 'Localhost' | 'RuntimeDefault' | 'Unconfined' }; fsGroupChangePolicy?: 'Always' | 'OnRootMismatch'; seLinuxChangePolicy?: string; seLinuxOptions?: { user?: string; level?: string; role?: string; type?: string }; seccompProfile?: { localhostProfile?: string; type: 'Localhost' | 'RuntimeDefault' | 'Unconfined' } };
-/**
-* List of volumes that can be mounted by containers belonging to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes
-* @isArray
-*/
-volumes?: Array<Record<string, any>>;
-/**
-* EnableServiceLinks indicates whether information about services should be injected into pod's environment variables, matching the syntax of Docker links. Optional: Defaults to true.
-*/
-enableServiceLinks?: boolean;
-/**
-* ResourceClaims defines which ResourceClaims must be allocated and reserved before the Pod is allowed to start. The resources will be made available to those containers which consume them by name.
-
-This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
-
-This field is immutable.
-* @isArray
-*/
-resourceClaims?: Array<{ name: string; resourceClaimName?: string; resourceClaimTemplateName?: string }>;
+readinessGates?: io_k8s_api_core_v1_PodReadinessGate[];
 /**
 * If specified, the pod will be dispatched by specified scheduler. If not specified, the pod will be dispatched by default scheduler.
 */
@@ -175,10 +125,11 @@ schedulerName?: string;
 */
 serviceAccountName?: string;
 /**
-* PodOS defines the OS parameters of a pod.
-* @isObject
+* List of containers belonging to the pod. Containers cannot currently be added or removed. There must be at least one container in a Pod. Cannot be updated.
+* @required
+* @isArray
 */
-os?: { name: string };
+containers: io_k8s_api_core_v1_Container[];
 /**
 * Set DNS policy for the pod. Defaults to "ClusterFirst". Valid values are 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'. DNS parameters given in DNSConfig will be merged with the policy selected with DNSPolicy. To have DNS options set along with hostNetwork, you have to specify DNS policy explicitly to 'ClusterFirstWithHostNet'.
 
@@ -190,18 +141,75 @@ Possible enum values:
 */
 dnsPolicy?: 'ClusterFirst' | 'ClusterFirstWithHostNet' | 'Default' | 'None';
 /**
-* Use the host's user namespace. Optional: Default to true. If set to true or not present, the pod will be run in the host user namespace, useful for when the pod needs a feature only available to the host user namespace, such as loading a kernel module with CAP_SYS_MODULE. When set to false, a new userns is created for the pod. Setting false is useful for mitigating container breakout vulnerabilities even allowing users to run their containers as root without actually having root privileges on the host. This field is alpha-level and is only honored by servers that enable the UserNamespacesSupport feature.
-*/
-hostUsers?: boolean;
-/**
 * ImagePullSecrets is an optional list of references to secrets in the same namespace to use for pulling any of the images used by this PodSpec. If specified, these secrets will be passed to individual puller implementations for them to use. More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod
 * @isArray
 */
-imagePullSecrets?: Array<{ name?: string }>;
+imagePullSecrets?: io_k8s_api_core_v1_LocalObjectReference[];
 /**
-* NodeName indicates in which node this pod is scheduled. If empty, this pod is a candidate for scheduling by the scheduler defined in schedulerName. Once this field is set, the kubelet for this node becomes responsible for the lifecycle of this pod. This field should not be used to express a desire for the pod to be scheduled on a specific node. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodename
+* List of initialization containers belonging to the pod. Init containers are executed in order prior to containers being started. If any init container fails, the pod is considered to have failed and is handled according to its restartPolicy. The name for an init container or normal container must be unique among all containers. Init containers may not have Lifecycle actions, Readiness probes, Liveness probes, or Startup probes. The resourceRequirements of an init container are taken into account during scheduling by finding the highest request/limit for each resource type, and then using the max of of that value or the sum of the normal containers. Limits are applied to init containers in a similar fashion. Init containers cannot currently be added or removed. Cannot be updated. More info: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+* @isArray
 */
-nodeName?: string;
+initContainers?: io_k8s_api_core_v1_Container[];
+/**
+* The priority value. Various system components use this field to find the priority of the pod. When Priority Admission Controller is enabled, it prevents users from setting this field. The admission controller populates this field from PriorityClassName. The higher the value, the higher the priority.
+*/
+priority?: number;
+/**
+* Share a single process namespace between all of the containers in a pod. When this is set containers will be able to view and signal processes from other containers in the same pod, and the first process in each container will not be assigned PID 1. HostPID and ShareProcessNamespace cannot both be set. Optional: Default to false.
+*/
+shareProcessNamespace?: boolean;
+/**
+* TopologySpreadConstraints describes how a group of pods ought to spread across topology domains. Scheduler will schedule pods in a way which abides by the constraints. All topologySpreadConstraints are ANDed.
+* @isArray
+*/
+topologySpreadConstraints?: io_k8s_api_core_v1_TopologySpreadConstraint[];
+/**
+* Overhead represents the resource overhead associated with running a pod for a given RuntimeClass. This field will be autopopulated at admission time by the RuntimeClass admission controller. If the RuntimeClass admission controller is enabled, overhead must not be set in Pod create requests. The RuntimeClass admission controller will reject Pod create requests which have the overhead already set. If RuntimeClass is configured and selected in the PodSpec, Overhead will be set to the value defined in the corresponding RuntimeClass, otherwise it will remain unset and treated as zero. More info: https://git.k8s.io/enhancements/keps/sig-node/688-pod-overhead/README.md
+*/
+overhead?: Record<string, any>;
+/**
+* SecurityContext holds pod-level security attributes and common container settings. Optional: Defaults to empty.  See type description for default values of each field.
+* @references io.k8s.api.core.v1.PodSecurityContext
+*/
+securityContext?: io_k8s_api_core_v1_PodSecurityContext;
+/**
+* If specified, the fully qualified Pod hostname will be "<hostname>.<subdomain>.<pod namespace>.svc.<cluster domain>". If not specified, the pod will not have a domainname at all.
+*/
+subdomain?: string;
+/**
+* If true the pod's hostname will be configured as the pod's FQDN, rather than the leaf name (the default). In Linux containers, this means setting the FQDN in the hostname field of the kernel (the nodename field of struct utsname). In Windows containers, this means setting the registry value of hostname for the registry key HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters to FQDN. If a pod does not have FQDN, this has no effect. Default to false.
+*/
+setHostnameAsFQDN?: boolean;
+/**
+* Optional duration in seconds the pod needs to terminate gracefully. May be decreased in delete request. Value must be non-negative integer. The value zero indicates stop immediately via the kill signal (no opportunity to shut down). If this value is nil, the default grace period will be used instead. The grace period is the duration in seconds after the processes running in the pod are sent a termination signal and the time when the processes are forcibly halted with a kill signal. Set this value longer than the expected cleanup time for your process. Defaults to 30 seconds.
+*/
+terminationGracePeriodSeconds?: number;
+/**
+* List of volumes that can be mounted by containers belonging to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes
+* @isArray
+*/
+volumes?: io_k8s_api_core_v1_Volume[];
+/**
+* HostAliases is an optional list of hosts and IPs that will be injected into the pod's hosts file if specified.
+* @isArray
+*/
+hostAliases?: io_k8s_api_core_v1_HostAlias[];
+/**
+* Use the host's ipc namespace. Optional: Default to false.
+*/
+hostIPC?: boolean;
+/**
+* Host networking requested for this pod. Use the host's network namespace. If this option is set, the ports that will be used must be specified. Default to false.
+*/
+hostNetwork?: boolean;
+/**
+* Specifies the hostname of the Pod If not specified, the pod's hostname will be set to a system-defined value.
+*/
+hostname?: string;
+/**
+* NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+*/
+nodeSelector?: Record<string, any>;
 }
 
 /**
@@ -212,44 +220,60 @@ nodeName?: string;
 export function createio_k8s_api_core_v1_PodSpec(data?: Partial<io_k8s_api_core_v1_PodSpec>): io_k8s_api_core_v1_PodSpec {
  return {
    automountServiceAccountToken: data?.automountServiceAccountToken !== undefined ? data.automountServiceAccountToken : false,
-   hostNetwork: data?.hostNetwork !== undefined ? data.hostNetwork : false,
-   terminationGracePeriodSeconds: data?.terminationGracePeriodSeconds !== undefined ? data.terminationGracePeriodSeconds : 0,
-   priority: data?.priority !== undefined ? data.priority : 0,
-   resources: data?.resources !== undefined ? data.resources : {},
-   restartPolicy: data?.restartPolicy !== undefined ? data.restartPolicy : '',
-   shareProcessNamespace: data?.shareProcessNamespace !== undefined ? data.shareProcessNamespace : false,
-   affinity: data?.affinity !== undefined ? data.affinity : {},
-   containers: data?.containers !== undefined ? data.containers : [],
-   ephemeralContainers: data?.ephemeralContainers !== undefined ? data.ephemeralContainers : [],
-   hostIPC: data?.hostIPC !== undefined ? data.hostIPC : false,
-   activeDeadlineSeconds: data?.activeDeadlineSeconds !== undefined ? data.activeDeadlineSeconds : 0,
-   overhead: data?.overhead !== undefined ? data.overhead : {},
+   nodeName: data?.nodeName !== undefined ? data.nodeName : '',
    preemptionPolicy: data?.preemptionPolicy !== undefined ? data.preemptionPolicy : '',
-   readinessGates: data?.readinessGates !== undefined ? data.readinessGates : [],
-   schedulingGates: data?.schedulingGates !== undefined ? data.schedulingGates : [],
-   subdomain: data?.subdomain !== undefined ? data.subdomain : '',
-   hostAliases: data?.hostAliases !== undefined ? data.hostAliases : [],
-   hostname: data?.hostname !== undefined ? data.hostname : '',
-   nodeSelector: data?.nodeSelector !== undefined ? data.nodeSelector : {},
-   priorityClassName: data?.priorityClassName !== undefined ? data.priorityClassName : '',
-   initContainers: data?.initContainers !== undefined ? data.initContainers : [],
-   serviceAccount: data?.serviceAccount !== undefined ? data.serviceAccount : '',
-   topologySpreadConstraints: data?.topologySpreadConstraints !== undefined ? data.topologySpreadConstraints : [],
-   setHostnameAsFQDN: data?.setHostnameAsFQDN !== undefined ? data.setHostnameAsFQDN : false,
-   tolerations: data?.tolerations !== undefined ? data.tolerations : [],
-   dnsConfig: data?.dnsConfig !== undefined ? data.dnsConfig : {},
-   hostPID: data?.hostPID !== undefined ? data.hostPID : false,
    runtimeClassName: data?.runtimeClassName !== undefined ? data.runtimeClassName : '',
-   securityContext: data?.securityContext !== undefined ? data.securityContext : {},
-   volumes: data?.volumes !== undefined ? data.volumes : [],
+   schedulingGates: data?.schedulingGates !== undefined ? data.schedulingGates : [],
+   priorityClassName: data?.priorityClassName !== undefined ? data.priorityClassName : '',
+   resources: data?.resources !== undefined ? data.resources : createio_k8s_api_core_v1_ResourceRequirements(),
+   activeDeadlineSeconds: data?.activeDeadlineSeconds !== undefined ? data.activeDeadlineSeconds : 0,
    enableServiceLinks: data?.enableServiceLinks !== undefined ? data.enableServiceLinks : false,
+   ephemeralContainers: data?.ephemeralContainers !== undefined ? data.ephemeralContainers : [],
+   hostPID: data?.hostPID !== undefined ? data.hostPID : false,
+   os: data?.os !== undefined ? data.os : createio_k8s_api_core_v1_PodOS(),
+   hostUsers: data?.hostUsers !== undefined ? data.hostUsers : false,
    resourceClaims: data?.resourceClaims !== undefined ? data.resourceClaims : [],
+   serviceAccount: data?.serviceAccount !== undefined ? data.serviceAccount : '',
+   affinity: data?.affinity !== undefined ? data.affinity : createio_k8s_api_core_v1_Affinity(),
+   restartPolicy: data?.restartPolicy !== undefined ? data.restartPolicy : '',
+   tolerations: data?.tolerations !== undefined ? data.tolerations : [],
+   dnsConfig: data?.dnsConfig !== undefined ? data.dnsConfig : createio_k8s_api_core_v1_PodDNSConfig(),
+   readinessGates: data?.readinessGates !== undefined ? data.readinessGates : [],
    schedulerName: data?.schedulerName !== undefined ? data.schedulerName : '',
    serviceAccountName: data?.serviceAccountName !== undefined ? data.serviceAccountName : '',
-   os: data?.os !== undefined ? data.os : { name: '' },
+   containers: data?.containers !== undefined ? data.containers : [],
    dnsPolicy: data?.dnsPolicy !== undefined ? data.dnsPolicy : '',
-   hostUsers: data?.hostUsers !== undefined ? data.hostUsers : false,
    imagePullSecrets: data?.imagePullSecrets !== undefined ? data.imagePullSecrets : [],
-   nodeName: data?.nodeName !== undefined ? data.nodeName : '',
+   initContainers: data?.initContainers !== undefined ? data.initContainers : [],
+   priority: data?.priority !== undefined ? data.priority : 0,
+   shareProcessNamespace: data?.shareProcessNamespace !== undefined ? data.shareProcessNamespace : false,
+   topologySpreadConstraints: data?.topologySpreadConstraints !== undefined ? data.topologySpreadConstraints : [],
+   overhead: data?.overhead !== undefined ? data.overhead : {},
+   securityContext: data?.securityContext !== undefined ? data.securityContext : createio_k8s_api_core_v1_PodSecurityContext(),
+   subdomain: data?.subdomain !== undefined ? data.subdomain : '',
+   setHostnameAsFQDN: data?.setHostnameAsFQDN !== undefined ? data.setHostnameAsFQDN : false,
+   terminationGracePeriodSeconds: data?.terminationGracePeriodSeconds !== undefined ? data.terminationGracePeriodSeconds : 0,
+   volumes: data?.volumes !== undefined ? data.volumes : [],
+   hostAliases: data?.hostAliases !== undefined ? data.hostAliases : [],
+   hostIPC: data?.hostIPC !== undefined ? data.hostIPC : false,
+   hostNetwork: data?.hostNetwork !== undefined ? data.hostNetwork : false,
+   hostname: data?.hostname !== undefined ? data.hostname : '',
+   nodeSelector: data?.nodeSelector !== undefined ? data.nodeSelector : {},
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_Affinity, createio_k8s_api_core_v1_Affinity } from '../affinity/io_k8s_api_core_v1_Affinity';
+import { io_k8s_api_core_v1_Container, createio_k8s_api_core_v1_Container } from '../io.k8s.api.core.v1.Container';
+import { io_k8s_api_core_v1_EphemeralContainer, createio_k8s_api_core_v1_EphemeralContainer } from '../io.k8s.api.core.v1.EphemeralContainer';
+import { io_k8s_api_core_v1_HostAlias, createio_k8s_api_core_v1_HostAlias } from '../io.k8s.api.core.v1.HostAlias';
+import { io_k8s_api_core_v1_LocalObjectReference, createio_k8s_api_core_v1_LocalObjectReference } from '../io.k8s.api.core.v1.LocalObjectReference';
+import { io_k8s_api_core_v1_PodDNSConfig, createio_k8s_api_core_v1_PodDNSConfig } from '../poddnsconfig/io_k8s_api_core_v1_PodDNSConfig';
+import { io_k8s_api_core_v1_PodOS, createio_k8s_api_core_v1_PodOS } from '../podo/io_k8s_api_core_v1_PodOS';
+import { io_k8s_api_core_v1_PodReadinessGate, createio_k8s_api_core_v1_PodReadinessGate } from '../io.k8s.api.core.v1.PodReadinessGate';
+import { io_k8s_api_core_v1_PodResourceClaim, createio_k8s_api_core_v1_PodResourceClaim } from '../io.k8s.api.core.v1.PodResourceClaim';
+import { io_k8s_api_core_v1_PodSchedulingGate, createio_k8s_api_core_v1_PodSchedulingGate } from '../io.k8s.api.core.v1.PodSchedulingGate';
+import { io_k8s_api_core_v1_PodSecurityContext, createio_k8s_api_core_v1_PodSecurityContext } from '../podsecuritycontext/io_k8s_api_core_v1_PodSecurityContext';
+import { io_k8s_api_core_v1_ResourceRequirements, createio_k8s_api_core_v1_ResourceRequirements } from '../resourcerequirement/io_k8s_api_core_v1_ResourceRequirements';
+import { io_k8s_api_core_v1_Toleration, createio_k8s_api_core_v1_Toleration } from '../io.k8s.api.core.v1.Toleration';
+import { io_k8s_api_core_v1_TopologySpreadConstraint, createio_k8s_api_core_v1_TopologySpreadConstraint } from '../io.k8s.api.core.v1.TopologySpreadConstraint';
+import { io_k8s_api_core_v1_Volume, createio_k8s_api_core_v1_Volume } from '../io.k8s.api.core.v1.Volume';

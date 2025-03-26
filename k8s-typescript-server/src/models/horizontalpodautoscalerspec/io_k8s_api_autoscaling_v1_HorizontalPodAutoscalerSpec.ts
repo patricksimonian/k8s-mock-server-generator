@@ -14,11 +14,11 @@ maxReplicas: number;
 */
 minReplicas?: number;
 /**
-* CrossVersionObjectReference contains enough information to let you identify the referred resource.
+* reference to scaled resource; horizontal pod autoscaler will learn the current resource consumption and will set the desired number of pods by using its Scale subresource.
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v1.CrossVersionObjectReference
 */
-scaleTargetRef: { apiVersion?: string; kind: string; name: string };
+scaleTargetRef: io_k8s_api_autoscaling_v1_CrossVersionObjectReference;
 /**
 * targetCPUUtilizationPercentage is the target average CPU utilization (represented as a percentage of requested CPU) over all the pods; if not specified the default autoscaling policy will be used.
 */
@@ -34,7 +34,9 @@ export function createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec(data
  return {
    maxReplicas: data?.maxReplicas !== undefined ? data.maxReplicas : 0,
    minReplicas: data?.minReplicas !== undefined ? data.minReplicas : 0,
-   scaleTargetRef: data?.scaleTargetRef !== undefined ? data.scaleTargetRef : { kind: '', name: '' },
+   scaleTargetRef: data?.scaleTargetRef !== undefined ? data.scaleTargetRef : createio_k8s_api_autoscaling_v1_CrossVersionObjectReference(),
    targetCPUUtilizationPercentage: data?.targetCPUUtilizationPercentage !== undefined ? data.targetCPUUtilizationPercentage : 0,
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v1_CrossVersionObjectReference, createio_k8s_api_autoscaling_v1_CrossVersionObjectReference } from '../crossversionobjectreference/io_k8s_api_autoscaling_v1_CrossVersionObjectReference';

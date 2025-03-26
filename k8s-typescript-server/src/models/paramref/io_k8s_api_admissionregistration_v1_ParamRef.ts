@@ -31,10 +31,14 @@ Required
 */
 parameterNotFoundAction?: string;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
+* selector can be used to match multiple param objects based on their labels. Supply selector: {} to match all resources of the ParamKind.
+
+If multiple params are found, they are all evaluated with the policy expressions and the results are ANDed together.
+
+One of `name` or `selector` must be set, but `name` and `selector` are mutually exclusive properties. If one is set, the other must be unset.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+selector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 }
 
 /**
@@ -47,6 +51,8 @@ export function createio_k8s_api_admissionregistration_v1_ParamRef(data?: Partia
    name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
    parameterNotFoundAction: data?.parameterNotFoundAction !== undefined ? data.parameterNotFoundAction : '',
-   selector: data?.selector !== undefined ? data.selector : {},
+   selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';

@@ -5,13 +5,13 @@
 */
 export interface io_k8s_api_authorization_v1_NonResourceAttributes {
 /**
-* Verb is the standard HTTP verb
-*/
-verb?: string;
-/**
 * Path is the URL path of the request
 */
 path?: string;
+/**
+* Verb is the standard HTTP verb
+*/
+verb?: string;
 }
 
 /**
@@ -21,7 +21,7 @@ path?: string;
 */
 export function createio_k8s_api_authorization_v1_NonResourceAttributes(data?: Partial<io_k8s_api_authorization_v1_NonResourceAttributes>): io_k8s_api_authorization_v1_NonResourceAttributes {
  return {
-   verb: data?.verb !== undefined ? data.verb : '',
    path: data?.path !== undefined ? data.path : '',
+   verb: data?.verb !== undefined ? data.verb : '',
  };
 }

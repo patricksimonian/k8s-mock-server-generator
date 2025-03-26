@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_PodAffinityTerm {
 /**
+* A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
+*/
+namespaceSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
+/**
 * namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
 * @isArray
 */
@@ -15,10 +20,10 @@ namespaces?: string[];
 */
 topologyKey: string;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
+* A label query over a set of resources, in this case pods. If it's null, this PodAffinityTerm matches with no Pods.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+labelSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 /**
 * MatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration. The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key in (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity. Keys that don't exist in the incoming pod labels will be ignored. The default value is empty. The same key is forbidden to exist in both matchLabelKeys and labelSelector. Also, matchLabelKeys cannot be set when labelSelector isn't set. This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
 * @isArray
@@ -29,11 +34,6 @@ matchLabelKeys?: string[];
 * @isArray
 */
 mismatchLabelKeys?: string[];
-/**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
-*/
-namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
 }
 
 /**
@@ -43,11 +43,13 @@ namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; 
 */
 export function createio_k8s_api_core_v1_PodAffinityTerm(data?: Partial<io_k8s_api_core_v1_PodAffinityTerm>): io_k8s_api_core_v1_PodAffinityTerm {
  return {
+   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    namespaces: data?.namespaces !== undefined ? data.namespaces : [],
    topologyKey: data?.topologyKey !== undefined ? data.topologyKey : '',
-   labelSelector: data?.labelSelector !== undefined ? data.labelSelector : {},
+   labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    matchLabelKeys: data?.matchLabelKeys !== undefined ? data.matchLabelKeys : [],
    mismatchLabelKeys: data?.mismatchLabelKeys !== undefined ? data.mismatchLabelKeys : [],
-   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : {},
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';

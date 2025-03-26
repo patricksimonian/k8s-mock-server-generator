@@ -7,6 +7,25 @@ import { handleResourceError } from '../utils';
 export function createingressclassRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//watch changes to an object of kind IngressClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting ingressclass ${name}`);
+      
+      const resource = await storage.getResource('ingressclass', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //watch individual changes to a list of IngressClass. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/networking.k8s.io/v1/watch/ingressclasses', async (req, res, next) => {
     try {
@@ -18,18 +37,11 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       const namespace = null;
       logger.info(`Listing ingressclass`);
       
-      const resources = await storage.listResources('ingressclass', namespace, listOpts);
+      const resourceList = await storage.listResources('ingressclass', namespace, listOpts);
       
-      const response = {
-        kind: 'IngressclassList',
-        apiVersion: 'networking.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -46,18 +58,11 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       const namespace = null;
       logger.info(`Listing ingressclass`);
       
-      const resources = await storage.listResources('ingressclass', namespace, listOpts);
+      const resourceList = await storage.listResources('ingressclass', namespace, listOpts);
       
-      const response = {
-        kind: 'IngressclassList',
-        apiVersion: 'networking.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -115,66 +120,6 @@ export function createingressclassRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind IngressClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting ingressclass ${name}`);
-      
-      const resource = await storage.getResource('ingressclass', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified IngressClass
-  router.get('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting ingressclass ${name}`);
-      
-      const resource = await storage.getResource('ingressclass', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace the specified IngressClass
-  router.put('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating ingressclass ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      
-      const updatedResource = await storage.updateResource('ingressclass', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //delete an IngressClass
   router.delete('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
     try {
@@ -213,7 +158,6 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting ingressclass ${name}`);
-
       const resource = await storage.getResource('ingressclass', name, namespace);
       
       if (!resource) {
@@ -230,7 +174,7 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('ingressclass', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -239,6 +183,47 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read the specified IngressClass
+  router.get('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting ingressclass ${name}`);
+      
+      const resource = await storage.getResource('ingressclass', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace the specified IngressClass
+  router.put('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating ingressclass ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('ingressclass', name, resource, namespace, resource.metadata.resourceVersion);
+      
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }

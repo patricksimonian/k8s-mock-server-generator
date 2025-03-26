@@ -13,20 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { resourceVersion?: string; finalizers?: string[]; generation?: number; labels?: Record<string, any>; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; selfLink?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; name?: string; uid?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generateName?: string; namespace?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* IngressSpec describes the Ingress the user wishes to exist.
-* @isObject
+* spec is the desired state of the Ingress. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.networking.v1.IngressSpec
 */
-spec?: { ingressClassName?: string; rules?: Array<{ host?: string; http?: { paths: Array<{ pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix'; backend: { resource?: { name: string; apiGroup?: string; kind: string }; service?: { name: string; port?: { name?: string; number?: number } } }; path?: string }> } }>; tls?: Array<{ hosts?: string[]; secretName?: string }>; defaultBackend?: { resource?: { kind: string; name: string; apiGroup?: string }; service?: { port?: { name?: string; number?: number }; name: string } } };
+spec?: io_k8s_api_networking_v1_IngressSpec;
 /**
-* IngressStatus describe the current state of the Ingress.
-* @isObject
+* status is the current state of the Ingress. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.networking.v1.IngressStatus
 */
-status?: { loadBalancer?: { ingress?: Array<{ ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>; hostname?: string; ip?: string }> } };
+status?: io_k8s_api_networking_v1_IngressStatus;
 }
 
 /**
@@ -38,8 +38,12 @@ export function createio_k8s_api_networking_v1_Ingress(data?: Partial<io_k8s_api
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_networking_v1_IngressSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_networking_v1_IngressStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_IngressSpec, createio_k8s_api_networking_v1_IngressSpec } from '../ingressspec/io_k8s_api_networking_v1_IngressSpec';
+import { io_k8s_api_networking_v1_IngressStatus, createio_k8s_api_networking_v1_IngressStatus } from '../ingressstatus/io_k8s_api_networking_v1_IngressStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

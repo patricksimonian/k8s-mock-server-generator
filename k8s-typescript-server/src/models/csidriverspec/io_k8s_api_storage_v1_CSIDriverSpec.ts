@@ -5,6 +5,14 @@
 */
 export interface io_k8s_api_storage_v1_CSIDriverSpec {
 /**
+* fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.
+
+This field was immutable in Kubernetes < 1.29 and now is mutable.
+
+Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume. With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume's access mode contains ReadWriteOnce.
+*/
+fsGroupPolicy?: string;
+/**
 * podInfoOnMount indicates this CSI volume driver requires additional pod information (like podName, podUID, etc.) during mount operations, if set to true. If set to false, pod information will not be passed on mount. Default is false.
 
 The CSI driver specifies podInfoOnMount as part of driver deployment. If true, Kubelet will pass pod information as VolumeContext in the CSI NodePublishVolume() calls. The CSI driver is responsible for parsing and validating the information passed in as VolumeContext.
@@ -55,7 +63,7 @@ storageCapacity?: boolean;
 Note: Audience in each TokenRequest should be different and at most one token is empty string. To receive a new token after expiry, RequiresRepublish can be used to trigger NodePublishVolume periodically.
 * @isArray
 */
-tokenRequests?: Array<{ audience: string; expirationSeconds?: number }>;
+tokenRequests?: io_k8s_api_storage_v1_TokenRequest[];
 /**
 * volumeLifecycleModes defines what kind of volumes this CSI volume driver supports. The default if the list is empty is "Persistent", which is the usage defined by the CSI specification and implemented in Kubernetes via the usual PV/PVC mechanism.
 
@@ -73,14 +81,6 @@ volumeLifecycleModes?: string[];
 This field is immutable.
 */
 attachRequired?: boolean;
-/**
-* fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.
-
-This field was immutable in Kubernetes < 1.29 and now is mutable.
-
-Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume. With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume's access mode contains ReadWriteOnce.
-*/
-fsGroupPolicy?: string;
 }
 
 /**
@@ -90,6 +90,7 @@ fsGroupPolicy?: string;
 */
 export function createio_k8s_api_storage_v1_CSIDriverSpec(data?: Partial<io_k8s_api_storage_v1_CSIDriverSpec>): io_k8s_api_storage_v1_CSIDriverSpec {
  return {
+   fsGroupPolicy: data?.fsGroupPolicy !== undefined ? data.fsGroupPolicy : '',
    podInfoOnMount: data?.podInfoOnMount !== undefined ? data.podInfoOnMount : false,
    requiresRepublish: data?.requiresRepublish !== undefined ? data.requiresRepublish : false,
    seLinuxMount: data?.seLinuxMount !== undefined ? data.seLinuxMount : false,
@@ -97,6 +98,7 @@ export function createio_k8s_api_storage_v1_CSIDriverSpec(data?: Partial<io_k8s_
    tokenRequests: data?.tokenRequests !== undefined ? data.tokenRequests : [],
    volumeLifecycleModes: data?.volumeLifecycleModes !== undefined ? data.volumeLifecycleModes : [],
    attachRequired: data?.attachRequired !== undefined ? data.attachRequired : false,
-   fsGroupPolicy: data?.fsGroupPolicy !== undefined ? data.fsGroupPolicy : '',
  };
 }
+// Required imports
+import { io_k8s_api_storage_v1_TokenRequest, createio_k8s_api_storage_v1_TokenRequest } from '../io.k8s.api.storage.v1.TokenRequest';

@@ -5,13 +5,10 @@
 */
 export interface io_k8s_api_batch_v1_JobCondition {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Last time the condition transit from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastProbeTime?: Date;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastTransitionTime?: Date;
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * Human readable message indicating details about last transition.
 */
@@ -30,6 +27,11 @@ status: string;
 * @required
 */
 type: string;
+/**
+* Last time the condition was checked.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastProbeTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -39,11 +41,13 @@ type: string;
 */
 export function createio_k8s_api_batch_v1_JobCondition(data?: Partial<io_k8s_api_batch_v1_JobCondition>): io_k8s_api_batch_v1_JobCondition {
  return {
-   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
+   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

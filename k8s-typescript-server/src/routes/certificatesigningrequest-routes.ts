@@ -7,121 +7,6 @@ import { handleResourceError } from '../utils';
 export function createcertificatesigningrequestRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch individual changes to a list of CertificateSigningRequest. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/certificates.k8s.io/v1/watch/certificatesigningrequests', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing certificatesigningrequest`);
-      
-      const resources = await storage.listResources('certificatesigningrequest', namespace, listOpts);
-      
-      const response = {
-        kind: 'CertificatesigningrequestList',
-        apiVersion: 'certificates.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified CertificateSigningRequest
-  router.get('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing certificatesigningrequest`);
-      
-      const resources = await storage.listResources('certificatesigningrequest', namespace, listOpts);
-      
-      const response = {
-        kind: 'CertificatesigningrequestList',
-        apiVersion: 'certificates.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace status of the specified CertificateSigningRequest
-  router.put('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating certificatesigningrequest ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      
-      const updatedResource = await storage.updateResource('certificatesigningrequest', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting certificatesigningrequest ${name}`);
-
-      const resource = await storage.getResource('certificatesigningrequest', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`certificatesigningrequest ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('certificatesigningrequest', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //list or watch objects of kind CertificateSigningRequest
   router.get('/apis/certificates.k8s.io/v1/certificatesigningrequests', async (req, res, next) => {
     try {
@@ -133,18 +18,11 @@ export function createcertificatesigningrequestRoutes(storage: Storage): express
       const namespace = null;
       logger.info(`Listing certificatesigningrequest`);
       
-      const resources = await storage.listResources('certificatesigningrequest', namespace, listOpts);
+      const resourceList = await storage.listResources('certificatesigningrequest', namespace, listOpts);
       
-      const response = {
-        kind: 'CertificatesigningrequestList',
-        apiVersion: 'certificates.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -202,8 +80,8 @@ export function createcertificatesigningrequestRoutes(storage: Storage): express
     }
   });
 
-//read approval of the specified CertificateSigningRequest
-  router.get('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/approval', async (req, res, next) => {
+//watch individual changes to a list of CertificateSigningRequest. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/certificates.k8s.io/v1/watch/certificatesigningrequests', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -213,114 +91,11 @@ export function createcertificatesigningrequestRoutes(storage: Storage): express
       const namespace = null;
       logger.info(`Listing certificatesigningrequest`);
       
-      const resources = await storage.listResources('certificatesigningrequest', namespace, listOpts);
+      const resourceList = await storage.listResources('certificatesigningrequest', namespace, listOpts);
       
-      const response = {
-        kind: 'CertificatesigningrequestList',
-        apiVersion: 'certificates.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace approval of the specified CertificateSigningRequest
-  router.put('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/approval', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating certificatesigningrequest ${name}`);
 
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
       
-      const updatedResource = await storage.updateResource('certificatesigningrequest', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/approval', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting certificatesigningrequest ${name}`);
-
-      const resource = await storage.getResource('certificatesigningrequest', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`certificatesigningrequest ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('certificatesigningrequest', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting certificatesigningrequest ${name}`);
-
-      const resource = await storage.getResource('certificatesigningrequest', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`certificatesigningrequest ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('certificatesigningrequest', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -358,7 +133,7 @@ export function createcertificatesigningrequestRoutes(storage: Storage): express
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('certificatesigningrequest', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -398,6 +173,42 @@ export function createcertificatesigningrequestRoutes(storage: Storage): express
       next(error);
     }
   });
+  router.patch('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting certificatesigningrequest ${name}`);
+      const resource = await storage.getResource('certificatesigningrequest', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`certificatesigningrequest ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('certificatesigningrequest', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('certificatesigningrequest', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
 
 //watch changes to an object of kind CertificateSigningRequest. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
   router.get('/apis/certificates.k8s.io/v1/watch/certificatesigningrequests/:name', async (req, res, next) => {
@@ -413,6 +224,126 @@ export function createcertificatesigningrequestRoutes(storage: Storage): express
       }
   
       res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read status of the specified CertificateSigningRequest
+  router.get('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/status', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing certificatesigningrequest`);
+      
+      const resourceList = await storage.listResources('certificatesigningrequest', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace status of the specified CertificateSigningRequest
+  router.put('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating certificatesigningrequest ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('certificatesigningrequest', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting certificatesigningrequest ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('certificatesigningrequest', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read approval of the specified CertificateSigningRequest
+  router.get('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/approval', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing certificatesigningrequest`);
+      
+      const resourceList = await storage.listResources('certificatesigningrequest', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace approval of the specified CertificateSigningRequest
+  router.put('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/approval', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating certificatesigningrequest ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "approval";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('certificatesigningrequest', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/certificates.k8s.io/v1/certificatesigningrequests/:name/approval', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting certificatesigningrequest ${name}`);
+      const subresource = "approval";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('certificatesigningrequest', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }

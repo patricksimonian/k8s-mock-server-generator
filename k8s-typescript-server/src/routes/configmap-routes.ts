@@ -25,39 +25,23 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-  router.patch('/api/v1/namespaces/:namespace/configmaps/:name', async (req, res, next) => {
+
+//list or watch objects of kind ConfigMap
+  router.get('/api/v1/configmaps', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching configmap ${name} in namespace ${namespace}`);
-
-      const resource = await storage.getResource('configmap', name, namespace);
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing configmap`);
       
-      if (!resource) {
-        return handleResourceError(new Error(`configmap ${name} not found in namespace ${namespace}`), res);
-      }
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
       
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
 
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -96,7 +80,7 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('configmap', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -132,6 +116,63 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
           kind: 'configmap'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/api/v1/namespaces/:namespace/configmaps/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      logger.info(`Patching configmap ${name} in namespace ${namespace}`);
+      const resource = await storage.getResource('configmap', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`configmap ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ConfigMap
+  router.get('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing configmap in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -193,62 +234,6 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind ConfigMap
-  router.get('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing configmap in namespace ${namespace}`);
-      
-      const resources = await storage.listResources('configmap', namespace, listOpts);
-      
-      const response = {
-        kind: 'ConfigmapList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ConfigMap
-  router.get('/api/v1/configmaps', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing configmap`);
-      
-      const resources = await storage.listResources('configmap', namespace, listOpts);
-      
-      const response = {
-        kind: 'ConfigmapList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //watch individual changes to a list of ConfigMap. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/api/v1/watch/namespaces/:namespace/configmaps', async (req, res, next) => {
     try {
@@ -260,18 +245,11 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
       const namespace = req.params.namespace;
       logger.info(`Listing configmap in namespace ${namespace}`);
       
-      const resources = await storage.listResources('configmap', namespace, listOpts);
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
       
-      const response = {
-        kind: 'ConfigmapList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -288,18 +266,11 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
       const namespace = null;
       logger.info(`Listing configmap`);
       
-      const resources = await storage.listResources('configmap', namespace, listOpts);
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
       
-      const response = {
-        kind: 'ConfigmapList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

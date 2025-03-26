@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSet {
 /**
+* The current status of this daemon set. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.apps.v1.DaemonSetStatus
+*/
+status?: io_k8s_api_apps_v1_DaemonSetStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -13,20 +18,15 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; deletionTimestamp?: Date; generateName?: string; namespace?: string; uid?: string; finalizers?: string[]; generation?: number; creationTimestamp?: Date; labels?: Record<string, any>; selfLink?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* DaemonSetSpec is the specification of a daemon set.
-* @isObject
+* The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.apps.v1.DaemonSetSpec
 */
-spec?: { minReadySeconds?: number; revisionHistoryLimit?: number; selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; template: { metadata?: { managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; name?: string; resourceVersion?: string; selfLink?: string; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; uid?: string; finalizers?: string[]; generateName?: string; generation?: number }; spec?: Record<string, any> }; updateStrategy?: { type?: 'OnDelete' | 'RollingUpdate'; rollingUpdate?: { maxSurge?: string; maxUnavailable?: string } } };
-/**
-* DaemonSetStatus represents the current status of a daemon set.
-* @isObject
-*/
-status?: { currentNumberScheduled: number; numberMisscheduled: number; numberUnavailable?: number; observedGeneration?: number; collisionCount?: number; conditions?: Array<{ type: string; lastTransitionTime?: Date; message?: string; reason?: string; status: string }>; desiredNumberScheduled: number; numberAvailable?: number; numberReady: number; updatedNumberScheduled?: number };
+spec?: io_k8s_api_apps_v1_DaemonSetSpec;
 }
 
 /**
@@ -36,10 +36,14 @@ status?: { currentNumberScheduled: number; numberMisscheduled: number; numberUna
 */
 export function createio_k8s_api_apps_v1_DaemonSet(data?: Partial<io_k8s_api_apps_v1_DaemonSet>): io_k8s_api_apps_v1_DaemonSet {
  return {
+   status: data?.status !== undefined ? data.status : createio_k8s_api_apps_v1_DaemonSetStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { selector: {}, template: {} },
-   status: data?.status !== undefined ? data.status : { currentNumberScheduled: 0, numberMisscheduled: 0, desiredNumberScheduled: 0, numberReady: 0 },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_apps_v1_DaemonSetSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_DaemonSetSpec, createio_k8s_api_apps_v1_DaemonSetSpec } from '../daemonsetspec/io_k8s_api_apps_v1_DaemonSetSpec';
+import { io_k8s_api_apps_v1_DaemonSetStatus, createio_k8s_api_apps_v1_DaemonSetStatus } from '../daemonsetstatus/io_k8s_api_apps_v1_DaemonSetStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

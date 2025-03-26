@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_core_v1_AzureDiskVolumeSource {
 /**
+* diskURI is the URI of data disk in the blob storage
+* @required
+*/
+diskURI: string;
+/**
+* fsType is Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
+*/
+fsType?: string;
+/**
 * kind expected values are Shared: multiple blob disks per storage account  Dedicated: single blob disk per storage account  Managed: azure managed data disk (only in managed availability set). defaults to shared
 
 Possible enum values:
@@ -31,15 +40,6 @@ cachingMode?: 'None' | 'ReadOnly' | 'ReadWrite';
 * @required
 */
 diskName: string;
-/**
-* diskURI is the URI of data disk in the blob storage
-* @required
-*/
-diskURI: string;
-/**
-* fsType is Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-*/
-fsType?: string;
 }
 
 /**
@@ -49,11 +49,11 @@ fsType?: string;
 */
 export function createio_k8s_api_core_v1_AzureDiskVolumeSource(data?: Partial<io_k8s_api_core_v1_AzureDiskVolumeSource>): io_k8s_api_core_v1_AzureDiskVolumeSource {
  return {
+   diskURI: data?.diskURI !== undefined ? data.diskURI : '',
+   fsType: data?.fsType !== undefined ? data.fsType : '',
    kind: data?.kind !== undefined ? data.kind : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    cachingMode: data?.cachingMode !== undefined ? data.cachingMode : '',
    diskName: data?.diskName !== undefined ? data.diskName : '',
-   diskURI: data?.diskURI !== undefined ? data.diskURI : '',
-   fsType: data?.fsType !== undefined ? data.fsType : '',
  };
 }

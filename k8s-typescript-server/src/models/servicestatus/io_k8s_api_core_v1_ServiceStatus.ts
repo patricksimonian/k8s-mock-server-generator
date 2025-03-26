@@ -8,12 +8,12 @@ export interface io_k8s_api_core_v1_ServiceStatus {
 * Current service state
 * @isArray
 */
-conditions?: Array<{ observedGeneration?: number; reason: string; status: string; type: string; lastTransitionTime: Date; message: string }>;
+conditions?: io_k8s_apimachinery_pkg_apis_meta_v1_Condition[];
 /**
-* LoadBalancerStatus represents the status of a load-balancer.
-* @isObject
+* LoadBalancer contains the current status of the load-balancer, if one is present.
+* @references io.k8s.api.core.v1.LoadBalancerStatus
 */
-loadBalancer?: { ingress?: Array<{ hostname?: string; ip?: string; ipMode?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }> }> };
+loadBalancer?: io_k8s_api_core_v1_LoadBalancerStatus;
 }
 
 /**
@@ -24,6 +24,9 @@ loadBalancer?: { ingress?: Array<{ hostname?: string; ip?: string; ipMode?: stri
 export function createio_k8s_api_core_v1_ServiceStatus(data?: Partial<io_k8s_api_core_v1_ServiceStatus>): io_k8s_api_core_v1_ServiceStatus {
  return {
    conditions: data?.conditions !== undefined ? data.conditions : [],
-   loadBalancer: data?.loadBalancer !== undefined ? data.loadBalancer : {},
+   loadBalancer: data?.loadBalancer !== undefined ? data.loadBalancer : createio_k8s_api_core_v1_LoadBalancerStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LoadBalancerStatus, createio_k8s_api_core_v1_LoadBalancerStatus } from '../loadbalancerstatus/io_k8s_api_core_v1_LoadBalancerStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Condition, createio_k8s_apimachinery_pkg_apis_meta_v1_Condition } from '../io.k8s.apimachinery.pkg.apis.meta.v1.Condition';

@@ -5,20 +5,20 @@
 */
 export interface io_k8s_api_core_v1_Affinity {
 /**
-* Pod affinity is a group of inter pod affinity scheduling rules.
-* @isObject
+* Describes node affinity scheduling rules for the pod.
+* @references io.k8s.api.core.v1.NodeAffinity
 */
-podAffinity?: { preferredDuringSchedulingIgnoredDuringExecution?: Array<{ podAffinityTerm: { labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[]; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string }; weight: number }>; requiredDuringSchedulingIgnoredDuringExecution?: Array<{ mismatchLabelKeys?: string[]; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string; labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[] }> };
+nodeAffinity?: io_k8s_api_core_v1_NodeAffinity;
 /**
-* Pod anti affinity is a group of inter pod anti affinity scheduling rules.
-* @isObject
+* Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
+* @references io.k8s.api.core.v1.PodAffinity
 */
-podAntiAffinity?: { preferredDuringSchedulingIgnoredDuringExecution?: Array<{ podAffinityTerm: { namespaceSelector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string; labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[] }; weight: number }>; requiredDuringSchedulingIgnoredDuringExecution?: Array<{ namespaceSelector?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> }; namespaces?: string[]; topologyKey: string; labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[] }> };
+podAffinity?: io_k8s_api_core_v1_PodAffinity;
 /**
-* Node affinity is a group of node affinity scheduling rules.
-* @isObject
+* Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
+* @references io.k8s.api.core.v1.PodAntiAffinity
 */
-nodeAffinity?: { requiredDuringSchedulingIgnoredDuringExecution?: { nodeSelectorTerms: Array<{ matchFields?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>; matchExpressions?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }> }> }; preferredDuringSchedulingIgnoredDuringExecution?: Array<{ preference: { matchExpressions?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>; matchFields?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }> }; weight: number }> };
+podAntiAffinity?: io_k8s_api_core_v1_PodAntiAffinity;
 }
 
 /**
@@ -28,8 +28,12 @@ nodeAffinity?: { requiredDuringSchedulingIgnoredDuringExecution?: { nodeSelector
 */
 export function createio_k8s_api_core_v1_Affinity(data?: Partial<io_k8s_api_core_v1_Affinity>): io_k8s_api_core_v1_Affinity {
  return {
-   podAffinity: data?.podAffinity !== undefined ? data.podAffinity : {},
-   podAntiAffinity: data?.podAntiAffinity !== undefined ? data.podAntiAffinity : {},
-   nodeAffinity: data?.nodeAffinity !== undefined ? data.nodeAffinity : {},
+   nodeAffinity: data?.nodeAffinity !== undefined ? data.nodeAffinity : createio_k8s_api_core_v1_NodeAffinity(),
+   podAffinity: data?.podAffinity !== undefined ? data.podAffinity : createio_k8s_api_core_v1_PodAffinity(),
+   podAntiAffinity: data?.podAntiAffinity !== undefined ? data.podAntiAffinity : createio_k8s_api_core_v1_PodAntiAffinity(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NodeAffinity, createio_k8s_api_core_v1_NodeAffinity } from '../nodeaffinity/io_k8s_api_core_v1_NodeAffinity';
+import { io_k8s_api_core_v1_PodAffinity, createio_k8s_api_core_v1_PodAffinity } from '../podaffinity/io_k8s_api_core_v1_PodAffinity';
+import { io_k8s_api_core_v1_PodAntiAffinity, createio_k8s_api_core_v1_PodAntiAffinity } from '../podantiaffinity/io_k8s_api_core_v1_PodAntiAffinity';

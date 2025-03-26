@@ -9,10 +9,10 @@ export interface io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSp
 */
 insecureSkipTLSVerify?: boolean;
 /**
-* ServiceReference holds a reference to Service.legacy.k8s.io
-* @isObject
+* Service is a reference to the service for this API server.  It must communicate on port 443. If the Service is nil, that means the handling for the API groupversion is handled locally on this server. The call will simply delegate to the normal handler chain to be fulfilled.
+* @references io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.ServiceReference
 */
-service?: { name?: string; namespace?: string; port?: number };
+service?: io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_ServiceReference;
 /**
 * Version is the API version this server hosts.  For example, "v1"
 */
@@ -45,7 +45,7 @@ groupPriorityMinimum: number;
 export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec(data?: Partial<io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec>): io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec {
  return {
    insecureSkipTLSVerify: data?.insecureSkipTLSVerify !== undefined ? data.insecureSkipTLSVerify : false,
-   service: data?.service !== undefined ? data.service : {},
+   service: data?.service !== undefined ? data.service : createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_ServiceReference(),
    version: data?.version !== undefined ? data.version : '',
    versionPriority: data?.versionPriority !== undefined ? data.versionPriority : 0,
    caBundle: data?.caBundle !== undefined ? data.caBundle : '',
@@ -53,3 +53,5 @@ export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServ
    groupPriorityMinimum: data?.groupPriorityMinimum !== undefined ? data.groupPriorityMinimum : 0,
  };
 }
+// Required imports
+import { io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_ServiceReference, createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_ServiceReference } from '../servicereference/io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_ServiceReference';

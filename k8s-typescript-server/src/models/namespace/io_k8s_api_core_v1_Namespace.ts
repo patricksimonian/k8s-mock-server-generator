@@ -13,20 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { annotations?: Record<string, any>; finalizers?: string[]; generation?: number; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; creationTimestamp?: Date; generateName?: string; selfLink?: string; uid?: string; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; resourceVersion?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* NamespaceSpec describes the attributes on a Namespace.
-* @isObject
+* Spec defines the behavior of the Namespace. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.NamespaceSpec
 */
-spec?: { finalizers?: string[] };
+spec?: io_k8s_api_core_v1_NamespaceSpec;
 /**
-* NamespaceStatus is information about the current status of a Namespace.
-* @isObject
+* Status describes the current status of a Namespace. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.NamespaceStatus
 */
-status?: { conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date }>; phase?: 'Active' | 'Terminating' };
+status?: io_k8s_api_core_v1_NamespaceStatus;
 }
 
 /**
@@ -38,8 +38,12 @@ export function createio_k8s_api_core_v1_Namespace(data?: Partial<io_k8s_api_cor
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_NamespaceSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_NamespaceStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NamespaceSpec, createio_k8s_api_core_v1_NamespaceSpec } from '../namespacespec/io_k8s_api_core_v1_NamespaceSpec';
+import { io_k8s_api_core_v1_NamespaceStatus, createio_k8s_api_core_v1_NamespaceStatus } from '../namespacestatus/io_k8s_api_core_v1_NamespaceStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

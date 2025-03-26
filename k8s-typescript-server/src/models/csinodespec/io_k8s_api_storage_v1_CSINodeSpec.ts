@@ -9,7 +9,7 @@ export interface io_k8s_api_storage_v1_CSINodeSpec {
 * @required
 * @isArray
 */
-drivers: Array<{ nodeID: string; topologyKeys?: string[]; allocatable?: { count?: number }; name: string }>;
+drivers: io_k8s_api_storage_v1_CSINodeDriver[];
 }
 
 /**
@@ -22,3 +22,5 @@ export function createio_k8s_api_storage_v1_CSINodeSpec(data?: Partial<io_k8s_ap
    drivers: data?.drivers !== undefined ? data.drivers : [],
  };
 }
+// Required imports
+import { io_k8s_api_storage_v1_CSINodeDriver, createio_k8s_api_storage_v1_CSINodeDriver } from '../io.k8s.api.storage.v1.CSINodeDriver';

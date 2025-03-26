@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler {
 /**
+* spec defines the behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerSpec
+*/
+spec?: io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec;
+/**
+* status is the current information about the autoscaler.
+* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerStatus
+*/
+status?: io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -13,20 +23,10 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; deletionGracePeriodSeconds?: number; generation?: number; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionTimestamp?: Date; finalizers?: string[]; name?: string; resourceVersion?: string; annotations?: Record<string, any>; creationTimestamp?: Date; generateName?: string; selfLink?: string; uid?: string };
-/**
-* specification of a horizontal pod autoscaler.
-* @isObject
-*/
-spec?: { minReplicas?: number; scaleTargetRef: { apiVersion?: string; kind: string; name: string }; targetCPUUtilizationPercentage?: number; maxReplicas: number };
-/**
-* current status of a horizontal pod autoscaler
-* @isObject
-*/
-status?: { observedGeneration?: number; currentCPUUtilizationPercentage?: number; currentReplicas: number; desiredReplicas: number; lastScaleTime?: Date };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -36,10 +36,14 @@ status?: { observedGeneration?: number; currentCPUUtilizationPercentage?: number
 */
 export function createio_k8s_api_autoscaling_v1_HorizontalPodAutoscaler(data?: Partial<io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler>): io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler {
  return {
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { maxReplicas: 0, scaleTargetRef: { kind: '', name: '' } },
-   status: data?.status !== undefined ? data.status : { currentReplicas: 0, desiredReplicas: 0 },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec, createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec } from '../horizontalpodautoscalerspec/io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec';
+import { io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus, createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus } from '../horizontalpodautoscalerstatus/io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

@@ -8,7 +8,7 @@ export interface io_k8s_api_autoscaling_v2_HPAScalingRules {
 * policies is a list of potential scaling polices which can be used during scaling. At least one policy must be specified, otherwise the HPAScalingRules will be discarded as invalid
 * @isArray
 */
-policies?: Array<{ periodSeconds: number; type: string; value: number }>;
+policies?: io_k8s_api_autoscaling_v2_HPAScalingPolicy[];
 /**
 * selectPolicy is used to specify which policy should be used. If not set, the default value Max is used.
 */
@@ -31,3 +31,5 @@ export function createio_k8s_api_autoscaling_v2_HPAScalingRules(data?: Partial<i
    stabilizationWindowSeconds: data?.stabilizationWindowSeconds !== undefined ? data.stabilizationWindowSeconds : 0,
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_HPAScalingPolicy, createio_k8s_api_autoscaling_v2_HPAScalingPolicy } from '../io.k8s.api.autoscaling.v2.HPAScalingPolicy';

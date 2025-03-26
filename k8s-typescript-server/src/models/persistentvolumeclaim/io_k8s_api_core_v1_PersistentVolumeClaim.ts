@@ -5,20 +5,20 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaim {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { name?: string; selfLink?: string; deletionTimestamp?: Date; generateName?: string; generation?: number; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; uid?: string; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; namespace?: string; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[] };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* PersistentVolumeClaimSpec describes the common attributes of storage devices and allows a Source for provider-specific attributes
-* @isObject
+* spec defines the desired characteristics of a volume requested by a pod author. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+* @references io.k8s.api.core.v1.PersistentVolumeClaimSpec
 */
-spec?: { dataSource?: { name: string; apiGroup?: string; kind: string }; dataSourceRef?: { apiGroup?: string; kind: string; name: string; namespace?: string }; resources?: { requests?: Record<string, any>; limits?: Record<string, any> }; storageClassName?: string; accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[]; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; volumeAttributesClassName?: string; volumeMode?: 'Block' | 'Filesystem'; volumeName?: string };
+spec?: io_k8s_api_core_v1_PersistentVolumeClaimSpec;
 /**
-* PersistentVolumeClaimStatus is the current status of a persistent volume claim.
-* @isObject
+* status represents the current information/status of a persistent volume claim. Read-only. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+* @references io.k8s.api.core.v1.PersistentVolumeClaimStatus
 */
-status?: { accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[]; allocatedResourceStatuses?: Record<string, any>; allocatedResources?: Record<string, any>; capacity?: Record<string, any>; conditions?: Array<{ reason?: string; status: string; type: string; lastProbeTime?: Date; lastTransitionTime?: Date; message?: string }>; currentVolumeAttributesClassName?: string; modifyVolumeStatus?: { status: 'InProgress' | 'Infeasible' | 'Pending'; targetVolumeAttributesClassName?: string }; phase?: 'Bound' | 'Lost' | 'Pending' };
+status?: io_k8s_api_core_v1_PersistentVolumeClaimStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -36,10 +36,14 @@ kind?: string;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaim(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaim>): io_k8s_api_core_v1_PersistentVolumeClaim {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_PersistentVolumeClaimSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_PersistentVolumeClaimStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PersistentVolumeClaimSpec, createio_k8s_api_core_v1_PersistentVolumeClaimSpec } from '../persistentvolumeclaimspec/io_k8s_api_core_v1_PersistentVolumeClaimSpec';
+import { io_k8s_api_core_v1_PersistentVolumeClaimStatus, createio_k8s_api_core_v1_PersistentVolumeClaimStatus } from '../persistentvolumeclaimstatus/io_k8s_api_core_v1_PersistentVolumeClaimStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

@@ -9,9 +9,10 @@ export interface io_k8s_api_flowcontrol_v1_FlowSchemaCondition {
 */
 type?: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* `lastTransitionTime` is the last time the condition transitioned from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastTransitionTime?: Date;
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * `message` is a human-readable message indicating details about last transition.
 */
@@ -34,9 +35,11 @@ status?: string;
 export function createio_k8s_api_flowcontrol_v1_FlowSchemaCondition(data?: Partial<io_k8s_api_flowcontrol_v1_FlowSchemaCondition>): io_k8s_api_flowcontrol_v1_FlowSchemaCondition {
  return {
    type: data?.type !== undefined ? data.type : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

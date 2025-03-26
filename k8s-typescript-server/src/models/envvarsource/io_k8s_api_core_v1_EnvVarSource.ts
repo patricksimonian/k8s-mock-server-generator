@@ -5,25 +5,25 @@
 */
 export interface io_k8s_api_core_v1_EnvVarSource {
 /**
-* ObjectFieldSelector selects an APIVersioned field of an object.
-* @isObject
+* Selects a key of a secret in the pod's namespace
+* @references io.k8s.api.core.v1.SecretKeySelector
 */
-fieldRef?: { apiVersion?: string; fieldPath: string };
+secretKeyRef?: io_k8s_api_core_v1_SecretKeySelector;
 /**
-* ResourceFieldSelector represents container resources (cpu, memory) and their output format
-* @isObject
+* Selects a key of a ConfigMap.
+* @references io.k8s.api.core.v1.ConfigMapKeySelector
 */
-resourceFieldRef?: { resource: string; containerName?: string; divisor?: string };
+configMapKeyRef?: io_k8s_api_core_v1_ConfigMapKeySelector;
 /**
-* SecretKeySelector selects a key of a Secret.
-* @isObject
+* Selects a field of the pod: supports metadata.name, metadata.namespace, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.
+* @references io.k8s.api.core.v1.ObjectFieldSelector
 */
-secretKeyRef?: { key: string; name?: string; optional?: boolean };
+fieldRef?: io_k8s_api_core_v1_ObjectFieldSelector;
 /**
-* Selects a key from a ConfigMap.
-* @isObject
+* Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.
+* @references io.k8s.api.core.v1.ResourceFieldSelector
 */
-configMapKeyRef?: { optional?: boolean; key: string; name?: string };
+resourceFieldRef?: io_k8s_api_core_v1_ResourceFieldSelector;
 }
 
 /**
@@ -33,9 +33,14 @@ configMapKeyRef?: { optional?: boolean; key: string; name?: string };
 */
 export function createio_k8s_api_core_v1_EnvVarSource(data?: Partial<io_k8s_api_core_v1_EnvVarSource>): io_k8s_api_core_v1_EnvVarSource {
  return {
-   fieldRef: data?.fieldRef !== undefined ? data.fieldRef : { fieldPath: '' },
-   resourceFieldRef: data?.resourceFieldRef !== undefined ? data.resourceFieldRef : { resource: '' },
-   secretKeyRef: data?.secretKeyRef !== undefined ? data.secretKeyRef : { key: '' },
-   configMapKeyRef: data?.configMapKeyRef !== undefined ? data.configMapKeyRef : { key: '' },
+   secretKeyRef: data?.secretKeyRef !== undefined ? data.secretKeyRef : createio_k8s_api_core_v1_SecretKeySelector(),
+   configMapKeyRef: data?.configMapKeyRef !== undefined ? data.configMapKeyRef : createio_k8s_api_core_v1_ConfigMapKeySelector(),
+   fieldRef: data?.fieldRef !== undefined ? data.fieldRef : createio_k8s_api_core_v1_ObjectFieldSelector(),
+   resourceFieldRef: data?.resourceFieldRef !== undefined ? data.resourceFieldRef : createio_k8s_api_core_v1_ResourceFieldSelector(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ConfigMapKeySelector, createio_k8s_api_core_v1_ConfigMapKeySelector } from '../configmapkeyselector/io_k8s_api_core_v1_ConfigMapKeySelector';
+import { io_k8s_api_core_v1_ObjectFieldSelector, createio_k8s_api_core_v1_ObjectFieldSelector } from '../objectfieldselector/io_k8s_api_core_v1_ObjectFieldSelector';
+import { io_k8s_api_core_v1_ResourceFieldSelector, createio_k8s_api_core_v1_ResourceFieldSelector } from '../resourcefieldselector/io_k8s_api_core_v1_ResourceFieldSelector';
+import { io_k8s_api_core_v1_SecretKeySelector, createio_k8s_api_core_v1_SecretKeySelector } from '../secretkeyselector/io_k8s_api_core_v1_SecretKeySelector';

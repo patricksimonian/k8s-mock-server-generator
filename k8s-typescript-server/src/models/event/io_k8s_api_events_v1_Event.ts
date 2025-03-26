@@ -5,79 +5,82 @@
 */
 export interface io_k8s_api_events_v1_Event {
 /**
-* ObjectReference contains enough information to let you inspect or modify the referred object.
-* @isObject
+* deprecatedFirstTimestamp is the deprecated field assuring backward compatibility with core.v1 Event type.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-related?: { uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string };
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-deprecatedLastTimestamp?: Date;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { deletionTimestamp?: Date; name?: string; resourceVersion?: string; creationTimestamp?: Date; finalizers?: string[]; deletionGracePeriodSeconds?: number; generateName?: string; generation?: number; labels?: Record<string, any>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; selfLink?: string; uid?: string; annotations?: Record<string, any>; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; namespace?: string };
-/**
-* EventSource contains information for an event.
-* @isObject
-*/
-deprecatedSource?: { component?: string; host?: string };
-/**
-* note is a human-readable description of the status of this operation. Maximal length of the note is 1kB, but libraries should be prepared to handle values up to 64kB.
-*/
-note?: string;
-/**
-* ObjectReference contains enough information to let you inspect or modify the referred object.
-* @isObject
-*/
-regarding?: { kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string };
-/**
-* action is what action was taken/failed regarding to the regarding object. It is machine-readable. This field cannot be empty for new Events and it can have at most 128 characters.
-*/
-action?: string;
-/**
-* deprecatedCount is the deprecated field assuring backward compatibility with core.v1 Event type.
-*/
-deprecatedCount?: number;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-deprecatedFirstTimestamp?: Date;
-/**
-* MicroTime is version of Time with microsecond level precision.
-* @required
-*/
-eventTime: Date;
-/**
-* EventSeries contain information on series of events, i.e. thing that was/is happening continuously for some time. How often to update the EventSeries is up to the event reporters. The default event reporter in "k8s.io/client-go/tools/events/event_broadcaster.go" shows how this struct is updated on heartbeats and can guide customized reporter implementations.
-* @isObject
-*/
-series?: { count: number; lastObservedTime: Date };
-/**
-* type is the type of this event (Normal, Warning), new types could be added in the future. It is machine-readable. This field cannot be empty for new Events.
-*/
-type?: string;
-/**
-* reportingInstance is the ID of the controller instance, e.g. `kubelet-xyzf`. This field cannot be empty for new Events and it can have at most 128 characters.
-*/
-reportingInstance?: string;
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
+deprecatedFirstTimestamp?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * reason is why the action was taken. It is human-readable. This field cannot be empty for new Events and it can have at most 128 characters.
 */
 reason?: string;
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* related is the optional secondary object for more complex actions. E.g. when regarding object triggers a creation or deletion of related object.
+* @references io.k8s.api.core.v1.ObjectReference
+*/
+related?: io_k8s_api_core_v1_ObjectReference;
+/**
+* series is data about the Event series this event represents or nil if it's a singleton Event.
+* @references io.k8s.api.events.v1.EventSeries
+*/
+series?: io_k8s_api_events_v1_EventSeries;
+/**
+* eventTime is the time when this Event was first observed. It is required.
+* @required
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
+*/
+eventTime: io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime;
+/**
+* deprecatedSource is the deprecated field assuring backward compatibility with core.v1 Event type.
+* @references io.k8s.api.core.v1.EventSource
+*/
+deprecatedSource?: io_k8s_api_core_v1_EventSource;
+/**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
 * reportingController is the name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`. This field cannot be empty for new Events.
 */
 reportingController?: string;
+/**
+* reportingInstance is the ID of the controller instance, e.g. `kubelet-xyzf`. This field cannot be empty for new Events and it can have at most 128 characters.
+*/
+reportingInstance?: string;
+/**
+* type is the type of this event (Normal, Warning), new types could be added in the future. It is machine-readable. This field cannot be empty for new Events.
+*/
+type?: string;
+/**
+* action is what action was taken/failed regarding to the regarding object. It is machine-readable. This field cannot be empty for new Events and it can have at most 128 characters.
+*/
+action?: string;
+/**
+* deprecatedLastTimestamp is the deprecated field assuring backward compatibility with core.v1 Event type.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+deprecatedLastTimestamp?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* note is a human-readable description of the status of this operation. Maximal length of the note is 1kB, but libraries should be prepared to handle values up to 64kB.
+*/
+note?: string;
+/**
+* regarding contains the object this Event is about. In most cases it's an Object reporting controller implements, e.g. ReplicaSetController implements ReplicaSets and this event is emitted because it acts on some changes in a ReplicaSet object.
+* @references io.k8s.api.core.v1.ObjectReference
+*/
+regarding?: io_k8s_api_core_v1_ObjectReference;
+/**
+* deprecatedCount is the deprecated field assuring backward compatibility with core.v1 Event type.
+*/
+deprecatedCount?: number;
 }
 
 /**
@@ -87,22 +90,29 @@ reportingController?: string;
 */
 export function createio_k8s_api_events_v1_Event(data?: Partial<io_k8s_api_events_v1_Event>): io_k8s_api_events_v1_Event {
  return {
-   related: data?.related !== undefined ? data.related : {},
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   deprecatedLastTimestamp: data?.deprecatedLastTimestamp !== undefined ? data.deprecatedLastTimestamp : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   deprecatedSource: data?.deprecatedSource !== undefined ? data.deprecatedSource : {},
-   note: data?.note !== undefined ? data.note : '',
-   regarding: data?.regarding !== undefined ? data.regarding : {},
-   action: data?.action !== undefined ? data.action : '',
-   deprecatedCount: data?.deprecatedCount !== undefined ? data.deprecatedCount : 0,
-   deprecatedFirstTimestamp: data?.deprecatedFirstTimestamp !== undefined ? data.deprecatedFirstTimestamp : '',
-   eventTime: data?.eventTime !== undefined ? data.eventTime : '',
-   series: data?.series !== undefined ? data.series : { count: 0, lastObservedTime: '' },
-   type: data?.type !== undefined ? data.type : '',
-   reportingInstance: data?.reportingInstance !== undefined ? data.reportingInstance : '',
-   kind: data?.kind !== undefined ? data.kind : '',
+   deprecatedFirstTimestamp: data?.deprecatedFirstTimestamp !== undefined ? data.deprecatedFirstTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    reason: data?.reason !== undefined ? data.reason : '',
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   related: data?.related !== undefined ? data.related : createio_k8s_api_core_v1_ObjectReference(),
+   series: data?.series !== undefined ? data.series : createio_k8s_api_events_v1_EventSeries(),
+   eventTime: data?.eventTime !== undefined ? data.eventTime : createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime(),
+   deprecatedSource: data?.deprecatedSource !== undefined ? data.deprecatedSource : createio_k8s_api_core_v1_EventSource(),
+   kind: data?.kind !== undefined ? data.kind : '',
    reportingController: data?.reportingController !== undefined ? data.reportingController : '',
+   reportingInstance: data?.reportingInstance !== undefined ? data.reportingInstance : '',
+   type: data?.type !== undefined ? data.type : '',
+   action: data?.action !== undefined ? data.action : '',
+   deprecatedLastTimestamp: data?.deprecatedLastTimestamp !== undefined ? data.deprecatedLastTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   note: data?.note !== undefined ? data.note : '',
+   regarding: data?.regarding !== undefined ? data.regarding : createio_k8s_api_core_v1_ObjectReference(),
+   deprecatedCount: data?.deprecatedCount !== undefined ? data.deprecatedCount : 0,
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_EventSource, createio_k8s_api_core_v1_EventSource } from '../eventsource/io_k8s_api_core_v1_EventSource';
+import { io_k8s_api_core_v1_ObjectReference, createio_k8s_api_core_v1_ObjectReference } from '../objectreference/io_k8s_api_core_v1_ObjectReference';
+import { io_k8s_api_events_v1_EventSeries, createio_k8s_api_events_v1_EventSeries } from '../eventseries/io_k8s_api_events_v1_EventSeries';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime, createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime } from '../microtime/io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

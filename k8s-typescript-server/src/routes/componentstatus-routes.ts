@@ -7,34 +7,6 @@ import { handleResourceError } from '../utils';
 export function createcomponentstatusRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list objects of kind ComponentStatus
-  router.get('/api/v1/componentstatuses', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing componentstatus`);
-      
-      const resources = await storage.listResources('componentstatus', namespace, listOpts);
-      
-      const response = {
-        kind: 'ComponentstatusList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //read the specified ComponentStatus
   router.get('/api/v1/componentstatuses/:name', async (req, res, next) => {
     try {
@@ -49,6 +21,27 @@ export function createcomponentstatusRoutes(storage: Storage): express.Router {
       }
   
       res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list objects of kind ComponentStatus
+  router.get('/api/v1/componentstatuses', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing componentstatus`);
+      
+      const resourceList = await storage.listResources('componentstatus', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

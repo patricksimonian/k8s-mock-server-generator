@@ -9,9 +9,10 @@ export interface io_k8s_api_storage_v1_VolumeError {
 */
 message?: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* time represents the time the error was encountered.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-time?: Date;
+time?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -22,6 +23,8 @@ time?: Date;
 export function createio_k8s_api_storage_v1_VolumeError(data?: Partial<io_k8s_api_storage_v1_VolumeError>): io_k8s_api_storage_v1_VolumeError {
  return {
    message: data?.message !== undefined ? data.message : '',
-   time: data?.time !== undefined ? data.time : '',
+   time: data?.time !== undefined ? data.time : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

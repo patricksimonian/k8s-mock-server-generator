@@ -8,7 +8,7 @@ export interface io_k8s_api_discovery_v1_EndpointHints {
 * forZones indicates the zone(s) this endpoint should be consumed by to enable topology aware routing.
 * @isArray
 */
-forZones?: Array<{ name: string }>;
+forZones?: io_k8s_api_discovery_v1_ForZone[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_discovery_v1_EndpointHints(data?: Partial<io_k8
    forZones: data?.forZones !== undefined ? data.forZones : [],
  };
 }
+// Required imports
+import { io_k8s_api_discovery_v1_ForZone, createio_k8s_api_discovery_v1_ForZone } from '../io.k8s.api.discovery.v1.ForZone';

@@ -5,6 +5,10 @@ Updates march 24th
 Updates March 25th
 
 I need to finish implementing the subresource generation. It could be that I need to refactor the endpoint template to handle the endpoint specific use cases. See https://chatgpt.com/c/67e3412c-2c64-8007-b150-65ffa7f41e17
+
+Updates March 26th
+I need to handle subresources for get and post requests seperatly. Eviction, exec, attach, and logs all act differently. I should also allow for a plugin for exec and attach as well as logs. 
+
 TODO
 
 - i know that the endpoint generatoin is almost there  

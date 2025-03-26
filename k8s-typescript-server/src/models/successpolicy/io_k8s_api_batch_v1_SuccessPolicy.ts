@@ -9,7 +9,7 @@ export interface io_k8s_api_batch_v1_SuccessPolicy {
 * @required
 * @isArray
 */
-rules: Array<{ succeededCount?: number; succeededIndexes?: string }>;
+rules: io_k8s_api_batch_v1_SuccessPolicyRule[];
 }
 
 /**
@@ -22,3 +22,5 @@ export function createio_k8s_api_batch_v1_SuccessPolicy(data?: Partial<io_k8s_ap
    rules: data?.rules !== undefined ? data.rules : [],
  };
 }
+// Required imports
+import { io_k8s_api_batch_v1_SuccessPolicyRule, createio_k8s_api_batch_v1_SuccessPolicyRule } from '../io.k8s.api.batch.v1.SuccessPolicyRule';

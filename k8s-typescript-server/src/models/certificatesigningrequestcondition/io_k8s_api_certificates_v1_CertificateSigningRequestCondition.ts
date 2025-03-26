@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequestCondition {
 /**
-* status of the condition, one of True, False, Unknown. Approved, Denied, and Failed conditions may not be "False" or "Unknown".
-* @required
-*/
-status: string;
-/**
 * type of the condition. Known conditions are "Approved", "Denied", and "Failed".
 
 An "Approved" condition is added via the /approval subresource, indicating the request was approved and should be issued by the signer.
@@ -25,13 +20,15 @@ Only one condition of a given type is allowed.
 */
 type: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* lastTransitionTime is the time the condition last transitioned from one status to another. If unset, when a new condition type is added or an existing condition's status is changed, the server defaults this to the current time.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastTransitionTime?: Date;
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* lastUpdateTime is the time of the last update to this condition
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastUpdateTime?: Date;
+lastUpdateTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * message contains a human readable message with details about the request state
 */
@@ -40,6 +37,11 @@ message?: string;
 * reason indicates a brief reason for the request state
 */
 reason?: string;
+/**
+* status of the condition, one of True, False, Unknown. Approved, Denied, and Failed conditions may not be "False" or "Unknown".
+* @required
+*/
+status: string;
 }
 
 /**
@@ -49,11 +51,13 @@ reason?: string;
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequestCondition(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequestCondition>): io_k8s_api_certificates_v1_CertificateSigningRequestCondition {
  return {
-   status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
-   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
+   status: data?.status !== undefined ? data.status : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

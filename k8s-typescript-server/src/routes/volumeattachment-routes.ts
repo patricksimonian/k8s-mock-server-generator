@@ -7,6 +7,106 @@ import { handleResourceError } from '../utils';
 export function createvolumeattachmentRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//read status of the specified VolumeAttachment
+  router.get('/apis/storage.k8s.io/v1/volumeattachments/:name/status', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing volumeattachment`);
+      
+      const resourceList = await storage.listResources('volumeattachment', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace status of the specified VolumeAttachment
+  router.put('/apis/storage.k8s.io/v1/volumeattachments/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating volumeattachment ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('volumeattachment', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/storage.k8s.io/v1/volumeattachments/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting volumeattachment ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('volumeattachment', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind VolumeAttachment. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/storage.k8s.io/v1/watch/volumeattachments/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting volumeattachment ${name}`);
+      
+      const resource = await storage.getResource('volumeattachment', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`volumeattachment ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of VolumeAttachment. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/storage.k8s.io/v1/watch/volumeattachments', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing volumeattachment`);
+      
+      const resourceList = await storage.listResources('volumeattachment', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //read the specified VolumeAttachment
   router.get('/apis/storage.k8s.io/v1/volumeattachments/:name', async (req, res, next) => {
     try {
@@ -39,7 +139,7 @@ export function createvolumeattachmentRoutes(storage: Storage): express.Router {
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('volumeattachment', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -86,7 +186,6 @@ export function createvolumeattachmentRoutes(storage: Storage): express.Router {
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting volumeattachment ${name}`);
-
       const resource = await storage.getResource('volumeattachment', name, namespace);
       
       if (!resource) {
@@ -103,7 +202,7 @@ export function createvolumeattachmentRoutes(storage: Storage): express.Router {
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('volumeattachment', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -112,53 +211,6 @@ export function createvolumeattachmentRoutes(storage: Storage): express.Router {
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of VolumeAttachment. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/storage.k8s.io/v1/watch/volumeattachments', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing volumeattachment`);
-      
-      const resources = await storage.listResources('volumeattachment', namespace, listOpts);
-      
-      const response = {
-        kind: 'VolumeattachmentList',
-        apiVersion: 'storage.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind VolumeAttachment. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/storage.k8s.io/v1/watch/volumeattachments/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting volumeattachment ${name}`);
-      
-      const resource = await storage.getResource('volumeattachment', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`volumeattachment ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
     } catch (error) {
       next(error);
     }
@@ -227,105 +279,11 @@ export function createvolumeattachmentRoutes(storage: Storage): express.Router {
       const namespace = null;
       logger.info(`Listing volumeattachment`);
       
-      const resources = await storage.listResources('volumeattachment', namespace, listOpts);
+      const resourceList = await storage.listResources('volumeattachment', namespace, listOpts);
       
-      const response = {
-        kind: 'VolumeattachmentList',
-        apiVersion: 'storage.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
 
-//read status of the specified VolumeAttachment
-  router.get('/apis/storage.k8s.io/v1/volumeattachments/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing volumeattachment`);
       
-      const resources = await storage.listResources('volumeattachment', namespace, listOpts);
-      
-      const response = {
-        kind: 'VolumeattachmentList',
-        apiVersion: 'storage.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace status of the specified VolumeAttachment
-  router.put('/apis/storage.k8s.io/v1/volumeattachments/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating volumeattachment ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      
-      const updatedResource = await storage.updateResource('volumeattachment', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/storage.k8s.io/v1/volumeattachments/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting volumeattachment ${name}`);
-
-      const resource = await storage.getResource('volumeattachment', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`volumeattachment ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('volumeattachment', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

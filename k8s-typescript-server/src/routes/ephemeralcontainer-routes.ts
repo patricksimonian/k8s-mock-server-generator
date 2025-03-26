@@ -18,18 +18,11 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
       const namespace = req.params.namespace;
       logger.info(`Listing ephemeralcontainer in namespace ${namespace}`);
       
-      const resources = await storage.listResources('ephemeralcontainer', namespace, listOpts);
+      const resourceList = await storage.listResources('ephemeralcontainer', namespace, listOpts);
       
-      const response = {
-        kind: 'EphemeralcontainerList',
-        apiVersion: 'v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -49,7 +42,7 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('ephemeralcontainer', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -64,7 +57,6 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
       const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
       logger.info(`Patching ephemeralcontainer ${name} in namespace ${namespace}`);
-
       const resource = await storage.getResource('ephemeralcontainer', name, namespace);
       
       if (!resource) {
@@ -81,7 +73,7 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('ephemeralcontainer', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {

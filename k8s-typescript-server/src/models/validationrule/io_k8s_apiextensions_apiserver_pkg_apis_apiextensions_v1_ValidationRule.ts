@@ -5,6 +5,38 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ValidationRule {
 /**
+* fieldPath represents the field path returned when the validation fails. It must be a relative JSON path (i.e. with array notation) scoped to the location of this x-kubernetes-validations extension in the schema and refer to an existing field. e.g. when validation checks if a specific attribute `foo` under a map `testMap`, the fieldPath could be set to `.testMap.foo` If the validation checks two lists must have unique attributes, the fieldPath could be set to either of the list: e.g. `.testList` It does not support list numeric index. It supports child operation to refer to an existing field currently. Refer to [JSONPath support in Kubernetes](https://kubernetes.io/docs/reference/kubectl/jsonpath/) for more info. Numeric index of array is not supported. For field name which contains special characters, use `['specialName']` to refer the field name. e.g. for attribute `foo.34$` appears in a list `testList`, the fieldPath could be set to `.testList['foo.34$']`
+*/
+fieldPath?: string;
+/**
+* Message represents the message displayed when validation fails. The message is required if the Rule contains line breaks. The message must not contain line breaks. If unset, the message is "failed rule: {Rule}". e.g. "must be a URL with the host matching spec.host"
+*/
+message?: string;
+/**
+* MessageExpression declares a CEL expression that evaluates to the validation failure message that is returned when this rule fails. Since messageExpression is used as a failure message, it must evaluate to a string. If both message and messageExpression are present on a rule, then messageExpression will be used if validation fails. If messageExpression results in a runtime error, the runtime error is logged, and the validation failure message is produced as if the messageExpression field were unset. If messageExpression evaluates to an empty string, a string with only spaces, or a string that contains line breaks, then the validation failure message will also be produced as if the messageExpression field were unset, and the fact that messageExpression produced an empty string/string with only spaces/string with line breaks will be logged. messageExpression has access to all the same variables as the rule; the only difference is the return type. Example: "x must be less than max ("+string(self.max)+")"
+*/
+messageExpression?: string;
+/**
+* optionalOldSelf is used to opt a transition rule into evaluation even when the object is first created, or if the old object is missing the value.
+
+When enabled `oldSelf` will be a CEL optional whose value will be `None` if there is no old value, or when the object is initially created.
+
+You may check for presence of oldSelf using `oldSelf.hasValue()` and unwrap it after checking using `oldSelf.value()`. Check the CEL documentation for Optional types for more information: https://pkg.go.dev/github.com/google/cel-go/cel#OptionalTypes
+
+May not be set unless `oldSelf` is used in `rule`.
+*/
+optionalOldSelf?: boolean;
+/**
+* reason provides a machine-readable validation failure reason that is returned to the caller when a request fails this validation rule. The HTTP status code returned to the caller will match the reason of the reason of the first failed validation rule. The currently supported reasons are: "FieldValueInvalid", "FieldValueForbidden", "FieldValueRequired", "FieldValueDuplicate". If not set, default to use "FieldValueInvalid". All future added reasons must be accepted by clients when reading this value and unknown reasons should be treated as FieldValueInvalid.
+
+Possible enum values:
+ - `"FieldValueDuplicate"` is used to report collisions of values that must be unique (e.g. unique IDs).
+ - `"FieldValueForbidden"` is used to report valid (as per formatting rules) values which would be accepted under some conditions, but which are not permitted by the current conditions (such as security policy).
+ - `"FieldValueInvalid"` is used to report malformed values (e.g. failed regex match, too long, out of bounds).
+ - `"FieldValueRequired"` is used to report required values that are not provided (e.g. empty strings, null values, or empty arrays).
+*/
+reason?: 'FieldValueDuplicate' | 'FieldValueForbidden' | 'FieldValueInvalid' | 'FieldValueRequired';
+/**
 * Rule represents the expression which will be evaluated by CEL. ref: https://github.com/google/cel-spec The Rule is scoped to the location of the x-kubernetes-validations extension in the schema. The `self` variable in the CEL expression is bound to the scoped value. Example: - Rule scoped to the root of a resource with a status subresource: {"rule": "self.status.actual <= self.spec.maxDesired"}
 
 If the Rule is scoped to an object with properties, the accessible properties of the object are field selectable via `self.field` and field presence can be checked via `has(self.field)`. Null valued fields are treated as absent fields in CEL expressions. If the Rule is scoped to an object with additionalProperties (i.e. a map) the value of the map are accessible via `self[mapKey]`, map containment can be checked via `mapKey in self` and all entries of the map are accessible via CEL macros and functions such as `self.all(...)`. If the Rule is scoped to an array, the elements of the array are accessible via `self[i]` and also by macros and functions. If the Rule is scoped to a scalar, `self` is bound to the scalar value. Examples: - Rule scoped to a map of objects: {"rule": "self.components['Widget'].priority < 10"} - Rule scoped to a list of integers: {"rule": "self.values.all(value, value >= 0 && value < 100)"} - Rule scoped to a string value: {"rule": "self.startsWith('kube')"}
@@ -41,38 +73,6 @@ Transition rules by default are applied only on UPDATE requests and are skipped 
 * @required
 */
 rule: string;
-/**
-* fieldPath represents the field path returned when the validation fails. It must be a relative JSON path (i.e. with array notation) scoped to the location of this x-kubernetes-validations extension in the schema and refer to an existing field. e.g. when validation checks if a specific attribute `foo` under a map `testMap`, the fieldPath could be set to `.testMap.foo` If the validation checks two lists must have unique attributes, the fieldPath could be set to either of the list: e.g. `.testList` It does not support list numeric index. It supports child operation to refer to an existing field currently. Refer to [JSONPath support in Kubernetes](https://kubernetes.io/docs/reference/kubectl/jsonpath/) for more info. Numeric index of array is not supported. For field name which contains special characters, use `['specialName']` to refer the field name. e.g. for attribute `foo.34$` appears in a list `testList`, the fieldPath could be set to `.testList['foo.34$']`
-*/
-fieldPath?: string;
-/**
-* Message represents the message displayed when validation fails. The message is required if the Rule contains line breaks. The message must not contain line breaks. If unset, the message is "failed rule: {Rule}". e.g. "must be a URL with the host matching spec.host"
-*/
-message?: string;
-/**
-* MessageExpression declares a CEL expression that evaluates to the validation failure message that is returned when this rule fails. Since messageExpression is used as a failure message, it must evaluate to a string. If both message and messageExpression are present on a rule, then messageExpression will be used if validation fails. If messageExpression results in a runtime error, the runtime error is logged, and the validation failure message is produced as if the messageExpression field were unset. If messageExpression evaluates to an empty string, a string with only spaces, or a string that contains line breaks, then the validation failure message will also be produced as if the messageExpression field were unset, and the fact that messageExpression produced an empty string/string with only spaces/string with line breaks will be logged. messageExpression has access to all the same variables as the rule; the only difference is the return type. Example: "x must be less than max ("+string(self.max)+")"
-*/
-messageExpression?: string;
-/**
-* optionalOldSelf is used to opt a transition rule into evaluation even when the object is first created, or if the old object is missing the value.
-
-When enabled `oldSelf` will be a CEL optional whose value will be `None` if there is no old value, or when the object is initially created.
-
-You may check for presence of oldSelf using `oldSelf.hasValue()` and unwrap it after checking using `oldSelf.value()`. Check the CEL documentation for Optional types for more information: https://pkg.go.dev/github.com/google/cel-go/cel#OptionalTypes
-
-May not be set unless `oldSelf` is used in `rule`.
-*/
-optionalOldSelf?: boolean;
-/**
-* reason provides a machine-readable validation failure reason that is returned to the caller when a request fails this validation rule. The HTTP status code returned to the caller will match the reason of the reason of the first failed validation rule. The currently supported reasons are: "FieldValueInvalid", "FieldValueForbidden", "FieldValueRequired", "FieldValueDuplicate". If not set, default to use "FieldValueInvalid". All future added reasons must be accepted by clients when reading this value and unknown reasons should be treated as FieldValueInvalid.
-
-Possible enum values:
- - `"FieldValueDuplicate"` is used to report collisions of values that must be unique (e.g. unique IDs).
- - `"FieldValueForbidden"` is used to report valid (as per formatting rules) values which would be accepted under some conditions, but which are not permitted by the current conditions (such as security policy).
- - `"FieldValueInvalid"` is used to report malformed values (e.g. failed regex match, too long, out of bounds).
- - `"FieldValueRequired"` is used to report required values that are not provided (e.g. empty strings, null values, or empty arrays).
-*/
-reason?: 'FieldValueDuplicate' | 'FieldValueForbidden' | 'FieldValueInvalid' | 'FieldValueRequired';
 }
 
 /**
@@ -82,11 +82,11 @@ reason?: 'FieldValueDuplicate' | 'FieldValueForbidden' | 'FieldValueInvalid' | '
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ValidationRule(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ValidationRule>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ValidationRule {
  return {
-   rule: data?.rule !== undefined ? data.rule : '',
    fieldPath: data?.fieldPath !== undefined ? data.fieldPath : '',
    message: data?.message !== undefined ? data.message : '',
    messageExpression: data?.messageExpression !== undefined ? data.messageExpression : '',
    optionalOldSelf: data?.optionalOldSelf !== undefined ? data.optionalOldSelf : false,
    reason: data?.reason !== undefined ? data.reason : '',
+   rule: data?.rule !== undefined ? data.rule : '',
  };
 }

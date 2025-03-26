@@ -5,20 +5,24 @@
 */
 export interface io_k8s_api_networking_v1_NetworkPolicyPeer {
 /**
-* IPBlock describes a particular CIDR (Ex. "192.168.1.0/24","2001:db8::/64") that is allowed to the pods matched by a NetworkPolicySpec's podSelector. The except entry describes CIDRs that should not be included within this rule.
-* @isObject
+* ipBlock defines policy on a particular IPBlock. If this field is set then neither of the other fields can be.
+* @references io.k8s.api.networking.v1.IPBlock
 */
-ipBlock?: { cidr: string; except?: string[] };
+ipBlock?: io_k8s_api_networking_v1_IPBlock;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
+* namespaceSelector selects namespaces using cluster-scoped labels. This field follows standard label selector semantics; if present but empty, it selects all namespaces.
+
+If podSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the namespaces selected by namespaceSelector. Otherwise it selects all pods in the namespaces selected by namespaceSelector.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+namespaceSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
+* podSelector is a label selector which selects pods. This field follows standard label selector semantics; if present but empty, it selects all pods.
+
+If namespaceSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the Namespaces selected by NamespaceSelector. Otherwise it selects the pods matching podSelector in the policy's own namespace.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-podSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+podSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 }
 
 /**
@@ -28,8 +32,11 @@ podSelector?: { matchExpressions?: Array<{ key: string; operator: string; values
 */
 export function createio_k8s_api_networking_v1_NetworkPolicyPeer(data?: Partial<io_k8s_api_networking_v1_NetworkPolicyPeer>): io_k8s_api_networking_v1_NetworkPolicyPeer {
  return {
-   ipBlock: data?.ipBlock !== undefined ? data.ipBlock : { cidr: '' },
-   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : {},
-   podSelector: data?.podSelector !== undefined ? data.podSelector : {},
+   ipBlock: data?.ipBlock !== undefined ? data.ipBlock : createio_k8s_api_networking_v1_IPBlock(),
+   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   podSelector: data?.podSelector !== undefined ? data.podSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_IPBlock, createio_k8s_api_networking_v1_IPBlock } from '../ipblock/io_k8s_api_networking_v1_IPBlock';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';

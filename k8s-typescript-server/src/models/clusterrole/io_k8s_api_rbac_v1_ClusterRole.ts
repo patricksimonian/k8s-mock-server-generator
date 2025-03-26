@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_rbac_v1_ClusterRole {
 /**
-* AggregationRule describes how to locate ClusterRoles to aggregate into the ClusterRole
-* @isObject
+* AggregationRule is an optional field that describes how to build the Rules for this ClusterRole. If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be stomped by the controller.
+* @references io.k8s.api.rbac.v1.AggregationRule
 */
-aggregationRule?: { clusterRoleSelectors?: Array<{ matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> }> };
+aggregationRule?: io_k8s_api_rbac_v1_AggregationRule;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -18,15 +18,15 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; name?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; finalizers?: string[]; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string; uid?: string; deletionTimestamp?: Date; generation?: number; selfLink?: string; resourceVersion?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
 * Rules holds all the PolicyRules for this ClusterRole
 * @isArray
 */
-rules?: Array<{ apiGroups?: string[]; nonResourceURLs?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[] }>;
+rules?: io_k8s_api_rbac_v1_PolicyRule[];
 }
 
 /**
@@ -36,10 +36,14 @@ rules?: Array<{ apiGroups?: string[]; nonResourceURLs?: string[]; resourceNames?
 */
 export function createio_k8s_api_rbac_v1_ClusterRole(data?: Partial<io_k8s_api_rbac_v1_ClusterRole>): io_k8s_api_rbac_v1_ClusterRole {
  return {
-   aggregationRule: data?.aggregationRule !== undefined ? data.aggregationRule : {},
+   aggregationRule: data?.aggregationRule !== undefined ? data.aggregationRule : createio_k8s_api_rbac_v1_AggregationRule(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    rules: data?.rules !== undefined ? data.rules : [],
  };
 }
+// Required imports
+import { io_k8s_api_rbac_v1_AggregationRule, createio_k8s_api_rbac_v1_AggregationRule } from '../aggregationrule/io_k8s_api_rbac_v1_AggregationRule';
+import { io_k8s_api_rbac_v1_PolicyRule, createio_k8s_api_rbac_v1_PolicyRule } from '../io.k8s.api.rbac.v1.PolicyRule';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

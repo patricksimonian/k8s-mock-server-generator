@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_networking_v1_IngressClassParametersReference {
 /**
+* kind is the type of resource being referenced.
+* @required
+*/
+kind: string;
+/**
 * name is the name of resource being referenced.
 * @required
 */
@@ -21,11 +26,6 @@ scope?: string;
 * apiGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.
 */
 apiGroup?: string;
-/**
-* kind is the type of resource being referenced.
-* @required
-*/
-kind: string;
 }
 
 /**
@@ -35,10 +35,10 @@ kind: string;
 */
 export function createio_k8s_api_networking_v1_IngressClassParametersReference(data?: Partial<io_k8s_api_networking_v1_IngressClassParametersReference>): io_k8s_api_networking_v1_IngressClassParametersReference {
  return {
+   kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
    scope: data?.scope !== undefined ? data.scope : '',
    apiGroup: data?.apiGroup !== undefined ? data.apiGroup : '',
-   kind: data?.kind !== undefined ? data.kind : '',
  };
 }

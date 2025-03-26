@@ -8,12 +8,12 @@ export interface io_k8s_api_networking_v1_NetworkPolicyEgressRule {
 * ports is a list of destination ports for outgoing traffic. Each item in this list is combined using a logical OR. If this field is empty or missing, this rule matches all ports (traffic not restricted by port). If this field is present and contains at least one item, then this rule allows traffic only if the traffic matches at least one port in the list.
 * @isArray
 */
-ports?: Array<{ endPort?: number; port?: string; protocol?: 'SCTP' | 'TCP' | 'UDP' }>;
+ports?: io_k8s_api_networking_v1_NetworkPolicyPort[];
 /**
 * to is a list of destinations for outgoing traffic of pods selected for this rule. Items in this list are combined using a logical OR operation. If this field is empty or missing, this rule matches all destinations (traffic not restricted by destination). If this field is present and contains at least one item, this rule allows traffic only if the traffic matches at least one item in the to list.
 * @isArray
 */
-to?: Array<{ namespaceSelector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> }; podSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; ipBlock?: { cidr: string; except?: string[] } }>;
+to?: io_k8s_api_networking_v1_NetworkPolicyPeer[];
 }
 
 /**
@@ -27,3 +27,6 @@ export function createio_k8s_api_networking_v1_NetworkPolicyEgressRule(data?: Pa
    to: data?.to !== undefined ? data.to : [],
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_NetworkPolicyPeer, createio_k8s_api_networking_v1_NetworkPolicyPeer } from '../io.k8s.api.networking.v1.NetworkPolicyPeer';
+import { io_k8s_api_networking_v1_NetworkPolicyPort, createio_k8s_api_networking_v1_NetworkPolicyPort } from '../io.k8s.api.networking.v1.NetworkPolicyPort';

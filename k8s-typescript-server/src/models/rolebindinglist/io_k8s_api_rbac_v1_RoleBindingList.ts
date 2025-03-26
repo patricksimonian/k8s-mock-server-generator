@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_rbac_v1_RoleBindingList {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * Items is a list of RoleBindings
 * @required
 * @isArray
@@ -20,10 +16,14 @@ items: io_k8s_api_rbac_v1_RoleBinding[];
 */
 kind?: string;
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
+* Standard object's metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
 */
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta;
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -33,11 +33,12 @@ metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: s
 */
 export function createio_k8s_api_rbac_v1_RoleBindingList(data?: Partial<io_k8s_api_rbac_v1_RoleBindingList>): io_k8s_api_rbac_v1_RoleBindingList {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports
 import { io_k8s_api_rbac_v1_RoleBinding, createio_k8s_api_rbac_v1_RoleBinding } from '../rolebinding/io_k8s_api_rbac_v1_RoleBinding';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

@@ -5,20 +5,10 @@
 */
 export interface io_k8s_api_autoscaling_v1_Scale {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* status is the current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.
+* @references io.k8s.api.autoscaling.v1.ScaleStatus
 */
-metadata?: { deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; resourceVersion?: string; uid?: string; deletionGracePeriodSeconds?: number; name?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; namespace?: string; selfLink?: string };
-/**
-* ScaleSpec describes the attributes of a scale subresource.
-* @isObject
-*/
-spec?: { replicas?: number };
-/**
-* ScaleStatus represents the current status of a scale subresource.
-* @isObject
-*/
-status?: { replicas: number; selector?: string };
+status?: io_k8s_api_autoscaling_v1_ScaleStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -27,6 +17,16 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+* @references io.k8s.api.autoscaling.v1.ScaleSpec
+*/
+spec?: io_k8s_api_autoscaling_v1_ScaleSpec;
 }
 
 /**
@@ -36,10 +36,14 @@ kind?: string;
 */
 export function createio_k8s_api_autoscaling_v1_Scale(data?: Partial<io_k8s_api_autoscaling_v1_Scale>): io_k8s_api_autoscaling_v1_Scale {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { replicas: 0 },
+   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v1_ScaleStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_autoscaling_v1_ScaleSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v1_ScaleSpec, createio_k8s_api_autoscaling_v1_ScaleSpec } from '../scalespec/io_k8s_api_autoscaling_v1_ScaleSpec';
+import { io_k8s_api_autoscaling_v1_ScaleStatus, createio_k8s_api_autoscaling_v1_ScaleStatus } from '../scalestatus/io_k8s_api_autoscaling_v1_ScaleStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

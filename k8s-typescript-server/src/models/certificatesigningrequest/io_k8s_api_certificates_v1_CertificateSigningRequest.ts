@@ -11,6 +11,22 @@ This API can be used to request client certificates to authenticate to kube-apis
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequest {
 /**
+* 
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec contains the certificate request, and is immutable after creation. Only the request, signerName, expirationSeconds, and usages fields can be set on creation. Other fields are derived by Kubernetes and cannot be modified by users.
+* @required
+* @references io.k8s.api.certificates.v1.CertificateSigningRequestSpec
+*/
+spec: io_k8s_api_certificates_v1_CertificateSigningRequestSpec;
+/**
+* status contains information about whether the request is approved or denied, and the certificate issued by the signer, or the failure condition indicating signer failure.
+* @references io.k8s.api.certificates.v1.CertificateSigningRequestStatus
+*/
+status?: io_k8s_api_certificates_v1_CertificateSigningRequestStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -18,22 +34,6 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { generateName?: string; generation?: number; labels?: Record<string, any>; name?: string; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; creationTimestamp?: Date; namespace?: string; selfLink?: string; finalizers?: string[]; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; deletionTimestamp?: Date; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }> };
-/**
-* CertificateSigningRequestSpec contains the certificate request.
-* @required
-* @isObject
-*/
-spec: { extra?: Record<string, any>; groups?: string[]; request: string; signerName: string; uid?: string; usages?: 'any' | 'cert sign' | 'client auth' | 'code signing' | 'content commitment' | 'crl sign' | 'data encipherment' | 'decipher only' | 'digital signature' | 'email protection' | 'encipher only' | 'ipsec end system' | 'ipsec tunnel' | 'ipsec user' | 'key agreement' | 'key encipherment' | 'microsoft sgc' | 'netscape sgc' | 'ocsp signing' | 's/mime' | 'server auth' | 'signing' | 'timestamping'[]; username?: string; expirationSeconds?: number };
-/**
-* CertificateSigningRequestStatus contains conditions used to indicate approved/denied/failed status of the request, and the issued certificate.
-* @isObject
-*/
-status?: { conditions?: Array<{ status: string; type: string; lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string; reason?: string }>; certificate?: string };
 }
 
 /**
@@ -43,10 +43,14 @@ status?: { conditions?: Array<{ status: string; type: string; lastTransitionTime
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequest(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequest>): io_k8s_api_certificates_v1_CertificateSigningRequest {
  return {
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_certificates_v1_CertificateSigningRequestSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_certificates_v1_CertificateSigningRequestStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { request: '', signerName: '' },
-   status: data?.status !== undefined ? data.status : {},
  };
 }
+// Required imports
+import { io_k8s_api_certificates_v1_CertificateSigningRequestSpec, createio_k8s_api_certificates_v1_CertificateSigningRequestSpec } from '../certificatesigningrequestspec/io_k8s_api_certificates_v1_CertificateSigningRequestSpec';
+import { io_k8s_api_certificates_v1_CertificateSigningRequestStatus, createio_k8s_api_certificates_v1_CertificateSigningRequestStatus } from '../certificatesigningrequeststatus/io_k8s_api_certificates_v1_CertificateSigningRequestStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

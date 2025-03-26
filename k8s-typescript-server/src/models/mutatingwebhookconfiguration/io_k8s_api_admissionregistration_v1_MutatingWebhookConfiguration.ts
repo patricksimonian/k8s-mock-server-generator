@@ -13,15 +13,15 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { creationTimestamp?: Date; generation?: number; uid?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generateName?: string; namespace?: string; selfLink?: string; annotations?: Record<string, any>; labels?: Record<string, any>; name?: string; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; deletionTimestamp?: Date; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; resourceVersion?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
 * Webhooks is a list of webhooks and the affected resources and operations.
 * @isArray
 */
-webhooks?: Array<{ objectSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; rules?: Array<{ apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resources?: string[]; scope?: string }>; timeoutSeconds?: number; admissionReviewVersions: string[]; clientConfig: { url?: string; caBundle?: string; service?: { name: string; namespace: string; path?: string; port?: number } }; failurePolicy?: 'Fail' | 'Ignore'; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; reinvocationPolicy?: 'IfNeeded' | 'Never'; sideEffects: 'None' | 'NoneOnDryRun' | 'Some' | 'Unknown'; matchConditions?: Array<{ name: string; expression: string }>; matchPolicy?: 'Equivalent' | 'Exact'; name: string }>;
+webhooks?: io_k8s_api_admissionregistration_v1_MutatingWebhook[];
 }
 
 /**
@@ -33,7 +33,10 @@ export function createio_k8s_api_admissionregistration_v1_MutatingWebhookConfigu
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    webhooks: data?.webhooks !== undefined ? data.webhooks : [],
  };
 }
+// Required imports
+import { io_k8s_api_admissionregistration_v1_MutatingWebhook, createio_k8s_api_admissionregistration_v1_MutatingWebhook } from '../io.k8s.api.admissionregistration.v1.MutatingWebhook';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

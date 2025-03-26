@@ -13,20 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { creationTimestamp?: Date; labels?: Record<string, any>; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; generation?: number; namespace?: string; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; name?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; selfLink?: string; uid?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generateName?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* PodDisruptionBudgetSpec is a description of a PodDisruptionBudget.
-* @isObject
+* Specification of the desired behavior of the PodDisruptionBudget.
+* @references io.k8s.api.policy.v1.PodDisruptionBudgetSpec
 */
-spec?: { unhealthyPodEvictionPolicy?: 'AlwaysAllow' | 'IfHealthyBudget'; maxUnavailable?: string; minAvailable?: string; selector?: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> } };
+spec?: io_k8s_api_policy_v1_PodDisruptionBudgetSpec;
 /**
-* PodDisruptionBudgetStatus represents information about the status of a PodDisruptionBudget. Status may trail the actual state of a system.
-* @isObject
+* Most recently observed status of the PodDisruptionBudget.
+* @references io.k8s.api.policy.v1.PodDisruptionBudgetStatus
 */
-status?: { conditions?: Array<{ lastTransitionTime: Date; message: string; observedGeneration?: number; reason: string; status: string; type: string }>; currentHealthy: number; desiredHealthy: number; disruptedPods?: Record<string, any>; disruptionsAllowed: number; expectedPods: number; observedGeneration?: number };
+status?: io_k8s_api_policy_v1_PodDisruptionBudgetStatus;
 }
 
 /**
@@ -38,8 +38,12 @@ export function createio_k8s_api_policy_v1_PodDisruptionBudget(data?: Partial<io
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { currentHealthy: 0, desiredHealthy: 0, disruptionsAllowed: 0, expectedPods: 0 },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_policy_v1_PodDisruptionBudgetSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_policy_v1_PodDisruptionBudgetStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_policy_v1_PodDisruptionBudgetSpec, createio_k8s_api_policy_v1_PodDisruptionBudgetSpec } from '../poddisruptionbudgetspec/io_k8s_api_policy_v1_PodDisruptionBudgetSpec';
+import { io_k8s_api_policy_v1_PodDisruptionBudgetStatus, createio_k8s_api_policy_v1_PodDisruptionBudgetStatus } from '../poddisruptionbudgetstatus/io_k8s_api_policy_v1_PodDisruptionBudgetStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

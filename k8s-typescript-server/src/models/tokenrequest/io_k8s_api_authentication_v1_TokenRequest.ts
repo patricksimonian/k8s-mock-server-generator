@@ -5,10 +5,21 @@
 */
 export interface io_k8s_api_authentication_v1_TokenRequest {
 /**
-* TokenRequestStatus is the result of a token request.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-status?: { token: string; expirationTimestamp: Date };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* Spec holds information about the request being evaluated
+* @required
+* @references io.k8s.api.authentication.v1.TokenRequestSpec
+*/
+spec: io_k8s_api_authentication_v1_TokenRequestSpec;
+/**
+* Status is filled in by the server and indicates whether the token can be authenticated.
+* @references io.k8s.api.authentication.v1.TokenRequestStatus
+*/
+status?: io_k8s_api_authentication_v1_TokenRequestStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -17,17 +28,6 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { creationTimestamp?: Date; labels?: Record<string, any>; selfLink?: string; name?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generateName?: string; generation?: number; annotations?: Record<string, any>; deletionTimestamp?: Date; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; uid?: string };
-/**
-* TokenRequestSpec contains client provided parameters of a token request.
-* @required
-* @isObject
-*/
-spec: { audiences: string[]; boundObjectRef?: { apiVersion?: string; kind?: string; name?: string; uid?: string }; expirationSeconds?: number };
 }
 
 /**
@@ -37,10 +37,14 @@ spec: { audiences: string[]; boundObjectRef?: { apiVersion?: string; kind?: stri
 */
 export function createio_k8s_api_authentication_v1_TokenRequest(data?: Partial<io_k8s_api_authentication_v1_TokenRequest>): io_k8s_api_authentication_v1_TokenRequest {
  return {
-   status: data?.status !== undefined ? data.status : { expirationTimestamp: '', token: '' },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authentication_v1_TokenRequestSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authentication_v1_TokenRequestStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { audiences: [] },
  };
 }
+// Required imports
+import { io_k8s_api_authentication_v1_TokenRequestSpec, createio_k8s_api_authentication_v1_TokenRequestSpec } from '../tokenrequestspec/io_k8s_api_authentication_v1_TokenRequestSpec';
+import { io_k8s_api_authentication_v1_TokenRequestStatus, createio_k8s_api_authentication_v1_TokenRequestStatus } from '../tokenrequeststatus/io_k8s_api_authentication_v1_TokenRequestStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

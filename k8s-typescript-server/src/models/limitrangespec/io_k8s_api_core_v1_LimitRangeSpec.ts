@@ -9,7 +9,7 @@ export interface io_k8s_api_core_v1_LimitRangeSpec {
 * @required
 * @isArray
 */
-limits: Array<{ defaultRequest?: Record<string, any>; max?: Record<string, any>; maxLimitRequestRatio?: Record<string, any>; min?: Record<string, any>; type: string; default?: Record<string, any> }>;
+limits: io_k8s_api_core_v1_LimitRangeItem[];
 }
 
 /**
@@ -22,3 +22,5 @@ export function createio_k8s_api_core_v1_LimitRangeSpec(data?: Partial<io_k8s_ap
    limits: data?.limits !== undefined ? data.limits : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_LimitRangeItem, createio_k8s_api_core_v1_LimitRangeItem } from '../io.k8s.api.core.v1.LimitRangeItem';

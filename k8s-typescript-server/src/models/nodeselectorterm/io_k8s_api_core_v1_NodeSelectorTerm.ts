@@ -8,12 +8,12 @@ export interface io_k8s_api_core_v1_NodeSelectorTerm {
 * A list of node selector requirements by node's labels.
 * @isArray
 */
-matchExpressions?: Array<{ values?: string[]; key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn' }>;
+matchExpressions?: io_k8s_api_core_v1_NodeSelectorRequirement[];
 /**
 * A list of node selector requirements by node's fields.
 * @isArray
 */
-matchFields?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>;
+matchFields?: io_k8s_api_core_v1_NodeSelectorRequirement[];
 }
 
 /**
@@ -27,3 +27,5 @@ export function createio_k8s_api_core_v1_NodeSelectorTerm(data?: Partial<io_k8s_
    matchFields: data?.matchFields !== undefined ? data.matchFields : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NodeSelectorRequirement, createio_k8s_api_core_v1_NodeSelectorRequirement } from '../io.k8s.api.core.v1.NodeSelectorRequirement';

@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_core_v1_SessionAffinityConfig {
 /**
-* ClientIPConfig represents the configurations of Client IP based session affinity.
-* @isObject
+* clientIP contains the configurations of Client IP based session affinity.
+* @references io.k8s.api.core.v1.ClientIPConfig
 */
-clientIP?: { timeoutSeconds?: number };
+clientIP?: io_k8s_api_core_v1_ClientIPConfig;
 }
 
 /**
@@ -18,6 +18,8 @@ clientIP?: { timeoutSeconds?: number };
 */
 export function createio_k8s_api_core_v1_SessionAffinityConfig(data?: Partial<io_k8s_api_core_v1_SessionAffinityConfig>): io_k8s_api_core_v1_SessionAffinityConfig {
  return {
-   clientIP: data?.clientIP !== undefined ? data.clientIP : {},
+   clientIP: data?.clientIP !== undefined ? data.clientIP : createio_k8s_api_core_v1_ClientIPConfig(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ClientIPConfig, createio_k8s_api_core_v1_ClientIPConfig } from '../clientipconfig/io_k8s_api_core_v1_ClientIPConfig';

@@ -5,21 +5,6 @@
 */
 export interface io_k8s_api_flowcontrol_v1_FlowSchema {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { name?: string; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; deletionGracePeriodSeconds?: number; creationTimestamp?: Date; resourceVersion?: string; selfLink?: string; annotations?: Record<string, any>; uid?: string; generation?: number };
-/**
-* FlowSchemaSpec describes how the FlowSchema's specification looks like.
-* @isObject
-*/
-spec?: { distinguisherMethod?: { type: string }; matchingPrecedence?: number; priorityLevelConfiguration: { name: string }; rules?: Array<{ nonResourceRules?: Array<{ nonResourceURLs: string[]; verbs: string[] }>; resourceRules?: Array<{ apiGroups: string[]; clusterScope?: boolean; namespaces?: string[]; resources: string[]; verbs: string[] }>; subjects: Array<{ group?: { name: string }; kind: string; serviceAccount?: { name: string; namespace: string }; user?: { name: string } }> }> };
-/**
-* FlowSchemaStatus represents the current state of a FlowSchema.
-* @isObject
-*/
-status?: { conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status?: string; type?: string }> };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -27,6 +12,21 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* `metadata` is the standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* `spec` is the specification of the desired behavior of a FlowSchema. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.flowcontrol.v1.FlowSchemaSpec
+*/
+spec?: io_k8s_api_flowcontrol_v1_FlowSchemaSpec;
+/**
+* `status` is the current status of a FlowSchema. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.flowcontrol.v1.FlowSchemaStatus
+*/
+status?: io_k8s_api_flowcontrol_v1_FlowSchemaStatus;
 }
 
 /**
@@ -36,10 +36,14 @@ kind?: string;
 */
 export function createio_k8s_api_flowcontrol_v1_FlowSchema(data?: Partial<io_k8s_api_flowcontrol_v1_FlowSchema>): io_k8s_api_flowcontrol_v1_FlowSchema {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { priorityLevelConfiguration: { name: '' } },
-   status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_flowcontrol_v1_FlowSchemaSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_flowcontrol_v1_FlowSchemaStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_flowcontrol_v1_FlowSchemaSpec, createio_k8s_api_flowcontrol_v1_FlowSchemaSpec } from '../flowschemaspec/io_k8s_api_flowcontrol_v1_FlowSchemaSpec';
+import { io_k8s_api_flowcontrol_v1_FlowSchemaStatus, createio_k8s_api_flowcontrol_v1_FlowSchemaStatus } from '../flowschemastatus/io_k8s_api_flowcontrol_v1_FlowSchemaStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

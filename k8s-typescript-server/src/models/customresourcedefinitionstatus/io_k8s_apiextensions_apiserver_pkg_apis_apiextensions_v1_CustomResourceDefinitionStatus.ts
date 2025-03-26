@@ -5,20 +5,20 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionStatus {
 /**
-* storedVersions lists all versions of CustomResources that were ever persisted. Tracking these versions allows a migration path for stored versions in etcd. The field is mutable so a migration controller can finish a migration to another version (ensuring no old objects are left in storage), and then remove the rest of the versions from this list. Versions may not be removed from `spec.versions` while they exist in this list.
-* @isArray
+* acceptedNames are the names that are actually being used to serve discovery. They may be different than the names in spec.
+* @references io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionNames
 */
-storedVersions?: string[];
-/**
-* CustomResourceDefinitionNames indicates the names to serve this CustomResourceDefinition
-* @isObject
-*/
-acceptedNames?: { categories?: string[]; kind: string; listKind?: string; plural: string; shortNames?: string[]; singular?: string };
+acceptedNames?: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames;
 /**
 * conditions indicate state for particular aspects of a CustomResourceDefinition
 * @isArray
 */
-conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date }>;
+conditions?: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition[];
+/**
+* storedVersions lists all versions of CustomResources that were ever persisted. Tracking these versions allows a migration path for stored versions in etcd. The field is mutable so a migration controller can finish a migration to another version (ensuring no old objects are left in storage), and then remove the rest of the versions from this list. Versions may not be removed from `spec.versions` while they exist in this list.
+* @isArray
+*/
+storedVersions?: string[];
 }
 
 /**
@@ -28,8 +28,11 @@ conditions?: Array<{ message?: string; reason?: string; status: string; type: st
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionStatus(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionStatus>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionStatus {
  return {
-   storedVersions: data?.storedVersions !== undefined ? data.storedVersions : [],
-   acceptedNames: data?.acceptedNames !== undefined ? data.acceptedNames : { kind: '', plural: '' },
+   acceptedNames: data?.acceptedNames !== undefined ? data.acceptedNames : createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames(),
    conditions: data?.conditions !== undefined ? data.conditions : [],
+   storedVersions: data?.storedVersions !== undefined ? data.storedVersions : [],
  };
 }
+// Required imports
+import { io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition, createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition } from '../io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionCondition';
+import { io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames, createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames } from '../customresourcedefinitionname/io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames';

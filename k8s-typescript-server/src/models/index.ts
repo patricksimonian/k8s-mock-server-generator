@@ -1591,6 +1591,14 @@ export * from './jobtemplatespec';
 export * from './json';
 
 /**
+ * Jsonschemaprop Models
+ * 
+ * This module exports all models related to the jsonschemaprop resource type.
+ * @packageDocumentation
+ */
+export * from './jsonschemaprop';
+
+/**
  * Jsonschemapropsorarray Models
  * 
  * This module exports all models related to the jsonschemapropsorarray resource type.

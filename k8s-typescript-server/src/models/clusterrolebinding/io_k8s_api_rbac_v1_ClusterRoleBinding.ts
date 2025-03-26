@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_rbac_v1_ClusterRoleBinding {
 /**
+* Subjects holds references to the objects the role applies to.
+* @isArray
+*/
+subjects?: io_k8s_api_rbac_v1_Subject[];
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -13,21 +18,16 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { creationTimestamp?: Date; generateName?: string; name?: string; uid?: string; annotations?: Record<string, any>; finalizers?: string[]; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; resourceVersion?: string; selfLink?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* RoleRef contains information that points to the role being used
+* RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error. This field is immutable.
 * @required
-* @isObject
+* @references io.k8s.api.rbac.v1.RoleRef
 */
-roleRef: { apiGroup: string; kind: string; name: string };
-/**
-* Subjects holds references to the objects the role applies to.
-* @isArray
-*/
-subjects?: Array<{ namespace?: string; apiGroup?: string; kind: string; name: string }>;
+roleRef: io_k8s_api_rbac_v1_RoleRef;
 }
 
 /**
@@ -37,10 +37,14 @@ subjects?: Array<{ namespace?: string; apiGroup?: string; kind: string; name: st
 */
 export function createio_k8s_api_rbac_v1_ClusterRoleBinding(data?: Partial<io_k8s_api_rbac_v1_ClusterRoleBinding>): io_k8s_api_rbac_v1_ClusterRoleBinding {
  return {
+   subjects: data?.subjects !== undefined ? data.subjects : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   roleRef: data?.roleRef !== undefined ? data.roleRef : { name: '', apiGroup: '', kind: '' },
-   subjects: data?.subjects !== undefined ? data.subjects : [],
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   roleRef: data?.roleRef !== undefined ? data.roleRef : createio_k8s_api_rbac_v1_RoleRef(),
  };
 }
+// Required imports
+import { io_k8s_api_rbac_v1_RoleRef, createio_k8s_api_rbac_v1_RoleRef } from '../roleref/io_k8s_api_rbac_v1_RoleRef';
+import { io_k8s_api_rbac_v1_Subject, createio_k8s_api_rbac_v1_Subject } from '../io.k8s.api.rbac.v1.Subject';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

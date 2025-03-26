@@ -11,10 +11,10 @@ export interface io_k8s_api_authentication_v1_TokenRequestSpec {
 */
 audiences: string[];
 /**
-* BoundObjectReference is a reference to an object that a token is bound to.
-* @isObject
+* BoundObjectRef is a reference to an object that the token will be bound to. The token will only be valid for as long as the bound object exists. NOTE: The API server's TokenReview endpoint will validate the BoundObjectRef, but other audiences may not. Keep ExpirationSeconds small if you want prompt revocation.
+* @references io.k8s.api.authentication.v1.BoundObjectReference
 */
-boundObjectRef?: { apiVersion?: string; kind?: string; name?: string; uid?: string };
+boundObjectRef?: io_k8s_api_authentication_v1_BoundObjectReference;
 /**
 * ExpirationSeconds is the requested duration of validity of the request. The token issuer may return a token with a different validity duration so a client needs to check the 'expiration' field in a response.
 */
@@ -29,7 +29,9 @@ expirationSeconds?: number;
 export function createio_k8s_api_authentication_v1_TokenRequestSpec(data?: Partial<io_k8s_api_authentication_v1_TokenRequestSpec>): io_k8s_api_authentication_v1_TokenRequestSpec {
  return {
    audiences: data?.audiences !== undefined ? data.audiences : [],
-   boundObjectRef: data?.boundObjectRef !== undefined ? data.boundObjectRef : {},
+   boundObjectRef: data?.boundObjectRef !== undefined ? data.boundObjectRef : createio_k8s_api_authentication_v1_BoundObjectReference(),
    expirationSeconds: data?.expirationSeconds !== undefined ? data.expirationSeconds : 0,
  };
 }
+// Required imports
+import { io_k8s_api_authentication_v1_BoundObjectReference, createio_k8s_api_authentication_v1_BoundObjectReference } from '../boundobjectreference/io_k8s_api_authentication_v1_BoundObjectReference';

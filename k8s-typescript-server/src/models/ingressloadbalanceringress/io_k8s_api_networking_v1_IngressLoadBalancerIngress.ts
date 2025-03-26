@@ -16,7 +16,7 @@ ip?: string;
 * ports provides information about the ports exposed by this LoadBalancer.
 * @isArray
 */
-ports?: Array<{ port: number; protocol: 'SCTP' | 'TCP' | 'UDP'; error?: string }>;
+ports?: io_k8s_api_networking_v1_IngressPortStatus[];
 }
 
 /**
@@ -31,3 +31,5 @@ export function createio_k8s_api_networking_v1_IngressLoadBalancerIngress(data?:
    ports: data?.ports !== undefined ? data.ports : [],
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_IngressPortStatus, createio_k8s_api_networking_v1_IngressPortStatus } from '../io.k8s.api.networking.v1.IngressPortStatus';

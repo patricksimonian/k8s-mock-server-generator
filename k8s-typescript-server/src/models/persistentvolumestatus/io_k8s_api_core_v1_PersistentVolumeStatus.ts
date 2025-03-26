@@ -9,9 +9,10 @@ export interface io_k8s_api_core_v1_PersistentVolumeStatus {
 */
 reason?: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* lastPhaseTransitionTime is the time the phase transitioned from one to another and automatically resets to current time everytime a volume phase transitions.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastPhaseTransitionTime?: Date;
+lastPhaseTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * message is a human-readable message indicating details about why the volume is in this state.
 */
@@ -37,8 +38,10 @@ phase?: 'Available' | 'Bound' | 'Failed' | 'Pending' | 'Released';
 export function createio_k8s_api_core_v1_PersistentVolumeStatus(data?: Partial<io_k8s_api_core_v1_PersistentVolumeStatus>): io_k8s_api_core_v1_PersistentVolumeStatus {
  return {
    reason: data?.reason !== undefined ? data.reason : '',
-   lastPhaseTransitionTime: data?.lastPhaseTransitionTime !== undefined ? data.lastPhaseTransitionTime : '',
+   lastPhaseTransitionTime: data?.lastPhaseTransitionTime !== undefined ? data.lastPhaseTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    phase: data?.phase !== undefined ? data.phase : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

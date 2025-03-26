@@ -7,86 +7,6 @@ import { handleResourceError } from '../utils';
 export function createclusterrolebindingRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//delete collection of ClusterRoleBinding
-  router.delete('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = null;
-      logger.info(`Deleting all clusterrolebinding ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('clusterrolebinding', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`clusterrolebinding not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`clusterrolebinding not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'clusterrolebinding'
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ClusterRoleBinding
-  router.get('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing clusterrolebinding`);
-      
-      const resources = await storage.listResources('clusterrolebinding', namespace, listOpts);
-      
-      const response = {
-        kind: 'ClusterrolebindingList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a ClusterRoleBinding
-  router.post('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      logger.info(`Creating clusterrolebinding`);
-      const namespace = null;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //read the specified ClusterRoleBinding
   router.get('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings/:name', async (req, res, next) => {
     try {
@@ -119,7 +39,7 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('clusterrolebinding', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -166,7 +86,6 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting clusterrolebinding ${name}`);
-
       const resource = await storage.getResource('clusterrolebinding', name, namespace);
       
       if (!resource) {
@@ -183,7 +102,7 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('clusterrolebinding', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -192,6 +111,27 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ClusterRoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterrolebindings', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing clusterrolebinding`);
+      
+      const resourceList = await storage.listResources('clusterrolebinding', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -216,8 +156,8 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
     }
   });
 
-//watch individual changes to a list of ClusterRoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterrolebindings', async (req, res, next) => {
+//list or watch objects of kind ClusterRoleBinding
+  router.get('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -227,18 +167,63 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
       const namespace = null;
       logger.info(`Listing clusterrolebinding`);
       
-      const resources = await storage.listResources('clusterrolebinding', namespace, listOpts);
+      const resourceList = await storage.listResources('clusterrolebinding', namespace, listOpts);
       
-      const response = {
-        kind: 'ClusterrolebindingList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a ClusterRoleBinding
+  router.post('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings', async (req, res, next) => {
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      logger.info(`Creating clusterrolebinding`);
+      const namespace = null;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of ClusterRoleBinding
+  router.delete('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = null;
+      logger.info(`Deleting all clusterrolebinding ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('clusterrolebinding', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`clusterrolebinding not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`clusterrolebinding not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'clusterrolebinding'
+        }
+      });
     } catch (error) {
       next(error);
     }

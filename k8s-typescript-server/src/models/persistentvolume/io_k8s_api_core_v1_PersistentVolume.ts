@@ -13,20 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { finalizers?: string[]; generation?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; labels?: Record<string, any>; namespace?: string; name?: string; resourceVersion?: string; generateName?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }> };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* PersistentVolumeSpec is the specification of a persistent volume.
-* @isObject
+* spec defines a specification of a persistent volume owned by the cluster. Provisioned by an administrator. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
+* @references io.k8s.api.core.v1.PersistentVolumeSpec
 */
-spec?: Record<string, any>;
+spec?: io_k8s_api_core_v1_PersistentVolumeSpec;
 /**
-* PersistentVolumeStatus is the current status of a persistent volume.
-* @isObject
+* status represents the current information/status for the persistent volume. Populated by the system. Read-only. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
+* @references io.k8s.api.core.v1.PersistentVolumeStatus
 */
-status?: { lastPhaseTransitionTime?: Date; message?: string; phase?: 'Available' | 'Bound' | 'Failed' | 'Pending' | 'Released'; reason?: string };
+status?: io_k8s_api_core_v1_PersistentVolumeStatus;
 }
 
 /**
@@ -38,8 +38,12 @@ export function createio_k8s_api_core_v1_PersistentVolume(data?: Partial<io_k8s_
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_PersistentVolumeSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_PersistentVolumeStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PersistentVolumeSpec, createio_k8s_api_core_v1_PersistentVolumeSpec } from '../persistentvolumespec/io_k8s_api_core_v1_PersistentVolumeSpec';
+import { io_k8s_api_core_v1_PersistentVolumeStatus, createio_k8s_api_core_v1_PersistentVolumeStatus } from '../persistentvolumestatus/io_k8s_api_core_v1_PersistentVolumeStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

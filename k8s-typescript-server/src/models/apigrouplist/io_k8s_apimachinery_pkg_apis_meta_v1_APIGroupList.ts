@@ -13,7 +13,7 @@ apiVersion?: string;
 * @required
 * @isArray
 */
-groups: Array<{ kind?: string; name: string; preferredVersion?: { groupVersion: string; version: string }; serverAddressByClientCIDRs?: Array<{ clientCIDR: string; serverAddress: string }>; versions: Array<{ groupVersion: string; version: string }>; apiVersion?: string }>;
+groups: io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup[];
 /**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
@@ -33,4 +33,4 @@ export function createio_k8s_apimachinery_pkg_apis_meta_v1_APIGroupList(data?: P
  };
 }
 // Required imports
-import { io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup, createio_k8s_apimachinery_pkg_apis_meta_v1_APIGroup } from '../apigroup/io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup, createio_k8s_apimachinery_pkg_apis_meta_v1_APIGroup } from '../io.k8s.apimachinery.pkg.apis.meta.v1.APIGroup';

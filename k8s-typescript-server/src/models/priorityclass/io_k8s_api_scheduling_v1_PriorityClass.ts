@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_scheduling_v1_PriorityClass {
 /**
-* value represents the integer value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.
-* @required
-*/
-value: number;
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * description is an arbitrary string that usually provides guidelines on when this priority class should be used.
 */
 description?: string;
@@ -26,10 +17,10 @@ globalDefault?: boolean;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { selfLink?: string; uid?: string; generateName?: string; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; generation?: number; labels?: Record<string, any>; deletionGracePeriodSeconds?: number; name?: string; resourceVersion?: string; annotations?: Record<string, any>; creationTimestamp?: Date; deletionTimestamp?: Date };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
 * preemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
 
@@ -38,6 +29,15 @@ Possible enum values:
  - `"PreemptLowerPriority"` means that pod can preempt other pods with lower priority.
 */
 preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
+/**
+* value represents the integer value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.
+* @required
+*/
+value: number;
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -47,12 +47,14 @@ preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
 */
 export function createio_k8s_api_scheduling_v1_PriorityClass(data?: Partial<io_k8s_api_scheduling_v1_PriorityClass>): io_k8s_api_scheduling_v1_PriorityClass {
  return {
-   value: data?.value !== undefined ? data.value : 0,
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    description: data?.description !== undefined ? data.description : '',
    globalDefault: data?.globalDefault !== undefined ? data.globalDefault : false,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    preemptionPolicy: data?.preemptionPolicy !== undefined ? data.preemptionPolicy : '',
+   value: data?.value !== undefined ? data.value : 0,
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

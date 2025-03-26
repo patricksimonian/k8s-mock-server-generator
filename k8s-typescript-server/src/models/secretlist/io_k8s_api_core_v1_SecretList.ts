@@ -9,10 +9,10 @@ export interface io_k8s_api_core_v1_SecretList {
 */
 kind?: string;
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
 */
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -34,10 +34,11 @@ items: io_k8s_api_core_v1_Secret[];
 export function createio_k8s_api_core_v1_SecretList(data?: Partial<io_k8s_api_core_v1_SecretList>): io_k8s_api_core_v1_SecretList {
  return {
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
  };
 }
 // Required imports
 import { io_k8s_api_core_v1_Secret, createio_k8s_api_core_v1_Secret } from '../secret/io_k8s_api_core_v1_Secret';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

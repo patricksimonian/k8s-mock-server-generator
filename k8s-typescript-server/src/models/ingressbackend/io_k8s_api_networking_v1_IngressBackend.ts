@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_networking_v1_IngressBackend {
 /**
-* TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.
-* @isObject
+* resource is an ObjectRef to another Kubernetes resource in the namespace of the Ingress object. If resource is specified, a service.Name and service.Port must not be specified. This is a mutually exclusive setting with "Service".
+* @references io.k8s.api.core.v1.TypedLocalObjectReference
 */
-resource?: { apiGroup?: string; kind: string; name: string };
+resource?: io_k8s_api_core_v1_TypedLocalObjectReference;
 /**
-* IngressServiceBackend references a Kubernetes Service as a Backend.
-* @isObject
+* service references a service as a backend. This is a mutually exclusive setting with "Resource".
+* @references io.k8s.api.networking.v1.IngressServiceBackend
 */
-service?: { name: string; port?: { name?: string; number?: number } };
+service?: io_k8s_api_networking_v1_IngressServiceBackend;
 }
 
 /**
@@ -23,7 +23,10 @@ service?: { name: string; port?: { name?: string; number?: number } };
 */
 export function createio_k8s_api_networking_v1_IngressBackend(data?: Partial<io_k8s_api_networking_v1_IngressBackend>): io_k8s_api_networking_v1_IngressBackend {
  return {
-   resource: data?.resource !== undefined ? data.resource : { kind: '', name: '' },
-   service: data?.service !== undefined ? data.service : { name: '' },
+   resource: data?.resource !== undefined ? data.resource : createio_k8s_api_core_v1_TypedLocalObjectReference(),
+   service: data?.service !== undefined ? data.service : createio_k8s_api_networking_v1_IngressServiceBackend(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_TypedLocalObjectReference, createio_k8s_api_core_v1_TypedLocalObjectReference } from '../typedlocalobjectreference/io_k8s_api_core_v1_TypedLocalObjectReference';
+import { io_k8s_api_networking_v1_IngressServiceBackend, createio_k8s_api_networking_v1_IngressServiceBackend } from '../ingressservicebackend/io_k8s_api_networking_v1_IngressServiceBackend';

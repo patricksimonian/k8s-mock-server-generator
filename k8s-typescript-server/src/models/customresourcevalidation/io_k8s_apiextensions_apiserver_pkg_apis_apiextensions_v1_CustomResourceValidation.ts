@@ -6,8 +6,9 @@
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceValidation {
 /**
 * openAPIV3Schema is the OpenAPI v3 schema to use for validation and pruning.
+* @references io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps
 */
-openAPIV3Schema?: Record<string, any>;
+openAPIV3Schema?: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps;
 }
 
 /**
@@ -17,6 +18,8 @@ openAPIV3Schema?: Record<string, any>;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceValidation(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceValidation>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceValidation {
  return {
-   openAPIV3Schema: data?.openAPIV3Schema !== undefined ? data.openAPIV3Schema : {},
+   openAPIV3Schema: data?.openAPIV3Schema !== undefined ? data.openAPIV3Schema : createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps(),
  };
 }
+// Required imports
+import { io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps, createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps } from '../jsonschemaprop/io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps';

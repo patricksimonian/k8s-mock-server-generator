@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSetUpdateStrategy {
 /**
-* Spec to control the desired behavior of daemon set rolling update.
-* @isObject
+* Rolling update config params. Present only if type = "RollingUpdate".
+* @references io.k8s.api.apps.v1.RollingUpdateDaemonSet
 */
-rollingUpdate?: { maxSurge?: string; maxUnavailable?: string };
+rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateDaemonSet;
 /**
 * Type of daemon set update. Can be "RollingUpdate" or "OnDelete". Default is RollingUpdate.
 
@@ -26,7 +26,9 @@ type?: 'OnDelete' | 'RollingUpdate';
 */
 export function createio_k8s_api_apps_v1_DaemonSetUpdateStrategy(data?: Partial<io_k8s_api_apps_v1_DaemonSetUpdateStrategy>): io_k8s_api_apps_v1_DaemonSetUpdateStrategy {
  return {
-   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : {},
+   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateDaemonSet(),
    type: data?.type !== undefined ? data.type : '',
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_RollingUpdateDaemonSet, createio_k8s_api_apps_v1_RollingUpdateDaemonSet } from '../rollingupdatedaemonset/io_k8s_api_apps_v1_RollingUpdateDaemonSet';

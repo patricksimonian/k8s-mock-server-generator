@@ -5,10 +5,11 @@
 */
 export interface io_k8s_api_authentication_v1_TokenRequestStatus {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* ExpirationTimestamp is the time of expiration of the returned token.
 * @required
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-expirationTimestamp: Date;
+expirationTimestamp: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * Token is the opaque bearer token.
 * @required
@@ -23,7 +24,9 @@ token: string;
 */
 export function createio_k8s_api_authentication_v1_TokenRequestStatus(data?: Partial<io_k8s_api_authentication_v1_TokenRequestStatus>): io_k8s_api_authentication_v1_TokenRequestStatus {
  return {
-   expirationTimestamp: data?.expirationTimestamp !== undefined ? data.expirationTimestamp : '',
+   expirationTimestamp: data?.expirationTimestamp !== undefined ? data.expirationTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    token: data?.token !== undefined ? data.token : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

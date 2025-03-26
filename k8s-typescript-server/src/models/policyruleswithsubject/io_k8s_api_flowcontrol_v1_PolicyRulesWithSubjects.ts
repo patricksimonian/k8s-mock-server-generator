@@ -5,21 +5,21 @@
 */
 export interface io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects {
 /**
-* subjects is the list of normal user, serviceaccount, or group that this rule cares about. There must be at least one member in this slice. A slice that includes both the system:authenticated and system:unauthenticated user groups matches every request. Required.
-* @required
-* @isArray
-*/
-subjects: Array<{ group?: { name: string }; kind: string; serviceAccount?: { name: string; namespace: string }; user?: { name: string } }>;
-/**
 * `nonResourceRules` is a list of NonResourcePolicyRules that identify matching requests according to their verb and the target non-resource URL.
 * @isArray
 */
-nonResourceRules?: Array<{ nonResourceURLs: string[]; verbs: string[] }>;
+nonResourceRules?: io_k8s_api_flowcontrol_v1_NonResourcePolicyRule[];
 /**
 * `resourceRules` is a slice of ResourcePolicyRules that identify matching requests according to their verb and the target resource. At least one of `resourceRules` and `nonResourceRules` has to be non-empty.
 * @isArray
 */
-resourceRules?: Array<{ apiGroups: string[]; clusterScope?: boolean; namespaces?: string[]; resources: string[]; verbs: string[] }>;
+resourceRules?: io_k8s_api_flowcontrol_v1_ResourcePolicyRule[];
+/**
+* subjects is the list of normal user, serviceaccount, or group that this rule cares about. There must be at least one member in this slice. A slice that includes both the system:authenticated and system:unauthenticated user groups matches every request. Required.
+* @required
+* @isArray
+*/
+subjects: io_k8s_api_flowcontrol_v1_Subject[];
 }
 
 /**
@@ -29,8 +29,12 @@ resourceRules?: Array<{ apiGroups: string[]; clusterScope?: boolean; namespaces?
 */
 export function createio_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects(data?: Partial<io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects>): io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects {
  return {
-   subjects: data?.subjects !== undefined ? data.subjects : [],
    nonResourceRules: data?.nonResourceRules !== undefined ? data.nonResourceRules : [],
    resourceRules: data?.resourceRules !== undefined ? data.resourceRules : [],
+   subjects: data?.subjects !== undefined ? data.subjects : [],
  };
 }
+// Required imports
+import { io_k8s_api_flowcontrol_v1_NonResourcePolicyRule, createio_k8s_api_flowcontrol_v1_NonResourcePolicyRule } from '../io.k8s.api.flowcontrol.v1.NonResourcePolicyRule';
+import { io_k8s_api_flowcontrol_v1_ResourcePolicyRule, createio_k8s_api_flowcontrol_v1_ResourcePolicyRule } from '../io.k8s.api.flowcontrol.v1.ResourcePolicyRule';
+import { io_k8s_api_flowcontrol_v1_Subject, createio_k8s_api_flowcontrol_v1_Subject } from '../io.k8s.api.flowcontrol.v1.Subject';

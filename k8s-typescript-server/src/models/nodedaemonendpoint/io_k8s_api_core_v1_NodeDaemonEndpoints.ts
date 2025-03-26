@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_core_v1_NodeDaemonEndpoints {
 /**
-* DaemonEndpoint contains information about a single Daemon endpoint.
-* @isObject
+* Endpoint on which Kubelet is listening.
+* @references io.k8s.api.core.v1.DaemonEndpoint
 */
-kubeletEndpoint?: { Port: number };
+kubeletEndpoint?: io_k8s_api_core_v1_DaemonEndpoint;
 }
 
 /**
@@ -18,6 +18,8 @@ kubeletEndpoint?: { Port: number };
 */
 export function createio_k8s_api_core_v1_NodeDaemonEndpoints(data?: Partial<io_k8s_api_core_v1_NodeDaemonEndpoints>): io_k8s_api_core_v1_NodeDaemonEndpoints {
  return {
-   kubeletEndpoint: data?.kubeletEndpoint !== undefined ? data.kubeletEndpoint : { Port: 0 },
+   kubeletEndpoint: data?.kubeletEndpoint !== undefined ? data.kubeletEndpoint : createio_k8s_api_core_v1_DaemonEndpoint(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_DaemonEndpoint, createio_k8s_api_core_v1_DaemonEndpoint } from '../daemonendpoint/io_k8s_api_core_v1_DaemonEndpoint';

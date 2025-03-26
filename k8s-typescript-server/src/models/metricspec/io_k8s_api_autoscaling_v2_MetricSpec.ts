@@ -5,35 +5,35 @@
 */
 export interface io_k8s_api_autoscaling_v2_MetricSpec {
 /**
-* PodsMetricSource indicates how to scale on a metric describing each pod in the current scale target (for example, transactions-processed-per-second). The values will be averaged together before being compared to the target value.
-* @isObject
+* object refers to a metric describing a single kubernetes object (for example, hits-per-second on an Ingress object).
+* @references io.k8s.api.autoscaling.v2.ObjectMetricSource
 */
-pods?: { metric: { selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; name: string }; target: { type: string; value?: string; averageUtilization?: number; averageValue?: string } };
+object?: io_k8s_api_autoscaling_v2_ObjectMetricSource;
 /**
-* ResourceMetricSource indicates how to scale on a resource metric known to Kubernetes, as specified in requests and limits, describing each pod in the current scale target (e.g. CPU or memory).  The values will be averaged together before being compared to the target.  Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.  Only one "target" type should be set.
-* @isObject
+* pods refers to a metric describing each pod in the current scale target (for example, transactions-processed-per-second).  The values will be averaged together before being compared to the target value.
+* @references io.k8s.api.autoscaling.v2.PodsMetricSource
 */
-resource?: { name: string; target: { averageValue?: string; type: string; value?: string; averageUtilization?: number } };
+pods?: io_k8s_api_autoscaling_v2_PodsMetricSource;
+/**
+* resource refers to a resource metric (such as those specified in requests and limits) known to Kubernetes describing each pod in the current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.
+* @references io.k8s.api.autoscaling.v2.ResourceMetricSource
+*/
+resource?: io_k8s_api_autoscaling_v2_ResourceMetricSource;
 /**
 * type is the type of metric source.  It should be one of "ContainerResource", "External", "Object", "Pods" or "Resource", each mapping to a matching field in the object.
 * @required
 */
 type: string;
 /**
-* ContainerResourceMetricSource indicates how to scale on a resource metric known to Kubernetes, as specified in requests and limits, describing each pod in the current scale target (e.g. CPU or memory).  The values will be averaged together before being compared to the target.  Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.  Only one "target" type should be set.
-* @isObject
+* containerResource refers to a resource metric (such as those specified in requests and limits) known to Kubernetes describing a single container in each pod of the current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.
+* @references io.k8s.api.autoscaling.v2.ContainerResourceMetricSource
 */
-containerResource?: { container: string; name: string; target: { averageUtilization?: number; averageValue?: string; type: string; value?: string } };
+containerResource?: io_k8s_api_autoscaling_v2_ContainerResourceMetricSource;
 /**
-* ExternalMetricSource indicates how to scale on a metric not associated with any Kubernetes object (for example length of queue in cloud messaging service, or QPS from loadbalancer running outside of cluster).
-* @isObject
+* external refers to a global metric that is not associated with any Kubernetes object. It allows autoscaling based on information coming from components running outside of cluster (for example length of queue in cloud messaging service, or QPS from loadbalancer running outside of cluster).
+* @references io.k8s.api.autoscaling.v2.ExternalMetricSource
 */
-external?: { metric: { name: string; selector?: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> } }; target: { averageValue?: string; type: string; value?: string; averageUtilization?: number } };
-/**
-* ObjectMetricSource indicates how to scale on a metric describing a kubernetes object (for example, hits-per-second on an Ingress object).
-* @isObject
-*/
-object?: { describedObject: { apiVersion?: string; kind: string; name: string }; metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }; target: { type: string; value?: string; averageUtilization?: number; averageValue?: string } };
+external?: io_k8s_api_autoscaling_v2_ExternalMetricSource;
 }
 
 /**
@@ -43,11 +43,17 @@ object?: { describedObject: { apiVersion?: string; kind: string; name: string };
 */
 export function createio_k8s_api_autoscaling_v2_MetricSpec(data?: Partial<io_k8s_api_autoscaling_v2_MetricSpec>): io_k8s_api_autoscaling_v2_MetricSpec {
  return {
-   pods: data?.pods !== undefined ? data.pods : { metric: { name: '' }, target: { type: '' } },
-   resource: data?.resource !== undefined ? data.resource : { name: '', target: { type: '' } },
+   object: data?.object !== undefined ? data.object : createio_k8s_api_autoscaling_v2_ObjectMetricSource(),
+   pods: data?.pods !== undefined ? data.pods : createio_k8s_api_autoscaling_v2_PodsMetricSource(),
+   resource: data?.resource !== undefined ? data.resource : createio_k8s_api_autoscaling_v2_ResourceMetricSource(),
    type: data?.type !== undefined ? data.type : '',
-   containerResource: data?.containerResource !== undefined ? data.containerResource : { container: '', name: '', target: { type: '' } },
-   external: data?.external !== undefined ? data.external : { metric: { name: '' }, target: { type: '' } },
-   object: data?.object !== undefined ? data.object : { describedObject: { kind: '', name: '' }, metric: { name: '' }, target: { type: '' } },
+   containerResource: data?.containerResource !== undefined ? data.containerResource : createio_k8s_api_autoscaling_v2_ContainerResourceMetricSource(),
+   external: data?.external !== undefined ? data.external : createio_k8s_api_autoscaling_v2_ExternalMetricSource(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_ContainerResourceMetricSource, createio_k8s_api_autoscaling_v2_ContainerResourceMetricSource } from '../containerresourcemetricsource/io_k8s_api_autoscaling_v2_ContainerResourceMetricSource';
+import { io_k8s_api_autoscaling_v2_ExternalMetricSource, createio_k8s_api_autoscaling_v2_ExternalMetricSource } from '../externalmetricsource/io_k8s_api_autoscaling_v2_ExternalMetricSource';
+import { io_k8s_api_autoscaling_v2_ObjectMetricSource, createio_k8s_api_autoscaling_v2_ObjectMetricSource } from '../objectmetricsource/io_k8s_api_autoscaling_v2_ObjectMetricSource';
+import { io_k8s_api_autoscaling_v2_PodsMetricSource, createio_k8s_api_autoscaling_v2_PodsMetricSource } from '../podsmetricsource/io_k8s_api_autoscaling_v2_PodsMetricSource';
+import { io_k8s_api_autoscaling_v2_ResourceMetricSource, createio_k8s_api_autoscaling_v2_ResourceMetricSource } from '../resourcemetricsource/io_k8s_api_autoscaling_v2_ResourceMetricSource';

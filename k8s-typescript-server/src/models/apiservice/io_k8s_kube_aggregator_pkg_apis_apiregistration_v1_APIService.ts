@@ -13,20 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; annotations?: Record<string, any>; finalizers?: string[]; name?: string; namespace?: string; resourceVersion?: string; deletionTimestamp?: Date; generateName?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; selfLink?: string; creationTimestamp?: Date; labels?: Record<string, any>; uid?: string; deletionGracePeriodSeconds?: number };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* APIServiceSpec contains information for locating and communicating with a server. Only https is supported, though you are able to disable certificate verification.
-* @isObject
+* Spec contains information for locating and communicating with a server
+* @references io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceSpec
 */
-spec?: { version?: string; versionPriority: number; caBundle?: string; group?: string; groupPriorityMinimum: number; insecureSkipTLSVerify?: boolean; service?: { name?: string; namespace?: string; port?: number } };
+spec?: io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec;
 /**
-* APIServiceStatus contains derived information about an API server
-* @isObject
+* Status contains derived information about an API server
+* @references io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceStatus
 */
-status?: { conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date }> };
+status?: io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceStatus;
 }
 
 /**
@@ -38,8 +38,12 @@ export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServ
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { groupPriorityMinimum: 0, versionPriority: 0 },
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceStatus(),
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';
+import { io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec, createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec } from '../apiservicespec/io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec';
+import { io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceStatus, createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceStatus } from '../apiservicestatus/io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceStatus';

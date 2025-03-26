@@ -5,17 +5,17 @@
 */
 export interface io_k8s_api_autoscaling_v2_ExternalMetricStatus {
 /**
-* MetricValueStatus holds the current value for a metric
+* current contains the current value for the given metric
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricValueStatus
 */
-current: { value?: string; averageUtilization?: number; averageValue?: string };
+current: io_k8s_api_autoscaling_v2_MetricValueStatus;
 /**
-* MetricIdentifier defines the name and optionally selector for a metric
+* metric identifies the target metric by name and selector
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricIdentifier
 */
-metric: { selector?: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> }; name: string };
+metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 }
 
 /**
@@ -25,7 +25,10 @@ metric: { selector?: { matchLabels?: Record<string, any>; matchExpressions?: Arr
 */
 export function createio_k8s_api_autoscaling_v2_ExternalMetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_ExternalMetricStatus>): io_k8s_api_autoscaling_v2_ExternalMetricStatus {
  return {
-   current: data?.current !== undefined ? data.current : {},
-   metric: data?.metric !== undefined ? data.metric : { name: '' },
+   current: data?.current !== undefined ? data.current : createio_k8s_api_autoscaling_v2_MetricValueStatus(),
+   metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_MetricIdentifier, createio_k8s_api_autoscaling_v2_MetricIdentifier } from '../metricidentifier/io_k8s_api_autoscaling_v2_MetricIdentifier';
+import { io_k8s_api_autoscaling_v2_MetricValueStatus, createio_k8s_api_autoscaling_v2_MetricValueStatus } from '../metricvaluestatus/io_k8s_api_autoscaling_v2_MetricValueStatus';

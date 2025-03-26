@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_networking_v1_NetworkPolicyList {
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
 * items is a list of schema objects.
 * @required
 * @isArray
@@ -16,14 +20,10 @@ items: io_k8s_api_networking_v1_NetworkPolicy[];
 */
 kind?: string;
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
 */
-metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: string; continue?: string };
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta;
 }
 
 /**
@@ -33,11 +33,12 @@ apiVersion?: string;
 */
 export function createio_k8s_api_networking_v1_NetworkPolicyList(data?: Partial<io_k8s_api_networking_v1_NetworkPolicyList>): io_k8s_api_networking_v1_NetworkPolicyList {
  return {
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
  };
 }
 // Required imports
 import { io_k8s_api_networking_v1_NetworkPolicy, createio_k8s_api_networking_v1_NetworkPolicy } from '../networkpolicy/io_k8s_api_networking_v1_NetworkPolicy';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

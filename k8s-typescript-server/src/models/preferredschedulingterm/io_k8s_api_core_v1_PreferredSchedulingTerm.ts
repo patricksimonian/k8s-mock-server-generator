@@ -5,11 +5,11 @@
 */
 export interface io_k8s_api_core_v1_PreferredSchedulingTerm {
 /**
-* A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
+* A node selector term, associated with the corresponding weight.
 * @required
-* @isObject
+* @references io.k8s.api.core.v1.NodeSelectorTerm
 */
-preference: { matchExpressions?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }>; matchFields?: Array<{ key: string; operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn'; values?: string[] }> };
+preference: io_k8s_api_core_v1_NodeSelectorTerm;
 /**
 * Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
 * @required
@@ -24,7 +24,9 @@ weight: number;
 */
 export function createio_k8s_api_core_v1_PreferredSchedulingTerm(data?: Partial<io_k8s_api_core_v1_PreferredSchedulingTerm>): io_k8s_api_core_v1_PreferredSchedulingTerm {
  return {
-   preference: data?.preference !== undefined ? data.preference : {},
+   preference: data?.preference !== undefined ? data.preference : createio_k8s_api_core_v1_NodeSelectorTerm(),
    weight: data?.weight !== undefined ? data.weight : 0,
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NodeSelectorTerm, createio_k8s_api_core_v1_NodeSelectorTerm } from '../nodeselectorterm/io_k8s_api_core_v1_NodeSelectorTerm';

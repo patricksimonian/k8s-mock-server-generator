@@ -5,19 +5,19 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus {
 /**
+* The results of type checking for each expression. Presence of this field indicates the completion of the type checking.
+* @references io.k8s.api.admissionregistration.v1.TypeChecking
+*/
+typeChecking?: io_k8s_api_admissionregistration_v1_TypeChecking;
+/**
 * The conditions represent the latest available observations of a policy's current state.
 * @isArray
 */
-conditions?: Array<{ message: string; observedGeneration?: number; reason: string; status: string; type: string; lastTransitionTime: Date }>;
+conditions?: io_k8s_apimachinery_pkg_apis_meta_v1_Condition[];
 /**
 * The generation observed by the controller.
 */
 observedGeneration?: number;
-/**
-* TypeChecking contains results of type checking the expressions in the ValidatingAdmissionPolicy
-* @isObject
-*/
-typeChecking?: { expressionWarnings?: Array<{ warning: string; fieldRef: string }> };
 }
 
 /**
@@ -27,8 +27,11 @@ typeChecking?: { expressionWarnings?: Array<{ warning: string; fieldRef: string 
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus {
  return {
+   typeChecking: data?.typeChecking !== undefined ? data.typeChecking : createio_k8s_api_admissionregistration_v1_TypeChecking(),
    conditions: data?.conditions !== undefined ? data.conditions : [],
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
-   typeChecking: data?.typeChecking !== undefined ? data.typeChecking : {},
  };
 }
+// Required imports
+import { io_k8s_api_admissionregistration_v1_TypeChecking, createio_k8s_api_admissionregistration_v1_TypeChecking } from '../typechecking/io_k8s_api_admissionregistration_v1_TypeChecking';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Condition, createio_k8s_apimachinery_pkg_apis_meta_v1_Condition } from '../io.k8s.apimachinery.pkg.apis.meta.v1.Condition';

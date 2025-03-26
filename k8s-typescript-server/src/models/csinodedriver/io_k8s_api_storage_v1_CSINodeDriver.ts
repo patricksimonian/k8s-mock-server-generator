@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_storage_v1_CSINodeDriver {
 /**
-* VolumeNodeResources is a set of resource limits for scheduling of volumes.
-* @isObject
+* allocatable represents the volume resources of a node that are available for scheduling. This field is beta.
+* @references io.k8s.api.storage.v1.VolumeNodeResources
 */
-allocatable?: { count?: number };
+allocatable?: io_k8s_api_storage_v1_VolumeNodeResources;
 /**
 * name represents the name of the CSI driver that this object refers to. This MUST be the same name returned by the CSI GetPluginName() call for that driver.
 * @required
@@ -33,9 +33,11 @@ topologyKeys?: string[];
 */
 export function createio_k8s_api_storage_v1_CSINodeDriver(data?: Partial<io_k8s_api_storage_v1_CSINodeDriver>): io_k8s_api_storage_v1_CSINodeDriver {
  return {
-   allocatable: data?.allocatable !== undefined ? data.allocatable : {},
+   allocatable: data?.allocatable !== undefined ? data.allocatable : createio_k8s_api_storage_v1_VolumeNodeResources(),
    name: data?.name !== undefined ? data.name : '',
    nodeID: data?.nodeID !== undefined ? data.nodeID : '',
    topologyKeys: data?.topologyKeys !== undefined ? data.topologyKeys : [],
  };
 }
+// Required imports
+import { io_k8s_api_storage_v1_VolumeNodeResources, createio_k8s_api_storage_v1_VolumeNodeResources } from '../volumenoderesource/io_k8s_api_storage_v1_VolumeNodeResources';

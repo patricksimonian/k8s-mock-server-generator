@@ -8,7 +8,7 @@ export interface io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSt
 * Current service state of apiService.
 * @isArray
 */
-conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>;
+conditions?: io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServ
    conditions: data?.conditions !== undefined ? data.conditions : [],
  };
 }
+// Required imports
+import { io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition, createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition } from '../io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceCondition';

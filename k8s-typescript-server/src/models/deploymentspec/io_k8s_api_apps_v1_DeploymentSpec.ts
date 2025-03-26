@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentSpec {
 /**
+* Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available. Defaults to 0 (pod will be considered available as soon as it is ready)
+*/
+minReadySeconds?: number;
+/**
 * Indicates that the deployment is paused.
 */
 paused?: boolean;
@@ -21,26 +25,22 @@ replicas?: number;
 */
 revisionHistoryLimit?: number;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
+* Label selector for pods. Existing ReplicaSets whose pods are selected by this will be the ones affected by this deployment. It must match the pod template's labels.
 * @required
-* @isObject
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+selector: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 /**
-* DeploymentStrategy describes how to replace existing pods with new ones.
-* @isObject
+* The deployment strategy to use to replace existing pods with new ones.
+* @references io.k8s.api.apps.v1.DeploymentStrategy
 */
-strategy?: { rollingUpdate?: { maxUnavailable?: string; maxSurge?: string }; type?: 'Recreate' | 'RollingUpdate' };
+strategy?: io_k8s_api_apps_v1_DeploymentStrategy;
 /**
-* PodTemplateSpec describes the data a pod should have when created from a template
+* Template describes the pods that will be created. The only allowed template.spec.restartPolicy value is "Always".
 * @required
-* @isObject
+* @references io.k8s.api.core.v1.PodTemplateSpec
 */
-template: { metadata?: { generation?: number; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; selfLink?: string; annotations?: Record<string, any>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; resourceVersion?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; finalizers?: string[]; name?: string; namespace?: string }; spec?: Record<string, any> };
-/**
-* Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available. Defaults to 0 (pod will be considered available as soon as it is ready)
-*/
-minReadySeconds?: number;
+template: io_k8s_api_core_v1_PodTemplateSpec;
 }
 
 /**
@@ -50,13 +50,17 @@ minReadySeconds?: number;
 */
 export function createio_k8s_api_apps_v1_DeploymentSpec(data?: Partial<io_k8s_api_apps_v1_DeploymentSpec>): io_k8s_api_apps_v1_DeploymentSpec {
  return {
+   minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
    paused: data?.paused !== undefined ? data.paused : false,
    progressDeadlineSeconds: data?.progressDeadlineSeconds !== undefined ? data.progressDeadlineSeconds : 0,
    replicas: data?.replicas !== undefined ? data.replicas : 0,
    revisionHistoryLimit: data?.revisionHistoryLimit !== undefined ? data.revisionHistoryLimit : 0,
-   selector: data?.selector !== undefined ? data.selector : {},
-   strategy: data?.strategy !== undefined ? data.strategy : {},
-   template: data?.template !== undefined ? data.template : {},
-   minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
+   selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   strategy: data?.strategy !== undefined ? data.strategy : createio_k8s_api_apps_v1_DeploymentStrategy(),
+   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_DeploymentStrategy, createio_k8s_api_apps_v1_DeploymentStrategy } from '../deploymentstrategy/io_k8s_api_apps_v1_DeploymentStrategy';
+import { io_k8s_api_core_v1_PodTemplateSpec, createio_k8s_api_core_v1_PodTemplateSpec } from '../podtemplatespec/io_k8s_api_core_v1_PodTemplateSpec';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';

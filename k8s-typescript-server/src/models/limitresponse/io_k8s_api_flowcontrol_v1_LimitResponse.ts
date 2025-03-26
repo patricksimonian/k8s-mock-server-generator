@@ -10,10 +10,10 @@ export interface io_k8s_api_flowcontrol_v1_LimitResponse {
 */
 type: string;
 /**
-* QueuingConfiguration holds the configuration parameters for queuing
-* @isObject
+* `queuing` holds the configuration parameters for queuing. This field may be non-empty only if `type` is `"Queue"`.
+* @references io.k8s.api.flowcontrol.v1.QueuingConfiguration
 */
-queuing?: { handSize?: number; queueLengthLimit?: number; queues?: number };
+queuing?: io_k8s_api_flowcontrol_v1_QueuingConfiguration;
 }
 
 /**
@@ -24,6 +24,8 @@ queuing?: { handSize?: number; queueLengthLimit?: number; queues?: number };
 export function createio_k8s_api_flowcontrol_v1_LimitResponse(data?: Partial<io_k8s_api_flowcontrol_v1_LimitResponse>): io_k8s_api_flowcontrol_v1_LimitResponse {
  return {
    type: data?.type !== undefined ? data.type : '',
-   queuing: data?.queuing !== undefined ? data.queuing : {},
+   queuing: data?.queuing !== undefined ? data.queuing : createio_k8s_api_flowcontrol_v1_QueuingConfiguration(),
  };
 }
+// Required imports
+import { io_k8s_api_flowcontrol_v1_QueuingConfiguration, createio_k8s_api_flowcontrol_v1_QueuingConfiguration } from '../queuingconfiguration/io_k8s_api_flowcontrol_v1_QueuingConfiguration';

@@ -5,15 +5,10 @@
 */
 export interface io_k8s_api_core_v1_Service {
 /**
-* ServiceSpec describes the attributes that a user creates on a service.
-* @isObject
+* Most recently observed status of the service. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ServiceStatus
 */
-spec?: Record<string, any>;
-/**
-* ServiceStatus represents the current status of a service.
-* @isObject
-*/
-status?: { conditions?: Array<{ lastTransitionTime: Date; message: string; observedGeneration?: number; reason: string; status: string; type: string }>; loadBalancer?: { ingress?: Array<{ hostname?: string; ip?: string; ipMode?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }> }> } };
+status?: io_k8s_api_core_v1_ServiceStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -23,10 +18,15 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; finalizers?: string[]; generation?: number; resourceVersion?: string; selfLink?: string; uid?: string; deletionTimestamp?: Date; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generateName?: string; deletionGracePeriodSeconds?: number; labels?: Record<string, any>; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; name?: string; namespace?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* Spec defines the behavior of a service. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ServiceSpec
+*/
+spec?: io_k8s_api_core_v1_ServiceSpec;
 }
 
 /**
@@ -36,10 +36,14 @@ metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; finali
 */
 export function createio_k8s_api_core_v1_Service(data?: Partial<io_k8s_api_core_v1_Service>): io_k8s_api_core_v1_Service {
  return {
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_ServiceStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_ServiceSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ServiceSpec, createio_k8s_api_core_v1_ServiceSpec } from '../servicespec/io_k8s_api_core_v1_ServiceSpec';
+import { io_k8s_api_core_v1_ServiceStatus, createio_k8s_api_core_v1_ServiceStatus } from '../servicestatus/io_k8s_api_core_v1_ServiceStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

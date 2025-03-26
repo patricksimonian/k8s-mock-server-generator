@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_TopologySelectorTerm {
 * A list of topology selector requirements by labels.
 * @isArray
 */
-matchLabelExpressions?: Array<{ key: string; values: string[] }>;
+matchLabelExpressions?: io_k8s_api_core_v1_TopologySelectorLabelRequirement[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_core_v1_TopologySelectorTerm(data?: Partial<io_
    matchLabelExpressions: data?.matchLabelExpressions !== undefined ? data.matchLabelExpressions : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_TopologySelectorLabelRequirement, createio_k8s_api_core_v1_TopologySelectorLabelRequirement } from '../io.k8s.api.core.v1.TopologySelectorLabelRequirement';

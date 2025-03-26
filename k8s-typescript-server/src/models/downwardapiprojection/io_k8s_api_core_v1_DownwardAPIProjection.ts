@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_DownwardAPIProjection {
 * Items is a list of DownwardAPIVolume file
 * @isArray
 */
-items?: Array<{ fieldRef?: { apiVersion?: string; fieldPath: string }; mode?: number; path: string; resourceFieldRef?: { containerName?: string; divisor?: string; resource: string } }>;
+items?: io_k8s_api_core_v1_DownwardAPIVolumeFile[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_core_v1_DownwardAPIProjection(data?: Partial<io
    items: data?.items !== undefined ? data.items : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_DownwardAPIVolumeFile, createio_k8s_api_core_v1_DownwardAPIVolumeFile } from '../io.k8s.api.core.v1.DownwardAPIVolumeFile';

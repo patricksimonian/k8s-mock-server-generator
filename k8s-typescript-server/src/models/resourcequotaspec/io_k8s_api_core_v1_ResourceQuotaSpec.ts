@@ -5,19 +5,19 @@
 */
 export interface io_k8s_api_core_v1_ResourceQuotaSpec {
 /**
-* A scope selector represents the AND of the selectors represented by the scoped-resource selector requirements.
-* @isObject
+* hard is the set of desired hard limits for each named resource. More info: https://kubernetes.io/docs/concepts/policy/resource-quotas/
 */
-scopeSelector?: { matchExpressions?: Array<{ operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn'; scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating'; values?: string[] }> };
+hard?: Record<string, any>;
+/**
+* scopeSelector is also a collection of filters like scopes that must match each object tracked by a quota but expressed using ScopeSelectorOperator in combination with possible values. For a resource to match, both scopes AND scopeSelector (if specified in spec), must be matched.
+* @references io.k8s.api.core.v1.ScopeSelector
+*/
+scopeSelector?: io_k8s_api_core_v1_ScopeSelector;
 /**
 * A collection of filters that must match each object tracked by a quota. If not specified, the quota matches all objects.
 * @isArray
 */
 scopes?: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating'[];
-/**
-* hard is the set of desired hard limits for each named resource. More info: https://kubernetes.io/docs/concepts/policy/resource-quotas/
-*/
-hard?: Record<string, any>;
 }
 
 /**
@@ -27,8 +27,10 @@ hard?: Record<string, any>;
 */
 export function createio_k8s_api_core_v1_ResourceQuotaSpec(data?: Partial<io_k8s_api_core_v1_ResourceQuotaSpec>): io_k8s_api_core_v1_ResourceQuotaSpec {
  return {
-   scopeSelector: data?.scopeSelector !== undefined ? data.scopeSelector : {},
-   scopes: data?.scopes !== undefined ? data.scopes : [],
    hard: data?.hard !== undefined ? data.hard : {},
+   scopeSelector: data?.scopeSelector !== undefined ? data.scopeSelector : createio_k8s_api_core_v1_ScopeSelector(),
+   scopes: data?.scopes !== undefined ? data.scopes : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ScopeSelector, createio_k8s_api_core_v1_ScopeSelector } from '../scopeselector/io_k8s_api_core_v1_ScopeSelector';

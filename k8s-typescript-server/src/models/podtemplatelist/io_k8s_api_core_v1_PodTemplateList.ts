@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_PodTemplateList {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * List of pod templates
 * @required
 * @isArray
@@ -20,10 +16,14 @@ items: io_k8s_api_core_v1_PodTemplate[];
 */
 kind?: string;
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
 */
-metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: string; continue?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta;
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -33,11 +33,12 @@ metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: s
 */
 export function createio_k8s_api_core_v1_PodTemplateList(data?: Partial<io_k8s_api_core_v1_PodTemplateList>): io_k8s_api_core_v1_PodTemplateList {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports
 import { io_k8s_api_core_v1_PodTemplate, createio_k8s_api_core_v1_PodTemplate } from '../podtemplate/io_k8s_api_core_v1_PodTemplate';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

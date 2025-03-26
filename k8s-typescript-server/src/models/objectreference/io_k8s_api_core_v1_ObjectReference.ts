@@ -5,14 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ObjectReference {
 /**
-* Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-*/
-name?: string;
-/**
-* Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
-*/
-namespace?: string;
-/**
 * Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
 */
 resourceVersion?: string;
@@ -32,6 +24,14 @@ fieldPath?: string;
 * Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+*/
+name?: string;
+/**
+* Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+*/
+namespace?: string;
 }
 
 /**
@@ -41,12 +41,12 @@ kind?: string;
 */
 export function createio_k8s_api_core_v1_ObjectReference(data?: Partial<io_k8s_api_core_v1_ObjectReference>): io_k8s_api_core_v1_ObjectReference {
  return {
-   name: data?.name !== undefined ? data.name : '',
-   namespace: data?.namespace !== undefined ? data.namespace : '',
    resourceVersion: data?.resourceVersion !== undefined ? data.resourceVersion : '',
    uid: data?.uid !== undefined ? data.uid : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    fieldPath: data?.fieldPath !== undefined ? data.fieldPath : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   name: data?.name !== undefined ? data.name : '',
+   namespace: data?.namespace !== undefined ? data.namespace : '',
  };
 }

@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicy {
 /**
+* Specification of the desired behavior of the ValidatingAdmissionPolicy.
+* @references io.k8s.api.admissionregistration.v1.ValidatingAdmissionPolicySpec
+*/
+spec?: io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec;
+/**
+* The status of the ValidatingAdmissionPolicy, including warnings that are useful to determine if the policy behaves in the expected way. Populated by the system. Read-only.
+* @references io.k8s.api.admissionregistration.v1.ValidatingAdmissionPolicyStatus
+*/
+status?: io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -13,20 +23,10 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { labels?: Record<string, any>; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; selfLink?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; resourceVersion?: string; uid?: string; namespace?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; generation?: number; name?: string; finalizers?: string[]; generateName?: string };
-/**
-* ValidatingAdmissionPolicySpec is the specification of the desired behavior of the AdmissionPolicy.
-* @isObject
-*/
-spec?: { validations?: Array<{ expression: string; message?: string; messageExpression?: string; reason?: string }>; variables?: Array<{ expression: string; name: string }>; auditAnnotations?: Array<{ key: string; valueExpression: string }>; failurePolicy?: 'Fail' | 'Ignore'; matchConditions?: Array<{ expression: string; name: string }>; matchConstraints?: { resourceRules?: Array<{ apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[]; resources?: string[]; scope?: string }>; excludeResourceRules?: Array<{ resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[] }>; matchPolicy?: 'Equivalent' | 'Exact'; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; objectSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }; paramKind?: { kind?: string; apiVersion?: string } };
-/**
-* ValidatingAdmissionPolicyStatus represents the status of an admission validation policy.
-* @isObject
-*/
-status?: { conditions?: Array<{ type: string; lastTransitionTime: Date; message: string; observedGeneration?: number; reason: string; status: string }>; observedGeneration?: number; typeChecking?: { expressionWarnings?: Array<{ fieldRef: string; warning: string }> } };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -36,10 +36,14 @@ status?: { conditions?: Array<{ type: string; lastTransitionTime: Date; message:
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicy(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicy>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicy {
  return {
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
+// Required imports
+import { io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec, createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec } from '../validatingadmissionpolicyspec/io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec';
+import { io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus, createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus } from '../validatingadmissionpolicystatus/io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

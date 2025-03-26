@@ -5,20 +5,15 @@
 */
 export interface io_k8s_api_autoscaling_v2_HorizontalPodAutoscaler {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* spec is the specification for the behaviour of the autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+* @references io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerSpec
 */
-metadata?: { deletionGracePeriodSeconds?: number; generation?: number; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; resourceVersion?: string; selfLink?: string; uid?: string; creationTimestamp?: Date; finalizers?: string[]; generateName?: string; name?: string; deletionTimestamp?: Date; namespace?: string; labels?: Record<string, any>; annotations?: Record<string, any> };
+spec?: io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec;
 /**
-* HorizontalPodAutoscalerSpec describes the desired functionality of the HorizontalPodAutoscaler.
-* @isObject
+* status is the current information about the autoscaler.
+* @references io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerStatus
 */
-spec?: { maxReplicas: number; metrics?: Array<{ containerResource?: { name: string; target: { type: string; value?: string; averageUtilization?: number; averageValue?: string }; container: string }; external?: { metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }; target: { type: string; value?: string; averageUtilization?: number; averageValue?: string } }; object?: { describedObject: { apiVersion?: string; kind: string; name: string }; metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }; target: { averageUtilization?: number; averageValue?: string; type: string; value?: string } }; pods?: { metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } }; target: { value?: string; averageUtilization?: number; averageValue?: string; type: string } }; resource?: { name: string; target: { averageUtilization?: number; averageValue?: string; type: string; value?: string } }; type: string }>; minReplicas?: number; scaleTargetRef: { apiVersion?: string; kind: string; name: string }; behavior?: { scaleDown?: { policies?: Array<{ periodSeconds: number; type: string; value: number }>; selectPolicy?: string; stabilizationWindowSeconds?: number }; scaleUp?: { policies?: Array<{ periodSeconds: number; type: string; value: number }>; selectPolicy?: string; stabilizationWindowSeconds?: number } } };
-/**
-* HorizontalPodAutoscalerStatus describes the current status of a horizontal pod autoscaler.
-* @isObject
-*/
-status?: { conditions?: Array<{ status: string; type: string; lastTransitionTime?: Date; message?: string; reason?: string }>; currentMetrics?: Array<{ containerResource?: { current: { averageUtilization?: number; averageValue?: string; value?: string }; name: string; container: string }; external?: { current: { averageUtilization?: number; averageValue?: string; value?: string }; metric: { name: string; selector?: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ values?: string[]; key: string; operator: string }> } } }; object?: { current: { averageUtilization?: number; averageValue?: string; value?: string }; describedObject: { name: string; apiVersion?: string; kind: string }; metric: { name: string; selector?: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> } } }; pods?: { current: { averageUtilization?: number; averageValue?: string; value?: string }; metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } } }; resource?: { current: { averageUtilization?: number; averageValue?: string; value?: string }; name: string }; type: string }>; currentReplicas?: number; desiredReplicas: number; lastScaleTime?: Date; observedGeneration?: number };
+status?: io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -27,6 +22,11 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* metadata is the standard object metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -36,10 +36,14 @@ kind?: string;
 */
 export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscaler(data?: Partial<io_k8s_api_autoscaling_v2_HorizontalPodAutoscaler>): io_k8s_api_autoscaling_v2_HorizontalPodAutoscaler {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { maxReplicas: 0, scaleTargetRef: { kind: '', name: '' } },
-   status: data?.status !== undefined ? data.status : { desiredReplicas: 0 },
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec, createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec } from '../horizontalpodautoscalerspec/io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec';
+import { io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus, createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus } from '../horizontalpodautoscalerstatus/io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

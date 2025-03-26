@@ -15,21 +15,21 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { generateName?: string; labels?: Record<string, any>; resourceVersion?: string; namespace?: string; selfLink?: string; creationTimestamp?: Date; finalizers?: string[]; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; name?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; generation?: number; deletionTimestamp?: Date; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; uid?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* VolumeAttachmentSpec is the specification of a VolumeAttachment request.
+* spec represents specification of the desired attach/detach volume behavior. Populated by the Kubernetes system.
 * @required
-* @isObject
+* @references io.k8s.api.storage.v1.VolumeAttachmentSpec
 */
-spec: { attacher: string; nodeName: string; source: { inlineVolumeSpec?: Record<string, any>; persistentVolumeName?: string } };
+spec: io_k8s_api_storage_v1_VolumeAttachmentSpec;
 /**
-* VolumeAttachmentStatus is the status of a VolumeAttachment request.
-* @isObject
+* status represents status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.
+* @references io.k8s.api.storage.v1.VolumeAttachmentStatus
 */
-status?: { attachError?: { message?: string; time?: Date }; attached: boolean; attachmentMetadata?: Record<string, any>; detachError?: { message?: string; time?: Date } };
+status?: io_k8s_api_storage_v1_VolumeAttachmentStatus;
 }
 
 /**
@@ -41,8 +41,12 @@ export function createio_k8s_api_storage_v1_VolumeAttachment(data?: Partial<io_k
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { attacher: '', nodeName: '', source: {} },
-   status: data?.status !== undefined ? data.status : { attached: false },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_storage_v1_VolumeAttachmentSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_storage_v1_VolumeAttachmentStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_storage_v1_VolumeAttachmentSpec, createio_k8s_api_storage_v1_VolumeAttachmentSpec } from '../volumeattachmentspec/io_k8s_api_storage_v1_VolumeAttachmentSpec';
+import { io_k8s_api_storage_v1_VolumeAttachmentStatus, createio_k8s_api_storage_v1_VolumeAttachmentStatus } from '../volumeattachmentstatus/io_k8s_api_storage_v1_VolumeAttachmentStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

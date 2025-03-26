@@ -14,7 +14,7 @@ defaultMode?: number;
 * items If unspecified, each key-value pair in the Data field of the referenced Secret will be projected into the volume as a file whose name is the key and content is the value. If specified, the listed keys will be projected into the specified paths, and unlisted keys will not be present. If a key is specified which is not present in the Secret, the volume setup will error unless it is marked optional. Paths must be relative and may not contain the '..' path or start with '..'.
 * @isArray
 */
-items?: Array<{ key: string; mode?: number; path: string }>;
+items?: io_k8s_api_core_v1_KeyToPath[];
 /**
 * optional field specify whether the Secret or its keys must be defined
 */
@@ -38,3 +38,5 @@ export function createio_k8s_api_core_v1_SecretVolumeSource(data?: Partial<io_k8
    secretName: data?.secretName !== undefined ? data.secretName : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_KeyToPath, createio_k8s_api_core_v1_KeyToPath } from '../io.k8s.api.core.v1.KeyToPath';

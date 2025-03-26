@@ -23,21 +23,21 @@ apiVersion?: string;
 * @required
 * @isArray
 */
-endpoints: Array<{ hints?: { forZones?: Array<{ name: string }> }; hostname?: string; nodeName?: string; targetRef?: { namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string }; zone?: string; addresses: string[]; conditions?: { ready?: boolean; serving?: boolean; terminating?: boolean }; deprecatedTopology?: Record<string, any> }>;
+endpoints: io_k8s_api_discovery_v1_Endpoint[];
 /**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { annotations?: Record<string, any>; generateName?: string; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; selfLink?: string; uid?: string; deletionTimestamp?: Date; finalizers?: string[]; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; labels?: Record<string, any>; namespace?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
 * ports specifies the list of network ports exposed by each endpoint in this slice. Each port must have a unique name. When ports is empty, it indicates that there are no defined ports. When a port is defined with a nil port value, it indicates "all ports". Each slice may include a maximum of 100 ports.
 * @isArray
 */
-ports?: Array<{ appProtocol?: string; name?: string; port?: number; protocol?: 'SCTP' | 'TCP' | 'UDP' }>;
+ports?: io_k8s_api_discovery_v1_EndpointPort[];
 }
 
 /**
@@ -51,7 +51,11 @@ export function createio_k8s_api_discovery_v1_EndpointSlice(data?: Partial<io_k8
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    endpoints: data?.endpoints !== undefined ? data.endpoints : [],
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    ports: data?.ports !== undefined ? data.ports : [],
  };
 }
+// Required imports
+import { io_k8s_api_discovery_v1_Endpoint, createio_k8s_api_discovery_v1_Endpoint } from '../io.k8s.api.discovery.v1.Endpoint';
+import { io_k8s_api_discovery_v1_EndpointPort, createio_k8s_api_discovery_v1_EndpointPort } from '../io.k8s.api.discovery.v1.EndpointPort';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

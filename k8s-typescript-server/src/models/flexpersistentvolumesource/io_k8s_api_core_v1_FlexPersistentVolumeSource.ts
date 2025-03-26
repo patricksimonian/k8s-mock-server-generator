@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_FlexPersistentVolumeSource {
 /**
-* driver is the name of the driver to use for this volume.
-* @required
-*/
-driver: string;
-/**
 * fsType is the Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". The default filesystem depends on FlexVolume script.
 */
 fsType?: string;
@@ -22,10 +17,15 @@ options?: Record<string, any>;
 */
 readOnly?: boolean;
 /**
-* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
-* @isObject
+* secretRef is Optional: SecretRef is reference to the secret object containing sensitive information to pass to the plugin scripts. This may be empty if no secret object is specified. If the secret object contains more than one secret, all secrets are passed to the plugin scripts.
+* @references io.k8s.api.core.v1.SecretReference
 */
-secretRef?: { name?: string; namespace?: string };
+secretRef?: io_k8s_api_core_v1_SecretReference;
+/**
+* driver is the name of the driver to use for this volume.
+* @required
+*/
+driver: string;
 }
 
 /**
@@ -35,10 +35,12 @@ secretRef?: { name?: string; namespace?: string };
 */
 export function createio_k8s_api_core_v1_FlexPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_FlexPersistentVolumeSource>): io_k8s_api_core_v1_FlexPersistentVolumeSource {
  return {
-   driver: data?.driver !== undefined ? data.driver : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    options: data?.options !== undefined ? data.options : {},
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretReference(),
+   driver: data?.driver !== undefined ? data.driver : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_SecretReference, createio_k8s_api_core_v1_SecretReference } from '../secretreference/io_k8s_api_core_v1_SecretReference';

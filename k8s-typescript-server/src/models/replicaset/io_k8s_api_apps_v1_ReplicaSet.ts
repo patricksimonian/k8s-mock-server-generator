@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_ReplicaSet {
 /**
-* ReplicaSetStatus represents the current status of a ReplicaSet.
-* @isObject
-*/
-status?: { availableReplicas?: number; conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date }>; fullyLabeledReplicas?: number; observedGeneration?: number; readyReplicas?: number; replicas: number };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -18,15 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* If the Labels of a ReplicaSet are empty, they are defaulted to be the same as the Pod(s) that the ReplicaSet manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { finalizers?: string[]; namespace?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; creationTimestamp?: Date; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; resourceVersion?: string; deletionTimestamp?: Date; generation?: number; name?: string; selfLink?: string; uid?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* ReplicaSetSpec is the specification of a ReplicaSet.
-* @isObject
+* Spec defines the specification of the desired behavior of the ReplicaSet. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.apps.v1.ReplicaSetSpec
 */
-spec?: { minReadySeconds?: number; replicas?: number; selector: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> }; template?: { spec?: Record<string, any>; metadata?: { deletionGracePeriodSeconds?: number; generation?: number; namespace?: string; deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; name?: string; resourceVersion?: string; selfLink?: string; uid?: string; annotations?: Record<string, any>; creationTimestamp?: Date; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }> } } };
+spec?: io_k8s_api_apps_v1_ReplicaSetSpec;
+/**
+* Status is the most recently observed status of the ReplicaSet. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.apps.v1.ReplicaSetStatus
+*/
+status?: io_k8s_api_apps_v1_ReplicaSetStatus;
 }
 
 /**
@@ -36,10 +36,14 @@ spec?: { minReadySeconds?: number; replicas?: number; selector: { matchExpressio
 */
 export function createio_k8s_api_apps_v1_ReplicaSet(data?: Partial<io_k8s_api_apps_v1_ReplicaSet>): io_k8s_api_apps_v1_ReplicaSet {
  return {
-   status: data?.status !== undefined ? data.status : { replicas: 0 },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { selector: {} },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_apps_v1_ReplicaSetSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_apps_v1_ReplicaSetStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_ReplicaSetSpec, createio_k8s_api_apps_v1_ReplicaSetSpec } from '../replicasetspec/io_k8s_api_apps_v1_ReplicaSetSpec';
+import { io_k8s_api_apps_v1_ReplicaSetStatus, createio_k8s_api_apps_v1_ReplicaSetStatus } from '../replicasetstatus/io_k8s_api_apps_v1_ReplicaSetStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

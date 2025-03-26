@@ -5,23 +5,23 @@
 */
 export interface io_k8s_api_autoscaling_v2_ObjectMetricStatus {
 /**
-* MetricValueStatus holds the current value for a metric
+* metric identifies the target metric by name and selector
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricIdentifier
 */
-current: { averageUtilization?: number; averageValue?: string; value?: string };
+metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 /**
-* CrossVersionObjectReference contains enough information to let you identify the referred resource.
+* current contains the current value for the given metric
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricValueStatus
 */
-describedObject: { apiVersion?: string; kind: string; name: string };
+current: io_k8s_api_autoscaling_v2_MetricValueStatus;
 /**
-* MetricIdentifier defines the name and optionally selector for a metric
+* DescribedObject specifies the descriptions of a object,such as kind,name apiVersion
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.CrossVersionObjectReference
 */
-metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } };
+describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
 }
 
 /**
@@ -31,8 +31,12 @@ metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; ope
 */
 export function createio_k8s_api_autoscaling_v2_ObjectMetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_ObjectMetricStatus>): io_k8s_api_autoscaling_v2_ObjectMetricStatus {
  return {
-   current: data?.current !== undefined ? data.current : {},
-   describedObject: data?.describedObject !== undefined ? data.describedObject : { kind: '', name: '' },
-   metric: data?.metric !== undefined ? data.metric : { name: '' },
+   metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
+   current: data?.current !== undefined ? data.current : createio_k8s_api_autoscaling_v2_MetricValueStatus(),
+   describedObject: data?.describedObject !== undefined ? data.describedObject : createio_k8s_api_autoscaling_v2_CrossVersionObjectReference(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_CrossVersionObjectReference, createio_k8s_api_autoscaling_v2_CrossVersionObjectReference } from '../crossversionobjectreference/io_k8s_api_autoscaling_v2_CrossVersionObjectReference';
+import { io_k8s_api_autoscaling_v2_MetricIdentifier, createio_k8s_api_autoscaling_v2_MetricIdentifier } from '../metricidentifier/io_k8s_api_autoscaling_v2_MetricIdentifier';
+import { io_k8s_api_autoscaling_v2_MetricValueStatus, createio_k8s_api_autoscaling_v2_MetricValueStatus } from '../metricvaluestatus/io_k8s_api_autoscaling_v2_MetricValueStatus';

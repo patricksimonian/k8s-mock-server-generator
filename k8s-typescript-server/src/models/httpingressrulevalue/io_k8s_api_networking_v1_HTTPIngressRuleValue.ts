@@ -9,7 +9,7 @@ export interface io_k8s_api_networking_v1_HTTPIngressRuleValue {
 * @required
 * @isArray
 */
-paths: Array<{ backend: { resource?: { name: string; apiGroup?: string; kind: string }; service?: { name: string; port?: { name?: string; number?: number } } }; path?: string; pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix' }>;
+paths: io_k8s_api_networking_v1_HTTPIngressPath[];
 }
 
 /**
@@ -22,3 +22,5 @@ export function createio_k8s_api_networking_v1_HTTPIngressRuleValue(data?: Parti
    paths: data?.paths !== undefined ? data.paths : [],
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_HTTPIngressPath, createio_k8s_api_networking_v1_HTTPIngressPath } from '../io.k8s.api.networking.v1.HTTPIngressPath';

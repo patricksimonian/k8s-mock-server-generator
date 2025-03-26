@@ -10,11 +10,11 @@ export interface io_k8s_api_autoscaling_v2_ResourceMetricSource {
 */
 name: string;
 /**
-* MetricTarget defines the target value, average value, or average utilization of a specific metric
+* target specifies the target value for the given metric
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricTarget
 */
-target: { type: string; value?: string; averageUtilization?: number; averageValue?: string };
+target: io_k8s_api_autoscaling_v2_MetricTarget;
 }
 
 /**
@@ -25,6 +25,8 @@ target: { type: string; value?: string; averageUtilization?: number; averageValu
 export function createio_k8s_api_autoscaling_v2_ResourceMetricSource(data?: Partial<io_k8s_api_autoscaling_v2_ResourceMetricSource>): io_k8s_api_autoscaling_v2_ResourceMetricSource {
  return {
    name: data?.name !== undefined ? data.name : '',
-   target: data?.target !== undefined ? data.target : { type: '' },
+   target: data?.target !== undefined ? data.target : createio_k8s_api_autoscaling_v2_MetricTarget(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_MetricTarget, createio_k8s_api_autoscaling_v2_MetricTarget } from '../metrictarget/io_k8s_api_autoscaling_v2_MetricTarget';

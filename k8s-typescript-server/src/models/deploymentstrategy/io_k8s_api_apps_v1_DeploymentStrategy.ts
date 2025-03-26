@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentStrategy {
 /**
-* Spec to control the desired behavior of rolling update.
-* @isObject
+* Rolling update config params. Present only if DeploymentStrategyType = RollingUpdate.
+* @references io.k8s.api.apps.v1.RollingUpdateDeployment
 */
-rollingUpdate?: { maxSurge?: string; maxUnavailable?: string };
+rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateDeployment;
 /**
 * Type of deployment. Can be "Recreate" or "RollingUpdate". Default is RollingUpdate.
 
@@ -26,7 +26,9 @@ type?: 'Recreate' | 'RollingUpdate';
 */
 export function createio_k8s_api_apps_v1_DeploymentStrategy(data?: Partial<io_k8s_api_apps_v1_DeploymentStrategy>): io_k8s_api_apps_v1_DeploymentStrategy {
  return {
-   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : {},
+   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateDeployment(),
    type: data?.type !== undefined ? data.type : '',
  };
 }
+// Required imports
+import { io_k8s_api_apps_v1_RollingUpdateDeployment, createio_k8s_api_apps_v1_RollingUpdateDeployment } from '../rollingupdatedeployment/io_k8s_api_apps_v1_RollingUpdateDeployment';

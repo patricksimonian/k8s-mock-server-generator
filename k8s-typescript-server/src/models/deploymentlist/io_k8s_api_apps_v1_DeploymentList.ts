@@ -20,10 +20,10 @@ items: io_k8s_api_apps_v1_Deployment[];
 */
 kind?: string;
 /**
-* ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-* @isObject
+* Standard list metadata.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
 */
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta;
 }
 
 /**
@@ -36,8 +36,9 @@ export function createio_k8s_api_apps_v1_DeploymentList(data?: Partial<io_k8s_ap
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
  };
 }
 // Required imports
 import { io_k8s_api_apps_v1_Deployment, createio_k8s_api_apps_v1_Deployment } from '../deployment/io_k8s_api_apps_v1_Deployment';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

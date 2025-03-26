@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_networking_v1_IngressStatus {
 /**
-* IngressLoadBalancerStatus represents the status of a load-balancer.
-* @isObject
+* loadBalancer contains the current status of the load-balancer.
+* @references io.k8s.api.networking.v1.IngressLoadBalancerStatus
 */
-loadBalancer?: { ingress?: Array<{ ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>; hostname?: string; ip?: string }> };
+loadBalancer?: io_k8s_api_networking_v1_IngressLoadBalancerStatus;
 }
 
 /**
@@ -18,6 +18,8 @@ loadBalancer?: { ingress?: Array<{ ports?: Array<{ error?: string; port: number;
 */
 export function createio_k8s_api_networking_v1_IngressStatus(data?: Partial<io_k8s_api_networking_v1_IngressStatus>): io_k8s_api_networking_v1_IngressStatus {
  return {
-   loadBalancer: data?.loadBalancer !== undefined ? data.loadBalancer : {},
+   loadBalancer: data?.loadBalancer !== undefined ? data.loadBalancer : createio_k8s_api_networking_v1_IngressLoadBalancerStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_networking_v1_IngressLoadBalancerStatus, createio_k8s_api_networking_v1_IngressLoadBalancerStatus } from '../ingressloadbalancerstatus/io_k8s_api_networking_v1_IngressLoadBalancerStatus';

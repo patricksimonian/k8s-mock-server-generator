@@ -7,6 +7,11 @@ It adds a name to it that uniquely identifies the ResourceClaim inside the Pod. 
 */
 export interface io_k8s_api_core_v1_PodResourceClaim {
 /**
+* Name uniquely identifies this resource claim inside the pod. This must be a DNS_LABEL.
+* @required
+*/
+name: string;
+/**
 * ResourceClaimName is the name of a ResourceClaim object in the same namespace as this pod.
 
 Exactly one of ResourceClaimName and ResourceClaimTemplateName must be set.
@@ -22,11 +27,6 @@ This field is immutable and no changes will be made to the corresponding Resourc
 Exactly one of ResourceClaimName and ResourceClaimTemplateName must be set.
 */
 resourceClaimTemplateName?: string;
-/**
-* Name uniquely identifies this resource claim inside the pod. This must be a DNS_LABEL.
-* @required
-*/
-name: string;
 }
 
 /**
@@ -36,8 +36,8 @@ name: string;
 */
 export function createio_k8s_api_core_v1_PodResourceClaim(data?: Partial<io_k8s_api_core_v1_PodResourceClaim>): io_k8s_api_core_v1_PodResourceClaim {
  return {
+   name: data?.name !== undefined ? data.name : '',
    resourceClaimName: data?.resourceClaimName !== undefined ? data.resourceClaimName : '',
    resourceClaimTemplateName: data?.resourceClaimTemplateName !== undefined ? data.resourceClaimTemplateName : '',
-   name: data?.name !== undefined ? data.name : '',
  };
 }

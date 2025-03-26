@@ -12,7 +12,7 @@ defaultMode?: number;
 * sources is the list of volume projections. Each entry in this list handles one source.
 * @isArray
 */
-sources?: Array<{ serviceAccountToken?: { expirationSeconds?: number; path: string; audience?: string }; clusterTrustBundle?: { labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; name?: string; optional?: boolean; path: string; signerName?: string }; configMap?: { items?: Array<{ key: string; mode?: number; path: string }>; name?: string; optional?: boolean }; downwardAPI?: { items?: Array<{ fieldRef?: { apiVersion?: string; fieldPath: string }; mode?: number; path: string; resourceFieldRef?: { resource: string; containerName?: string; divisor?: string } }> }; secret?: { name?: string; optional?: boolean; items?: Array<{ key: string; mode?: number; path: string }> } }>;
+sources?: io_k8s_api_core_v1_VolumeProjection[];
 }
 
 /**
@@ -26,3 +26,5 @@ export function createio_k8s_api_core_v1_ProjectedVolumeSource(data?: Partial<io
    sources: data?.sources !== undefined ? data.sources : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_VolumeProjection, createio_k8s_api_core_v1_VolumeProjection } from '../io.k8s.api.core.v1.VolumeProjection';

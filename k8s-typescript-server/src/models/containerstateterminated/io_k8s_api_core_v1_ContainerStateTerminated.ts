@@ -5,14 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ContainerStateTerminated {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-finishedAt?: Date;
-/**
-* Message regarding the last termination of the container
-*/
-message?: string;
-/**
 * (brief) reason from the last termination of the container
 */
 reason?: string;
@@ -21,9 +13,10 @@ reason?: string;
 */
 signal?: number;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Time at which previous execution of the container started
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-startedAt?: Date;
+startedAt?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * Container's ID in the format '<type>://<container_id>'
 */
@@ -33,6 +26,15 @@ containerID?: string;
 * @required
 */
 exitCode: number;
+/**
+* Time at which the container last terminated
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+finishedAt?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* Message regarding the last termination of the container
+*/
+message?: string;
 }
 
 /**
@@ -42,12 +44,14 @@ exitCode: number;
 */
 export function createio_k8s_api_core_v1_ContainerStateTerminated(data?: Partial<io_k8s_api_core_v1_ContainerStateTerminated>): io_k8s_api_core_v1_ContainerStateTerminated {
  return {
-   finishedAt: data?.finishedAt !== undefined ? data.finishedAt : '',
-   message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    signal: data?.signal !== undefined ? data.signal : 0,
-   startedAt: data?.startedAt !== undefined ? data.startedAt : '',
+   startedAt: data?.startedAt !== undefined ? data.startedAt : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    containerID: data?.containerID !== undefined ? data.containerID : '',
    exitCode: data?.exitCode !== undefined ? data.exitCode : 0,
+   finishedAt: data?.finishedAt !== undefined ? data.finishedAt : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   message: data?.message !== undefined ? data.message : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

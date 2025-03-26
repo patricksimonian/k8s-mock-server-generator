@@ -5,23 +5,19 @@
 */
 export interface io_k8s_api_core_v1_EnvFromSource {
 /**
-* ConfigMapEnvSource selects a ConfigMap to populate the environment variables with.
-
-The contents of the target ConfigMap's Data field will represent the key-value pairs as environment variables.
-* @isObject
-*/
-configMapRef?: { name?: string; optional?: boolean };
-/**
 * An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
 */
 prefix?: string;
 /**
-* SecretEnvSource selects a Secret to populate the environment variables with.
-
-The contents of the target Secret's Data field will represent the key-value pairs as environment variables.
-* @isObject
+* The Secret to select from
+* @references io.k8s.api.core.v1.SecretEnvSource
 */
-secretRef?: { name?: string; optional?: boolean };
+secretRef?: io_k8s_api_core_v1_SecretEnvSource;
+/**
+* The ConfigMap to select from
+* @references io.k8s.api.core.v1.ConfigMapEnvSource
+*/
+configMapRef?: io_k8s_api_core_v1_ConfigMapEnvSource;
 }
 
 /**
@@ -31,8 +27,11 @@ secretRef?: { name?: string; optional?: boolean };
 */
 export function createio_k8s_api_core_v1_EnvFromSource(data?: Partial<io_k8s_api_core_v1_EnvFromSource>): io_k8s_api_core_v1_EnvFromSource {
  return {
-   configMapRef: data?.configMapRef !== undefined ? data.configMapRef : {},
    prefix: data?.prefix !== undefined ? data.prefix : '',
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretEnvSource(),
+   configMapRef: data?.configMapRef !== undefined ? data.configMapRef : createio_k8s_api_core_v1_ConfigMapEnvSource(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ConfigMapEnvSource, createio_k8s_api_core_v1_ConfigMapEnvSource } from '../configmapenvsource/io_k8s_api_core_v1_ConfigMapEnvSource';
+import { io_k8s_api_core_v1_SecretEnvSource, createio_k8s_api_core_v1_SecretEnvSource } from '../secretenvsource/io_k8s_api_core_v1_SecretEnvSource';

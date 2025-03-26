@@ -14,10 +14,10 @@ name: string;
 */
 value?: string;
 /**
-* EnvVarSource represents a source for the value of an EnvVar.
-* @isObject
+* Source for the environment variable's value. Cannot be used if value is not empty.
+* @references io.k8s.api.core.v1.EnvVarSource
 */
-valueFrom?: { configMapKeyRef?: { key: string; name?: string; optional?: boolean }; fieldRef?: { apiVersion?: string; fieldPath: string }; resourceFieldRef?: { resource: string; containerName?: string; divisor?: string }; secretKeyRef?: { key: string; name?: string; optional?: boolean } };
+valueFrom?: io_k8s_api_core_v1_EnvVarSource;
 }
 
 /**
@@ -29,6 +29,8 @@ export function createio_k8s_api_core_v1_EnvVar(data?: Partial<io_k8s_api_core_v
  return {
    name: data?.name !== undefined ? data.name : '',
    value: data?.value !== undefined ? data.value : '',
-   valueFrom: data?.valueFrom !== undefined ? data.valueFrom : {},
+   valueFrom: data?.valueFrom !== undefined ? data.valueFrom : createio_k8s_api_core_v1_EnvVarSource(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_EnvVarSource, createio_k8s_api_core_v1_EnvVarSource } from '../envvarsource/io_k8s_api_core_v1_EnvVarSource';

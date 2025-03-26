@@ -5,25 +5,25 @@
 */
 export interface io_k8s_api_flowcontrol_v1_Subject {
 /**
-* GroupSubject holds detailed information for group-kind subject.
-* @isObject
+* `group` matches based on user group name.
+* @references io.k8s.api.flowcontrol.v1.GroupSubject
 */
-group?: { name: string };
+group?: io_k8s_api_flowcontrol_v1_GroupSubject;
 /**
 * `kind` indicates which one of the other fields is non-empty. Required
 * @required
 */
 kind: string;
 /**
-* ServiceAccountSubject holds detailed information for service-account-kind subject.
-* @isObject
+* `serviceAccount` matches ServiceAccounts.
+* @references io.k8s.api.flowcontrol.v1.ServiceAccountSubject
 */
-serviceAccount?: { name: string; namespace: string };
+serviceAccount?: io_k8s_api_flowcontrol_v1_ServiceAccountSubject;
 /**
-* UserSubject holds detailed information for user-kind subject.
-* @isObject
+* `user` matches based on username.
+* @references io.k8s.api.flowcontrol.v1.UserSubject
 */
-user?: { name: string };
+user?: io_k8s_api_flowcontrol_v1_UserSubject;
 }
 
 /**
@@ -33,9 +33,13 @@ user?: { name: string };
 */
 export function createio_k8s_api_flowcontrol_v1_Subject(data?: Partial<io_k8s_api_flowcontrol_v1_Subject>): io_k8s_api_flowcontrol_v1_Subject {
  return {
-   group: data?.group !== undefined ? data.group : { name: '' },
+   group: data?.group !== undefined ? data.group : createio_k8s_api_flowcontrol_v1_GroupSubject(),
    kind: data?.kind !== undefined ? data.kind : '',
-   serviceAccount: data?.serviceAccount !== undefined ? data.serviceAccount : { name: '', namespace: '' },
-   user: data?.user !== undefined ? data.user : { name: '' },
+   serviceAccount: data?.serviceAccount !== undefined ? data.serviceAccount : createio_k8s_api_flowcontrol_v1_ServiceAccountSubject(),
+   user: data?.user !== undefined ? data.user : createio_k8s_api_flowcontrol_v1_UserSubject(),
  };
 }
+// Required imports
+import { io_k8s_api_flowcontrol_v1_GroupSubject, createio_k8s_api_flowcontrol_v1_GroupSubject } from '../groupsubject/io_k8s_api_flowcontrol_v1_GroupSubject';
+import { io_k8s_api_flowcontrol_v1_ServiceAccountSubject, createio_k8s_api_flowcontrol_v1_ServiceAccountSubject } from '../serviceaccountsubject/io_k8s_api_flowcontrol_v1_ServiceAccountSubject';
+import { io_k8s_api_flowcontrol_v1_UserSubject, createio_k8s_api_flowcontrol_v1_UserSubject } from '../usersubject/io_k8s_api_flowcontrol_v1_UserSubject';

@@ -8,7 +8,7 @@ export interface io_k8s_api_admissionregistration_v1_TypeChecking {
 * The type checking warnings for each expression.
 * @isArray
 */
-expressionWarnings?: Array<{ fieldRef: string; warning: string }>;
+expressionWarnings?: io_k8s_api_admissionregistration_v1_ExpressionWarning[];
 }
 
 /**
@@ -21,3 +21,5 @@ export function createio_k8s_api_admissionregistration_v1_TypeChecking(data?: Pa
    expressionWarnings: data?.expressionWarnings !== undefined ? data.expressionWarnings : [],
  };
 }
+// Required imports
+import { io_k8s_api_admissionregistration_v1_ExpressionWarning, createio_k8s_api_admissionregistration_v1_ExpressionWarning } from '../io.k8s.api.admissionregistration.v1.ExpressionWarning';

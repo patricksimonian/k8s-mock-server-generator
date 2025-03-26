@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec {
 /**
-* NonResourceAttributes includes the authorization attributes available for non-resource requests to the Authorizer interface
-* @isObject
+* NonResourceAttributes describes information for a non-resource access request
+* @references io.k8s.api.authorization.v1.NonResourceAttributes
 */
-nonResourceAttributes?: { path?: string; verb?: string };
+nonResourceAttributes?: io_k8s_api_authorization_v1_NonResourceAttributes;
 /**
-* ResourceAttributes includes the authorization attributes available for resource requests to the Authorizer interface
-* @isObject
+* ResourceAuthorizationAttributes describes information for a resource access request
+* @references io.k8s.api.authorization.v1.ResourceAttributes
 */
-resourceAttributes?: { subresource?: string; version?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; namespace?: string; resource?: string; verb?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string };
+resourceAttributes?: io_k8s_api_authorization_v1_ResourceAttributes;
 }
 
 /**
@@ -23,7 +23,10 @@ resourceAttributes?: { subresource?: string; version?: string; labelSelector?: {
 */
 export function createio_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec(data?: Partial<io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec>): io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec {
  return {
-   nonResourceAttributes: data?.nonResourceAttributes !== undefined ? data.nonResourceAttributes : {},
-   resourceAttributes: data?.resourceAttributes !== undefined ? data.resourceAttributes : {},
+   nonResourceAttributes: data?.nonResourceAttributes !== undefined ? data.nonResourceAttributes : createio_k8s_api_authorization_v1_NonResourceAttributes(),
+   resourceAttributes: data?.resourceAttributes !== undefined ? data.resourceAttributes : createio_k8s_api_authorization_v1_ResourceAttributes(),
  };
 }
+// Required imports
+import { io_k8s_api_authorization_v1_NonResourceAttributes, createio_k8s_api_authorization_v1_NonResourceAttributes } from '../nonresourceattribute/io_k8s_api_authorization_v1_NonResourceAttributes';
+import { io_k8s_api_authorization_v1_ResourceAttributes, createio_k8s_api_authorization_v1_ResourceAttributes } from '../resourceattribute/io_k8s_api_authorization_v1_ResourceAttributes';

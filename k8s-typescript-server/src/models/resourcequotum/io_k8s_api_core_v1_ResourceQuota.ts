@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ResourceQuota {
 /**
-* ResourceQuotaStatus defines the enforced hard limits and observed use.
-* @isObject
-*/
-status?: { hard?: Record<string, any>; used?: Record<string, any> };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -18,15 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; selfLink?: string; uid?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; generateName?: string; labels?: Record<string, any>; resourceVersion?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; name?: string; namespace?: string; deletionTimestamp?: Date; generation?: number };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* ResourceQuotaSpec defines the desired hard limits to enforce for Quota.
-* @isObject
+* Spec defines the desired quota. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ResourceQuotaSpec
 */
-spec?: { hard?: Record<string, any>; scopeSelector?: { matchExpressions?: Array<{ operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn'; scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating'; values?: string[] }> }; scopes?: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating'[] };
+spec?: io_k8s_api_core_v1_ResourceQuotaSpec;
+/**
+* Status defines the actual enforced quota and its current usage. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ResourceQuotaStatus
+*/
+status?: io_k8s_api_core_v1_ResourceQuotaStatus;
 }
 
 /**
@@ -36,10 +36,14 @@ spec?: { hard?: Record<string, any>; scopeSelector?: { matchExpressions?: Array<
 */
 export function createio_k8s_api_core_v1_ResourceQuota(data?: Partial<io_k8s_api_core_v1_ResourceQuota>): io_k8s_api_core_v1_ResourceQuota {
  return {
-   status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_ResourceQuotaSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_ResourceQuotaStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ResourceQuotaSpec, createio_k8s_api_core_v1_ResourceQuotaSpec } from '../resourcequotaspec/io_k8s_api_core_v1_ResourceQuotaSpec';
+import { io_k8s_api_core_v1_ResourceQuotaStatus, createio_k8s_api_core_v1_ResourceQuotaStatus } from '../resourcequotastatus/io_k8s_api_core_v1_ResourceQuotaStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

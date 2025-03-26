@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_batch_v1_JobTemplateSpec {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata of the jobs created from this template. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; deletionTimestamp?: Date; resourceVersion?: string; name?: string; namespace?: string; uid?: string; deletionGracePeriodSeconds?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; finalizers?: string[]; generateName?: string; generation?: number; labels?: Record<string, any> };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* JobSpec describes how the job execution will look like.
-* @isObject
+* Specification of the desired behavior of the job. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.batch.v1.JobSpec
 */
-spec?: Record<string, any>;
+spec?: io_k8s_api_batch_v1_JobSpec;
 }
 
 /**
@@ -23,7 +23,10 @@ spec?: Record<string, any>;
 */
 export function createio_k8s_api_batch_v1_JobTemplateSpec(data?: Partial<io_k8s_api_batch_v1_JobTemplateSpec>): io_k8s_api_batch_v1_JobTemplateSpec {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { template: {} },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_batch_v1_JobSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_batch_v1_JobSpec, createio_k8s_api_batch_v1_JobSpec } from '../jobspec/io_k8s_api_batch_v1_JobSpec';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

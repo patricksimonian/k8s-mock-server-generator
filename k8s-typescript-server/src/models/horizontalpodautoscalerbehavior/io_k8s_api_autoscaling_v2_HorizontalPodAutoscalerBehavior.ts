@@ -5,15 +5,18 @@
 */
 export interface io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerBehavior {
 /**
-* HPAScalingRules configures the scaling behavior for one direction. These Rules are applied after calculating DesiredReplicas from metrics for the HPA. They can limit the scaling velocity by specifying scaling policies. They can prevent flapping by specifying the stabilization window, so that the number of replicas is not set instantly, instead, the safest value from the stabilization window is chosen.
-* @isObject
+* scaleUp is scaling policy for scaling Up. If not set, the default value is the higher of:
+  * increase no more than 4 pods per 60 seconds
+  * double the number of pods per 60 seconds
+No stabilization is used.
+* @references io.k8s.api.autoscaling.v2.HPAScalingRules
 */
-scaleDown?: { stabilizationWindowSeconds?: number; policies?: Array<{ periodSeconds: number; type: string; value: number }>; selectPolicy?: string };
+scaleUp?: io_k8s_api_autoscaling_v2_HPAScalingRules;
 /**
-* HPAScalingRules configures the scaling behavior for one direction. These Rules are applied after calculating DesiredReplicas from metrics for the HPA. They can limit the scaling velocity by specifying scaling policies. They can prevent flapping by specifying the stabilization window, so that the number of replicas is not set instantly, instead, the safest value from the stabilization window is chosen.
-* @isObject
+* scaleDown is scaling policy for scaling Down. If not set, the default value is to allow to scale down to minReplicas pods, with a 300 second stabilization window (i.e., the highest recommendation for the last 300sec is used).
+* @references io.k8s.api.autoscaling.v2.HPAScalingRules
 */
-scaleUp?: { stabilizationWindowSeconds?: number; policies?: Array<{ periodSeconds: number; type: string; value: number }>; selectPolicy?: string };
+scaleDown?: io_k8s_api_autoscaling_v2_HPAScalingRules;
 }
 
 /**
@@ -23,7 +26,9 @@ scaleUp?: { stabilizationWindowSeconds?: number; policies?: Array<{ periodSecond
 */
 export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerBehavior(data?: Partial<io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerBehavior>): io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerBehavior {
  return {
-   scaleDown: data?.scaleDown !== undefined ? data.scaleDown : {},
-   scaleUp: data?.scaleUp !== undefined ? data.scaleUp : {},
+   scaleUp: data?.scaleUp !== undefined ? data.scaleUp : createio_k8s_api_autoscaling_v2_HPAScalingRules(),
+   scaleDown: data?.scaleDown !== undefined ? data.scaleDown : createio_k8s_api_autoscaling_v2_HPAScalingRules(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_HPAScalingRules, createio_k8s_api_autoscaling_v2_HPAScalingRules } from '../hpascalingrule/io_k8s_api_autoscaling_v2_HPAScalingRules';

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2025-03-26T18:58:51.062Z"
+  labels:
+    run: foo
+  name: foo
+  namespace: default
+  resourceVersion: 3a325070-5bc4-4ad3-9a05-2ee8dc82e747
+spec:
+  containers:
+  - image: nginx:latest
+    name: foo
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -5,16 +5,6 @@
 */
 export interface io_k8s_api_batch_v1_CronJob {
 /**
-* CronJobSpec describes how the job execution will look like and when it will actually run.
-* @isObject
-*/
-spec?: { failedJobsHistoryLimit?: number; jobTemplate: { spec?: Record<string, any>; metadata?: { finalizers?: string[]; generateName?: string; generation?: number; labels?: Record<string, any>; selfLink?: string; creationTimestamp?: Date; deletionTimestamp?: Date; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; name?: string; namespace?: string } }; schedule: string; startingDeadlineSeconds?: number; successfulJobsHistoryLimit?: number; suspend?: boolean; timeZone?: string; concurrencyPolicy?: 'Allow' | 'Forbid' | 'Replace' };
-/**
-* CronJobStatus represents the current state of a cron job.
-* @isObject
-*/
-status?: { active?: Array<{ name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string }>; lastScheduleTime?: Date; lastSuccessfulTime?: Date };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -23,10 +13,20 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; labels?: Record<string, any>; generateName?: string; selfLink?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; name?: string; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; uid?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* Specification of the desired behavior of a cron job, including the schedule. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.batch.v1.CronJobSpec
+*/
+spec?: io_k8s_api_batch_v1_CronJobSpec;
+/**
+* Current status of a cron job. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.batch.v1.CronJobStatus
+*/
+status?: io_k8s_api_batch_v1_CronJobStatus;
 }
 
 /**
@@ -36,10 +36,14 @@ metadata?: { creationTimestamp?: Date; deletionGracePeriodSeconds?: number; fina
 */
 export function createio_k8s_api_batch_v1_CronJob(data?: Partial<io_k8s_api_batch_v1_CronJob>): io_k8s_api_batch_v1_CronJob {
  return {
-   spec: data?.spec !== undefined ? data.spec : { jobTemplate: {}, schedule: '' },
-   status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_batch_v1_CronJobSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_batch_v1_CronJobStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_batch_v1_CronJobSpec, createio_k8s_api_batch_v1_CronJobSpec } from '../cronjobspec/io_k8s_api_batch_v1_CronJobSpec';
+import { io_k8s_api_batch_v1_CronJobStatus, createio_k8s_api_batch_v1_CronJobStatus } from '../cronjobstatus/io_k8s_api_batch_v1_CronJobStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

@@ -5,22 +5,20 @@
 */
 export interface io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec {
 /**
+* `exempt` specifies how requests are handled for an exempt priority level. This field MUST be empty if `type` is `"Limited"`. This field MAY be non-empty if `type` is `"Exempt"`. If empty and `type` is `"Exempt"` then the default values for `ExemptPriorityLevelConfiguration` apply.
+* @references io.k8s.api.flowcontrol.v1.ExemptPriorityLevelConfiguration
+*/
+exempt?: io_k8s_api_flowcontrol_v1_ExemptPriorityLevelConfiguration;
+/**
+* `limited` specifies how requests are handled for a Limited priority level. This field must be non-empty if and only if `type` is `"Limited"`.
+* @references io.k8s.api.flowcontrol.v1.LimitedPriorityLevelConfiguration
+*/
+limited?: io_k8s_api_flowcontrol_v1_LimitedPriorityLevelConfiguration;
+/**
 * `type` indicates whether this priority level is subject to limitation on request execution.  A value of `"Exempt"` means that requests of this priority level are not subject to a limit (and thus are never queued) and do not detract from the capacity made available to other priority levels.  A value of `"Limited"` means that (a) requests of this priority level _are_ subject to limits and (b) some of the server's limited capacity is made available exclusively to this priority level. Required.
 * @required
 */
 type: string;
-/**
-* ExemptPriorityLevelConfiguration describes the configurable aspects of the handling of exempt requests. In the mandatory exempt configuration object the values in the fields here can be modified by authorized users, unlike the rest of the `spec`.
-* @isObject
-*/
-exempt?: { lendablePercent?: number; nominalConcurrencyShares?: number };
-/**
-* LimitedPriorityLevelConfiguration specifies how to handle requests that are subject to limits. It addresses two issues:
-  - How are requests for this priority level limited?
-  - What should be done with requests that exceed the limit?
-* @isObject
-*/
-limited?: { limitResponse?: { queuing?: { handSize?: number; queueLengthLimit?: number; queues?: number }; type: string }; nominalConcurrencyShares?: number; borrowingLimitPercent?: number; lendablePercent?: number };
 }
 
 /**
@@ -30,8 +28,11 @@ limited?: { limitResponse?: { queuing?: { handSize?: number; queueLengthLimit?: 
 */
 export function createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec(data?: Partial<io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec>): io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec {
  return {
+   exempt: data?.exempt !== undefined ? data.exempt : createio_k8s_api_flowcontrol_v1_ExemptPriorityLevelConfiguration(),
+   limited: data?.limited !== undefined ? data.limited : createio_k8s_api_flowcontrol_v1_LimitedPriorityLevelConfiguration(),
    type: data?.type !== undefined ? data.type : '',
-   exempt: data?.exempt !== undefined ? data.exempt : {},
-   limited: data?.limited !== undefined ? data.limited : {},
  };
 }
+// Required imports
+import { io_k8s_api_flowcontrol_v1_ExemptPriorityLevelConfiguration, createio_k8s_api_flowcontrol_v1_ExemptPriorityLevelConfiguration } from '../exemptprioritylevelconfiguration/io_k8s_api_flowcontrol_v1_ExemptPriorityLevelConfiguration';
+import { io_k8s_api_flowcontrol_v1_LimitedPriorityLevelConfiguration, createio_k8s_api_flowcontrol_v1_LimitedPriorityLevelConfiguration } from '../limitedprioritylevelconfiguration/io_k8s_api_flowcontrol_v1_LimitedPriorityLevelConfiguration';

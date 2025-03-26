@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_Node {
 /**
+* Most recently observed status of the node. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.NodeStatus
+*/
+status?: io_k8s_api_core_v1_NodeStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -13,20 +18,15 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { resourceVersion?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; annotations?: Record<string, any>; name?: string; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; selfLink?: string; uid?: string; creationTimestamp?: Date; finalizers?: string[]; generateName?: string; generation?: number; namespace?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* NodeSpec describes the attributes that a node is created with.
-* @isObject
+* Spec defines the behavior of a node. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.NodeSpec
 */
-spec?: { podCIDR?: string; podCIDRs?: string[]; providerID?: string; taints?: Array<{ effect: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key: string; timeAdded?: Date; value?: string }>; unschedulable?: boolean; configSource?: { configMap?: { resourceVersion?: string; uid?: string; kubeletConfigKey: string; name: string; namespace: string } }; externalID?: string };
-/**
-* NodeStatus is information about the current status of a node.
-* @isObject
-*/
-status?: { addresses?: Array<{ address: string; type: string }>; capacity?: Record<string, any>; conditions?: Array<{ lastHeartbeatTime?: Date; lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>; config?: { active?: { configMap?: { namespace: string; resourceVersion?: string; uid?: string; kubeletConfigKey: string; name: string } }; assigned?: { configMap?: { kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string; uid?: string } }; error?: string; lastKnownGood?: { configMap?: { kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string; uid?: string } } }; images?: Array<{ names?: string[]; sizeBytes?: number }>; nodeInfo?: { bootID: string; containerRuntimeVersion: string; kubeProxyVersion: string; machineID: string; architecture: string; kernelVersion: string; kubeletVersion: string; operatingSystem: string; osImage: string; systemUUID: string }; runtimeHandlers?: Array<{ name?: string; features?: { recursiveReadOnlyMounts?: boolean; userNamespaces?: boolean } }>; allocatable?: Record<string, any>; daemonEndpoints?: { kubeletEndpoint?: { Port: number } }; features?: { supplementalGroupsPolicy?: boolean }; phase?: 'Pending' | 'Running' | 'Terminated'; volumesAttached?: Array<{ devicePath: string; name: string }>; volumesInUse?: string[] };
+spec?: io_k8s_api_core_v1_NodeSpec;
 }
 
 /**
@@ -36,10 +36,14 @@ status?: { addresses?: Array<{ address: string; type: string }>; capacity?: Reco
 */
 export function createio_k8s_api_core_v1_Node(data?: Partial<io_k8s_api_core_v1_Node>): io_k8s_api_core_v1_Node {
  return {
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_NodeStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_NodeSpec(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_NodeSpec, createio_k8s_api_core_v1_NodeSpec } from '../nodespec/io_k8s_api_core_v1_NodeSpec';
+import { io_k8s_api_core_v1_NodeStatus, createio_k8s_api_core_v1_NodeStatus } from '../nodestatus/io_k8s_api_core_v1_NodeStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

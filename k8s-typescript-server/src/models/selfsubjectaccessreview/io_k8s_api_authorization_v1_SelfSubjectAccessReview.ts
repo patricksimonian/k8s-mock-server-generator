@@ -5,21 +5,16 @@
 */
 export interface io_k8s_api_authorization_v1_SelfSubjectAccessReview {
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; resourceVersion?: string; selfLink?: string; name?: string; generateName?: string; creationTimestamp?: Date; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; labels?: Record<string, any>; namespace?: string; uid?: string; deletionGracePeriodSeconds?: number };
-/**
-* SelfSubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+* Spec holds information about the request being evaluated.  user and groups must be empty
 * @required
-* @isObject
+* @references io.k8s.api.authorization.v1.SelfSubjectAccessReviewSpec
 */
-spec: { nonResourceAttributes?: { verb?: string; path?: string }; resourceAttributes?: { resource?: string; subresource?: string; version?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; namespace?: string; name?: string; verb?: string; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> } } };
+spec: io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec;
 /**
-* SubjectAccessReviewStatus
-* @isObject
+* Status is filled in by the server and indicates whether the request is allowed or not
+* @references io.k8s.api.authorization.v1.SubjectAccessReviewStatus
 */
-status?: { allowed: boolean; denied?: boolean; evaluationError?: string; reason?: string };
+status?: io_k8s_api_authorization_v1_SubjectAccessReviewStatus;
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -28,6 +23,11 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -37,10 +37,14 @@ kind?: string;
 */
 export function createio_k8s_api_authorization_v1_SelfSubjectAccessReview(data?: Partial<io_k8s_api_authorization_v1_SelfSubjectAccessReview>): io_k8s_api_authorization_v1_SelfSubjectAccessReview {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { allowed: false },
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authorization_v1_SubjectAccessReviewStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
+// Required imports
+import { io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec, createio_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec } from '../selfsubjectaccessreviewspec/io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec';
+import { io_k8s_api_authorization_v1_SubjectAccessReviewStatus, createio_k8s_api_authorization_v1_SubjectAccessReviewStatus } from '../subjectaccessreviewstatus/io_k8s_api_authorization_v1_SubjectAccessReviewStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_core_v1_NodeConfigSource {
 /**
-* ConfigMapNodeConfigSource contains the information to reference a ConfigMap as a config source for the Node. This API is deprecated since 1.22: https://git.k8s.io/enhancements/keps/sig-node/281-dynamic-kubelet-configuration
-* @isObject
+* ConfigMap is a reference to a Node's ConfigMap
+* @references io.k8s.api.core.v1.ConfigMapNodeConfigSource
 */
-configMap?: { uid?: string; kubeletConfigKey: string; name: string; namespace: string; resourceVersion?: string };
+configMap?: io_k8s_api_core_v1_ConfigMapNodeConfigSource;
 }
 
 /**
@@ -18,6 +18,8 @@ configMap?: { uid?: string; kubeletConfigKey: string; name: string; namespace: s
 */
 export function createio_k8s_api_core_v1_NodeConfigSource(data?: Partial<io_k8s_api_core_v1_NodeConfigSource>): io_k8s_api_core_v1_NodeConfigSource {
  return {
-   configMap: data?.configMap !== undefined ? data.configMap : { namespace: '', kubeletConfigKey: '', name: '' },
+   configMap: data?.configMap !== undefined ? data.configMap : createio_k8s_api_core_v1_ConfigMapNodeConfigSource(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_ConfigMapNodeConfigSource, createio_k8s_api_core_v1_ConfigMapNodeConfigSource } from '../configmapnodeconfigsource/io_k8s_api_core_v1_ConfigMapNodeConfigSource';

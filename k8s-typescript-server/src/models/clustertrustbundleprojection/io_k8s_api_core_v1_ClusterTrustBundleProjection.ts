@@ -5,14 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ClusterTrustBundleProjection {
 /**
-* Select a single ClusterTrustBundle by object name.  Mutually-exclusive with signerName and labelSelector.
-*/
-name?: string;
-/**
-* If true, don't block pod startup if the referenced ClusterTrustBundle(s) aren't available.  If using name, then the named ClusterTrustBundle is allowed not to exist.  If using signerName, then the combination of signerName and labelSelector is allowed to match zero ClusterTrustBundles.
-*/
-optional?: boolean;
-/**
 * Relative path from the volume root to write the bundle.
 * @required
 */
@@ -22,10 +14,18 @@ path: string;
 */
 signerName?: string;
 /**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
+* Select all ClusterTrustBundles that match this label selector.  Only has effect if signerName is set.  Mutually-exclusive with name.  If unset, interpreted as "match nothing".  If set but empty, interpreted as "match everything".
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
-labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+labelSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
+/**
+* Select a single ClusterTrustBundle by object name.  Mutually-exclusive with signerName and labelSelector.
+*/
+name?: string;
+/**
+* If true, don't block pod startup if the referenced ClusterTrustBundle(s) aren't available.  If using name, then the named ClusterTrustBundle is allowed not to exist.  If using signerName, then the combination of signerName and labelSelector is allowed to match zero ClusterTrustBundles.
+*/
+optional?: boolean;
 }
 
 /**
@@ -35,10 +35,12 @@ labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; valu
 */
 export function createio_k8s_api_core_v1_ClusterTrustBundleProjection(data?: Partial<io_k8s_api_core_v1_ClusterTrustBundleProjection>): io_k8s_api_core_v1_ClusterTrustBundleProjection {
  return {
-   name: data?.name !== undefined ? data.name : '',
-   optional: data?.optional !== undefined ? data.optional : false,
    path: data?.path !== undefined ? data.path : '',
    signerName: data?.signerName !== undefined ? data.signerName : '',
-   labelSelector: data?.labelSelector !== undefined ? data.labelSelector : {},
+   labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   name: data?.name !== undefined ? data.name : '',
+   optional: data?.optional !== undefined ? data.optional : false,
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector, createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector } from '../labelselector/io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector';

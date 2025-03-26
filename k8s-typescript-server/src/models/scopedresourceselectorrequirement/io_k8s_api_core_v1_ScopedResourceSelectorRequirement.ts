@@ -5,19 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ScopedResourceSelectorRequirement {
 /**
-* The name of the scope that the selector applies to.
-
-Possible enum values:
- - `"BestEffort"` Match all pod objects that have best effort quality of service
- - `"CrossNamespacePodAffinity"` Match all pod objects that have cross-namespace pod (anti)affinity mentioned.
- - `"NotBestEffort"` Match all pod objects that do not have best effort quality of service
- - `"NotTerminating"` Match all pod objects where spec.activeDeadlineSeconds is nil
- - `"PriorityClass"` Match all pod objects that have priority class mentioned
- - `"Terminating"` Match all pod objects where spec.activeDeadlineSeconds >=0
-* @required
-*/
-scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating';
-/**
 * An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
 * @isArray
 */
@@ -33,6 +20,19 @@ Possible enum values:
 * @required
 */
 operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn';
+/**
+* The name of the scope that the selector applies to.
+
+Possible enum values:
+ - `"BestEffort"` Match all pod objects that have best effort quality of service
+ - `"CrossNamespacePodAffinity"` Match all pod objects that have cross-namespace pod (anti)affinity mentioned.
+ - `"NotBestEffort"` Match all pod objects that do not have best effort quality of service
+ - `"NotTerminating"` Match all pod objects where spec.activeDeadlineSeconds is nil
+ - `"PriorityClass"` Match all pod objects that have priority class mentioned
+ - `"Terminating"` Match all pod objects where spec.activeDeadlineSeconds >=0
+* @required
+*/
+scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating';
 }
 
 /**
@@ -42,8 +42,8 @@ operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn';
 */
 export function createio_k8s_api_core_v1_ScopedResourceSelectorRequirement(data?: Partial<io_k8s_api_core_v1_ScopedResourceSelectorRequirement>): io_k8s_api_core_v1_ScopedResourceSelectorRequirement {
  return {
-   scopeName: data?.scopeName !== undefined ? data.scopeName : '',
    values: data?.values !== undefined ? data.values : [],
    operator: data?.operator !== undefined ? data.operator : '',
+   scopeName: data?.scopeName !== undefined ? data.scopeName : '',
  };
 }

@@ -12,7 +12,7 @@ nodeSelector?: Record<string, any>;
 * tolerations are appended (excluding duplicates) to pods running with this RuntimeClass during admission, effectively unioning the set of nodes tolerated by the pod and the RuntimeClass.
 * @isArray
 */
-tolerations?: Array<{ value?: string; effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number }>;
+tolerations?: io_k8s_api_core_v1_Toleration[];
 }
 
 /**
@@ -26,3 +26,5 @@ export function createio_k8s_api_node_v1_Scheduling(data?: Partial<io_k8s_api_no
    tolerations: data?.tolerations !== undefined ? data.tolerations : [],
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_Toleration, createio_k8s_api_core_v1_Toleration } from '../io.k8s.api.core.v1.Toleration';

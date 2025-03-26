@@ -15,13 +15,15 @@ status: string;
 */
 type: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Last time we probed the condition.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastProbeTime?: Date;
+lastProbeTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Last time the condition transitioned from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastTransitionTime?: Date;
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * Human-readable message indicating details about last transition.
 */
@@ -41,9 +43,11 @@ export function createio_k8s_api_core_v1_PodCondition(data?: Partial<io_k8s_api_
  return {
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
-   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
+   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

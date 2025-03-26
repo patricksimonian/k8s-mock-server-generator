@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_authentication_v1_SelfSubjectReviewStatus {
 /**
-* UserInfo holds the information about the user needed to implement the user.Info interface.
-* @isObject
+* User attributes of the user making this request.
+* @references io.k8s.api.authentication.v1.UserInfo
 */
-userInfo?: { uid?: string; username?: string; extra?: Record<string, any>; groups?: string[] };
+userInfo?: io_k8s_api_authentication_v1_UserInfo;
 }
 
 /**
@@ -18,6 +18,8 @@ userInfo?: { uid?: string; username?: string; extra?: Record<string, any>; group
 */
 export function createio_k8s_api_authentication_v1_SelfSubjectReviewStatus(data?: Partial<io_k8s_api_authentication_v1_SelfSubjectReviewStatus>): io_k8s_api_authentication_v1_SelfSubjectReviewStatus {
  return {
-   userInfo: data?.userInfo !== undefined ? data.userInfo : {},
+   userInfo: data?.userInfo !== undefined ? data.userInfo : createio_k8s_api_authentication_v1_UserInfo(),
  };
 }
+// Required imports
+import { io_k8s_api_authentication_v1_UserInfo, createio_k8s_api_authentication_v1_UserInfo } from '../userinfo/io_k8s_api_authentication_v1_UserInfo';

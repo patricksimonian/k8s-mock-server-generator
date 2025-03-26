@@ -12,7 +12,7 @@ import {
 import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
 import { applyPatch } from "fast-json-patch";
-import { isClusterScoped, createStatusFailure, matchesFieldSelector, matchesLabelSelector, merge } from "../utils";
+import { isClusterScoped, createStatusFailure, matchesFieldSelector, matchesLabelSelector, merge, capitalize } from "../utils";
 
 // ----------------------------------------------------------------
 // Pagination: base64-encoded tokens with offset + resourceVersion
@@ -176,7 +176,7 @@ export class InMemoryStorage implements Storage {
     namespace: string | null = null,
     options?: ListOptions
   ): Promise<KubeList<KubeResource> | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
+    const resolved = this.resolveNamespace(capitalize(kind), namespace);
     if (typeof resolved !== "string") {
       return resolved;
     }
@@ -236,7 +236,7 @@ export class InMemoryStorage implements Storage {
     }
 
     const list: KubeList<KubeResource> = {
-      kind: `${kind}List`,
+      kind: `${capitalize(kind)}List`,
       apiVersion: "v1",
       metadata: {
         resourceVersion: highestRV,

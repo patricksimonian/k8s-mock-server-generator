@@ -7,41 +7,41 @@ StorageClasses are non-namespaced; the name of the storage class according to et
 */
 export interface io_k8s_api_storage_v1_StorageClass {
 /**
-* provisioner indicates the type of the provisioner.
-* @required
-*/
-provisioner: string;
-/**
-* allowVolumeExpansion shows whether the storage class allow volume expand.
-*/
-allowVolumeExpansion?: boolean;
-/**
 * allowedTopologies restrict the node topologies where volumes can be dynamically provisioned. Each volume plugin defines its own supported topology specifications. An empty TopologySelectorTerm list means there is no topology restriction. This field is only honored by servers that enable the VolumeScheduling feature.
 * @isArray
 */
-allowedTopologies?: Array<{ matchLabelExpressions?: Array<{ key: string; values: string[] }> }>;
+allowedTopologies?: io_k8s_api_core_v1_TopologySelectorTerm[];
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
-apiVersion?: string;
+kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; namespace?: string; finalizers?: string[]; generateName?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; selfLink?: string; name?: string; resourceVersion?: string; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }> };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
 * mountOptions controls the mountOptions for dynamically provisioned PersistentVolumes of this storage class. e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
 * @isArray
 */
 mountOptions?: string[];
 /**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
 * parameters holds the parameters for the provisioner that should create volumes of this storage class.
 */
 parameters?: Record<string, any>;
+/**
+* allowVolumeExpansion shows whether the storage class allow volume expand.
+*/
+allowVolumeExpansion?: boolean;
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
+* provisioner indicates the type of the provisioner.
+* @required
+*/
+provisioner: string;
 /**
 * reclaimPolicy controls the reclaimPolicy for dynamically provisioned PersistentVolumes of this storage class. Defaults to Delete.
 
@@ -68,15 +68,18 @@ volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
 */
 export function createio_k8s_api_storage_v1_StorageClass(data?: Partial<io_k8s_api_storage_v1_StorageClass>): io_k8s_api_storage_v1_StorageClass {
  return {
-   provisioner: data?.provisioner !== undefined ? data.provisioner : '',
-   allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
    allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
    parameters: data?.parameters !== undefined ? data.parameters : {},
+   allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   provisioner: data?.provisioner !== undefined ? data.provisioner : '',
    reclaimPolicy: data?.reclaimPolicy !== undefined ? data.reclaimPolicy : '',
    volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_TopologySelectorTerm, createio_k8s_api_core_v1_TopologySelectorTerm } from '../io.k8s.api.core.v1.TopologySelectorTerm';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

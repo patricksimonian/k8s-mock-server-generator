@@ -1,5 +1,6 @@
 import express from 'express';
 import { createDiscoveryRoutes } from './discovery-routes';
+import { createOpenAPIRoutes } from './openapi-routes';
 import storage from '../storage';
 
 // Import all route handlers
@@ -76,7 +77,8 @@ export function createRoutes(): express.Router {
  
  // Add discovery routes
  router.use('/', createDiscoveryRoutes(storage));
- 
+ // Add OpenAPI routes
+ router.use('/', createOpenAPIRoutes());
  // Add resource routes
  router.use('/', createapiserviceRoutes(storage));
  router.use('/', createbindingRoutes(storage));

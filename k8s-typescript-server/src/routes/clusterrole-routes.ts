@@ -7,6 +7,27 @@ import { handleResourceError } from '../utils';
 export function createclusterroleRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//watch individual changes to a list of ClusterRole. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterroles', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing clusterrole`);
+      
+      const resourceList = await storage.listResources('clusterrole', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //read the specified ClusterRole
   router.get('/apis/rbac.authorization.k8s.io/v1/clusterroles/:name', async (req, res, next) => {
     try {
@@ -39,7 +60,7 @@ export function createclusterroleRoutes(storage: Storage): express.Router {
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+
       const updatedResource = await storage.updateResource('clusterrole', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
@@ -86,7 +107,6 @@ export function createclusterroleRoutes(storage: Storage): express.Router {
       const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting clusterrole ${name}`);
-
       const resource = await storage.getResource('clusterrole', name, namespace);
       
       if (!resource) {
@@ -103,7 +123,7 @@ export function createclusterroleRoutes(storage: Storage): express.Router {
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('clusterrole', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -131,62 +151,6 @@ export function createclusterroleRoutes(storage: Storage): express.Router {
       }
   
       res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of ClusterRole. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterroles', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing clusterrole`);
-      
-      const resources = await storage.listResources('clusterrole', namespace, listOpts);
-      
-      const response = {
-        kind: 'ClusterroleList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ClusterRole
-  router.get('/apis/rbac.authorization.k8s.io/v1/clusterroles', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing clusterrole`);
-      
-      const resources = await storage.listResources('clusterrole', namespace, listOpts);
-      
-      const response = {
-        kind: 'ClusterroleList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
     } catch (error) {
       next(error);
     }
@@ -239,6 +203,27 @@ export function createclusterroleRoutes(storage: Storage): express.Router {
           kind: 'clusterrole'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ClusterRole
+  router.get('/apis/rbac.authorization.k8s.io/v1/clusterroles', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing clusterrole`);
+      
+      const resourceList = await storage.listResources('clusterrole', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

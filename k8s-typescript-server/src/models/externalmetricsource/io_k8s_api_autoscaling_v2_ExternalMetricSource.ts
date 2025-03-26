@@ -5,17 +5,17 @@
 */
 export interface io_k8s_api_autoscaling_v2_ExternalMetricSource {
 /**
-* MetricIdentifier defines the name and optionally selector for a metric
+* metric identifies the target metric by name and selector
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricIdentifier
 */
-metric: { name: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } };
+metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 /**
-* MetricTarget defines the target value, average value, or average utilization of a specific metric
+* target specifies the target value for the given metric
 * @required
-* @isObject
+* @references io.k8s.api.autoscaling.v2.MetricTarget
 */
-target: { averageUtilization?: number; averageValue?: string; type: string; value?: string };
+target: io_k8s_api_autoscaling_v2_MetricTarget;
 }
 
 /**
@@ -25,7 +25,10 @@ target: { averageUtilization?: number; averageValue?: string; type: string; valu
 */
 export function createio_k8s_api_autoscaling_v2_ExternalMetricSource(data?: Partial<io_k8s_api_autoscaling_v2_ExternalMetricSource>): io_k8s_api_autoscaling_v2_ExternalMetricSource {
  return {
-   metric: data?.metric !== undefined ? data.metric : { name: '' },
-   target: data?.target !== undefined ? data.target : { type: '' },
+   metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
+   target: data?.target !== undefined ? data.target : createio_k8s_api_autoscaling_v2_MetricTarget(),
  };
 }
+// Required imports
+import { io_k8s_api_autoscaling_v2_MetricIdentifier, createio_k8s_api_autoscaling_v2_MetricIdentifier } from '../metricidentifier/io_k8s_api_autoscaling_v2_MetricIdentifier';
+import { io_k8s_api_autoscaling_v2_MetricTarget, createio_k8s_api_autoscaling_v2_MetricTarget } from '../metrictarget/io_k8s_api_autoscaling_v2_MetricTarget';

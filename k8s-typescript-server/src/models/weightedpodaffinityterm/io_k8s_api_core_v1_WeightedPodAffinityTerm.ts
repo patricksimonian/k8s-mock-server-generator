@@ -5,11 +5,11 @@
 */
 export interface io_k8s_api_core_v1_WeightedPodAffinityTerm {
 /**
-* Defines a set of pods (namely those matching the labelSelector relative to the given namespace(s)) that this pod should be co-located (affinity) or not co-located (anti-affinity) with, where co-located is defined as running on a node whose value of the label with key <topologyKey> matches that of any node on which a pod of the set of pods is running
+* Required. A pod affinity term, associated with the corresponding weight.
 * @required
-* @isObject
+* @references io.k8s.api.core.v1.PodAffinityTerm
 */
-podAffinityTerm: { namespaces?: string[]; topologyKey: string; labelSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; matchLabelKeys?: string[]; mismatchLabelKeys?: string[]; namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } };
+podAffinityTerm: io_k8s_api_core_v1_PodAffinityTerm;
 /**
 * weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
 * @required
@@ -24,7 +24,9 @@ weight: number;
 */
 export function createio_k8s_api_core_v1_WeightedPodAffinityTerm(data?: Partial<io_k8s_api_core_v1_WeightedPodAffinityTerm>): io_k8s_api_core_v1_WeightedPodAffinityTerm {
  return {
-   podAffinityTerm: data?.podAffinityTerm !== undefined ? data.podAffinityTerm : { topologyKey: '' },
+   podAffinityTerm: data?.podAffinityTerm !== undefined ? data.podAffinityTerm : createio_k8s_api_core_v1_PodAffinityTerm(),
    weight: data?.weight !== undefined ? data.weight : 0,
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PodAffinityTerm, createio_k8s_api_core_v1_PodAffinityTerm } from '../podaffinityterm/io_k8s_api_core_v1_PodAffinityTerm';

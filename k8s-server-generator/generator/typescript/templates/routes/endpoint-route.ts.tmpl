@@ -22,6 +22,13 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       logger.info(`Getting {{ $.ResourceType }} ${name}`);
       {{- end }}
 
+      {{- if .Operational }}
+      const subresource = "{{ getSubresource .Path }}";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('{{ $.ResourceType }}', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+      {{- else }}
       const resource = await storage.getResource('{{ $.ResourceType }}', name, namespace);
       
       if (!resource) {
@@ -38,7 +45,7 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('{{ $.ResourceType }}', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -47,6 +54,7 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
+      {{- end }}
     } catch (error) {
       next(error);
     }
@@ -100,18 +108,11 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       logger.info(`Listing {{ $.ResourceType }}`);
       {{- end }}
       
-      const resources = await storage.listResources('{{ $.ResourceType }}', namespace, listOpts);
+      const resourceList = await storage.listResources('{{ $.ResourceType }}', namespace, listOpts);
       
-      const response = {
-        kind: '{{ $.ResourceType | title }}List',
-        apiVersion: '{{ if hasSubstring .Path "/apis/" }}{{ index (split .Path "/") 2 }}/{{ index (split .Path "/") 3 }}{{ else }}v1{{ end }}',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -171,8 +172,14 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      
+      {{- if .Operational }}
+      const subresource = "{{ getSubresource .Path }}";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('{{ $.ResourceType }}', name, subresource, resource, namespace);
+      {{- else }}
+
       const updatedResource = await storage.updateResource('{{ $.ResourceType }}', name, resource, namespace, resource.metadata.resourceVersion);
+      {{- end }}
       
       res.json(updatedResource);
     } catch (error) {

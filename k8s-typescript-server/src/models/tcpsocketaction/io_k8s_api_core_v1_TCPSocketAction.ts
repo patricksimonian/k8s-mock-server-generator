@@ -5,14 +5,15 @@
 */
 export interface io_k8s_api_core_v1_TCPSocketAction {
 /**
+* Number or name of the port to access on the container. Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
+* @required
+* @references io.k8s.apimachinery.pkg.util.intstr.IntOrString
+*/
+port: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
+/**
 * Optional: Host name to connect to, defaults to the pod IP.
 */
 host?: string;
-/**
-* IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.
-* @required
-*/
-port: string;
 }
 
 /**
@@ -22,7 +23,9 @@ port: string;
 */
 export function createio_k8s_api_core_v1_TCPSocketAction(data?: Partial<io_k8s_api_core_v1_TCPSocketAction>): io_k8s_api_core_v1_TCPSocketAction {
  return {
+   port: data?.port !== undefined ? data.port : createio_k8s_apimachinery_pkg_util_intstr_IntOrString(),
    host: data?.host !== undefined ? data.host : '',
-   port: data?.port !== undefined ? data.port : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_util_intstr_IntOrString, createio_k8s_apimachinery_pkg_util_intstr_IntOrString } from '../intorstring/io_k8s_apimachinery_pkg_util_intstr_IntOrString';

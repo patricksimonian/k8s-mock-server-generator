@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec {
 /**
-* MatchResources decides whether to run the admission control policy on an object based on whether it meets the match criteria. The exclude rules take precedence over include rules (if a resource matches both, it is excluded)
-* @isObject
+* MatchResources declares what resources match this binding and will be validated by it. Note that this is intersected with the policy's matchConstraints, so only requests that are matched by the policy can be selected by this. If this is unset, all resources matched by the policy are validated by this binding When resourceRules is unset, it does not constrain resource matching. If a resource is matched by the other fields of this object, it will be validated. Note that this is differs from ValidatingAdmissionPolicy matchConstraints, where resourceRules are required.
+* @references io.k8s.api.admissionregistration.v1.MatchResources
 */
-matchResources?: { namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; objectSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; resourceRules?: Array<{ resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[]; operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[] }>; excludeResourceRules?: Array<{ operations?: '*' | 'CONNECT' | 'CREATE' | 'DELETE' | 'UPDATE'[]; resourceNames?: string[]; resources?: string[]; scope?: string; apiGroups?: string[]; apiVersions?: string[] }>; matchPolicy?: 'Equivalent' | 'Exact' };
+matchResources?: io_k8s_api_admissionregistration_v1_MatchResources;
 /**
-* ParamRef describes how to locate the params to be used as input to expressions of rules applied by a policy binding.
-* @isObject
+* paramRef specifies the parameter resource used to configure the admission control policy. It should point to a resource of the type specified in ParamKind of the bound ValidatingAdmissionPolicy. If the policy specifies a ParamKind and the resource referred to by ParamRef does not exist, this binding is considered mis-configured and the FailurePolicy of the ValidatingAdmissionPolicy applied. If the policy does not specify a ParamKind then this field is ignored, and the rules are evaluated without a param.
+* @references io.k8s.api.admissionregistration.v1.ParamRef
 */
-paramRef?: { name?: string; namespace?: string; parameterNotFoundAction?: string; selector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> } };
+paramRef?: io_k8s_api_admissionregistration_v1_ParamRef;
 /**
 * PolicyName references a ValidatingAdmissionPolicy name which the ValidatingAdmissionPolicyBinding binds to. If the referenced resource does not exist, this binding is considered invalid and will be ignored Required.
 */
@@ -50,9 +50,12 @@ validationActions?: 'Audit' | 'Deny' | 'Warn'[];
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec {
  return {
-   matchResources: data?.matchResources !== undefined ? data.matchResources : {},
-   paramRef: data?.paramRef !== undefined ? data.paramRef : {},
+   matchResources: data?.matchResources !== undefined ? data.matchResources : createio_k8s_api_admissionregistration_v1_MatchResources(),
+   paramRef: data?.paramRef !== undefined ? data.paramRef : createio_k8s_api_admissionregistration_v1_ParamRef(),
    policyName: data?.policyName !== undefined ? data.policyName : '',
    validationActions: data?.validationActions !== undefined ? data.validationActions : [],
  };
 }
+// Required imports
+import { io_k8s_api_admissionregistration_v1_MatchResources, createio_k8s_api_admissionregistration_v1_MatchResources } from '../matchresource/io_k8s_api_admissionregistration_v1_MatchResources';
+import { io_k8s_api_admissionregistration_v1_ParamRef, createio_k8s_api_admissionregistration_v1_ParamRef } from '../paramref/io_k8s_api_admissionregistration_v1_ParamRef';

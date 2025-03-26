@@ -5,10 +5,10 @@
 */
 export interface io_k8s_api_storage_v1_VolumeAttachmentSource {
 /**
-* PersistentVolumeSpec is the specification of a persistent volume.
-* @isObject
+* inlineVolumeSpec contains all the information necessary to attach a persistent volume defined by a pod's inline VolumeSource. This field is populated only for the CSIMigration feature. It contains translated fields from a pod's inline VolumeSource to a PersistentVolumeSpec. This field is beta-level and is only honored by servers that enabled the CSIMigration feature.
+* @references io.k8s.api.core.v1.PersistentVolumeSpec
 */
-inlineVolumeSpec?: Record<string, any>;
+inlineVolumeSpec?: io_k8s_api_core_v1_PersistentVolumeSpec;
 /**
 * persistentVolumeName represents the name of the persistent volume to attach.
 */
@@ -22,7 +22,9 @@ persistentVolumeName?: string;
 */
 export function createio_k8s_api_storage_v1_VolumeAttachmentSource(data?: Partial<io_k8s_api_storage_v1_VolumeAttachmentSource>): io_k8s_api_storage_v1_VolumeAttachmentSource {
  return {
-   inlineVolumeSpec: data?.inlineVolumeSpec !== undefined ? data.inlineVolumeSpec : {},
+   inlineVolumeSpec: data?.inlineVolumeSpec !== undefined ? data.inlineVolumeSpec : createio_k8s_api_core_v1_PersistentVolumeSpec(),
    persistentVolumeName: data?.persistentVolumeName !== undefined ? data.persistentVolumeName : '',
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_PersistentVolumeSpec, createio_k8s_api_core_v1_PersistentVolumeSpec } from '../persistentvolumespec/io_k8s_api_core_v1_PersistentVolumeSpec';

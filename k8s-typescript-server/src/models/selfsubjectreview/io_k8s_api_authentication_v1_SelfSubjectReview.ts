@@ -13,15 +13,15 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generation?: number; namespace?: string; resourceVersion?: string; deletionTimestamp?: Date; finalizers?: string[]; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generateName?: string; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; name?: string; uid?: string; annotations?: Record<string, any>; labels?: Record<string, any>; selfLink?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* SelfSubjectReviewStatus is filled by the kube-apiserver and sent back to a user.
-* @isObject
+* Status is filled in by the server with the user attributes.
+* @references io.k8s.api.authentication.v1.SelfSubjectReviewStatus
 */
-status?: { userInfo?: { username?: string; extra?: Record<string, any>; groups?: string[]; uid?: string } };
+status?: io_k8s_api_authentication_v1_SelfSubjectReviewStatus;
 }
 
 /**
@@ -33,7 +33,10 @@ export function createio_k8s_api_authentication_v1_SelfSubjectReview(data?: Part
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   status: data?.status !== undefined ? data.status : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authentication_v1_SelfSubjectReviewStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_authentication_v1_SelfSubjectReviewStatus, createio_k8s_api_authentication_v1_SelfSubjectReviewStatus } from '../selfsubjectreviewstatus/io_k8s_api_authentication_v1_SelfSubjectReviewStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

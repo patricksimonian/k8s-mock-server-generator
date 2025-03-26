@@ -5,9 +5,10 @@
 */
 export interface io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Last time the condition transitioned from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-lastTransitionTime?: Date;
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * Human-readable message indicating details about last transition.
 */
@@ -35,10 +36,12 @@ type: string;
 */
 export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition(data?: Partial<io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition>): io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition {
  return {
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

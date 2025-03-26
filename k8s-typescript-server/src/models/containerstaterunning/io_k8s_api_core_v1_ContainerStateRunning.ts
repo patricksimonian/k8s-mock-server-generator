@@ -5,9 +5,10 @@
 */
 export interface io_k8s_api_core_v1_ContainerStateRunning {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Time at which the container was last (re-)started
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-startedAt?: Date;
+startedAt?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -17,6 +18,8 @@ startedAt?: Date;
 */
 export function createio_k8s_api_core_v1_ContainerStateRunning(data?: Partial<io_k8s_api_core_v1_ContainerStateRunning>): io_k8s_api_core_v1_ContainerStateRunning {
  return {
-   startedAt: data?.startedAt !== undefined ? data.startedAt : '',
+   startedAt: data?.startedAt !== undefined ? data.startedAt : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

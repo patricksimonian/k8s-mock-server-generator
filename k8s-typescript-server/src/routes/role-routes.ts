@@ -7,34 +7,6 @@ import { handleResourceError } from '../utils';
 export function createroleRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list or watch objects of kind Role
-  router.get('/apis/rbac.authorization.k8s.io/v1/roles', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing role`);
-      
-      const resources = await storage.listResources('role', namespace, listOpts);
-      
-      const response = {
-        kind: 'RoleList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //watch individual changes to a list of Role. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/rbac.authorization.k8s.io/v1/watch/namespaces/:namespace/roles', async (req, res, next) => {
     try {
@@ -46,18 +18,74 @@ export function createroleRoutes(storage: Storage): express.Router {
       const namespace = req.params.namespace;
       logger.info(`Listing role in namespace ${namespace}`);
       
-      const resources = await storage.listResources('role', namespace, listOpts);
+      const resourceList = await storage.listResources('role', namespace, listOpts);
       
-      const response = {
-        kind: 'RoleList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind Role. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/namespaces/:namespace/roles/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting role ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('role', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`role ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind Role
+  router.get('/apis/rbac.authorization.k8s.io/v1/roles', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing role`);
+      
+      const resourceList = await storage.listResources('role', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace the specified Role
+  router.put('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/roles/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating role ${name} in namespace ${namespace}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('role', name, resource, namespace, resource.metadata.resourceVersion);
+      
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -101,7 +129,6 @@ export function createroleRoutes(storage: Storage): express.Router {
       const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
       logger.info(`Patching role ${name} in namespace ${namespace}`);
-
       const resource = await storage.getResource('role', name, namespace);
       
       if (!resource) {
@@ -118,7 +145,7 @@ export function createroleRoutes(storage: Storage): express.Router {
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = storage.jsonPatchResource('role', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -150,76 +177,6 @@ export function createroleRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-//replace the specified Role
-  router.put('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/roles/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating role ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      
-      const updatedResource = await storage.updateResource('role', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of Role. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/roles', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing role`);
-      
-      const resources = await storage.listResources('role', namespace, listOpts);
-      
-      const response = {
-        kind: 'RoleList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
-      
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind Role. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/namespaces/:namespace/roles/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting role ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('role', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`role ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
 
 //list or watch objects of kind Role
   router.get('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/roles', async (req, res, next) => {
@@ -232,18 +189,11 @@ export function createroleRoutes(storage: Storage): express.Router {
       const namespace = req.params.namespace;
       logger.info(`Listing role in namespace ${namespace}`);
       
-      const resources = await storage.listResources('role', namespace, listOpts);
+      const resourceList = await storage.listResources('role', namespace, listOpts);
       
-      const response = {
-        kind: 'RoleList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+
       
-      res.json(response);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -300,6 +250,27 @@ export function createroleRoutes(storage: Storage): express.Router {
           kind: 'role'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of Role. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/roles', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing role`);
+      
+      const resourceList = await storage.listResources('role', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

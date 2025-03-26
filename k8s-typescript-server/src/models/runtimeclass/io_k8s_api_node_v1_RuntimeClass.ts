@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_node_v1_RuntimeClass {
 /**
-* Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
-* @isObject
-*/
-scheduling?: { nodeSelector?: Record<string, any>; tolerations?: Array<{ effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number; value?: string }> };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -23,15 +18,21 @@ handler: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { generateName?: string; namespace?: string; resourceVersion?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; uid?: string; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; finalizers?: string[]; generation?: number; labels?: Record<string, any>; creationTimestamp?: Date; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }> };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* Overhead structure represents the resource overhead associated with running a pod.
-* @isObject
+* overhead represents the resource overhead associated with running a pod for a given RuntimeClass. For more details, see
+ https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/
+* @references io.k8s.api.node.v1.Overhead
 */
-overhead?: { podFixed?: Record<string, any> };
+overhead?: io_k8s_api_node_v1_Overhead;
+/**
+* scheduling holds the scheduling constraints to ensure that pods running with this RuntimeClass are scheduled to nodes that support it. If scheduling is nil, this RuntimeClass is assumed to be supported by all nodes.
+* @references io.k8s.api.node.v1.Scheduling
+*/
+scheduling?: io_k8s_api_node_v1_Scheduling;
 }
 
 /**
@@ -41,11 +42,15 @@ overhead?: { podFixed?: Record<string, any> };
 */
 export function createio_k8s_api_node_v1_RuntimeClass(data?: Partial<io_k8s_api_node_v1_RuntimeClass>): io_k8s_api_node_v1_RuntimeClass {
  return {
-   scheduling: data?.scheduling !== undefined ? data.scheduling : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    handler: data?.handler !== undefined ? data.handler : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   overhead: data?.overhead !== undefined ? data.overhead : {},
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   overhead: data?.overhead !== undefined ? data.overhead : createio_k8s_api_node_v1_Overhead(),
+   scheduling: data?.scheduling !== undefined ? data.scheduling : createio_k8s_api_node_v1_Scheduling(),
  };
 }
+// Required imports
+import { io_k8s_api_node_v1_Overhead, createio_k8s_api_node_v1_Overhead } from '../overhead/io_k8s_api_node_v1_Overhead';
+import { io_k8s_api_node_v1_Scheduling, createio_k8s_api_node_v1_Scheduling } from '../scheduling/io_k8s_api_node_v1_Scheduling';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';

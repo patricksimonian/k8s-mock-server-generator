@@ -5,18 +5,6 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry {
 /**
-* FieldsV1 stores a set of fields in a data structure like a Trie, in JSON format.
-
-Each key is either a '.' representing the field itself, and will always map to an empty set, or a string representing a sub-field or item. The string will follow one of these four formats: 'f:<name>', where <name> is the name of a field in a struct, or key in a map 'v:<value>', where <value> is the exact json formatted value of a list item 'i:<index>', where <index> is position of a item in a list 'k:<keys>', where <keys> is a map of  a list item's key fields to their unique values If a key maps to an empty Fields value, the field that key represents is part of the set.
-
-The exact format is defined in sigs.k8s.io/structured-merge-diff
-*/
-fieldsV1?: Record<string, any>;
-/**
-* Manager is an identifier of the workflow managing these fields.
-*/
-manager?: string;
-/**
 * Operation is the type of operation which lead to this ManagedFieldsEntry being created. The only valid values for this field are 'Apply' and 'Update'.
 */
 operation?: string;
@@ -25,9 +13,10 @@ operation?: string;
 */
 subresource?: string;
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* Time is the timestamp of when the ManagedFields entry was added. The timestamp will also be updated if a field is added, the manager changes any of the owned fields value or removes a field. The timestamp does not update when a field is removed from the entry because another manager took it over.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
-time?: Date;
+time?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 /**
 * APIVersion defines the version of this resource that this field set applies to. The format is "group/version" just like the top-level APIVersion field. It is necessary to track the version of a field set because it cannot be automatically converted.
 */
@@ -36,6 +25,15 @@ apiVersion?: string;
 * FieldsType is the discriminator for the different fields format and version. There is currently only one possible value: "FieldsV1"
 */
 fieldsType?: string;
+/**
+* FieldsV1 holds the first JSON version format as described in the "FieldsV1" type.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.FieldsV1
+*/
+fieldsV1?: io_k8s_apimachinery_pkg_apis_meta_v1_FieldsV1;
+/**
+* Manager is an identifier of the workflow managing these fields.
+*/
+manager?: string;
 }
 
 /**
@@ -45,12 +43,15 @@ fieldsType?: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry>): io_k8s_apimachinery_pkg_apis_meta_v1_ManagedFieldsEntry {
  return {
-   fieldsV1: data?.fieldsV1 !== undefined ? data.fieldsV1 : {},
-   manager: data?.manager !== undefined ? data.manager : '',
    operation: data?.operation !== undefined ? data.operation : '',
    subresource: data?.subresource !== undefined ? data.subresource : '',
-   time: data?.time !== undefined ? data.time : '',
+   time: data?.time !== undefined ? data.time : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    fieldsType: data?.fieldsType !== undefined ? data.fieldsType : '',
+   fieldsV1: data?.fieldsV1 !== undefined ? data.fieldsV1 : createio_k8s_apimachinery_pkg_apis_meta_v1_FieldsV1(),
+   manager: data?.manager !== undefined ? data.manager : '',
  };
 }
+// Required imports
+import { io_k8s_apimachinery_pkg_apis_meta_v1_FieldsV1, createio_k8s_apimachinery_pkg_apis_meta_v1_FieldsV1 } from '../fieldsv1/io_k8s_apimachinery_pkg_apis_meta_v1_FieldsV1';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_Time, createio_k8s_apimachinery_pkg_apis_meta_v1_Time } from '../time/io_k8s_apimachinery_pkg_apis_meta_v1_Time';

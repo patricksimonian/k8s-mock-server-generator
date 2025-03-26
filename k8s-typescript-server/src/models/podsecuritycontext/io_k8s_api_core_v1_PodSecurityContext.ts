@@ -5,18 +5,10 @@
 */
 export interface io_k8s_api_core_v1_PodSecurityContext {
 /**
-* WindowsSecurityContextOptions contain Windows-specific options and credentials.
-* @isObject
+* appArmorProfile is the AppArmor options to use by the containers in this pod. Note that this field cannot be set when spec.os.name is windows.
+* @references io.k8s.api.core.v1.AppArmorProfile
 */
-windowsOptions?: { runAsUserName?: string; gmsaCredentialSpec?: string; gmsaCredentialSpecName?: string; hostProcess?: boolean };
-/**
-* A special supplemental group that applies to all containers in a pod. Some volume types allow the Kubelet to change the ownership of that volume to be owned by the pod:
-
-1. The owning GID will be the FSGroup 2. The setgid bit is set (new files created in the volume will be owned by FSGroup) 3. The permission bits are OR'd with rw-rw----
-
-If unset, the Kubelet will not modify the ownership and permissions of any volume. Note that this field cannot be set when spec.os.name is windows.
-*/
-fsGroup?: number;
+appArmorProfile?: io_k8s_api_core_v1_AppArmorProfile;
 /**
 * fsGroupChangePolicy defines behavior of changing ownership and permission of the volume before being exposed inside Pod. This field will only apply to volume types which support fsGroup based ownership(and permissions). It will have no effect on ephemeral volume types such as: secret, configmaps and emptydir. Valid values are "OnRootMismatch" and "Always". If not specified, "Always" is used. Note that this field cannot be set when spec.os.name is windows.
 
@@ -44,25 +36,23 @@ All Pods that use the same volume should use the same seLinuxChangePolicy, other
 */
 seLinuxChangePolicy?: string;
 /**
-* SELinuxOptions are the labels to be applied to the container
-* @isObject
+* The SELinux context to be applied to all containers. If unspecified, the container runtime will allocate a random SELinux context for each container.  May also be set in SecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence for that container. Note that this field cannot be set when spec.os.name is windows.
+* @references io.k8s.api.core.v1.SELinuxOptions
 */
-seLinuxOptions?: { type?: string; user?: string; level?: string; role?: string };
+seLinuxOptions?: io_k8s_api_core_v1_SELinuxOptions;
 /**
-* SeccompProfile defines a pod/container's seccomp profile settings. Only one profile source may be set.
-* @isObject
+* The seccomp options to use by the containers in this pod. Note that this field cannot be set when spec.os.name is windows.
+* @references io.k8s.api.core.v1.SeccompProfile
 */
-seccompProfile?: { localhostProfile?: string; type: 'Localhost' | 'RuntimeDefault' | 'Unconfined' };
+seccompProfile?: io_k8s_api_core_v1_SeccompProfile;
 /**
-* Sysctls hold a list of namespaced sysctls used for the pod. Pods with unsupported sysctls (by the container runtime) might fail to launch. Note that this field cannot be set when spec.os.name is windows.
-* @isArray
+* A special supplemental group that applies to all containers in a pod. Some volume types allow the Kubelet to change the ownership of that volume to be owned by the pod:
+
+1. The owning GID will be the FSGroup 2. The setgid bit is set (new files created in the volume will be owned by FSGroup) 3. The permission bits are OR'd with rw-rw----
+
+If unset, the Kubelet will not modify the ownership and permissions of any volume. Note that this field cannot be set when spec.os.name is windows.
 */
-sysctls?: Array<{ value: string; name: string }>;
-/**
-* AppArmorProfile defines a pod or container's AppArmor settings.
-* @isObject
-*/
-appArmorProfile?: { type: 'Localhost' | 'RuntimeDefault' | 'Unconfined'; localhostProfile?: string };
+fsGroup?: number;
 /**
 * The GID to run the entrypoint of the container process. Uses runtime default if unset. May also be set in SecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence for that container. Note that this field cannot be set when spec.os.name is windows.
 */
@@ -84,6 +74,16 @@ Possible enum values:
  - `"Strict"` means that the container's provided SupplementalGroups and FsGroup (specified in SecurityContext) will be used instead of any groups defined in the container image.
 */
 supplementalGroupsPolicy?: 'Merge' | 'Strict';
+/**
+* Sysctls hold a list of namespaced sysctls used for the pod. Pods with unsupported sysctls (by the container runtime) might fail to launch. Note that this field cannot be set when spec.os.name is windows.
+* @isArray
+*/
+sysctls?: io_k8s_api_core_v1_Sysctl[];
+/**
+* The Windows specific settings applied to all containers. If unspecified, the options within a container's SecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is linux.
+* @references io.k8s.api.core.v1.WindowsSecurityContextOptions
+*/
+windowsOptions?: io_k8s_api_core_v1_WindowsSecurityContextOptions;
 }
 
 /**
@@ -93,18 +93,24 @@ supplementalGroupsPolicy?: 'Merge' | 'Strict';
 */
 export function createio_k8s_api_core_v1_PodSecurityContext(data?: Partial<io_k8s_api_core_v1_PodSecurityContext>): io_k8s_api_core_v1_PodSecurityContext {
  return {
-   windowsOptions: data?.windowsOptions !== undefined ? data.windowsOptions : {},
-   fsGroup: data?.fsGroup !== undefined ? data.fsGroup : 0,
+   appArmorProfile: data?.appArmorProfile !== undefined ? data.appArmorProfile : createio_k8s_api_core_v1_AppArmorProfile(),
    fsGroupChangePolicy: data?.fsGroupChangePolicy !== undefined ? data.fsGroupChangePolicy : '',
    runAsUser: data?.runAsUser !== undefined ? data.runAsUser : 0,
    seLinuxChangePolicy: data?.seLinuxChangePolicy !== undefined ? data.seLinuxChangePolicy : '',
-   seLinuxOptions: data?.seLinuxOptions !== undefined ? data.seLinuxOptions : {},
-   seccompProfile: data?.seccompProfile !== undefined ? data.seccompProfile : { type: '' },
-   sysctls: data?.sysctls !== undefined ? data.sysctls : [],
-   appArmorProfile: data?.appArmorProfile !== undefined ? data.appArmorProfile : { type: '' },
+   seLinuxOptions: data?.seLinuxOptions !== undefined ? data.seLinuxOptions : createio_k8s_api_core_v1_SELinuxOptions(),
+   seccompProfile: data?.seccompProfile !== undefined ? data.seccompProfile : createio_k8s_api_core_v1_SeccompProfile(),
+   fsGroup: data?.fsGroup !== undefined ? data.fsGroup : 0,
    runAsGroup: data?.runAsGroup !== undefined ? data.runAsGroup : 0,
    runAsNonRoot: data?.runAsNonRoot !== undefined ? data.runAsNonRoot : false,
    supplementalGroups: data?.supplementalGroups !== undefined ? data.supplementalGroups : [],
    supplementalGroupsPolicy: data?.supplementalGroupsPolicy !== undefined ? data.supplementalGroupsPolicy : '',
+   sysctls: data?.sysctls !== undefined ? data.sysctls : [],
+   windowsOptions: data?.windowsOptions !== undefined ? data.windowsOptions : createio_k8s_api_core_v1_WindowsSecurityContextOptions(),
  };
 }
+// Required imports
+import { io_k8s_api_core_v1_AppArmorProfile, createio_k8s_api_core_v1_AppArmorProfile } from '../apparmorprofile/io_k8s_api_core_v1_AppArmorProfile';
+import { io_k8s_api_core_v1_SELinuxOptions, createio_k8s_api_core_v1_SELinuxOptions } from '../selinuxoption/io_k8s_api_core_v1_SELinuxOptions';
+import { io_k8s_api_core_v1_SeccompProfile, createio_k8s_api_core_v1_SeccompProfile } from '../seccompprofile/io_k8s_api_core_v1_SeccompProfile';
+import { io_k8s_api_core_v1_Sysctl, createio_k8s_api_core_v1_Sysctl } from '../io.k8s.api.core.v1.Sysctl';
+import { io_k8s_api_core_v1_WindowsSecurityContextOptions, createio_k8s_api_core_v1_WindowsSecurityContextOptions } from '../windowssecuritycontextoption/io_k8s_api_core_v1_WindowsSecurityContextOptions';

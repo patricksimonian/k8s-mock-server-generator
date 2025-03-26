@@ -13,21 +13,21 @@ apiVersion?: string;
 */
 kind?: string;
 /**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
+* Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
-metadata?: { generateName?: string; labels?: Record<string, any>; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; resourceVersion?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; creationTimestamp?: Date; deletionTimestamp?: Date; generation?: number; selfLink?: string; finalizers?: string[]; name?: string; namespace?: string };
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* SubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+* Spec holds information about the request being evaluated.  spec.namespace must be equal to the namespace you made the request against.  If empty, it is defaulted.
 * @required
-* @isObject
+* @references io.k8s.api.authorization.v1.SubjectAccessReviewSpec
 */
-spec: { groups?: string[]; nonResourceAttributes?: { path?: string; verb?: string }; resourceAttributes?: { name?: string; version?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ values?: string[]; key: string; operator: string }> }; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; namespace?: string; resource?: string; subresource?: string; verb?: string }; uid?: string; user?: string; extra?: Record<string, any> };
+spec: io_k8s_api_authorization_v1_SubjectAccessReviewSpec;
 /**
-* SubjectAccessReviewStatus
-* @isObject
+* Status is filled in by the server and indicates whether the request is allowed or not
+* @references io.k8s.api.authorization.v1.SubjectAccessReviewStatus
 */
-status?: { allowed: boolean; denied?: boolean; evaluationError?: string; reason?: string };
+status?: io_k8s_api_authorization_v1_SubjectAccessReviewStatus;
 }
 
 /**
@@ -39,8 +39,12 @@ export function createio_k8s_api_authorization_v1_LocalSubjectAccessReview(data?
  return {
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : {},
-   status: data?.status !== undefined ? data.status : { allowed: false },
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authorization_v1_SubjectAccessReviewSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authorization_v1_SubjectAccessReviewStatus(),
  };
 }
+// Required imports
+import { io_k8s_api_authorization_v1_SubjectAccessReviewSpec, createio_k8s_api_authorization_v1_SubjectAccessReviewSpec } from '../subjectaccessreviewspec/io_k8s_api_authorization_v1_SubjectAccessReviewSpec';
+import { io_k8s_api_authorization_v1_SubjectAccessReviewStatus, createio_k8s_api_authorization_v1_SubjectAccessReviewStatus } from '../subjectaccessreviewstatus/io_k8s_api_authorization_v1_SubjectAccessReviewStatus';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta } from '../objectmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta';
