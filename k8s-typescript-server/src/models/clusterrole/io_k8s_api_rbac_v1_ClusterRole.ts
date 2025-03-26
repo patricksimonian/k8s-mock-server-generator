@@ -8,7 +8,7 @@ export interface io_k8s_api_rbac_v1_ClusterRole {
 * AggregationRule describes how to locate ClusterRoles to aggregate into the ClusterRole
 * @isObject
 */
-aggregationRule?: { clusterRoleSelectors?: Array<{ matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }> };
+aggregationRule?: { clusterRoleSelectors?: Array<{ matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> }> };
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -21,12 +21,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { resourceVersion?: string; uid?: string; namespace?: string; deletionTimestamp?: Date; labels?: Record<string, any>; deletionGracePeriodSeconds?: number; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; creationTimestamp?: Date; generateName?: string; name?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; selfLink?: string; annotations?: Record<string, any> };
+metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; name?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; finalizers?: string[]; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string; uid?: string; deletionTimestamp?: Date; generation?: number; selfLink?: string; resourceVersion?: string };
 /**
 * Rules holds all the PolicyRules for this ClusterRole
 * @isArray
 */
-rules?: Array<{ nonResourceURLs?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[]; apiGroups?: string[] }>;
+rules?: Array<{ apiGroups?: string[]; nonResourceURLs?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[] }>;
 }
 
 /**

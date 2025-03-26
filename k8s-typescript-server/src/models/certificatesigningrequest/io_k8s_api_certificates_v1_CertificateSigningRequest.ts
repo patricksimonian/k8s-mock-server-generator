@@ -22,18 +22,18 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; generateName?: string; labels?: Record<string, any>; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; finalizers?: string[]; name?: string; namespace?: string; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; selfLink?: string };
+metadata?: { generateName?: string; generation?: number; labels?: Record<string, any>; name?: string; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; creationTimestamp?: Date; namespace?: string; selfLink?: string; finalizers?: string[]; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; deletionTimestamp?: Date; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }> };
 /**
 * CertificateSigningRequestSpec contains the certificate request.
 * @required
 * @isObject
 */
-spec: { expirationSeconds?: number; extra?: Record<string, any>; groups?: string[]; request: string; signerName: string; uid?: string; usages?: 'any' | 'cert sign' | 'client auth' | 'code signing' | 'content commitment' | 'crl sign' | 'data encipherment' | 'decipher only' | 'digital signature' | 'email protection' | 'encipher only' | 'ipsec end system' | 'ipsec tunnel' | 'ipsec user' | 'key agreement' | 'key encipherment' | 'microsoft sgc' | 'netscape sgc' | 'ocsp signing' | 's/mime' | 'server auth' | 'signing' | 'timestamping'[]; username?: string };
+spec: { extra?: Record<string, any>; groups?: string[]; request: string; signerName: string; uid?: string; usages?: 'any' | 'cert sign' | 'client auth' | 'code signing' | 'content commitment' | 'crl sign' | 'data encipherment' | 'decipher only' | 'digital signature' | 'email protection' | 'encipher only' | 'ipsec end system' | 'ipsec tunnel' | 'ipsec user' | 'key agreement' | 'key encipherment' | 'microsoft sgc' | 'netscape sgc' | 'ocsp signing' | 's/mime' | 'server auth' | 'signing' | 'timestamping'[]; username?: string; expirationSeconds?: number };
 /**
 * CertificateSigningRequestStatus contains conditions used to indicate approved/denied/failed status of the request, and the issued certificate.
 * @isObject
 */
-status?: { certificate?: string; conditions?: Array<{ lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string; reason?: string; status: string; type: string }> };
+status?: { conditions?: Array<{ status: string; type: string; lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string; reason?: string }>; certificate?: string };
 }
 
 /**

@@ -22,7 +22,7 @@ nonResourceAttributes?: { path?: string; verb?: string };
 * ResourceAttributes includes the authorization attributes available for resource requests to the Authorizer interface
 * @isObject
 */
-resourceAttributes?: { verb?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; name?: string; subresource?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ operator: string; values?: string[]; key: string }> }; namespace?: string; resource?: string; version?: string };
+resourceAttributes?: { fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; resource?: string; subresource?: string; version?: string; namespace?: string; verb?: string };
 /**
 * UID information about the requesting user.
 */

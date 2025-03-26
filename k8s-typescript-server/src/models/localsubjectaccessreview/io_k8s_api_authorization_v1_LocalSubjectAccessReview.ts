@@ -16,13 +16,13 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { selfLink?: string; annotations?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generation?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; resourceVersion?: string; name?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; labels?: Record<string, any>; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string };
+metadata?: { generateName?: string; labels?: Record<string, any>; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; resourceVersion?: string; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; creationTimestamp?: Date; deletionTimestamp?: Date; generation?: number; selfLink?: string; finalizers?: string[]; name?: string; namespace?: string };
 /**
 * SubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
 * @required
 * @isObject
 */
-spec: { extra?: Record<string, any>; groups?: string[]; nonResourceAttributes?: { path?: string; verb?: string }; resourceAttributes?: { namespace?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; resource?: string; subresource?: string; verb?: string; version?: string }; uid?: string; user?: string };
+spec: { groups?: string[]; nonResourceAttributes?: { path?: string; verb?: string }; resourceAttributes?: { name?: string; version?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ values?: string[]; key: string; operator: string }> }; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; namespace?: string; resource?: string; subresource?: string; verb?: string }; uid?: string; user?: string; extra?: Record<string, any> };
 /**
 * SubjectAccessReviewStatus
 * @isObject

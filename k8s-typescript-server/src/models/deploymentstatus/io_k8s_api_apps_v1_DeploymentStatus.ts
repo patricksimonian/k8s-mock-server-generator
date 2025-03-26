@@ -24,7 +24,7 @@ collisionCount?: number;
 * Represents the latest available observations of a deployment's current state.
 * @isArray
 */
-conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date; lastUpdateTime?: Date }>;
+conditions?: Array<{ lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string; reason?: string; status: string; type: string }>;
 /**
 * The generation observed by the deployment controller.
 */

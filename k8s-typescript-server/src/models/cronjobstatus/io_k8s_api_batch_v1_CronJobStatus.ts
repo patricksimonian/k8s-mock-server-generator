@@ -8,7 +8,7 @@ export interface io_k8s_api_batch_v1_CronJobStatus {
 * A list of pointers to currently running jobs.
 * @isArray
 */
-active?: Array<{ uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string }>;
+active?: Array<{ apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string }>;
 /**
 * Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 */

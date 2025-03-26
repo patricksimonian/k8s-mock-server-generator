@@ -13,7 +13,7 @@ nonResourceAttributes?: { path?: string; verb?: string };
 * ResourceAttributes includes the authorization attributes available for resource requests to the Authorizer interface
 * @isObject
 */
-resourceAttributes?: { fieldSelector?: { requirements?: Array<{ key: string; operator: string; values?: string[] }>; rawSelector?: string }; group?: string; name?: string; namespace?: string; verb?: string; version?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; resource?: string; subresource?: string };
+resourceAttributes?: { subresource?: string; version?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; name?: string; namespace?: string; resource?: string; verb?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string };
 }
 
 /**

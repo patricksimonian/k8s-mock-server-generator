@@ -5,16 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentSpec {
 /**
-* PodTemplateSpec describes the data a pod should have when created from a template
-* @required
-* @isObject
-*/
-template: { metadata?: { managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; generation?: number; annotations?: Record<string, any>; generateName?: string; selfLink?: string; uid?: string; deletionTimestamp?: Date; labels?: Record<string, any>; name?: string; namespace?: string }; spec?: Record<string, any> };
-/**
-* Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available. Defaults to 0 (pod will be considered available as soon as it is ready)
-*/
-minReadySeconds?: number;
-/**
 * Indicates that the deployment is paused.
 */
 paused?: boolean;
@@ -35,12 +25,22 @@ revisionHistoryLimit?: number;
 * @required
 * @isObject
 */
-selector: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> };
+selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
 /**
 * DeploymentStrategy describes how to replace existing pods with new ones.
 * @isObject
 */
-strategy?: { rollingUpdate?: { maxSurge?: string; maxUnavailable?: string }; type?: 'Recreate' | 'RollingUpdate' };
+strategy?: { rollingUpdate?: { maxUnavailable?: string; maxSurge?: string }; type?: 'Recreate' | 'RollingUpdate' };
+/**
+* PodTemplateSpec describes the data a pod should have when created from a template
+* @required
+* @isObject
+*/
+template: { metadata?: { generation?: number; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; selfLink?: string; annotations?: Record<string, any>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; resourceVersion?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; finalizers?: string[]; name?: string; namespace?: string }; spec?: Record<string, any> };
+/**
+* Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available. Defaults to 0 (pod will be considered available as soon as it is ready)
+*/
+minReadySeconds?: number;
 }
 
 /**
@@ -50,13 +50,13 @@ strategy?: { rollingUpdate?: { maxSurge?: string; maxUnavailable?: string }; typ
 */
 export function createio_k8s_api_apps_v1_DeploymentSpec(data?: Partial<io_k8s_api_apps_v1_DeploymentSpec>): io_k8s_api_apps_v1_DeploymentSpec {
  return {
-   template: data?.template !== undefined ? data.template : {},
-   minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
    paused: data?.paused !== undefined ? data.paused : false,
    progressDeadlineSeconds: data?.progressDeadlineSeconds !== undefined ? data.progressDeadlineSeconds : 0,
    replicas: data?.replicas !== undefined ? data.replicas : 0,
    revisionHistoryLimit: data?.revisionHistoryLimit !== undefined ? data.revisionHistoryLimit : 0,
    selector: data?.selector !== undefined ? data.selector : {},
    strategy: data?.strategy !== undefined ? data.strategy : {},
+   template: data?.template !== undefined ? data.template : {},
+   minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
  };
 }

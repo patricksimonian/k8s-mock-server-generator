@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects {
 /**
+* subjects is the list of normal user, serviceaccount, or group that this rule cares about. There must be at least one member in this slice. A slice that includes both the system:authenticated and system:unauthenticated user groups matches every request. Required.
+* @required
+* @isArray
+*/
+subjects: Array<{ group?: { name: string }; kind: string; serviceAccount?: { name: string; namespace: string }; user?: { name: string } }>;
+/**
 * `nonResourceRules` is a list of NonResourcePolicyRules that identify matching requests according to their verb and the target non-resource URL.
 * @isArray
 */
@@ -14,12 +20,6 @@ nonResourceRules?: Array<{ nonResourceURLs: string[]; verbs: string[] }>;
 * @isArray
 */
 resourceRules?: Array<{ apiGroups: string[]; clusterScope?: boolean; namespaces?: string[]; resources: string[]; verbs: string[] }>;
-/**
-* subjects is the list of normal user, serviceaccount, or group that this rule cares about. There must be at least one member in this slice. A slice that includes both the system:authenticated and system:unauthenticated user groups matches every request. Required.
-* @required
-* @isArray
-*/
-subjects: Array<{ group?: { name: string }; kind: string; serviceAccount?: { name: string; namespace: string }; user?: { name: string } }>;
 }
 
 /**
@@ -29,8 +29,8 @@ subjects: Array<{ group?: { name: string }; kind: string; serviceAccount?: { nam
 */
 export function createio_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects(data?: Partial<io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects>): io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects {
  return {
+   subjects: data?.subjects !== undefined ? data.subjects : [],
    nonResourceRules: data?.nonResourceRules !== undefined ? data.nonResourceRules : [],
    resourceRules: data?.resourceRules !== undefined ? data.resourceRules : [],
-   subjects: data?.subjects !== undefined ? data.subjects : [],
  };
 }

@@ -8,7 +8,7 @@ export interface io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationStatus {
 * `conditions` is the current state of "request-priority".
 * @isArray
 */
-conditions?: Array<{ status?: string; type?: string; lastTransitionTime?: Date; message?: string; reason?: string }>;
+conditions?: Array<{ reason?: string; status?: string; type?: string; lastTransitionTime?: Date; message?: string }>;
 }
 
 /**

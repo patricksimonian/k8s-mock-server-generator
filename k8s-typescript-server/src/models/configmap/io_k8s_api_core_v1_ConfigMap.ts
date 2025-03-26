@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_core_v1_ConfigMap {
 /**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
+*/
+metadata?: { uid?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; selfLink?: string; deletionTimestamp?: Date; generation?: number; labels?: Record<string, any>; annotations?: Record<string, any>; finalizers?: string[]; namespace?: string; generateName?: string; name?: string; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; resourceVersion?: string };
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -20,15 +29,6 @@ data?: Record<string, any>;
 * Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated (only object metadata can be modified). If not set to true, the field can be modified at any time. Defaulted to nil.
 */
 immutable?: boolean;
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; annotations?: Record<string, any>; generateName?: string; generation?: number; labels?: Record<string, any>; finalizers?: string[]; name?: string; namespace?: string; selfLink?: string; deletionTimestamp?: Date; deletionGracePeriodSeconds?: number; resourceVersion?: string; uid?: string; creationTimestamp?: Date };
 }
 
 /**
@@ -38,11 +38,11 @@ metadata?: { managedFields?: Array<{ manager?: string; operation?: string; subre
 */
 export function createio_k8s_api_core_v1_ConfigMap(data?: Partial<io_k8s_api_core_v1_ConfigMap>): io_k8s_api_core_v1_ConfigMap {
  return {
+   kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    binaryData: data?.binaryData !== undefined ? data.binaryData : {},
    data: data?.data !== undefined ? data.data : {},
    immutable: data?.immutable !== undefined ? data.immutable : false,
-   kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
  };
 }

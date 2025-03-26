@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_batch_v1_PodFailurePolicyRule {
 /**
+* PodFailurePolicyOnExitCodesRequirement describes the requirement for handling a failed pod based on its container exit codes. In particular, it lookups the .state.terminated.exitCode for each app container and init container status, represented by the .status.containerStatuses and .status.initContainerStatuses fields in the Pod status, respectively. Containers completed with success (exit code 0) are excluded from the requirement check.
+* @isObject
+*/
+onExitCodes?: { containerName?: string; operator: 'In' | 'NotIn'; values: number[] };
+/**
+* Represents the requirement on the pod conditions. The requirement is represented as a list of pod condition patterns. The requirement is satisfied if at least one pattern matches an actual pod condition. At most 20 elements are allowed.
+* @isArray
+*/
+onPodConditions?: Array<{ status: string; type: string }>;
+/**
 * Specifies the action taken on a pod failure when the requirements are satisfied. Possible values are:
 
 - FailJob: indicates that the pod's job is marked as Failed and all
@@ -27,16 +37,6 @@ Possible enum values:
 * @required
 */
 action: 'Count' | 'FailIndex' | 'FailJob' | 'Ignore';
-/**
-* PodFailurePolicyOnExitCodesRequirement describes the requirement for handling a failed pod based on its container exit codes. In particular, it lookups the .state.terminated.exitCode for each app container and init container status, represented by the .status.containerStatuses and .status.initContainerStatuses fields in the Pod status, respectively. Containers completed with success (exit code 0) are excluded from the requirement check.
-* @isObject
-*/
-onExitCodes?: { values: number[]; containerName?: string; operator: 'In' | 'NotIn' };
-/**
-* Represents the requirement on the pod conditions. The requirement is represented as a list of pod condition patterns. The requirement is satisfied if at least one pattern matches an actual pod condition. At most 20 elements are allowed.
-* @isArray
-*/
-onPodConditions?: Array<{ type: string; status: string }>;
 }
 
 /**
@@ -46,8 +46,8 @@ onPodConditions?: Array<{ type: string; status: string }>;
 */
 export function createio_k8s_api_batch_v1_PodFailurePolicyRule(data?: Partial<io_k8s_api_batch_v1_PodFailurePolicyRule>): io_k8s_api_batch_v1_PodFailurePolicyRule {
  return {
-   action: data?.action !== undefined ? data.action : '',
    onExitCodes: data?.onExitCodes !== undefined ? data.onExitCodes : { operator: '', values: [] },
    onPodConditions: data?.onPodConditions !== undefined ? data.onPodConditions : [],
+   action: data?.action !== undefined ? data.action : '',
  };
 }

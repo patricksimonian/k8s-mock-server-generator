@@ -23,7 +23,7 @@ priorityLevelConfiguration: { name: string };
 * `rules` describes which requests will match this flow schema. This FlowSchema matches a request if and only if at least one member of rules matches the request. if it is an empty slice, there will be no requests matching the FlowSchema.
 * @isArray
 */
-rules?: Array<{ nonResourceRules?: Array<{ nonResourceURLs: string[]; verbs: string[] }>; resourceRules?: Array<{ resources: string[]; verbs: string[]; apiGroups: string[]; clusterScope?: boolean; namespaces?: string[] }>; subjects: Array<{ group?: { name: string }; kind: string; serviceAccount?: { name: string; namespace: string }; user?: { name: string } }> }>;
+rules?: Array<{ nonResourceRules?: Array<{ verbs: string[]; nonResourceURLs: string[] }>; resourceRules?: Array<{ apiGroups: string[]; clusterScope?: boolean; namespaces?: string[]; resources: string[]; verbs: string[] }>; subjects: Array<{ user?: { name: string }; group?: { name: string }; kind: string; serviceAccount?: { name: string; namespace: string } }> }>;
 }
 
 /**

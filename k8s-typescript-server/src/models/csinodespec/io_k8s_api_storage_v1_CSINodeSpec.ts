@@ -9,7 +9,7 @@ export interface io_k8s_api_storage_v1_CSINodeSpec {
 * @required
 * @isArray
 */
-drivers: Array<{ allocatable?: { count?: number }; name: string; nodeID: string; topologyKeys?: string[] }>;
+drivers: Array<{ nodeID: string; topologyKeys?: string[]; allocatable?: { count?: number }; name: string }>;
 }
 
 /**

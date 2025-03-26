@@ -33,7 +33,7 @@ certificate?: string;
 * conditions applied to the request. Known conditions are "Approved", "Denied", and "Failed".
 * @isArray
 */
-conditions?: Array<{ lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string; reason?: string; status: string; type: string }>;
+conditions?: Array<{ message?: string; reason?: string; status: string; type: string; lastTransitionTime?: Date; lastUpdateTime?: Date }>;
 }
 
 /**

@@ -16,7 +16,7 @@ ip?: string;
 * ports provides information about the ports exposed by this LoadBalancer.
 * @isArray
 */
-ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>;
+ports?: Array<{ port: number; protocol: 'SCTP' | 'TCP' | 'UDP'; error?: string }>;
 }
 
 /**

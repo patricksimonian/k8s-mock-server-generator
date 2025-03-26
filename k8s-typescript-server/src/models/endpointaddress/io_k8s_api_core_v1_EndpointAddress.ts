@@ -21,7 +21,7 @@ nodeName?: string;
 * ObjectReference contains enough information to let you inspect or modify the referred object.
 * @isObject
 */
-targetRef?: { name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string };
+targetRef?: { namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string };
 }
 
 /**

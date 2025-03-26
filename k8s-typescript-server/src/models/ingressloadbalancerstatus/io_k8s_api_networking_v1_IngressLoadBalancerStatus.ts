@@ -8,7 +8,7 @@ export interface io_k8s_api_networking_v1_IngressLoadBalancerStatus {
 * ingress is a list containing ingress points for the load-balancer.
 * @isArray
 */
-ingress?: Array<{ hostname?: string; ip?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }> }>;
+ingress?: Array<{ ip?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>; hostname?: string }>;
 }
 
 /**

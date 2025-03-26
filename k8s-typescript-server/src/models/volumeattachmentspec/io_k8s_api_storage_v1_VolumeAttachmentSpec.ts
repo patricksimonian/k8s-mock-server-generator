@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_VolumeAttachmentSpec {
 /**
-* attacher indicates the name of the volume driver that MUST handle this request. This is the name returned by GetPluginName().
-* @required
-*/
-attacher: string;
-/**
 * nodeName represents the node that the volume should be attached to.
 * @required
 */
@@ -20,6 +15,11 @@ nodeName: string;
 * @isObject
 */
 source: { inlineVolumeSpec?: Record<string, any>; persistentVolumeName?: string };
+/**
+* attacher indicates the name of the volume driver that MUST handle this request. This is the name returned by GetPluginName().
+* @required
+*/
+attacher: string;
 }
 
 /**
@@ -29,8 +29,8 @@ source: { inlineVolumeSpec?: Record<string, any>; persistentVolumeName?: string 
 */
 export function createio_k8s_api_storage_v1_VolumeAttachmentSpec(data?: Partial<io_k8s_api_storage_v1_VolumeAttachmentSpec>): io_k8s_api_storage_v1_VolumeAttachmentSpec {
  return {
-   attacher: data?.attacher !== undefined ? data.attacher : '',
    nodeName: data?.nodeName !== undefined ? data.nodeName : '',
    source: data?.source !== undefined ? data.source : {},
+   attacher: data?.attacher !== undefined ? data.attacher : '',
  };
 }

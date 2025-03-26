@@ -16,17 +16,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { labels?: Record<string, any>; selfLink?: string; deletionTimestamp?: Date; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; generation?: number; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; resourceVersion?: string; uid?: string; generateName?: string };
+metadata?: { managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; deletionGracePeriodSeconds?: number; generation?: number; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionTimestamp?: Date; finalizers?: string[]; name?: string; resourceVersion?: string; annotations?: Record<string, any>; creationTimestamp?: Date; generateName?: string; selfLink?: string; uid?: string };
 /**
 * specification of a horizontal pod autoscaler.
 * @isObject
 */
-spec?: { scaleTargetRef: { apiVersion?: string; kind: string; name: string }; targetCPUUtilizationPercentage?: number; maxReplicas: number; minReplicas?: number };
+spec?: { minReplicas?: number; scaleTargetRef: { apiVersion?: string; kind: string; name: string }; targetCPUUtilizationPercentage?: number; maxReplicas: number };
 /**
 * current status of a horizontal pod autoscaler
 * @isObject
 */
-status?: { currentCPUUtilizationPercentage?: number; currentReplicas: number; desiredReplicas: number; lastScaleTime?: Date; observedGeneration?: number };
+status?: { observedGeneration?: number; currentCPUUtilizationPercentage?: number; currentReplicas: number; desiredReplicas: number; lastScaleTime?: Date };
 }
 
 /**

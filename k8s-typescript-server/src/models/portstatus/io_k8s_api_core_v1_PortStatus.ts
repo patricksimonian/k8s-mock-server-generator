@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_PortStatus {
 /**
+* Port is the port number of the service port of which status is recorded here
+* @required
+*/
+port: number;
+/**
 * Protocol is the protocol of the service port of which status is recorded here The supported values are: "TCP", "UDP", "SCTP"
 
 Possible enum values:
@@ -21,11 +26,6 @@ protocol: 'SCTP' | 'TCP' | 'UDP';
   format foo.example.com/CamelCase.
 */
 error?: string;
-/**
-* Port is the port number of the service port of which status is recorded here
-* @required
-*/
-port: number;
 }
 
 /**
@@ -35,8 +35,8 @@ port: number;
 */
 export function createio_k8s_api_core_v1_PortStatus(data?: Partial<io_k8s_api_core_v1_PortStatus>): io_k8s_api_core_v1_PortStatus {
  return {
+   port: data?.port !== undefined ? data.port : 0,
    protocol: data?.protocol !== undefined ? data.protocol : '',
    error: data?.error !== undefined ? data.error : '',
-   port: data?.port !== undefined ? data.port : 0,
  };
 }

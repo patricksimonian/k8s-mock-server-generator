@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_core_v1_CephFSPersistentVolumeSource {
 /**
-* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
-* @isObject
-*/
-secretRef?: { name?: string; namespace?: string };
-/**
-* user is Optional: User is the rados user name, default is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
-*/
-user?: string;
-/**
 * monitors is Required: Monitors is a collection of Ceph monitors More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 * @required
 * @isArray
@@ -31,6 +22,15 @@ readOnly?: boolean;
 * secretFile is Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 */
 secretFile?: string;
+/**
+* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
+* @isObject
+*/
+secretRef?: { name?: string; namespace?: string };
+/**
+* user is Optional: User is the rados user name, default is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
+*/
+user?: string;
 }
 
 /**
@@ -40,11 +40,11 @@ secretFile?: string;
 */
 export function createio_k8s_api_core_v1_CephFSPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_CephFSPersistentVolumeSource>): io_k8s_api_core_v1_CephFSPersistentVolumeSource {
  return {
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
-   user: data?.user !== undefined ? data.user : '',
    monitors: data?.monitors !== undefined ? data.monitors : [],
    path: data?.path !== undefined ? data.path : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    secretFile: data?.secretFile !== undefined ? data.secretFile : '',
+   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
+   user: data?.user !== undefined ? data.user : '',
  };
 }

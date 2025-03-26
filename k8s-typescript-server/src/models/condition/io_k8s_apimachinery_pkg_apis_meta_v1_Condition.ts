@@ -5,6 +5,16 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_Condition {
 /**
+* type of condition in CamelCase or in foo.example.com/CamelCase.
+* @required
+*/
+type: string;
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* @required
+*/
+lastTransitionTime: Date;
+/**
 * message is a human readable message indicating details about the transition. This may be an empty string.
 * @required
 */
@@ -23,16 +33,6 @@ reason: string;
 * @required
 */
 status: string;
-/**
-* type of condition in CamelCase or in foo.example.com/CamelCase.
-* @required
-*/
-type: string;
-/**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-* @required
-*/
-lastTransitionTime: Date;
 }
 
 /**
@@ -42,11 +42,11 @@ lastTransitionTime: Date;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_Condition(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_Condition>): io_k8s_apimachinery_pkg_apis_meta_v1_Condition {
  return {
+   type: data?.type !== undefined ? data.type : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    message: data?.message !== undefined ? data.message : '',
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
-   type: data?.type !== undefined ? data.type : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
  };
 }

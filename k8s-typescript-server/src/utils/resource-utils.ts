@@ -2,39 +2,6 @@ import { Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import express from 'express';
 
-/**
- * Helper function to fetch a list of resources with pagination
- */
-export async function fetchResourceList<T = any>(
-  storage: Storage, 
-  resourceType: string,
-  namespace: string, 
-  options: {
-    limit?: number;
-    continueToken?: string;
-    labelSelector?: string;
-    fieldSelector?: string;
-  }
-): Promise<{ kind: string; apiVersion: string; metadata: any; items: T[] }> {
-  const { limit, continueToken, labelSelector, fieldSelector } = options;
-  
-  try {
-    const resources = await storage.listResources(resourceType, namespace, labelSelector);
-    
-    return {
-      kind: `${resourceType}List`,
-      apiVersion: 'v1',
-      metadata: {
-        resourceVersion: Date.now().toString(),
-        continue: ''
-      },
-      items: resources as T[]
-    };
-  } catch (error) {
-    logger.error(`Error listing ${resourceType}s:`, error);
-    throw error;
-  }
-}
 
 /**
  * Helper function to validate a resource before creation/update

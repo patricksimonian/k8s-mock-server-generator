@@ -1,19 +1,24 @@
 // endpoint-route.ts.tmpl
 import express from 'express';
-import { Storage } from '../storage/Storage';
+import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
 export function createrolebindingRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list or watch objects of kind RoleBinding
-  router.get('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings', async (req, res, next) => {
+//watch individual changes to a list of RoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/rolebindings', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
-      logger.info(`Listing rolebinding in namespace ${namespace}`);
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing rolebinding`);
       
-      const resources = await storage.listResources('rolebinding', namespace);
+      const resources = await storage.listResources('rolebinding', namespace, listOpts);
       
       const response = {
         kind: 'RolebindingList',
@@ -29,75 +34,39 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//create a RoleBinding
-  router.post('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings', async (req, res, next) => {
+  router.patch('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
-      logger.info(`Creating rolebinding in namespace ${namespace}`);
-      
-      const resource = req.body;
-      
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      const createdResource = await storage.createResource('rolebinding', resource);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of RoleBinding
-  router.delete('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings', async (req, res, next) => {
-    try {
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all rolebinding in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('rolebinding', namespace);
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`rolebinding not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`rolebinding not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'rolebinding'
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind RoleBinding. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
-    try {
-      const namespace = req.params.namespace;
       const name = req.params.name;
-      logger.info(`Getting rolebinding ${name} in namespace ${namespace}`);
-      
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      logger.info(`Patching rolebinding ${name} in namespace ${namespace}`);
+
       const resource = await storage.getResource('rolebinding', name, namespace);
       
       if (!resource) {
         return handleResourceError(new Error(`rolebinding ${name} not found in namespace ${namespace}`), res);
       }
       
-      res.json(resource);
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('rolebinding', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -106,8 +75,8 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
 //read the specified RoleBinding
   router.get('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
       const name = req.params.name;
+      const namespace = req.params.namespace;
       logger.info(`Getting rolebinding ${name} in namespace ${namespace}`);
       
       const resource = await storage.getResource('rolebinding', name, namespace);
@@ -115,32 +84,29 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
       if (!resource) {
         return handleResourceError(new Error(`rolebinding ${name} not found in namespace ${namespace}`), res);
       }
-      
+  
       res.json(resource);
     } catch (error) {
       next(error);
     }
   });
-
 //replace the specified RoleBinding
   router.put('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
       const name = req.params.name;
-      logger.info(`Updating rolebinding ${name} in namespace ${namespace}`);
-      
       const resource = req.body;
-      
       // Ensure resource has metadata
       if (!resource.metadata) {
         resource.metadata = {};
       }
-      
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating rolebinding ${name} in namespace ${namespace}`);
+
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      resource.metadata.namespace = namespace;
       
-      const updatedResource = await storage.updateResource('rolebinding', name, resource);
+      const updatedResource = await storage.updateResource('rolebinding', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
     } catch (error) {
@@ -151,8 +117,8 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
 //delete a RoleBinding
   router.delete('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
       const name = req.params.name;
+      const namespace = req.params.namespace;
       logger.info(`Deleting rolebinding ${name} in namespace ${namespace}`);
       try {
 
@@ -179,51 +145,38 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-  router.patch('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
+
+//watch changes to an object of kind RoleBinding. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/namespaces/:namespace/rolebindings/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
-      
-      logger.info(`Patching rolebinding ${name} in namespace ${namespace}`);
+      logger.info(`Getting rolebinding ${name} in namespace ${namespace}`);
       
       const resource = await storage.getResource('rolebinding', name, namespace);
       
       if (!resource) {
         return handleResourceError(new Error(`rolebinding ${name} not found in namespace ${namespace}`), res);
       }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
+  
+      res.json(resource);
     } catch (error) {
       next(error);
     }
   });
 
 //list or watch objects of kind RoleBinding
-  router.get('/apis/rbac.authorization.k8s.io/v1/rolebindings', async (req, res, next) => {
+  router.get('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings', async (req, res, next) => {
     try {
-      logger.info(`Listing rolebinding`);
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing rolebinding in namespace ${namespace}`);
       
-      const resources = await storage.listResources('rolebinding');
+      const resources = await storage.listResources('rolebinding', namespace, listOpts);
       
       const response = {
         kind: 'RolebindingList',
@@ -239,24 +192,58 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//watch individual changes to a list of RoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/rolebindings', async (req, res, next) => {
+  //create a RoleBinding
+  router.post('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings', async (req, res, next) => {
     try {
-      logger.info(`Listing rolebinding`);
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating rolebinding in namespace ${namespace}`);
       
-      const resources = await storage.listResources('rolebinding');
       
-      const response = {
-        kind: 'RolebindingList',
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        metadata: {
-          resourceVersion: '1'
-        },
-        items: resources || []
-      };
+      // Set namespace in metadata
+      resource.metadata.namespace = namespace;
       
-      res.json(response);
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of RoleBinding
+  router.delete('/apis/rbac.authorization.k8s.io/v1/namespaces/:namespace/rolebindings', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all rolebinding in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('rolebinding', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`rolebinding not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`rolebinding not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'rolebinding'
+        }
+      });
     } catch (error) {
       next(error);
     }
@@ -265,10 +252,43 @@ export function createrolebindingRoutes(storage: Storage): express.Router {
 //watch individual changes to a list of RoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/rbac.authorization.k8s.io/v1/watch/namespaces/:namespace/rolebindings', async (req, res, next) => {
     try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
       logger.info(`Listing rolebinding in namespace ${namespace}`);
       
-      const resources = await storage.listResources('rolebinding', namespace);
+      const resources = await storage.listResources('rolebinding', namespace, listOpts);
+      
+      const response = {
+        kind: 'RolebindingList',
+        apiVersion: 'rbac.authorization.k8s.io/v1',
+        metadata: {
+          resourceVersion: '1'
+        },
+        items: resources || []
+      };
+      
+      res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind RoleBinding
+  router.get('/apis/rbac.authorization.k8s.io/v1/rolebindings', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing rolebinding`);
+      
+      const resources = await storage.listResources('rolebinding', namespace, listOpts);
       
       const response = {
         kind: 'RolebindingList',

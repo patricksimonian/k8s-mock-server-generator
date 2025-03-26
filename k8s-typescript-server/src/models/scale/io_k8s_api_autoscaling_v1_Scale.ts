@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_autoscaling_v1_Scale {
 /**
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
+*/
+metadata?: { deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; resourceVersion?: string; uid?: string; deletionGracePeriodSeconds?: number; name?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; annotations?: Record<string, any>; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; namespace?: string; selfLink?: string };
+/**
 * ScaleSpec describes the attributes of a scale subresource.
 * @isObject
 */
@@ -22,11 +27,6 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { deletionGracePeriodSeconds?: number; finalizers?: string[]; labels?: Record<string, any>; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; name?: string; namespace?: string; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; creationTimestamp?: Date; generateName?: string; selfLink?: string; uid?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; generation?: number; resourceVersion?: string };
 }
 
 /**
@@ -36,10 +36,10 @@ metadata?: { deletionGracePeriodSeconds?: number; finalizers?: string[]; labels?
 */
 export function createio_k8s_api_autoscaling_v1_Scale(data?: Partial<io_k8s_api_autoscaling_v1_Scale>): io_k8s_api_autoscaling_v1_Scale {
  return {
+   metadata: data?.metadata !== undefined ? data.metadata : {},
    spec: data?.spec !== undefined ? data.spec : {},
    status: data?.status !== undefined ? data.status : { replicas: 0 },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : {},
  };
 }

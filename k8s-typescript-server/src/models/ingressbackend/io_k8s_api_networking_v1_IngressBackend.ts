@@ -8,7 +8,7 @@ export interface io_k8s_api_networking_v1_IngressBackend {
 * TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.
 * @isObject
 */
-resource?: { name: string; apiGroup?: string; kind: string };
+resource?: { apiGroup?: string; kind: string; name: string };
 /**
 * IngressServiceBackend references a Kubernetes Service as a Backend.
 * @isObject

@@ -15,6 +15,10 @@ accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOnc
 */
 selector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> };
 /**
+* storageClassName is the name of the StorageClass required by the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
+*/
+storageClassName?: string;
+/**
 * volumeAttributesClassName may be used to set the VolumeAttributesClass used by this claim. If specified, the CSI driver will create or update the volume with the attributes defined in the corresponding VolumeAttributesClass. This has a different purpose than storageClassName, it can be changed after the claim is created. An empty string value means that no VolumeAttributesClass will be applied to the claim but it's not allowed to reset this field to empty string once it is set. If unspecified and the PersistentVolumeClaim is unbound, the default VolumeAttributesClass will be set by the persistentvolume controller if it exists. If the resource referred to by volumeAttributesClass does not exist, this PersistentVolumeClaim will be set to a Pending state, as reflected by the modifyVolumeStatus field, until such as a resource exists. More info: https://kubernetes.io/docs/concepts/storage/volume-attributes-classes/ (Beta) Using this field requires the VolumeAttributesClass feature gate to be enabled (off by default).
 */
 volumeAttributesClassName?: string;
@@ -31,16 +35,12 @@ dataSource?: { apiGroup?: string; kind: string; name: string };
 * TypedObjectReference contains enough information to let you locate the typed referenced object
 * @isObject
 */
-dataSourceRef?: { name: string; namespace?: string; apiGroup?: string; kind: string };
+dataSourceRef?: { namespace?: string; apiGroup?: string; kind: string; name: string };
 /**
 * VolumeResourceRequirements describes the storage resource requirements for a volume.
 * @isObject
 */
 resources?: { limits?: Record<string, any>; requests?: Record<string, any> };
-/**
-* storageClassName is the name of the StorageClass required by the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
-*/
-storageClassName?: string;
 /**
 * volumeMode defines what type of volume is required by the claim. Value of Filesystem is implied when not included in claim spec.
 
@@ -60,12 +60,12 @@ export function createio_k8s_api_core_v1_PersistentVolumeClaimSpec(data?: Partia
  return {
    accessModes: data?.accessModes !== undefined ? data.accessModes : [],
    selector: data?.selector !== undefined ? data.selector : {},
+   storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
    volumeAttributesClassName: data?.volumeAttributesClassName !== undefined ? data.volumeAttributesClassName : '',
    volumeName: data?.volumeName !== undefined ? data.volumeName : '',
    dataSource: data?.dataSource !== undefined ? data.dataSource : { kind: '', name: '' },
    dataSourceRef: data?.dataSourceRef !== undefined ? data.dataSourceRef : { kind: '', name: '' },
    resources: data?.resources !== undefined ? data.resources : {},
-   storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
    volumeMode: data?.volumeMode !== undefined ? data.volumeMode : '',
  };
 }

@@ -5,6 +5,22 @@
 */
 export interface io_k8s_api_authorization_v1_SelfSubjectAccessReview {
 /**
+* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+* @isObject
+*/
+metadata?: { ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; resourceVersion?: string; selfLink?: string; name?: string; generateName?: string; creationTimestamp?: Date; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; labels?: Record<string, any>; namespace?: string; uid?: string; deletionGracePeriodSeconds?: number };
+/**
+* SelfSubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+* @required
+* @isObject
+*/
+spec: { nonResourceAttributes?: { verb?: string; path?: string }; resourceAttributes?: { resource?: string; subresource?: string; version?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; namespace?: string; name?: string; verb?: string; group?: string; labelSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> } } };
+/**
+* SubjectAccessReviewStatus
+* @isObject
+*/
+status?: { allowed: boolean; denied?: boolean; evaluationError?: string; reason?: string };
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -12,22 +28,6 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
-/**
-* ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-* @isObject
-*/
-metadata?: { creationTimestamp?: Date; generation?: number; namespace?: string; uid?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; selfLink?: string; deletionTimestamp?: Date; finalizers?: string[]; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generateName?: string; labels?: Record<string, any>; name?: string; resourceVersion?: string };
-/**
-* SelfSubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
-* @required
-* @isObject
-*/
-spec: { nonResourceAttributes?: { path?: string; verb?: string }; resourceAttributes?: { name?: string; namespace?: string; resource?: string; subresource?: string; verb?: string; fieldSelector?: { rawSelector?: string; requirements?: Array<{ key: string; operator: string; values?: string[] }> }; group?: string; labelSelector?: { requirements?: Array<{ values?: string[]; key: string; operator: string }>; rawSelector?: string }; version?: string } };
-/**
-* SubjectAccessReviewStatus
-* @isObject
-*/
-status?: { reason?: string; allowed: boolean; denied?: boolean; evaluationError?: string };
 }
 
 /**
@@ -37,10 +37,10 @@ status?: { reason?: string; allowed: boolean; denied?: boolean; evaluationError?
 */
 export function createio_k8s_api_authorization_v1_SelfSubjectAccessReview(data?: Partial<io_k8s_api_authorization_v1_SelfSubjectAccessReview>): io_k8s_api_authorization_v1_SelfSubjectAccessReview {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
    spec: data?.spec !== undefined ? data.spec : {},
    status: data?.status !== undefined ? data.status : { allowed: false },
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   kind: data?.kind !== undefined ? data.kind : '',
  };
 }

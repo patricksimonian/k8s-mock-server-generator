@@ -21,9 +21,9 @@ apiVersion?: string;
 * items is the list of horizontal pod autoscaler objects.
 * @required
 * @isArray
-* @references io.k8s.api.autoscaling.v2.HorizontalPodAutoscaler
+* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscaler
 */
-items: io_k8s_api_autoscaling_v2_HorizontalPodAutoscaler[];
+items: io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler[];
 }
 
 /**
@@ -40,4 +40,4 @@ export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerList(data
  };
 }
 // Required imports
-import { io_k8s_api_autoscaling_v2_HorizontalPodAutoscaler, createio_k8s_api_autoscaling_v2_HorizontalPodAutoscaler } from '../horizontalpodautoscaler/io_k8s_api_autoscaling_v2_HorizontalPodAutoscaler';
+import { io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler, createio_k8s_api_autoscaling_v1_HorizontalPodAutoscaler } from '../horizontalpodautoscaler/io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler';

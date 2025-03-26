@@ -19,7 +19,7 @@ kind?: string;
 * ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 * @isObject
 */
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+metadata?: { resourceVersion?: string; selfLink?: string; continue?: string; remainingItemCount?: number };
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */

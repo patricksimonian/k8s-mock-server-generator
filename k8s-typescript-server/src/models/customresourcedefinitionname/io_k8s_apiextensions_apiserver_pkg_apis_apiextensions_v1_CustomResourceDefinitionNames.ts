@@ -5,6 +5,11 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames {
 /**
+* categories is a list of grouped resources this custom resource belongs to (e.g. 'all'). This is published in API discovery documents, and used by clients to support invocations like `kubectl get all`.
+* @isArray
+*/
+categories?: string[];
+/**
 * kind is the serialized kind of the resource. It is normally CamelCase and singular. Custom resource instances will use this value as the `kind` attribute in API calls.
 * @required
 */
@@ -27,11 +32,6 @@ shortNames?: string[];
 * singular is the singular name of the resource. It must be all lowercase. Defaults to lowercased `kind`.
 */
 singular?: string;
-/**
-* categories is a list of grouped resources this custom resource belongs to (e.g. 'all'). This is published in API discovery documents, and used by clients to support invocations like `kubectl get all`.
-* @isArray
-*/
-categories?: string[];
 }
 
 /**
@@ -41,11 +41,11 @@ categories?: string[];
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionNames {
  return {
+   categories: data?.categories !== undefined ? data.categories : [],
    kind: data?.kind !== undefined ? data.kind : '',
    listKind: data?.listKind !== undefined ? data.listKind : '',
    plural: data?.plural !== undefined ? data.plural : '',
    shortNames: data?.shortNames !== undefined ? data.shortNames : [],
    singular: data?.singular !== undefined ? data.singular : '',
-   categories: data?.categories !== undefined ? data.categories : [],
  };
 }

@@ -256,6 +256,10 @@ func (g *Generator) createTemplateFuncMap() template.FuncMap {
 			}
 			return str
 		},
+		"getSubresource": func(path string) string {
+			segments := strings.Split(path, "/")
+			return segments[len(segments)-1]
+		},
 		"getDefaultValue": func(schema ir.Schema) string {
 			return g.getDefaultValue(schema)
 		},

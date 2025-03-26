@@ -5,13 +5,13 @@
 */
 export interface io_k8s_api_apps_v1_StatefulSetPersistentVolumeClaimRetentionPolicy {
 /**
-* WhenScaled specifies what happens to PVCs created from StatefulSet VolumeClaimTemplates when the StatefulSet is scaled down. The default policy of `Retain` causes PVCs to not be affected by a scaledown. The `Delete` policy causes the associated PVCs for any excess pods above the replica count to be deleted.
-*/
-whenScaled?: string;
-/**
 * WhenDeleted specifies what happens to PVCs created from StatefulSet VolumeClaimTemplates when the StatefulSet is deleted. The default policy of `Retain` causes PVCs to not be affected by StatefulSet deletion. The `Delete` policy causes those PVCs to be deleted.
 */
 whenDeleted?: string;
+/**
+* WhenScaled specifies what happens to PVCs created from StatefulSet VolumeClaimTemplates when the StatefulSet is scaled down. The default policy of `Retain` causes PVCs to not be affected by a scaledown. The `Delete` policy causes the associated PVCs for any excess pods above the replica count to be deleted.
+*/
+whenScaled?: string;
 }
 
 /**
@@ -21,7 +21,7 @@ whenDeleted?: string;
 */
 export function createio_k8s_api_apps_v1_StatefulSetPersistentVolumeClaimRetentionPolicy(data?: Partial<io_k8s_api_apps_v1_StatefulSetPersistentVolumeClaimRetentionPolicy>): io_k8s_api_apps_v1_StatefulSetPersistentVolumeClaimRetentionPolicy {
  return {
-   whenScaled: data?.whenScaled !== undefined ? data.whenScaled : '',
    whenDeleted: data?.whenDeleted !== undefined ? data.whenDeleted : '',
+   whenScaled: data?.whenScaled !== undefined ? data.whenScaled : '',
  };
 }

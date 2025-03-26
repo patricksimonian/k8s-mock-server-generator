@@ -16,12 +16,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { namespace?: string; annotations?: Record<string, any>; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; finalizers?: string[]; generateName?: string; labels?: Record<string, any>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; resourceVersion?: string; selfLink?: string; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generation?: number; name?: string; deletionGracePeriodSeconds?: number };
+metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; namespace?: string; generation?: number; uid?: string; finalizers?: string[]; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; resourceVersion?: string; selfLink?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generateName?: string; labels?: Record<string, any>; name?: string };
 /**
 * IngressClassSpec provides information about the class of an Ingress.
 * @isObject
 */
-spec?: { controller?: string; parameters?: { namespace?: string; scope?: string; apiGroup?: string; kind: string; name: string } };
+spec?: { controller?: string; parameters?: { apiGroup?: string; kind: string; name: string; namespace?: string; scope?: string } };
 }
 
 /**

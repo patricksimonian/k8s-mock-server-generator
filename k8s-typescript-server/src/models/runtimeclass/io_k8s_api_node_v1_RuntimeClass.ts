@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_node_v1_RuntimeClass {
 /**
+* Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
+* @isObject
+*/
+scheduling?: { nodeSelector?: Record<string, any>; tolerations?: Array<{ effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists'; tolerationSeconds?: number; value?: string }> };
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -21,17 +26,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; name?: string; creationTimestamp?: Date; resourceVersion?: string; selfLink?: string; namespace?: string; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; uid?: string; annotations?: Record<string, any> };
+metadata?: { generateName?: string; namespace?: string; resourceVersion?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; uid?: string; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; finalizers?: string[]; generation?: number; labels?: Record<string, any>; creationTimestamp?: Date; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }> };
 /**
 * Overhead structure represents the resource overhead associated with running a pod.
 * @isObject
 */
 overhead?: { podFixed?: Record<string, any> };
-/**
-* Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
-* @isObject
-*/
-scheduling?: { nodeSelector?: Record<string, any>; tolerations?: Array<{ tolerationSeconds?: number; value?: string; effect?: 'NoExecute' | 'NoSchedule' | 'PreferNoSchedule'; key?: string; operator?: 'Equal' | 'Exists' }> };
 }
 
 /**
@@ -41,11 +41,11 @@ scheduling?: { nodeSelector?: Record<string, any>; tolerations?: Array<{ tolerat
 */
 export function createio_k8s_api_node_v1_RuntimeClass(data?: Partial<io_k8s_api_node_v1_RuntimeClass>): io_k8s_api_node_v1_RuntimeClass {
  return {
+   scheduling: data?.scheduling !== undefined ? data.scheduling : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    handler: data?.handler !== undefined ? data.handler : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
    overhead: data?.overhead !== undefined ? data.overhead : {},
-   scheduling: data?.scheduling !== undefined ? data.scheduling : {},
  };
 }

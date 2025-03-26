@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_rbac_v1_PolicyRule {
 /**
+* NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API resources (such as "pods" or "secrets") or non-resource URL paths (such as "/api"),  but not both.
+* @isArray
+*/
+nonResourceURLs?: string[];
+/**
 * ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.
 * @isArray
 */
@@ -25,11 +30,6 @@ verbs: string[];
 * @isArray
 */
 apiGroups?: string[];
-/**
-* NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API resources (such as "pods" or "secrets") or non-resource URL paths (such as "/api"),  but not both.
-* @isArray
-*/
-nonResourceURLs?: string[];
 }
 
 /**
@@ -39,10 +39,10 @@ nonResourceURLs?: string[];
 */
 export function createio_k8s_api_rbac_v1_PolicyRule(data?: Partial<io_k8s_api_rbac_v1_PolicyRule>): io_k8s_api_rbac_v1_PolicyRule {
  return {
+   nonResourceURLs: data?.nonResourceURLs !== undefined ? data.nonResourceURLs : [],
    resourceNames: data?.resourceNames !== undefined ? data.resourceNames : [],
    resources: data?.resources !== undefined ? data.resources : [],
    verbs: data?.verbs !== undefined ? data.verbs : [],
    apiGroups: data?.apiGroups !== undefined ? data.apiGroups : [],
-   nonResourceURLs: data?.nonResourceURLs !== undefined ? data.nonResourceURLs : [],
  };
 }

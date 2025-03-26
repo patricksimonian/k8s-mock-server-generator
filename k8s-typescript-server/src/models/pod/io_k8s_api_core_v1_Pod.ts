@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_Pod {
 /**
-* PodSpec is a description of a pod.
-* @isObject
-*/
-spec?: Record<string, any>;
-/**
 * PodStatus represents information about the status of a pod. Status may trail the actual state of a system, especially if the node that hosts the pod cannot contact the control plane.
 * @isObject
 */
@@ -26,7 +21,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { generateName?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; namespace?: string; uid?: string; finalizers?: string[]; labels?: Record<string, any>; deletionTimestamp?: Date; generation?: number; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; name?: string; resourceVersion?: string; selfLink?: string; creationTimestamp?: Date; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }> };
+metadata?: { labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; generation?: number; deletionTimestamp?: Date; name?: string; resourceVersion?: string; uid?: string; annotations?: Record<string, any>; finalizers?: string[]; generateName?: string; creationTimestamp?: Date; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; selfLink?: string; deletionGracePeriodSeconds?: number };
+/**
+* PodSpec is a description of a pod.
+* @isObject
+*/
+spec?: Record<string, any>;
 }
 
 /**
@@ -36,10 +36,10 @@ metadata?: { generateName?: string; ownerReferences?: Array<{ uid: string; apiVe
 */
 export function createio_k8s_api_core_v1_Pod(data?: Partial<io_k8s_api_core_v1_Pod>): io_k8s_api_core_v1_Pod {
  return {
-   spec: data?.spec !== undefined ? data.spec : { containers: [] },
    status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   spec: data?.spec !== undefined ? data.spec : { containers: [] },
  };
 }

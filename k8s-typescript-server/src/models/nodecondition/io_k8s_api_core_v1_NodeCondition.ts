@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_NodeCondition {
 /**
-* Type of node condition.
-* @required
-*/
-type: string;
-/**
 * Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 */
 lastHeartbeatTime?: Date;
@@ -30,6 +25,11 @@ reason?: string;
 * @required
 */
 status: string;
+/**
+* Type of node condition.
+* @required
+*/
+type: string;
 }
 
 /**
@@ -39,11 +39,11 @@ status: string;
 */
 export function createio_k8s_api_core_v1_NodeCondition(data?: Partial<io_k8s_api_core_v1_NodeCondition>): io_k8s_api_core_v1_NodeCondition {
  return {
-   type: data?.type !== undefined ? data.type : '',
    lastHeartbeatTime: data?.lastHeartbeatTime !== undefined ? data.lastHeartbeatTime : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
+   type: data?.type !== undefined ? data.type : '',
  };
 }

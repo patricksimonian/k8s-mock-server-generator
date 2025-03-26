@@ -16,7 +16,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; name?: string; resourceVersion?: string; uid?: string; deletionTimestamp?: Date; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; selfLink?: string; creationTimestamp?: Date; finalizers?: string[]; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; deletionGracePeriodSeconds?: number; generateName?: string; namespace?: string };
+metadata?: { annotations?: Record<string, any>; name?: string; resourceVersion?: string; selfLink?: string; creationTimestamp?: Date; deletionTimestamp?: Date; generateName?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; uid?: string; deletionGracePeriodSeconds?: number; finalizers?: string[]; generation?: number; labels?: Record<string, any> };
 /**
 * LimitRangeSpec defines a min/max usage limit for resources that match on kind.
 * @isObject

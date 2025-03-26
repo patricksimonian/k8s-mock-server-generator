@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_core_v1_CephFSVolumeSource {
 /**
+* monitors is Required: Monitors is a collection of Ceph monitors More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
+* @required
+* @isArray
+*/
+monitors: string[];
+/**
+* path is Optional: Used as the mounted root, rather than the full Ceph tree, default is /
+*/
+path?: string;
+/**
 * readOnly is Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 */
 readOnly?: boolean;
@@ -21,16 +31,6 @@ secretRef?: { name?: string };
 * user is optional: User is the rados user name, default is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 */
 user?: string;
-/**
-* monitors is Required: Monitors is a collection of Ceph monitors More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
-* @required
-* @isArray
-*/
-monitors: string[];
-/**
-* path is Optional: Used as the mounted root, rather than the full Ceph tree, default is /
-*/
-path?: string;
 }
 
 /**
@@ -40,11 +40,11 @@ path?: string;
 */
 export function createio_k8s_api_core_v1_CephFSVolumeSource(data?: Partial<io_k8s_api_core_v1_CephFSVolumeSource>): io_k8s_api_core_v1_CephFSVolumeSource {
  return {
+   monitors: data?.monitors !== undefined ? data.monitors : [],
+   path: data?.path !== undefined ? data.path : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    secretFile: data?.secretFile !== undefined ? data.secretFile : '',
    secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    user: data?.user !== undefined ? data.user : '',
-   monitors: data?.monitors !== undefined ? data.monitors : [],
-   path: data?.path !== undefined ? data.path : '',
  };
 }

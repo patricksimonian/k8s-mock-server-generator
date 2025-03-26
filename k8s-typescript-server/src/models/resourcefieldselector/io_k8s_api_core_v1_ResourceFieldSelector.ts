@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_ResourceFieldSelector {
 /**
+* Required: resource to select
+* @required
+*/
+resource: string;
+/**
 * Container name: required for volumes, optional for env vars
 */
 containerName?: string;
@@ -48,11 +53,6 @@ Non-canonical values will still parse as long as they are well formed, but will 
 This format is intended to make it difficult to use these numbers without writing some sort of special handling code in the hopes that that will cause implementors to also use a fixed point implementation.
 */
 divisor?: string;
-/**
-* Required: resource to select
-* @required
-*/
-resource: string;
 }
 
 /**
@@ -62,8 +62,8 @@ resource: string;
 */
 export function createio_k8s_api_core_v1_ResourceFieldSelector(data?: Partial<io_k8s_api_core_v1_ResourceFieldSelector>): io_k8s_api_core_v1_ResourceFieldSelector {
  return {
+   resource: data?.resource !== undefined ? data.resource : '',
    containerName: data?.containerName !== undefined ? data.containerName : '',
    divisor: data?.divisor !== undefined ? data.divisor : '',
-   resource: data?.resource !== undefined ? data.resource : '',
  };
 }

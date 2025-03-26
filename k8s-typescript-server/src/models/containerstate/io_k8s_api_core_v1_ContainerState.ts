@@ -13,7 +13,7 @@ running?: { startedAt?: Date };
 * ContainerStateTerminated is a terminated state of a container.
 * @isObject
 */
-terminated?: { containerID?: string; exitCode: number; finishedAt?: Date; message?: string; reason?: string; signal?: number; startedAt?: Date };
+terminated?: { finishedAt?: Date; message?: string; reason?: string; signal?: number; startedAt?: Date; containerID?: string; exitCode: number };
 /**
 * ContainerStateWaiting is a waiting state of a container.
 * @isObject

@@ -159,4 +159,6 @@ export interface Storage {
  * A simple set of cluster-scoped resource kinds.
  * Real K8s has more (e.g. ClusterRole, PersistentVolume, etc.).
  */
-export const clusterScopedKinds = new Set(["Namespace", "Node", "ClusterRole", "ClusterRoleBinding"]);
+export const clusterScopedKinds = new Set([
+"Namespace", "Node", "ClusterRole", "ClusterRoleBinding"
+]);

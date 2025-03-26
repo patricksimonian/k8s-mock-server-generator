@@ -2,6 +2,9 @@ Updates march 24th
 
 - patch endpoint added and stoprage interface updated to allow for null namespace values. Now need to update the inMemory to handle storing namespaces vs non-namespaced resource, then also implement label selectors etc. 
 
+Updates March 25th
+
+I need to finish implementing the subresource generation. It could be that I need to refactor the endpoint template to handle the endpoint specific use cases. See https://chatgpt.com/c/67e3412c-2c64-8007-b150-65ffa7f41e17
 TODO
 
 - i know that the endpoint generatoin is almost there  

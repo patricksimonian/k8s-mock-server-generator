@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolume {
 /**
-* PersistentVolumeStatus is the current status of a persistent volume.
-* @isObject
-*/
-status?: { lastPhaseTransitionTime?: Date; message?: string; phase?: 'Available' | 'Bound' | 'Failed' | 'Pending' | 'Released'; reason?: string };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -21,12 +16,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; generation?: number; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; creationTimestamp?: Date; generateName?: string; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; resourceVersion?: string; selfLink?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; finalizers?: string[]; name?: string; labels?: Record<string, any>; uid?: string };
+metadata?: { finalizers?: string[]; generation?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; uid?: string; creationTimestamp?: Date; deletionTimestamp?: Date; labels?: Record<string, any>; namespace?: string; name?: string; resourceVersion?: string; generateName?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }> };
 /**
 * PersistentVolumeSpec is the specification of a persistent volume.
 * @isObject
 */
 spec?: Record<string, any>;
+/**
+* PersistentVolumeStatus is the current status of a persistent volume.
+* @isObject
+*/
+status?: { lastPhaseTransitionTime?: Date; message?: string; phase?: 'Available' | 'Bound' | 'Failed' | 'Pending' | 'Released'; reason?: string };
 }
 
 /**
@@ -36,10 +36,10 @@ spec?: Record<string, any>;
 */
 export function createio_k8s_api_core_v1_PersistentVolume(data?: Partial<io_k8s_api_core_v1_PersistentVolume>): io_k8s_api_core_v1_PersistentVolume {
  return {
-   status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
    spec: data?.spec !== undefined ? data.spec : {},
+   status: data?.status !== undefined ? data.status : {},
  };
 }

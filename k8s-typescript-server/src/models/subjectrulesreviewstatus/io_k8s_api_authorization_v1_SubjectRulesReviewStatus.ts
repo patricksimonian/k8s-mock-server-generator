@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_authorization_v1_SubjectRulesReviewStatus {
 /**
-* EvaluationError can appear in combination with Rules. It indicates an error occurred during rule evaluation, such as an authorizer that doesn't support rule evaluation, and that ResourceRules and/or NonResourceRules may be incomplete.
-*/
-evaluationError?: string;
-/**
-* Incomplete is true when the rules returned by this call are incomplete. This is most commonly encountered when an authorizer, such as an external authorizer, doesn't support rules evaluation.
-* @required
-*/
-incomplete: boolean;
-/**
 * NonResourceRules is the list of actions the subject is allowed to perform on non-resources. The list ordering isn't significant, may contain duplicates, and possibly be incomplete.
 * @required
 * @isArray
@@ -24,7 +15,16 @@ nonResourceRules: Array<{ nonResourceURLs?: string[]; verbs: string[] }>;
 * @required
 * @isArray
 */
-resourceRules: Array<{ apiGroups?: string[]; resourceNames?: string[]; resources?: string[]; verbs: string[] }>;
+resourceRules: Array<{ resourceNames?: string[]; resources?: string[]; verbs: string[]; apiGroups?: string[] }>;
+/**
+* EvaluationError can appear in combination with Rules. It indicates an error occurred during rule evaluation, such as an authorizer that doesn't support rule evaluation, and that ResourceRules and/or NonResourceRules may be incomplete.
+*/
+evaluationError?: string;
+/**
+* Incomplete is true when the rules returned by this call are incomplete. This is most commonly encountered when an authorizer, such as an external authorizer, doesn't support rules evaluation.
+* @required
+*/
+incomplete: boolean;
 }
 
 /**
@@ -34,9 +34,9 @@ resourceRules: Array<{ apiGroups?: string[]; resourceNames?: string[]; resources
 */
 export function createio_k8s_api_authorization_v1_SubjectRulesReviewStatus(data?: Partial<io_k8s_api_authorization_v1_SubjectRulesReviewStatus>): io_k8s_api_authorization_v1_SubjectRulesReviewStatus {
  return {
-   evaluationError: data?.evaluationError !== undefined ? data.evaluationError : '',
-   incomplete: data?.incomplete !== undefined ? data.incomplete : false,
    nonResourceRules: data?.nonResourceRules !== undefined ? data.nonResourceRules : [],
    resourceRules: data?.resourceRules !== undefined ? data.resourceRules : [],
+   evaluationError: data?.evaluationError !== undefined ? data.evaluationError : '',
+   incomplete: data?.incomplete !== undefined ? data.incomplete : false,
  };
 }

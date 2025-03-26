@@ -16,7 +16,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { labels?: Record<string, any>; annotations?: Record<string, any>; deletionTimestamp?: Date; finalizers?: string[]; generateName?: string; name?: string; namespace?: string; deletionGracePeriodSeconds?: number; generation?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; creationTimestamp?: Date; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; selfLink?: string; uid?: string };
+metadata?: { uid?: string; deletionTimestamp?: Date; namespace?: string; generateName?: string; labels?: Record<string, any>; finalizers?: string[]; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; selfLink?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; name?: string; resourceVersion?: string; annotations?: Record<string, any>; generation?: number };
 /**
 * SelfSubjectRulesReviewSpec defines the specification for SelfSubjectRulesReview.
 * @required

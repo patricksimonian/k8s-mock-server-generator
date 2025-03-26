@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_core_v1_Binding {
 /**
+* ObjectReference contains enough information to let you inspect or modify the referred object.
+* @required
+* @isObject
+*/
+target: { namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string };
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -16,13 +22,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; finalizers?: string[]; namespace?: string; selfLink?: string; deletionTimestamp?: Date; name?: string; creationTimestamp?: Date; labels?: Record<string, any>; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; uid?: string; generateName?: string; generation?: number; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; resourceVersion?: string };
-/**
-* ObjectReference contains enough information to let you inspect or modify the referred object.
-* @required
-* @isObject
-*/
-target: { kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string };
+metadata?: { annotations?: Record<string, any>; finalizers?: string[]; generateName?: string; generation?: number; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; resourceVersion?: string; deletionGracePeriodSeconds?: number; labels?: Record<string, any>; namespace?: string; selfLink?: string; creationTimestamp?: Date; deletionTimestamp?: Date; name?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; uid?: string };
 }
 
 /**
@@ -32,9 +32,9 @@ target: { kind?: string; name?: string; namespace?: string; resourceVersion?: st
 */
 export function createio_k8s_api_core_v1_Binding(data?: Partial<io_k8s_api_core_v1_Binding>): io_k8s_api_core_v1_Binding {
  return {
+   target: data?.target !== undefined ? data.target : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   target: data?.target !== undefined ? data.target : {},
  };
 }

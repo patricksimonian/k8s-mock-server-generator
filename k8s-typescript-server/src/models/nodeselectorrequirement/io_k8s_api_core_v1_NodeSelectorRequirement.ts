@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_NodeSelectorRequirement {
 /**
-* An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
-* @isArray
-*/
-values?: string[];
-/**
 * The label key that the selector applies to.
 * @required
 */
@@ -27,6 +22,11 @@ Possible enum values:
 * @required
 */
 operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn';
+/**
+* An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
+* @isArray
+*/
+values?: string[];
 }
 
 /**
@@ -36,8 +36,8 @@ operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn';
 */
 export function createio_k8s_api_core_v1_NodeSelectorRequirement(data?: Partial<io_k8s_api_core_v1_NodeSelectorRequirement>): io_k8s_api_core_v1_NodeSelectorRequirement {
  return {
-   values: data?.values !== undefined ? data.values : [],
    key: data?.key !== undefined ? data.key : '',
    operator: data?.operator !== undefined ? data.operator : '',
+   values: data?.values !== undefined ? data.values : [],
  };
 }

@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_PodTemplateSpec {
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; resourceVersion?: string; uid?: string; namespace?: string; creationTimestamp?: Date; finalizers?: string[]; generateName?: string; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; name?: string; selfLink?: string; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; generation?: number };
+metadata?: { deletionGracePeriodSeconds?: number; generateName?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; resourceVersion?: string; uid?: string; deletionTimestamp?: Date; labels?: Record<string, any>; selfLink?: string; creationTimestamp?: Date; generation?: number; annotations?: Record<string, any>; finalizers?: string[]; name?: string; namespace?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }> };
 /**
 * PodSpec is a description of a pod.
 * @isObject

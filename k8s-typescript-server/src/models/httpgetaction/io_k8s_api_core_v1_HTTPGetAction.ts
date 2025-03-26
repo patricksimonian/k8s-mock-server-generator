@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_HTTPGetAction {
 /**
-* Host name to connect to, defaults to the pod IP. You probably want to set "Host" in httpHeaders instead.
-*/
-host?: string;
-/**
 * Custom headers to set in the request. HTTP allows repeated headers.
 * @isArray
 */
@@ -30,6 +26,10 @@ Possible enum values:
  - `"HTTPS"` means that the scheme used will be https://
 */
 scheme?: 'HTTP' | 'HTTPS';
+/**
+* Host name to connect to, defaults to the pod IP. You probably want to set "Host" in httpHeaders instead.
+*/
+host?: string;
 }
 
 /**
@@ -39,10 +39,10 @@ scheme?: 'HTTP' | 'HTTPS';
 */
 export function createio_k8s_api_core_v1_HTTPGetAction(data?: Partial<io_k8s_api_core_v1_HTTPGetAction>): io_k8s_api_core_v1_HTTPGetAction {
  return {
-   host: data?.host !== undefined ? data.host : '',
    httpHeaders: data?.httpHeaders !== undefined ? data.httpHeaders : [],
    path: data?.path !== undefined ? data.path : '',
    port: data?.port !== undefined ? data.port : '',
    scheme: data?.scheme !== undefined ? data.scheme : '',
+   host: data?.host !== undefined ? data.host : '',
  };
 }

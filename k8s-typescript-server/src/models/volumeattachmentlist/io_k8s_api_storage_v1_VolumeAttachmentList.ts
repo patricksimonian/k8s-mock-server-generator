@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_VolumeAttachmentList {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * items is the list of VolumeAttachments
 * @required
 * @isArray
@@ -23,7 +19,11 @@ kind?: string;
 * ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 * @isObject
 */
-metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: string; continue?: string };
+metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -33,10 +33,10 @@ metadata?: { remainingItemCount?: number; resourceVersion?: string; selfLink?: s
 */
 export function createio_k8s_api_storage_v1_VolumeAttachmentList(data?: Partial<io_k8s_api_storage_v1_VolumeAttachmentList>): io_k8s_api_storage_v1_VolumeAttachmentList {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    items: data?.items !== undefined ? data.items : ,
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

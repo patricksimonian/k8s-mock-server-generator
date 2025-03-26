@@ -12,17 +12,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { annotations?: Record<string, any>; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; name?: string; finalizers?: string[]; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; selfLink?: string; deletionGracePeriodSeconds?: number; generateName?: string; uid?: string; deletionTimestamp?: Date; resourceVersion?: string };
+metadata?: { ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; generateName?: string; name?: string; uid?: string; generation?: number; deletionTimestamp?: Date; finalizers?: string[]; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; namespace?: string; selfLink?: string; deletionGracePeriodSeconds?: number; creationTimestamp?: Date; annotations?: Record<string, any> };
 /**
 * DeploymentSpec is the specification of the desired behavior of the Deployment.
 * @isObject
 */
-spec?: { revisionHistoryLimit?: number; selector: { matchLabels?: Record<string, any>; matchExpressions?: Array<{ key: string; operator: string; values?: string[] }> }; strategy?: { rollingUpdate?: { maxSurge?: string; maxUnavailable?: string }; type?: 'Recreate' | 'RollingUpdate' }; template: { metadata?: { generation?: number; name?: string; uid?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; resourceVersion?: string; deletionGracePeriodSeconds?: number; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; finalizers?: string[]; generateName?: string; selfLink?: string; creationTimestamp?: Date }; spec?: Record<string, any> }; minReadySeconds?: number; paused?: boolean; progressDeadlineSeconds?: number; replicas?: number };
+spec?: { progressDeadlineSeconds?: number; replicas?: number; revisionHistoryLimit?: number; selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; strategy?: { rollingUpdate?: { maxSurge?: string; maxUnavailable?: string }; type?: 'Recreate' | 'RollingUpdate' }; template: { metadata?: { selfLink?: string; generateName?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; labels?: Record<string, any>; deletionGracePeriodSeconds?: number; generation?: number; name?: string; resourceVersion?: string; uid?: string; finalizers?: string[]; managedFields?: Array<{ fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string }>; deletionTimestamp?: Date; namespace?: string; annotations?: Record<string, any>; creationTimestamp?: Date }; spec?: Record<string, any> }; minReadySeconds?: number; paused?: boolean };
 /**
 * DeploymentStatus is the most recently observed status of the Deployment.
 * @isObject
 */
-status?: { availableReplicas?: number; collisionCount?: number; conditions?: Array<{ lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string; reason?: string; status: string; type: string }>; observedGeneration?: number; readyReplicas?: number; replicas?: number; unavailableReplicas?: number; updatedReplicas?: number };
+status?: { unavailableReplicas?: number; updatedReplicas?: number; availableReplicas?: number; collisionCount?: number; conditions?: Array<{ reason?: string; status: string; type: string; lastTransitionTime?: Date; lastUpdateTime?: Date; message?: string }>; observedGeneration?: number; readyReplicas?: number; replicas?: number };
 /**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
@@ -38,7 +38,7 @@ export function createio_k8s_api_apps_v1_Deployment(data?: Partial<io_k8s_api_ap
  return {
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { selector: {}, template: {} },
+   spec: data?.spec !== undefined ? data.spec : { template: {}, selector: {} },
    status: data?.status !== undefined ? data.status : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };

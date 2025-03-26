@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSet {
 /**
-* DaemonSetStatus represents the current status of a daemon set.
-* @isObject
-*/
-status?: { conditions?: Array<{ lastTransitionTime?: Date; message?: string; reason?: string; status: string; type: string }>; numberAvailable?: number; observedGeneration?: number; updatedNumberScheduled?: number; collisionCount?: number; currentNumberScheduled: number; desiredNumberScheduled: number; numberMisscheduled: number; numberReady: number; numberUnavailable?: number };
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -21,12 +16,17 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { creationTimestamp?: Date; generation?: number; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; resourceVersion?: string; uid?: string; deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; name?: string; deletionTimestamp?: Date; namespace?: string; selfLink?: string; annotations?: Record<string, any>; finalizers?: string[]; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }> };
+metadata?: { managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; deletionTimestamp?: Date; generateName?: string; namespace?: string; uid?: string; finalizers?: string[]; generation?: number; creationTimestamp?: Date; labels?: Record<string, any>; selfLink?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number };
 /**
 * DaemonSetSpec is the specification of a daemon set.
 * @isObject
 */
-spec?: { minReadySeconds?: number; revisionHistoryLimit?: number; selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; template: { metadata?: { deletionGracePeriodSeconds?: number; name?: string; uid?: string; selfLink?: string; annotations?: Record<string, any>; labels?: Record<string, any>; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; generateName?: string; generation?: number; resourceVersion?: string; managedFields?: Array<{ fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string }>; namespace?: string; creationTimestamp?: Date; deletionTimestamp?: Date; finalizers?: string[] }; spec?: Record<string, any> }; updateStrategy?: { rollingUpdate?: { maxSurge?: string; maxUnavailable?: string }; type?: 'OnDelete' | 'RollingUpdate' } };
+spec?: { minReadySeconds?: number; revisionHistoryLimit?: number; selector: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> }; template: { metadata?: { managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; name?: string; resourceVersion?: string; selfLink?: string; labels?: Record<string, any>; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; uid?: string; finalizers?: string[]; generateName?: string; generation?: number }; spec?: Record<string, any> }; updateStrategy?: { type?: 'OnDelete' | 'RollingUpdate'; rollingUpdate?: { maxSurge?: string; maxUnavailable?: string } } };
+/**
+* DaemonSetStatus represents the current status of a daemon set.
+* @isObject
+*/
+status?: { currentNumberScheduled: number; numberMisscheduled: number; numberUnavailable?: number; observedGeneration?: number; collisionCount?: number; conditions?: Array<{ type: string; lastTransitionTime?: Date; message?: string; reason?: string; status: string }>; desiredNumberScheduled: number; numberAvailable?: number; numberReady: number; updatedNumberScheduled?: number };
 }
 
 /**
@@ -36,10 +36,10 @@ spec?: { minReadySeconds?: number; revisionHistoryLimit?: number; selector: { ma
 */
 export function createio_k8s_api_apps_v1_DaemonSet(data?: Partial<io_k8s_api_apps_v1_DaemonSet>): io_k8s_api_apps_v1_DaemonSet {
  return {
-   status: data?.status !== undefined ? data.status : { currentNumberScheduled: 0, desiredNumberScheduled: 0, numberMisscheduled: 0, numberReady: 0 },
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   spec: data?.spec !== undefined ? data.spec : { template: {}, selector: {} },
+   spec: data?.spec !== undefined ? data.spec : { selector: {}, template: {} },
+   status: data?.status !== undefined ? data.status : { currentNumberScheduled: 0, numberMisscheduled: 0, desiredNumberScheduled: 0, numberReady: 0 },
  };
 }

@@ -1,6 +1,6 @@
 // endpoint-route.ts.tmpl
 import express from 'express';
-import { Storage } from '../storage/Storage';
+import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
@@ -10,10 +10,15 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
 //read ephemeralcontainers of the specified Pod
   router.get('/api/v1/namespaces/:namespace/pods/:name/ephemeralcontainers', async (req, res, next) => {
     try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
       logger.info(`Listing ephemeralcontainer in namespace ${namespace}`);
       
-      const resources = await storage.listResources('ephemeralcontainer', namespace);
+      const resources = await storage.listResources('ephemeralcontainer', namespace, listOpts);
       
       const response = {
         kind: 'EphemeralcontainerList',
@@ -29,26 +34,23 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
       next(error);
     }
   });
-
 //replace ephemeralcontainers of the specified Pod
   router.put('/api/v1/namespaces/:namespace/pods/:name/ephemeralcontainers', async (req, res, next) => {
     try {
-      const namespace = req.params.namespace;
       const name = req.params.name;
-      logger.info(`Updating ephemeralcontainer ${name} in namespace ${namespace}`);
-      
       const resource = req.body;
-      
       // Ensure resource has metadata
       if (!resource.metadata) {
         resource.metadata = {};
       }
-      
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating ephemeralcontainer ${name} in namespace ${namespace}`);
+
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      resource.metadata.namespace = namespace;
       
-      const updatedResource = await storage.updateResource('ephemeralcontainer', name, resource);
+      const updatedResource = await storage.updateResource('ephemeralcontainer', name, resource, namespace, resource.metadata.resourceVersion);
       
       res.json(updatedResource);
     } catch (error) {
@@ -61,9 +63,8 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
       const patchData = req.body;
       const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
-      
       logger.info(`Patching ephemeralcontainer ${name} in namespace ${namespace}`);
-      
+
       const resource = await storage.getResource('ephemeralcontainer', name, namespace);
       
       if (!resource) {
@@ -75,12 +76,12 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('configmap', name, patchData);
+        const updatedResource = storage.mergePatchResource('ephemeralcontainer', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('configmap', name, patchData);
+          const updatedResource = storage.jsonPatchResource('configmap', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {

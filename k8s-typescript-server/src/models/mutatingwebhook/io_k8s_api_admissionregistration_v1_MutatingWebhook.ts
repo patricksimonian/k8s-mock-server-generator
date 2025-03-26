@@ -10,16 +10,6 @@ export interface io_k8s_api_admissionregistration_v1_MutatingWebhook {
 */
 objectSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
 /**
-* The name of the admission webhook. Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where "imagepolicy" is the name of the webhook, and kubernetes.io is the name of the organization. Required.
-* @required
-*/
-name: string;
-/**
-* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
-* @isObject
-*/
-namespaceSelector?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> };
-/**
 * reinvocationPolicy indicates whether this webhook should be called multiple times as part of a single admission evaluation. Allowed values are "Never" and "IfNeeded".
 
 Never: the webhook will not be called more than once in a single admission evaluation.
@@ -34,17 +24,15 @@ Possible enum values:
 */
 reinvocationPolicy?: 'IfNeeded' | 'Never';
 /**
+* TimeoutSeconds specifies the timeout for this webhook. After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy. The timeout value must be between 1 and 30 seconds. Default to 10 seconds.
+*/
+timeoutSeconds?: number;
+/**
 * AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects. API server will try to use first version in the list which it supports. If none of the versions specified in this list supported by API server, validation will fail for this object. If a persisted webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail and be subject to the failure policy.
 * @required
 * @isArray
 */
 admissionReviewVersions: string[];
-/**
-* WebhookClientConfig contains the information to make a TLS connection with the webhook
-* @required
-* @isObject
-*/
-clientConfig: { url?: string; caBundle?: string; service?: { name: string; namespace: string; path?: string; port?: number } };
 /**
 * FailurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail. Defaults to Fail.
 
@@ -80,6 +68,22 @@ Possible enum values:
 */
 matchPolicy?: 'Equivalent' | 'Exact';
 /**
+* A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
+* @isObject
+*/
+namespaceSelector?: { matchExpressions?: Array<{ key: string; operator: string; values?: string[] }>; matchLabels?: Record<string, any> };
+/**
+* WebhookClientConfig contains the information to make a TLS connection with the webhook
+* @required
+* @isObject
+*/
+clientConfig: { caBundle?: string; service?: { name: string; namespace: string; path?: string; port?: number }; url?: string };
+/**
+* The name of the admission webhook. Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where "imagepolicy" is the name of the webhook, and kubernetes.io is the name of the organization. Required.
+* @required
+*/
+name: string;
+/**
 * Rules describes what operations on what resources/subresources the webhook cares about. The webhook cares about an operation if it matches _any_ Rule. However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.
 * @isArray
 */
@@ -95,10 +99,6 @@ Possible enum values:
 * @required
 */
 sideEffects: 'None' | 'NoneOnDryRun' | 'Some' | 'Unknown';
-/**
-* TimeoutSeconds specifies the timeout for this webhook. After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy. The timeout value must be between 1 and 30 seconds. Default to 10 seconds.
-*/
-timeoutSeconds?: number;
 }
 
 /**
@@ -109,16 +109,16 @@ timeoutSeconds?: number;
 export function createio_k8s_api_admissionregistration_v1_MutatingWebhook(data?: Partial<io_k8s_api_admissionregistration_v1_MutatingWebhook>): io_k8s_api_admissionregistration_v1_MutatingWebhook {
  return {
    objectSelector: data?.objectSelector !== undefined ? data.objectSelector : {},
-   name: data?.name !== undefined ? data.name : '',
-   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : {},
    reinvocationPolicy: data?.reinvocationPolicy !== undefined ? data.reinvocationPolicy : '',
+   timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
    admissionReviewVersions: data?.admissionReviewVersions !== undefined ? data.admissionReviewVersions : [],
-   clientConfig: data?.clientConfig !== undefined ? data.clientConfig : {},
    failurePolicy: data?.failurePolicy !== undefined ? data.failurePolicy : '',
    matchConditions: data?.matchConditions !== undefined ? data.matchConditions : [],
    matchPolicy: data?.matchPolicy !== undefined ? data.matchPolicy : '',
+   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : {},
+   clientConfig: data?.clientConfig !== undefined ? data.clientConfig : {},
+   name: data?.name !== undefined ? data.name : '',
    rules: data?.rules !== undefined ? data.rules : [],
    sideEffects: data?.sideEffects !== undefined ? data.sideEffects : '',
-   timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
  };
 }

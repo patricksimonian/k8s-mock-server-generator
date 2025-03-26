@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_ModifyVolumeStatus {
 /**
+* targetVolumeAttributesClassName is the name of the VolumeAttributesClass the PVC currently being reconciled
+*/
+targetVolumeAttributesClassName?: string;
+/**
 * status is the status of the ControllerModifyVolume operation. It can be in any of following states:
  - Pending
    Pending indicates that the PersistentVolumeClaim cannot be modified due to unmet requirements, such as
@@ -23,10 +27,6 @@ Possible enum values:
 * @required
 */
 status: 'InProgress' | 'Infeasible' | 'Pending';
-/**
-* targetVolumeAttributesClassName is the name of the VolumeAttributesClass the PVC currently being reconciled
-*/
-targetVolumeAttributesClassName?: string;
 }
 
 /**
@@ -36,7 +36,7 @@ targetVolumeAttributesClassName?: string;
 */
 export function createio_k8s_api_core_v1_ModifyVolumeStatus(data?: Partial<io_k8s_api_core_v1_ModifyVolumeStatus>): io_k8s_api_core_v1_ModifyVolumeStatus {
  return {
-   status: data?.status !== undefined ? data.status : '',
    targetVolumeAttributesClassName: data?.targetVolumeAttributesClassName !== undefined ? data.targetVolumeAttributesClassName : '',
+   status: data?.status !== undefined ? data.status : '',
  };
 }

@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_networking_v1_HTTPIngressPath {
 /**
+* IngressBackend describes all endpoints for a given service and port.
+* @required
+* @isObject
+*/
+backend: { resource?: { apiGroup?: string; kind: string; name: string }; service?: { name: string; port?: { number?: number; name?: string } } };
+/**
+* path is matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional "path" part of a URL as defined by RFC 3986. Paths must begin with a '/' and must be present when using PathType with value "Exact" or "Prefix".
+*/
+path?: string;
+/**
 * pathType determines the interpretation of the path matching. PathType can be one of the following values: * Exact: Matches the URL path exactly. * Prefix: Matches based on a URL path prefix split by '/'. Matching is
   done on a path element by element basis. A path element refers is the
   list of labels in the path split by the '/' separator. A request is a
@@ -24,16 +34,6 @@ Possible enum values:
 * @required
 */
 pathType: 'Exact' | 'ImplementationSpecific' | 'Prefix';
-/**
-* IngressBackend describes all endpoints for a given service and port.
-* @required
-* @isObject
-*/
-backend: { resource?: { name: string; apiGroup?: string; kind: string }; service?: { name: string; port?: { name?: string; number?: number } } };
-/**
-* path is matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional "path" part of a URL as defined by RFC 3986. Paths must begin with a '/' and must be present when using PathType with value "Exact" or "Prefix".
-*/
-path?: string;
 }
 
 /**
@@ -43,8 +43,8 @@ path?: string;
 */
 export function createio_k8s_api_networking_v1_HTTPIngressPath(data?: Partial<io_k8s_api_networking_v1_HTTPIngressPath>): io_k8s_api_networking_v1_HTTPIngressPath {
  return {
-   pathType: data?.pathType !== undefined ? data.pathType : '',
    backend: data?.backend !== undefined ? data.backend : {},
    path: data?.path !== undefined ? data.path : '',
+   pathType: data?.pathType !== undefined ? data.pathType : '',
  };
 }

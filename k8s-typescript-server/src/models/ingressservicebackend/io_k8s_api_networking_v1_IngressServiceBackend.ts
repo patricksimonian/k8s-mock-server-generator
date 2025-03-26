@@ -13,7 +13,7 @@ name: string;
 * ServiceBackendPort is the service port being referenced.
 * @isObject
 */
-port?: { name?: string; number?: number };
+port?: { number?: number; name?: string };
 }
 
 /**

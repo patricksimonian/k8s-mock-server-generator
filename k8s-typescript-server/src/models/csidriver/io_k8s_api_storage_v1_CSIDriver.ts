@@ -16,13 +16,13 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { name?: string; namespace?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; uid?: string; annotations?: Record<string, any>; labels?: Record<string, any>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; generateName?: string; selfLink?: string; generation?: number; resourceVersion?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; deletionTimestamp?: Date };
+metadata?: { managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string; uid?: string; labels?: Record<string, any>; deletionTimestamp?: Date; name?: string; ownerReferences?: Array<{ kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean }>; resourceVersion?: string; annotations?: Record<string, any>; deletionGracePeriodSeconds?: number; finalizers?: string[]; creationTimestamp?: Date; generation?: number; selfLink?: string; generateName?: string };
 /**
 * CSIDriverSpec is the specification of a CSIDriver.
 * @required
 * @isObject
 */
-spec: { podInfoOnMount?: boolean; requiresRepublish?: boolean; seLinuxMount?: boolean; storageCapacity?: boolean; tokenRequests?: Array<{ audience: string; expirationSeconds?: number }>; volumeLifecycleModes?: string[]; attachRequired?: boolean; fsGroupPolicy?: string };
+spec: { attachRequired?: boolean; fsGroupPolicy?: string; podInfoOnMount?: boolean; requiresRepublish?: boolean; seLinuxMount?: boolean; storageCapacity?: boolean; tokenRequests?: Array<{ expirationSeconds?: number; audience: string }>; volumeLifecycleModes?: string[] };
 }
 
 /**

@@ -7,10 +7,6 @@ An AWS EBS disk must exist before mounting to a container. The disk must also be
 */
 export interface io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource {
 /**
-* fsType is the filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
-*/
-fsType?: string;
-/**
 * partition is the partition in the volume that you want to mount. If omitted, the default is to mount by volume name. Examples: For volume /dev/sda1, you specify the partition as "1". Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).
 */
 partition?: number;
@@ -23,6 +19,10 @@ readOnly?: boolean;
 * @required
 */
 volumeID: string;
+/**
+* fsType is the filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
+*/
+fsType?: string;
 }
 
 /**
@@ -32,9 +32,9 @@ volumeID: string;
 */
 export function createio_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource(data?: Partial<io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource>): io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource {
  return {
-   fsType: data?.fsType !== undefined ? data.fsType : '',
    partition: data?.partition !== undefined ? data.partition : 0,
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    volumeID: data?.volumeID !== undefined ? data.volumeID : '',
+   fsType: data?.fsType !== undefined ? data.fsType : '',
  };
 }

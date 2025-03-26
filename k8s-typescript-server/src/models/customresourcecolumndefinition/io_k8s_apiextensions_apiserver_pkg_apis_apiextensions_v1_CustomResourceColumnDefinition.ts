@@ -5,6 +5,10 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition {
 /**
+* description is a human readable description of this column.
+*/
+description?: string;
+/**
 * format is an optional OpenAPI type definition for this column. The 'name' format is applied to the primary identifier column to assist in clients identifying column is the resource name. See https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types for details.
 */
 format?: string;
@@ -27,10 +31,6 @@ priority?: number;
 * @required
 */
 type: string;
-/**
-* description is a human readable description of this column.
-*/
-description?: string;
 }
 
 /**
@@ -40,11 +40,11 @@ description?: string;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition {
  return {
+   description: data?.description !== undefined ? data.description : '',
    format: data?.format !== undefined ? data.format : '',
    jsonPath: data?.jsonPath !== undefined ? data.jsonPath : '',
    name: data?.name !== undefined ? data.name : '',
    priority: data?.priority !== undefined ? data.priority : 0,
    type: data?.type !== undefined ? data.type : '',
-   description: data?.description !== undefined ? data.description : '',
  };
 }

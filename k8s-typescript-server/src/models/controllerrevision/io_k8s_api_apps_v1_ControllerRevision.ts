@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_apps_v1_ControllerRevision {
 /**
+* Revision indicates the revision of the state represented by Data.
+* @required
+*/
+revision: number;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -57,12 +62,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { deletionGracePeriodSeconds?: number; deletionTimestamp?: Date; name?: string; selfLink?: string; uid?: string; labels?: Record<string, any>; managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; namespace?: string; resourceVersion?: string; creationTimestamp?: Date; finalizers?: string[]; generateName?: string; generation?: number; annotations?: Record<string, any>; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }> };
-/**
-* Revision indicates the revision of the state represented by Data.
-* @required
-*/
-revision: number;
+metadata?: { deletionGracePeriodSeconds?: number; resourceVersion?: string; finalizers?: string[]; generateName?: string; namespace?: string; ownerReferences?: Array<{ blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string; apiVersion: string }>; deletionTimestamp?: Date; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; selfLink?: string; uid?: string; name?: string; annotations?: Record<string, any>; creationTimestamp?: Date; generation?: number; labels?: Record<string, any> };
 }
 
 /**
@@ -72,10 +72,10 @@ revision: number;
 */
 export function createio_k8s_api_apps_v1_ControllerRevision(data?: Partial<io_k8s_api_apps_v1_ControllerRevision>): io_k8s_api_apps_v1_ControllerRevision {
  return {
+   revision: data?.revision !== undefined ? data.revision : 0,
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    data: data?.data !== undefined ? data.data : {},
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
-   revision: data?.revision !== undefined ? data.revision : 0,
  };
 }

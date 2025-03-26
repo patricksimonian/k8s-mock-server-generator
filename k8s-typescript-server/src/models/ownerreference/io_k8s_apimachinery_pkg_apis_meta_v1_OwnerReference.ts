@@ -5,11 +5,6 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_OwnerReference {
 /**
-* UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
-* @required
-*/
-uid: string;
-/**
 * API version of the referent.
 * @required
 */
@@ -32,6 +27,11 @@ kind: string;
 * @required
 */
 name: string;
+/**
+* UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
+* @required
+*/
+uid: string;
 }
 
 /**
@@ -41,11 +41,11 @@ name: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_OwnerReference(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_OwnerReference>): io_k8s_apimachinery_pkg_apis_meta_v1_OwnerReference {
  return {
-   uid: data?.uid !== undefined ? data.uid : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    blockOwnerDeletion: data?.blockOwnerDeletion !== undefined ? data.blockOwnerDeletion : false,
    controller: data?.controller !== undefined ? data.controller : false,
    kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
+   uid: data?.uid !== undefined ? data.uid : '',
  };
 }

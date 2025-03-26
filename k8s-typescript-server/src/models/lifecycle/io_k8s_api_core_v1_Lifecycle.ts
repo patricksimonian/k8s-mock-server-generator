@@ -8,12 +8,12 @@ export interface io_k8s_api_core_v1_Lifecycle {
 * LifecycleHandler defines a specific action that should be taken in a lifecycle hook. One and only one of the fields, except TCPSocket must be specified.
 * @isObject
 */
-postStart?: { httpGet?: { scheme?: 'HTTP' | 'HTTPS'; host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string }; sleep?: { seconds: number }; tcpSocket?: { host?: string; port: string }; exec?: { command?: string[] } };
+preStop?: { httpGet?: { scheme?: 'HTTP' | 'HTTPS'; host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string }; sleep?: { seconds: number }; tcpSocket?: { host?: string; port: string }; exec?: { command?: string[] } };
 /**
 * LifecycleHandler defines a specific action that should be taken in a lifecycle hook. One and only one of the fields, except TCPSocket must be specified.
 * @isObject
 */
-preStop?: { exec?: { command?: string[] }; httpGet?: { host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string; scheme?: 'HTTP' | 'HTTPS' }; sleep?: { seconds: number }; tcpSocket?: { host?: string; port: string } };
+postStart?: { httpGet?: { host?: string; httpHeaders?: Array<{ name: string; value: string }>; path?: string; port: string; scheme?: 'HTTP' | 'HTTPS' }; sleep?: { seconds: number }; tcpSocket?: { host?: string; port: string }; exec?: { command?: string[] } };
 }
 
 /**
@@ -23,7 +23,7 @@ preStop?: { exec?: { command?: string[] }; httpGet?: { host?: string; httpHeader
 */
 export function createio_k8s_api_core_v1_Lifecycle(data?: Partial<io_k8s_api_core_v1_Lifecycle>): io_k8s_api_core_v1_Lifecycle {
  return {
-   postStart: data?.postStart !== undefined ? data.postStart : {},
    preStop: data?.preStop !== undefined ? data.preStop : {},
+   postStart: data?.postStart !== undefined ? data.postStart : {},
  };
 }

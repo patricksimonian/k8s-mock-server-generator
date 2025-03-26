@@ -29,7 +29,7 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { labels?: Record<string, any>; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; resourceVersion?: string; annotations?: Record<string, any>; deletionTimestamp?: Date; generateName?: string; selfLink?: string; creationTimestamp?: Date; finalizers?: string[]; generation?: number; namespace?: string; deletionGracePeriodSeconds?: number; name?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; uid?: string };
+metadata?: { selfLink?: string; uid?: string; generateName?: string; namespace?: string; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; finalizers?: string[]; generation?: number; labels?: Record<string, any>; deletionGracePeriodSeconds?: number; name?: string; resourceVersion?: string; annotations?: Record<string, any>; creationTimestamp?: Date; deletionTimestamp?: Date };
 /**
 * preemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
 

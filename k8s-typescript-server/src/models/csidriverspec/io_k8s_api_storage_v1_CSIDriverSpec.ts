@@ -5,20 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_CSIDriverSpec {
 /**
-* attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting. The CSI external-attacher coordinates with CSI volume driver and updates the volumeattachment status when the attach operation is complete. If the CSIDriverRegistry feature gate is enabled and the value is specified to false, the attach operation will be skipped. Otherwise the attach operation will be called.
-
-This field is immutable.
-*/
-attachRequired?: boolean;
-/**
-* fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.
-
-This field was immutable in Kubernetes < 1.29 and now is mutable.
-
-Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume. With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume's access mode contains ReadWriteOnce.
-*/
-fsGroupPolicy?: string;
-/**
 * podInfoOnMount indicates this CSI volume driver requires additional pod information (like podName, podUID, etc.) during mount operations, if set to true. If set to false, pod information will not be passed on mount. Default is false.
 
 The CSI driver specifies podInfoOnMount as part of driver deployment. If true, Kubelet will pass pod information as VolumeContext in the CSI NodePublishVolume() calls. The CSI driver is responsible for parsing and validating the information passed in as VolumeContext.
@@ -81,6 +67,20 @@ This field is beta. This field is immutable.
 * @isArray
 */
 volumeLifecycleModes?: string[];
+/**
+* attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting. The CSI external-attacher coordinates with CSI volume driver and updates the volumeattachment status when the attach operation is complete. If the CSIDriverRegistry feature gate is enabled and the value is specified to false, the attach operation will be skipped. Otherwise the attach operation will be called.
+
+This field is immutable.
+*/
+attachRequired?: boolean;
+/**
+* fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.
+
+This field was immutable in Kubernetes < 1.29 and now is mutable.
+
+Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume. With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume's access mode contains ReadWriteOnce.
+*/
+fsGroupPolicy?: string;
 }
 
 /**
@@ -90,13 +90,13 @@ volumeLifecycleModes?: string[];
 */
 export function createio_k8s_api_storage_v1_CSIDriverSpec(data?: Partial<io_k8s_api_storage_v1_CSIDriverSpec>): io_k8s_api_storage_v1_CSIDriverSpec {
  return {
-   attachRequired: data?.attachRequired !== undefined ? data.attachRequired : false,
-   fsGroupPolicy: data?.fsGroupPolicy !== undefined ? data.fsGroupPolicy : '',
    podInfoOnMount: data?.podInfoOnMount !== undefined ? data.podInfoOnMount : false,
    requiresRepublish: data?.requiresRepublish !== undefined ? data.requiresRepublish : false,
    seLinuxMount: data?.seLinuxMount !== undefined ? data.seLinuxMount : false,
    storageCapacity: data?.storageCapacity !== undefined ? data.storageCapacity : false,
    tokenRequests: data?.tokenRequests !== undefined ? data.tokenRequests : [],
    volumeLifecycleModes: data?.volumeLifecycleModes !== undefined ? data.volumeLifecycleModes : [],
+   attachRequired: data?.attachRequired !== undefined ? data.attachRequired : false,
+   fsGroupPolicy: data?.fsGroupPolicy !== undefined ? data.fsGroupPolicy : '',
  };
 }

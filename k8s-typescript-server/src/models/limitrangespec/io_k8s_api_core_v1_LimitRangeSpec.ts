@@ -9,7 +9,7 @@ export interface io_k8s_api_core_v1_LimitRangeSpec {
 * @required
 * @isArray
 */
-limits: Array<{ max?: Record<string, any>; maxLimitRequestRatio?: Record<string, any>; min?: Record<string, any>; type: string; default?: Record<string, any>; defaultRequest?: Record<string, any> }>;
+limits: Array<{ defaultRequest?: Record<string, any>; max?: Record<string, any>; maxLimitRequestRatio?: Record<string, any>; min?: Record<string, any>; type: string; default?: Record<string, any> }>;
 }
 
 /**

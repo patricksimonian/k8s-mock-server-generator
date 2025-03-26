@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_CinderPersistentVolumeSource {
 /**
-* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
-* @isObject
-*/
-secretRef?: { name?: string; namespace?: string };
-/**
 * volumeID used to identify the volume in cinder. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
 * @required
 */
@@ -22,6 +17,11 @@ fsType?: string;
 * readOnly is Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
 */
 readOnly?: boolean;
+/**
+* SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace
+* @isObject
+*/
+secretRef?: { name?: string; namespace?: string };
 }
 
 /**
@@ -31,9 +31,9 @@ readOnly?: boolean;
 */
 export function createio_k8s_api_core_v1_CinderPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_CinderPersistentVolumeSource>): io_k8s_api_core_v1_CinderPersistentVolumeSource {
  return {
-   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
    volumeID: data?.volumeID !== undefined ? data.volumeID : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : {},
  };
 }

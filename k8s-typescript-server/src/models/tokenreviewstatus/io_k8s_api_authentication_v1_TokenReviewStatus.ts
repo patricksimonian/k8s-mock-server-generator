@@ -21,7 +21,7 @@ error?: string;
 * UserInfo holds the information about the user needed to implement the user.Info interface.
 * @isObject
 */
-user?: { extra?: Record<string, any>; groups?: string[]; uid?: string; username?: string };
+user?: { uid?: string; username?: string; extra?: Record<string, any>; groups?: string[] };
 }
 
 /**

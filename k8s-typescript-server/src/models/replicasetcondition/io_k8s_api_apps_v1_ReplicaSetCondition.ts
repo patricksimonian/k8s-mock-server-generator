@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_apps_v1_ReplicaSetCondition {
 /**
+* Status of the condition, one of True, False, Unknown.
+* @required
+*/
+status: string;
+/**
+* Type of replica set condition.
+* @required
+*/
+type: string;
+/**
 * Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 */
 lastTransitionTime?: Date;
@@ -16,16 +26,6 @@ message?: string;
 * The reason for the condition's last transition.
 */
 reason?: string;
-/**
-* Status of the condition, one of True, False, Unknown.
-* @required
-*/
-status: string;
-/**
-* Type of replica set condition.
-* @required
-*/
-type: string;
 }
 
 /**
@@ -35,10 +35,10 @@ type: string;
 */
 export function createio_k8s_api_apps_v1_ReplicaSetCondition(data?: Partial<io_k8s_api_apps_v1_ReplicaSetCondition>): io_k8s_api_apps_v1_ReplicaSetCondition {
  return {
+   status: data?.status !== undefined ? data.status : '',
+   type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
-   status: data?.status !== undefined ? data.status : '',
-   type: data?.type !== undefined ? data.type : '',
  };
 }

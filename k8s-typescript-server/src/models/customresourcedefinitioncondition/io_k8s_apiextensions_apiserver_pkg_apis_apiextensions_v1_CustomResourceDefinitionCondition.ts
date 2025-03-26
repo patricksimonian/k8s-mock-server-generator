@@ -5,15 +5,6 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition {
 /**
-* reason is a unique, one-word, CamelCase reason for the condition's last transition.
-*/
-reason?: string;
-/**
-* status is the status of the condition. Can be True, False, Unknown.
-* @required
-*/
-status: string;
-/**
 * type is the type of the condition. Types include Established, NamesAccepted and Terminating.
 * @required
 */
@@ -26,6 +17,15 @@ lastTransitionTime?: Date;
 * message is a human-readable message indicating details about last transition.
 */
 message?: string;
+/**
+* reason is a unique, one-word, CamelCase reason for the condition's last transition.
+*/
+reason?: string;
+/**
+* status is the status of the condition. Can be True, False, Unknown.
+* @required
+*/
+status: string;
 }
 
 /**
@@ -35,10 +35,10 @@ message?: string;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition {
  return {
-   reason: data?.reason !== undefined ? data.reason : '',
-   status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    message: data?.message !== undefined ? data.message : '',
+   reason: data?.reason !== undefined ? data.reason : '',
+   status: data?.status !== undefined ? data.status : '',
  };
 }

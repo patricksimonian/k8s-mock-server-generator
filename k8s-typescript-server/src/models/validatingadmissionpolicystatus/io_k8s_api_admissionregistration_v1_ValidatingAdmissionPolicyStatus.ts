@@ -8,7 +8,7 @@ export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySt
 * The conditions represent the latest available observations of a policy's current state.
 * @isArray
 */
-conditions?: Array<{ reason: string; status: string; type: string; lastTransitionTime: Date; message: string; observedGeneration?: number }>;
+conditions?: Array<{ message: string; observedGeneration?: number; reason: string; status: string; type: string; lastTransitionTime: Date }>;
 /**
 * The generation observed by the controller.
 */
@@ -17,7 +17,7 @@ observedGeneration?: number;
 * TypeChecking contains results of type checking the expressions in the ValidatingAdmissionPolicy
 * @isObject
 */
-typeChecking?: { expressionWarnings?: Array<{ fieldRef: string; warning: string }> };
+typeChecking?: { expressionWarnings?: Array<{ warning: string; fieldRef: string }> };
 }
 
 /**

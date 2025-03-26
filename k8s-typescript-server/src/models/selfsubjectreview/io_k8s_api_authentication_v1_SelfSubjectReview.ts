@@ -16,12 +16,12 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { deletionGracePeriodSeconds?: number; generateName?: string; labels?: Record<string, any>; creationTimestamp?: Date; generation?: number; managedFields?: Array<{ subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string }>; resourceVersion?: string; selfLink?: string; uid?: string; finalizers?: string[]; deletionTimestamp?: Date; name?: string; namespace?: string; ownerReferences?: Array<{ uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string }>; annotations?: Record<string, any> };
+metadata?: { creationTimestamp?: Date; deletionGracePeriodSeconds?: number; generation?: number; namespace?: string; resourceVersion?: string; deletionTimestamp?: Date; finalizers?: string[]; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; generateName?: string; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; name?: string; uid?: string; annotations?: Record<string, any>; labels?: Record<string, any>; selfLink?: string };
 /**
 * SelfSubjectReviewStatus is filled by the kube-apiserver and sent back to a user.
 * @isObject
 */
-status?: { userInfo?: { extra?: Record<string, any>; groups?: string[]; uid?: string; username?: string } };
+status?: { userInfo?: { username?: string; extra?: Record<string, any>; groups?: string[]; uid?: string } };
 }
 
 /**

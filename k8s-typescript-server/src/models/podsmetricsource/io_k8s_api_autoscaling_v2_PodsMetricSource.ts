@@ -9,7 +9,7 @@ export interface io_k8s_api_autoscaling_v2_PodsMetricSource {
 * @required
 * @isObject
 */
-metric: { selector?: { matchExpressions?: Array<{ values?: string[]; key: string; operator: string }>; matchLabels?: Record<string, any> }; name: string };
+metric: { name: string; selector?: { matchExpressions?: Array<{ operator: string; values?: string[]; key: string }>; matchLabels?: Record<string, any> } };
 /**
 * MetricTarget defines the target value, average value, or average utilization of a specific metric
 * @required

@@ -8,7 +8,7 @@ export interface io_k8s_api_core_v1_ScopeSelector {
 * A list of scope selector requirements by scope of the resources.
 * @isArray
 */
-matchExpressions?: Array<{ operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn'; scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating'; values?: string[] }>;
+matchExpressions?: Array<{ values?: string[]; operator: 'DoesNotExist' | 'Exists' | 'In' | 'NotIn'; scopeName: 'BestEffort' | 'CrossNamespacePodAffinity' | 'NotBestEffort' | 'NotTerminating' | 'PriorityClass' | 'Terminating' }>;
 }
 
 /**

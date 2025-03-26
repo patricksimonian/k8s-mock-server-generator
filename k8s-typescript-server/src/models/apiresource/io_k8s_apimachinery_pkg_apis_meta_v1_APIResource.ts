@@ -20,6 +20,15 @@ storageVersionHash?: string;
 */
 verbs: string[];
 /**
+* categories is a list of the grouped resources this resource belongs to (e.g. 'all')
+* @isArray
+*/
+categories?: string[];
+/**
+* group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale".
+*/
+group?: string;
+/**
 * namespaced indicates if a resource is namespaced or not.
 * @required
 */
@@ -43,15 +52,6 @@ name: string;
 * version is the preferred version of the resource.  Empty implies the version of the containing resource list For subresources, this may have a different value, for example: v1 (while inside a v1beta1 version of the core resource's group)".
 */
 version?: string;
-/**
-* categories is a list of the grouped resources this resource belongs to (e.g. 'all')
-* @isArray
-*/
-categories?: string[];
-/**
-* group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale".
-*/
-group?: string;
 }
 
 /**
@@ -64,12 +64,12 @@ export function createio_k8s_apimachinery_pkg_apis_meta_v1_APIResource(data?: Pa
    singularName: data?.singularName !== undefined ? data.singularName : '',
    storageVersionHash: data?.storageVersionHash !== undefined ? data.storageVersionHash : '',
    verbs: data?.verbs !== undefined ? data.verbs : [],
+   categories: data?.categories !== undefined ? data.categories : [],
+   group: data?.group !== undefined ? data.group : '',
    namespaced: data?.namespaced !== undefined ? data.namespaced : false,
    shortNames: data?.shortNames !== undefined ? data.shortNames : [],
    kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
    version: data?.version !== undefined ? data.version : '',
-   categories: data?.categories !== undefined ? data.categories : [],
-   group: data?.group !== undefined ? data.group : '',
  };
 }

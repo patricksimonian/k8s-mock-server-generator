@@ -14,7 +14,7 @@ name: string;
 * @required
 * @isObject
 */
-target: { value?: string; averageUtilization?: number; averageValue?: string; type: string };
+target: { type: string; value?: string; averageUtilization?: number; averageValue?: string };
 }
 
 /**

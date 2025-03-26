@@ -8,12 +8,12 @@ export interface io_k8s_api_core_v1_ServiceStatus {
 * Current service state
 * @isArray
 */
-conditions?: Array<{ message: string; observedGeneration?: number; reason: string; status: string; type: string; lastTransitionTime: Date }>;
+conditions?: Array<{ observedGeneration?: number; reason: string; status: string; type: string; lastTransitionTime: Date; message: string }>;
 /**
 * LoadBalancerStatus represents the status of a load-balancer.
 * @isObject
 */
-loadBalancer?: { ingress?: Array<{ ipMode?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }>; hostname?: string; ip?: string }> };
+loadBalancer?: { ingress?: Array<{ hostname?: string; ip?: string; ipMode?: string; ports?: Array<{ error?: string; port: number; protocol: 'SCTP' | 'TCP' | 'UDP' }> }> };
 }
 
 /**

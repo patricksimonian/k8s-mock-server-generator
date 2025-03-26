@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_authorization_v1_SubjectAccessReviewStatus {
 /**
+* Reason is optional.  It indicates why a request was allowed or denied.
+*/
+reason?: string;
+/**
 * Allowed is required. True if the action would be allowed, false otherwise.
 * @required
 */
@@ -17,10 +21,6 @@ denied?: boolean;
 * EvaluationError is an indication that some error occurred during the authorization check. It is entirely possible to get an error and be able to continue determine authorization status in spite of it. For instance, RBAC can be missing a role, but enough roles are still present and bound to reason about the request.
 */
 evaluationError?: string;
-/**
-* Reason is optional.  It indicates why a request was allowed or denied.
-*/
-reason?: string;
 }
 
 /**
@@ -30,9 +30,9 @@ reason?: string;
 */
 export function createio_k8s_api_authorization_v1_SubjectAccessReviewStatus(data?: Partial<io_k8s_api_authorization_v1_SubjectAccessReviewStatus>): io_k8s_api_authorization_v1_SubjectAccessReviewStatus {
  return {
+   reason: data?.reason !== undefined ? data.reason : '',
    allowed: data?.allowed !== undefined ? data.allowed : false,
    denied: data?.denied !== undefined ? data.denied : false,
    evaluationError: data?.evaluationError !== undefined ? data.evaluationError : '',
-   reason: data?.reason !== undefined ? data.reason : '',
  };
 }

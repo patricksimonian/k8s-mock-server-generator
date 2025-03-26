@@ -5,24 +5,55 @@
 */
 export interface io_k8s_api_core_v1_Event {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+* MicroTime is version of Time with microsecond level precision.
 */
-firstTimestamp?: Date;
+eventTime?: Date;
 /**
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @required
 * @isObject
 */
-metadata: { uid?: string; deletionTimestamp?: Date; finalizers?: string[]; generation?: number; labels?: Record<string, any>; deletionGracePeriodSeconds?: number; namespace?: string; annotations?: Record<string, any>; generateName?: string; managedFields?: Array<{ apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string; time?: Date }>; name?: string; creationTimestamp?: Date; ownerReferences?: Array<{ controller?: boolean; kind: string; name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean }>; resourceVersion?: string; selfLink?: string };
+metadata: { annotations?: Record<string, any>; deletionTimestamp?: Date; name?: string; resourceVersion?: string; selfLink?: string; uid?: string; finalizers?: string[]; generateName?: string; ownerReferences?: Array<{ name: string; uid: string; apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string }>; generation?: number; labels?: Record<string, any>; managedFields?: Array<{ time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string; operation?: string; subresource?: string }>; namespace?: string; creationTimestamp?: Date; deletionGracePeriodSeconds?: number };
+/**
+* This should be a short, machine understandable string that gives the reason for the transition into the object's current status.
+*/
+reason?: string;
+/**
+* Type of this event (Normal, Warning), new types could be added in the future
+*/
+type?: string;
+/**
+* EventSeries contain information on series of events, i.e. thing that was/is happening continuously for some time.
+* @isObject
+*/
+series?: { count?: number; lastObservedTime?: Date };
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+firstTimestamp?: Date;
+/**
+* ObjectReference contains enough information to let you inspect or modify the referred object.
+* @required
+* @isObject
+*/
+involvedObject: { fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string; apiVersion?: string };
+/**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
+* A human-readable description of the status of this operation.
+*/
+message?: string;
 /**
 * ObjectReference contains enough information to let you inspect or modify the referred object.
 * @isObject
 */
-related?: { uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string };
+related?: { apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string; resourceVersion?: string; uid?: string };
 /**
-* ID of the controller instance, e.g. `kubelet-xyzf`.
+* Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.
 */
-reportingInstance?: string;
+reportingComponent?: string;
 /**
 * EventSource contains information for an event.
 * @isObject
@@ -33,52 +64,21 @@ source?: { component?: string; host?: string };
 */
 action?: string;
 /**
-* MicroTime is version of Time with microsecond level precision.
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
-eventTime?: Date;
-/**
-* Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.
-*/
-reportingComponent?: string;
+apiVersion?: string;
 /**
 * The number of times this event has occurred.
 */
 count?: number;
 /**
-* ObjectReference contains enough information to let you inspect or modify the referred object.
-* @required
-* @isObject
-*/
-involvedObject: { resourceVersion?: string; uid?: string; apiVersion?: string; fieldPath?: string; kind?: string; name?: string; namespace?: string };
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
 * Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 */
 lastTimestamp?: Date;
 /**
-* A human-readable description of the status of this operation.
+* ID of the controller instance, e.g. `kubelet-xyzf`.
 */
-message?: string;
-/**
-* This should be a short, machine understandable string that gives the reason for the transition into the object's current status.
-*/
-reason?: string;
-/**
-* EventSeries contain information on series of events, i.e. thing that was/is happening continuously for some time.
-* @isObject
-*/
-series?: { count?: number; lastObservedTime?: Date };
-/**
-* Type of this event (Normal, Warning), new types could be added in the future
-*/
-type?: string;
+reportingInstance?: string;
 }
 
 /**
@@ -88,22 +88,22 @@ type?: string;
 */
 export function createio_k8s_api_core_v1_Event(data?: Partial<io_k8s_api_core_v1_Event>): io_k8s_api_core_v1_Event {
  return {
-   firstTimestamp: data?.firstTimestamp !== undefined ? data.firstTimestamp : '',
+   eventTime: data?.eventTime !== undefined ? data.eventTime : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   reason: data?.reason !== undefined ? data.reason : '',
+   type: data?.type !== undefined ? data.type : '',
+   series: data?.series !== undefined ? data.series : {},
+   firstTimestamp: data?.firstTimestamp !== undefined ? data.firstTimestamp : '',
+   involvedObject: data?.involvedObject !== undefined ? data.involvedObject : {},
+   kind: data?.kind !== undefined ? data.kind : '',
+   message: data?.message !== undefined ? data.message : '',
    related: data?.related !== undefined ? data.related : {},
-   reportingInstance: data?.reportingInstance !== undefined ? data.reportingInstance : '',
+   reportingComponent: data?.reportingComponent !== undefined ? data.reportingComponent : '',
    source: data?.source !== undefined ? data.source : {},
    action: data?.action !== undefined ? data.action : '',
-   eventTime: data?.eventTime !== undefined ? data.eventTime : '',
-   reportingComponent: data?.reportingComponent !== undefined ? data.reportingComponent : '',
-   count: data?.count !== undefined ? data.count : 0,
-   involvedObject: data?.involvedObject !== undefined ? data.involvedObject : {},
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   kind: data?.kind !== undefined ? data.kind : '',
+   count: data?.count !== undefined ? data.count : 0,
    lastTimestamp: data?.lastTimestamp !== undefined ? data.lastTimestamp : '',
-   message: data?.message !== undefined ? data.message : '',
-   reason: data?.reason !== undefined ? data.reason : '',
-   series: data?.series !== undefined ? data.series : {},
-   type: data?.type !== undefined ? data.type : '',
+   reportingInstance: data?.reportingInstance !== undefined ? data.reportingInstance : '',
  };
 }

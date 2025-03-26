@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ComponentStatus {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * List of component conditions observed
 * @isArray
 */
@@ -21,7 +17,11 @@ kind?: string;
 * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 * @isObject
 */
-metadata?: { managedFields?: Array<{ operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any>; manager?: string }>; labels?: Record<string, any>; namespace?: string; annotations?: Record<string, any>; creationTimestamp?: Date; deletionGracePeriodSeconds?: number; finalizers?: string[]; generateName?: string; generation?: number; name?: string; uid?: string; deletionTimestamp?: Date; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; resourceVersion?: string; selfLink?: string };
+metadata?: { uid?: string; deletionTimestamp?: Date; finalizers?: string[]; managedFields?: Array<{ manager?: string; operation?: string; subresource?: string; time?: Date; apiVersion?: string; fieldsType?: string; fieldsV1?: Record<string, any> }>; resourceVersion?: string; selfLink?: string; annotations?: Record<string, any>; generateName?: string; name?: string; namespace?: string; creationTimestamp?: Date; generation?: number; ownerReferences?: Array<{ apiVersion: string; blockOwnerDeletion?: boolean; controller?: boolean; kind: string; name: string; uid: string }>; deletionGracePeriodSeconds?: number; labels?: Record<string, any> };
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -31,9 +31,9 @@ metadata?: { managedFields?: Array<{ operation?: string; subresource?: string; t
 */
 export function createio_k8s_api_core_v1_ComponentStatus(data?: Partial<io_k8s_api_core_v1_ComponentStatus>): io_k8s_api_core_v1_ComponentStatus {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    conditions: data?.conditions !== undefined ? data.conditions : [],
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : {},
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }

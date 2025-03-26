@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationCondition {
 /**
-* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-*/
-lastTransitionTime?: Date;
-/**
 * `message` is a human-readable message indicating details about last transition.
 */
 message?: string;
@@ -24,6 +20,10 @@ status?: string;
 * `type` is the type of the condition. Required.
 */
 type?: string;
+/**
+* Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+*/
+lastTransitionTime?: Date;
 }
 
 /**
@@ -33,10 +33,10 @@ type?: string;
 */
 export function createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationCondition(data?: Partial<io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationCondition>): io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationCondition {
  return {
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : '',
  };
 }

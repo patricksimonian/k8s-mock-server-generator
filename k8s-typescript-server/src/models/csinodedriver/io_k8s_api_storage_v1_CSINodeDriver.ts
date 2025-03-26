@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_CSINodeDriver {
 /**
-* topologyKeys is the list of keys supported by the driver. When a driver is initialized on a cluster, it provides a set of topology keys that it understands (e.g. "company.com/zone", "company.com/region"). When a driver is initialized on a node, it provides the same topology keys along with values. Kubelet will expose these topology keys as labels on its own node object. When Kubernetes does topology aware provisioning, it can use this list to determine which labels it should retrieve from the node object and pass back to the driver. It is possible for different nodes to use different topology keys. This can be empty if driver does not support topology.
-* @isArray
-*/
-topologyKeys?: string[];
-/**
 * VolumeNodeResources is a set of resource limits for scheduling of volumes.
 * @isObject
 */
@@ -24,6 +19,11 @@ name: string;
 * @required
 */
 nodeID: string;
+/**
+* topologyKeys is the list of keys supported by the driver. When a driver is initialized on a cluster, it provides a set of topology keys that it understands (e.g. "company.com/zone", "company.com/region"). When a driver is initialized on a node, it provides the same topology keys along with values. Kubelet will expose these topology keys as labels on its own node object. When Kubernetes does topology aware provisioning, it can use this list to determine which labels it should retrieve from the node object and pass back to the driver. It is possible for different nodes to use different topology keys. This can be empty if driver does not support topology.
+* @isArray
+*/
+topologyKeys?: string[];
 }
 
 /**
@@ -33,9 +33,9 @@ nodeID: string;
 */
 export function createio_k8s_api_storage_v1_CSINodeDriver(data?: Partial<io_k8s_api_storage_v1_CSINodeDriver>): io_k8s_api_storage_v1_CSINodeDriver {
  return {
-   topologyKeys: data?.topologyKeys !== undefined ? data.topologyKeys : [],
    allocatable: data?.allocatable !== undefined ? data.allocatable : {},
    name: data?.name !== undefined ? data.name : '',
    nodeID: data?.nodeID !== undefined ? data.nodeID : '',
+   topologyKeys: data?.topologyKeys !== undefined ? data.topologyKeys : [],
  };
 }

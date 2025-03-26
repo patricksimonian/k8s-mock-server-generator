@@ -5,6 +5,11 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent {
 /**
+* 
+* @required
+*/
+type: string;
+/**
 * RawExtension is used to hold extensions in external versions.
 
 To use this, make a field which has RawExtension as its type in your external, versioned struct, and Object in your internal struct. You also need to register your various plugin types.
@@ -46,11 +51,6 @@ So what happens? Decode first uses json or yaml to unmarshal the serialized data
 * @required
 */
 object: Record<string, any>;
-/**
-* 
-* @required
-*/
-type: string;
 }
 
 /**
@@ -60,7 +60,7 @@ type: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent>): io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent {
  return {
-   object: data?.object !== undefined ? data.object : {},
    type: data?.type !== undefined ? data.type : '',
+   object: data?.object !== undefined ? data.object : {},
  };
 }

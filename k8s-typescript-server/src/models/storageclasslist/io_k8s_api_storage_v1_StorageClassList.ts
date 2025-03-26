@@ -23,7 +23,7 @@ kind?: string;
 * ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 * @isObject
 */
-metadata?: { continue?: string; remainingItemCount?: number; resourceVersion?: string; selfLink?: string };
+metadata?: { selfLink?: string; continue?: string; remainingItemCount?: number; resourceVersion?: string };
 }
 
 /**
