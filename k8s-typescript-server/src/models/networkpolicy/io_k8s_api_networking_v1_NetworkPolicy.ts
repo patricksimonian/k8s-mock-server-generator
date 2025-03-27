@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_networking_v1_NetworkPolicy {
 /**
-* spec represents the specification of the desired behavior for this NetworkPolicy.
-* @references io.k8s.api.networking.v1.NetworkPolicySpec
-*/
-spec?: io_k8s_api_networking_v1_NetworkPolicySpec;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -22,6 +17,11 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec represents the specification of the desired behavior for this NetworkPolicy.
+* @references io.k8s.api.networking.v1.NetworkPolicySpec
+*/
+spec?: io_k8s_api_networking_v1_NetworkPolicySpec;
 }
 
 /**
@@ -31,10 +31,10 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_networking_v1_NetworkPolicy(data?: Partial<io_k8s_api_networking_v1_NetworkPolicy>): io_k8s_api_networking_v1_NetworkPolicy {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_networking_v1_NetworkPolicySpec(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_networking_v1_NetworkPolicySpec(),
  };
 }
 // Required imports

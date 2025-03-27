@@ -4,10 +4,12 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createbindingRoutes(storage: Storage): express.Router {
   const router = express.Router();
   //create a Binding
   router.post('/api/v1/namespaces/:namespace/bindings', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata

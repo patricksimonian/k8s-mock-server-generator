@@ -15,10 +15,20 @@ kernelVersion: string;
 */
 kubeletVersion: string;
 /**
+* MachineID reported by the node. For unique machine identification in the cluster this field is preferred. Learn more from man(5) machine-id: http://man7.org/linux/man-pages/man5/machine-id.5.html
+* @required
+*/
+machineID: string;
+/**
 * The Operating System reported by the node
 * @required
 */
 operatingSystem: string;
+/**
+* OS Image reported by the node from /etc/os-release (e.g. Debian GNU/Linux 7 (wheezy)).
+* @required
+*/
+osImage: string;
 /**
 * The Architecture reported by the node
 * @required
@@ -40,16 +50,6 @@ containerRuntimeVersion: string;
 */
 kubeProxyVersion: string;
 /**
-* MachineID reported by the node. For unique machine identification in the cluster this field is preferred. Learn more from man(5) machine-id: http://man7.org/linux/man-pages/man5/machine-id.5.html
-* @required
-*/
-machineID: string;
-/**
-* OS Image reported by the node from /etc/os-release (e.g. Debian GNU/Linux 7 (wheezy)).
-* @required
-*/
-osImage: string;
-/**
 * SystemUUID reported by the node. For unique machine identification MachineID is preferred. This field is specific to Red Hat hosts https://access.redhat.com/documentation/en-us/red_hat_subscription_management/1/html/rhsm/uuid
 * @required
 */
@@ -65,13 +65,13 @@ export function createio_k8s_api_core_v1_NodeSystemInfo(data?: Partial<io_k8s_ap
  return {
    kernelVersion: data?.kernelVersion !== undefined ? data.kernelVersion : '',
    kubeletVersion: data?.kubeletVersion !== undefined ? data.kubeletVersion : '',
+   machineID: data?.machineID !== undefined ? data.machineID : '',
    operatingSystem: data?.operatingSystem !== undefined ? data.operatingSystem : '',
+   osImage: data?.osImage !== undefined ? data.osImage : '',
    architecture: data?.architecture !== undefined ? data.architecture : '',
    bootID: data?.bootID !== undefined ? data.bootID : '',
    containerRuntimeVersion: data?.containerRuntimeVersion !== undefined ? data.containerRuntimeVersion : '',
    kubeProxyVersion: data?.kubeProxyVersion !== undefined ? data.kubeProxyVersion : '',
-   machineID: data?.machineID !== undefined ? data.machineID : '',
-   osImage: data?.osImage !== undefined ? data.osImage : '',
    systemUUID: data?.systemUUID !== undefined ? data.systemUUID : '',
  };
 }

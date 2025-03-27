@@ -4,30 +4,12 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createendpointsliceRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch changes to an object of kind EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('endpointslice', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/discovery.k8s.io/v1/watch/endpointslices', async (req, res, next) => {
+//list or watch objects of kind EndpointSlice
+  router.get('/apis/discovery.k8s.io/v1/endpointslices', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -46,8 +28,51 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
+
+//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing endpointslice in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind EndpointSlice
+  router.get('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing endpointslice in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
   //create an EndpointSlice
   router.post('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -98,69 +123,6 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
           kind: 'endpointslice'
         }
       });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind EndpointSlice
-  router.get('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing endpointslice in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified EndpointSlice
-  router.get('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('endpointslice', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace the specified EndpointSlice
-  router.put('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating endpointslice ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-
-      const updatedResource = await storage.updateResource('endpointslice', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -234,29 +196,50 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices', async (req, res, next) => {
+//read the specified EndpointSlice
+  router.get('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
       const namespace = req.params.namespace;
-      logger.info(`Listing endpointslice in namespace ${namespace}`);
+      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
       
-      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
+      const resource = await storage.getResource('endpointslice', name, namespace);
       
+      if (!resource) {
+        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace the specified EndpointSlice
+  router.put('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating endpointslice ${name} in namespace ${namespace}`);
 
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('endpointslice', name, resource, namespace, resource.metadata.resourceVersion);
       
-      res.json(resourceList);
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
   });
 
-//list or watch objects of kind EndpointSlice
-  router.get('/apis/discovery.k8s.io/v1/endpointslices', async (req, res, next) => {
+//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/discovery.k8s.io/v1/watch/endpointslices', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -271,6 +254,25 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
 
       
       res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('endpointslice', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
     } catch (error) {
       next(error);
     }

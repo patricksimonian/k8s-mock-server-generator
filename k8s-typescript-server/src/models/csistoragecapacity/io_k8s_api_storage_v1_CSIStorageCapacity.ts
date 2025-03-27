@@ -13,17 +13,6 @@ They are consumed by the kube-scheduler when a CSI driver opts into capacity-awa
 */
 export interface io_k8s_api_storage_v1_CSIStorageCapacity {
 /**
-* capacity is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
-
-The semantic is currently (CSI spec 1.2) defined as: The available capacity, in bytes, of the storage that can be used to provision volumes. If not set, that information is currently unavailable.
-* @references io.k8s.apimachinery.pkg.api.resource.Quantity
-*/
-capacity?: io_k8s_apimachinery_pkg_api_resource_Quantity;
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
 * maximumVolumeSize is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
 
 This is defined since CSI spec 1.4.0 as the largest size that may be used in a CreateVolumeRequest.capacity_range.required_bytes field to create a volume with the same parameters as those in GetCapacityRequest. The corresponding value in the Kubernetes API is ResourceRequirements.Requests in a volume claim.
@@ -53,6 +42,17 @@ storageClassName: string;
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
+/**
+* capacity is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
+
+The semantic is currently (CSI spec 1.2) defined as: The available capacity, in bytes, of the storage that can be used to provision volumes. If not set, that information is currently unavailable.
+* @references io.k8s.apimachinery.pkg.api.resource.Quantity
+*/
+capacity?: io_k8s_apimachinery_pkg_api_resource_Quantity;
+/**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
 }
 
 /**
@@ -62,13 +62,13 @@ apiVersion?: string;
 */
 export function createio_k8s_api_storage_v1_CSIStorageCapacity(data?: Partial<io_k8s_api_storage_v1_CSIStorageCapacity>): io_k8s_api_storage_v1_CSIStorageCapacity {
  return {
-   capacity: data?.capacity !== undefined ? data.capacity : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
-   kind: data?.kind !== undefined ? data.kind : '',
    maximumVolumeSize: data?.maximumVolumeSize !== undefined ? data.maximumVolumeSize : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   capacity: data?.capacity !== undefined ? data.capacity : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
+   kind: data?.kind !== undefined ? data.kind : '',
  };
 }
 // Required imports

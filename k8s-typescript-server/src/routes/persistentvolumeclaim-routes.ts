@@ -4,6 +4,7 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createpersistentvolumeclaimRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
@@ -21,104 +22,6 @@ export function createpersistentvolumeclaimRoutes(storage: Storage): express.Rou
       }
   
       res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a PersistentVolumeClaim
-  router.post('/api/v1/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating persistentvolumeclaim in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of PersistentVolumeClaim
-  router.delete('/api/v1/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all persistentvolumeclaim in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('persistentvolumeclaim', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`persistentvolumeclaim not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`persistentvolumeclaim not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'persistentvolumeclaim'
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind PersistentVolumeClaim
-  router.get('/api/v1/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing persistentvolumeclaim in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('persistentvolumeclaim', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of PersistentVolumeClaim. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing persistentvolumeclaim in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('persistentvolumeclaim', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -326,6 +229,105 @@ export function createpersistentvolumeclaimRoutes(storage: Storage): express.Rou
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = null;
       logger.info(`Listing persistentvolumeclaim`);
+      
+      const resourceList = await storage.listResources('persistentvolumeclaim', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind PersistentVolumeClaim
+  router.get('/api/v1/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing persistentvolumeclaim in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('persistentvolumeclaim', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a PersistentVolumeClaim
+  router.post('/api/v1/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
+
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating persistentvolumeclaim in namespace ${namespace}`);
+      
+      
+      // Set namespace in metadata
+      resource.metadata.namespace = namespace;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of PersistentVolumeClaim
+  router.delete('/api/v1/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all persistentvolumeclaim in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('persistentvolumeclaim', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`persistentvolumeclaim not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`persistentvolumeclaim not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'persistentvolumeclaim'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of PersistentVolumeClaim. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/persistentvolumeclaims', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing persistentvolumeclaim in namespace ${namespace}`);
       
       const resourceList = await storage.listResources('persistentvolumeclaim', namespace, listOpts);
       

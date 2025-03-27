@@ -5,17 +5,6 @@
 */
 export interface io_k8s_api_authorization_v1_SelfSubjectAccessReview {
 /**
-* Spec holds information about the request being evaluated.  user and groups must be empty
-* @required
-* @references io.k8s.api.authorization.v1.SelfSubjectAccessReviewSpec
-*/
-spec: io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec;
-/**
-* Status is filled in by the server and indicates whether the request is allowed or not
-* @references io.k8s.api.authorization.v1.SubjectAccessReviewStatus
-*/
-status?: io_k8s_api_authorization_v1_SubjectAccessReviewStatus;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -28,6 +17,17 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* Spec holds information about the request being evaluated.  user and groups must be empty
+* @required
+* @references io.k8s.api.authorization.v1.SelfSubjectAccessReviewSpec
+*/
+spec: io_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec;
+/**
+* Status is filled in by the server and indicates whether the request is allowed or not
+* @references io.k8s.api.authorization.v1.SubjectAccessReviewStatus
+*/
+status?: io_k8s_api_authorization_v1_SubjectAccessReviewStatus;
 }
 
 /**
@@ -37,11 +37,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_authorization_v1_SelfSubjectAccessReview(data?: Partial<io_k8s_api_authorization_v1_SelfSubjectAccessReview>): io_k8s_api_authorization_v1_SelfSubjectAccessReview {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_authorization_v1_SubjectAccessReviewStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authorization_v1_SelfSubjectAccessReviewSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authorization_v1_SubjectAccessReviewStatus(),
  };
 }
 // Required imports

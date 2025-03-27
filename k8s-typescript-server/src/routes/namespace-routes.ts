@@ -4,8 +4,30 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createnamespaceRoutes(storage: Storage): express.Router {
   const router = express.Router();
+
+//watch individual changes to a list of Namespace. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing namespace`);
+      
+      const resourceList = await storage.listResources('namespace', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 //watch changes to an object of kind Namespace. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
   router.get('/api/v1/watch/namespaces/:name', async (req, res, next) => {
@@ -25,23 +47,25 @@ export function createnamespaceRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//read status of the specified Namespace
-  router.get('/api/v1/namespaces/:name/status', async (req, res, next) => {
+//replace finalize of the specified Namespace
+  router.put('/api/v1/namespaces/:name/finalize', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
       const namespace = null;
-      logger.info(`Listing namespace`);
-      
-      const resourceList = await storage.listResources('namespace', namespace, listOpts);
-      
+      logger.info(`Updating namespace ${name}`);
 
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "finalize";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('namespace', name, subresource, resource, namespace);
       
-      res.json(resourceList);
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -86,6 +110,27 @@ export function createnamespaceRoutes(storage: Storage): express.Router {
     }
   });
 
+//read status of the specified Namespace
+  router.get('/api/v1/namespaces/:name/status', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing namespace`);
+      
+      const resourceList = await storage.listResources('namespace', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //list or watch objects of kind Namespace
   router.get('/api/v1/namespaces', async (req, res, next) => {
     try {
@@ -108,6 +153,7 @@ export function createnamespaceRoutes(storage: Storage): express.Router {
   });
   //create a Namespace
   router.post('/api/v1/namespaces', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -121,50 +167,6 @@ export function createnamespaceRoutes(storage: Storage): express.Router {
       const createdResource = await storage.createResource(resource as KubeResource, namespace);
       
       res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace finalize of the specified Namespace
-  router.put('/api/v1/namespaces/:name/finalize', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating namespace ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "finalize";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('namespace', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of Namespace. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing namespace`);
-      
-      const resourceList = await storage.listResources('namespace', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

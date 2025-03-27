@@ -5,6 +5,14 @@
 */
 export interface io_k8s_api_authorization_v1_ResourceAttributes {
 /**
+* Group is the API Group of the Resource.  "*" means all.
+*/
+group?: string;
+/**
+* Resource is one of the existing resource types.  "*" means all.
+*/
+resource?: string;
+/**
 * Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  "*" means all.
 */
 verb?: string;
@@ -19,10 +27,6 @@ This field  is alpha-level. To use this field, you must enable the `AuthorizeWit
 * @references io.k8s.api.authorization.v1.FieldSelectorAttributes
 */
 fieldSelector?: io_k8s_api_authorization_v1_FieldSelectorAttributes;
-/**
-* Group is the API Group of the Resource.  "*" means all.
-*/
-group?: string;
 /**
 * labelSelector describes the limitation on access based on labels.  It can only limit access, not broaden it.
 
@@ -39,10 +43,6 @@ name?: string;
 */
 namespace?: string;
 /**
-* Resource is one of the existing resource types.  "*" means all.
-*/
-resource?: string;
-/**
 * Subresource is one of the existing resource types.  "" means none.
 */
 subresource?: string;
@@ -55,14 +55,14 @@ subresource?: string;
 */
 export function createio_k8s_api_authorization_v1_ResourceAttributes(data?: Partial<io_k8s_api_authorization_v1_ResourceAttributes>): io_k8s_api_authorization_v1_ResourceAttributes {
  return {
+   group: data?.group !== undefined ? data.group : '',
+   resource: data?.resource !== undefined ? data.resource : '',
    verb: data?.verb !== undefined ? data.verb : '',
    version: data?.version !== undefined ? data.version : '',
    fieldSelector: data?.fieldSelector !== undefined ? data.fieldSelector : createio_k8s_api_authorization_v1_FieldSelectorAttributes(),
-   group: data?.group !== undefined ? data.group : '',
    labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_api_authorization_v1_LabelSelectorAttributes(),
    name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
-   resource: data?.resource !== undefined ? data.resource : '',
    subresource: data?.subresource !== undefined ? data.subresource : '',
  };
 }

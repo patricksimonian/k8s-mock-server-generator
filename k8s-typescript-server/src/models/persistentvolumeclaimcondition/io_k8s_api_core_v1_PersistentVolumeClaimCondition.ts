@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaimCondition {
 /**
+* Type is the type of the condition. More info: https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#:~:text=set%20to%20%27ResizeStarted%27.-,PersistentVolumeClaimCondition,-contains%20details%20about
+* @required
+*/
+type: string;
+/**
 * lastProbeTime is the time we probed the condition.
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
@@ -27,11 +32,6 @@ reason?: string;
 * @required
 */
 status: string;
-/**
-* Type is the type of the condition. More info: https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#:~:text=set%20to%20%27ResizeStarted%27.-,PersistentVolumeClaimCondition,-contains%20details%20about
-* @required
-*/
-type: string;
 }
 
 /**
@@ -41,12 +41,12 @@ type: string;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaimCondition(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaimCondition>): io_k8s_api_core_v1_PersistentVolumeClaimCondition {
  return {
+   type: data?.type !== undefined ? data.type : '',
    lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
-   type: data?.type !== undefined ? data.type : '',
  };
 }
 // Required imports

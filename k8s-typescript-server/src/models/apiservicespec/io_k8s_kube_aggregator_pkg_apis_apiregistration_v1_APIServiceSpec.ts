@@ -5,6 +5,19 @@
 */
 export interface io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec {
 /**
+* CABundle is a PEM encoded CA bundle which will be used to validate an API server's serving certificate. If unspecified, system trust roots on the apiserver are used.
+*/
+caBundle?: string;
+/**
+* Group is the API group name this server hosts
+*/
+group?: string;
+/**
+* GroupPriorityMinimum is the priority this group should have at least. Higher priority means that the group is preferred by clients over lower priority ones. Note that other versions of this group might specify even higher GroupPriorityMinimum values such that the whole group gets a higher priority. The primary sort is based on GroupPriorityMinimum, ordered highest number to lowest (20 before 10). The secondary sort is based on the alphabetical comparison of the name of the object.  (v1.bar before v1.foo) We'd recommend something like: *.k8s.io (except extensions) at 18000 and PaaSes (OpenShift, Deis) are recommended to be in the 2000s
+* @required
+*/
+groupPriorityMinimum: number;
+/**
 * InsecureSkipTLSVerify disables TLS certificate verification when communicating with this server. This is strongly discouraged.  You should use the CABundle instead.
 */
 insecureSkipTLSVerify?: boolean;
@@ -22,19 +35,6 @@ version?: string;
 * @required
 */
 versionPriority: number;
-/**
-* CABundle is a PEM encoded CA bundle which will be used to validate an API server's serving certificate. If unspecified, system trust roots on the apiserver are used.
-*/
-caBundle?: string;
-/**
-* Group is the API group name this server hosts
-*/
-group?: string;
-/**
-* GroupPriorityMinimum is the priority this group should have at least. Higher priority means that the group is preferred by clients over lower priority ones. Note that other versions of this group might specify even higher GroupPriorityMinimum values such that the whole group gets a higher priority. The primary sort is based on GroupPriorityMinimum, ordered highest number to lowest (20 before 10). The secondary sort is based on the alphabetical comparison of the name of the object.  (v1.bar before v1.foo) We'd recommend something like: *.k8s.io (except extensions) at 18000 and PaaSes (OpenShift, Deis) are recommended to be in the 2000s
-* @required
-*/
-groupPriorityMinimum: number;
 }
 
 /**
@@ -44,13 +44,13 @@ groupPriorityMinimum: number;
 */
 export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec(data?: Partial<io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec>): io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceSpec {
  return {
+   caBundle: data?.caBundle !== undefined ? data.caBundle : '',
+   group: data?.group !== undefined ? data.group : '',
+   groupPriorityMinimum: data?.groupPriorityMinimum !== undefined ? data.groupPriorityMinimum : 0,
    insecureSkipTLSVerify: data?.insecureSkipTLSVerify !== undefined ? data.insecureSkipTLSVerify : false,
    service: data?.service !== undefined ? data.service : createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_ServiceReference(),
    version: data?.version !== undefined ? data.version : '',
    versionPriority: data?.versionPriority !== undefined ? data.versionPriority : 0,
-   caBundle: data?.caBundle !== undefined ? data.caBundle : '',
-   group: data?.group !== undefined ? data.group : '',
-   groupPriorityMinimum: data?.groupPriorityMinimum !== undefined ? data.groupPriorityMinimum : 0,
  };
 }
 // Required imports

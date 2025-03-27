@@ -5,12 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v2_ObjectMetricStatus {
 /**
-* metric identifies the target metric by name and selector
-* @required
-* @references io.k8s.api.autoscaling.v2.MetricIdentifier
-*/
-metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
-/**
 * current contains the current value for the given metric
 * @required
 * @references io.k8s.api.autoscaling.v2.MetricValueStatus
@@ -22,6 +16,12 @@ current: io_k8s_api_autoscaling_v2_MetricValueStatus;
 * @references io.k8s.api.autoscaling.v2.CrossVersionObjectReference
 */
 describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
+/**
+* metric identifies the target metric by name and selector
+* @required
+* @references io.k8s.api.autoscaling.v2.MetricIdentifier
+*/
+metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 }
 
 /**
@@ -31,9 +31,9 @@ describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
 */
 export function createio_k8s_api_autoscaling_v2_ObjectMetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_ObjectMetricStatus>): io_k8s_api_autoscaling_v2_ObjectMetricStatus {
  return {
-   metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
    current: data?.current !== undefined ? data.current : createio_k8s_api_autoscaling_v2_MetricValueStatus(),
    describedObject: data?.describedObject !== undefined ? data.describedObject : createio_k8s_api_autoscaling_v2_CrossVersionObjectReference(),
+   metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
  };
 }
 // Required imports

@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_storage_v1_CSIDriverSpec {
 /**
+* attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting. The CSI external-attacher coordinates with CSI volume driver and updates the volumeattachment status when the attach operation is complete. If the CSIDriverRegistry feature gate is enabled and the value is specified to false, the attach operation will be skipped. Otherwise the attach operation will be called.
+
+This field is immutable.
+*/
+attachRequired?: boolean;
+/**
 * fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.
 
 This field was immutable in Kubernetes < 1.29 and now is mutable.
@@ -75,12 +81,6 @@ This field is beta. This field is immutable.
 * @isArray
 */
 volumeLifecycleModes?: string[];
-/**
-* attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting. The CSI external-attacher coordinates with CSI volume driver and updates the volumeattachment status when the attach operation is complete. If the CSIDriverRegistry feature gate is enabled and the value is specified to false, the attach operation will be skipped. Otherwise the attach operation will be called.
-
-This field is immutable.
-*/
-attachRequired?: boolean;
 }
 
 /**
@@ -90,6 +90,7 @@ attachRequired?: boolean;
 */
 export function createio_k8s_api_storage_v1_CSIDriverSpec(data?: Partial<io_k8s_api_storage_v1_CSIDriverSpec>): io_k8s_api_storage_v1_CSIDriverSpec {
  return {
+   attachRequired: data?.attachRequired !== undefined ? data.attachRequired : false,
    fsGroupPolicy: data?.fsGroupPolicy !== undefined ? data.fsGroupPolicy : '',
    podInfoOnMount: data?.podInfoOnMount !== undefined ? data.podInfoOnMount : false,
    requiresRepublish: data?.requiresRepublish !== undefined ? data.requiresRepublish : false,
@@ -97,7 +98,6 @@ export function createio_k8s_api_storage_v1_CSIDriverSpec(data?: Partial<io_k8s_
    storageCapacity: data?.storageCapacity !== undefined ? data.storageCapacity : false,
    tokenRequests: data?.tokenRequests !== undefined ? data.tokenRequests : [],
    volumeLifecycleModes: data?.volumeLifecycleModes !== undefined ? data.volumeLifecycleModes : [],
-   attachRequired: data?.attachRequired !== undefined ? data.attachRequired : false,
  };
 }
 // Required imports

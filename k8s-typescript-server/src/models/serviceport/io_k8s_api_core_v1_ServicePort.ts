@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ServicePort {
 /**
-* The port on each node on which this service is exposed when type is NodePort or LoadBalancer.  Usually assigned by the system. If a value is specified, in-range, and not in use it will be used, otherwise the operation will fail.  If not specified, a port will be allocated if this Service requires one.  If this field is specified when creating a Service which does not need it, creation will fail. This field will be wiped when updating a Service to no longer need it (e.g. changing type from NodePort to ClusterIP). More info: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-*/
-nodePort?: number;
-/**
 * The port that will be exposed by this service.
 * @required
 */
@@ -44,6 +40,10 @@ appProtocol?: string;
 * The name of this port within the service. This must be a DNS_LABEL. All ports within a ServiceSpec must have unique names. When considering the endpoints for a Service, this must match the 'name' field in the EndpointPort. Optional if only one ServicePort is defined on this service.
 */
 name?: string;
+/**
+* The port on each node on which this service is exposed when type is NodePort or LoadBalancer.  Usually assigned by the system. If a value is specified, in-range, and not in use it will be used, otherwise the operation will fail.  If not specified, a port will be allocated if this Service requires one.  If this field is specified when creating a Service which does not need it, creation will fail. This field will be wiped when updating a Service to no longer need it (e.g. changing type from NodePort to ClusterIP). More info: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+*/
+nodePort?: number;
 }
 
 /**
@@ -53,12 +53,12 @@ name?: string;
 */
 export function createio_k8s_api_core_v1_ServicePort(data?: Partial<io_k8s_api_core_v1_ServicePort>): io_k8s_api_core_v1_ServicePort {
  return {
-   nodePort: data?.nodePort !== undefined ? data.nodePort : 0,
    port: data?.port !== undefined ? data.port : 0,
    protocol: data?.protocol !== undefined ? data.protocol : '',
    targetPort: data?.targetPort !== undefined ? data.targetPort : createio_k8s_apimachinery_pkg_util_intstr_IntOrString(),
    appProtocol: data?.appProtocol !== undefined ? data.appProtocol : '',
    name: data?.name !== undefined ? data.name : '',
+   nodePort: data?.nodePort !== undefined ? data.nodePort : 0,
  };
 }
 // Required imports

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_EndpointAddress {
 /**
-* Reference to object providing the endpoint.
-* @references io.k8s.api.core.v1.ObjectReference
-*/
-targetRef?: io_k8s_api_core_v1_ObjectReference;
-/**
 * The Hostname of this endpoint
 */
 hostname?: string;
@@ -22,6 +17,11 @@ ip: string;
 * Optional: Node hosting this endpoint. This can be used to determine endpoints local to a node.
 */
 nodeName?: string;
+/**
+* Reference to object providing the endpoint.
+* @references io.k8s.api.core.v1.ObjectReference
+*/
+targetRef?: io_k8s_api_core_v1_ObjectReference;
 }
 
 /**
@@ -31,10 +31,10 @@ nodeName?: string;
 */
 export function createio_k8s_api_core_v1_EndpointAddress(data?: Partial<io_k8s_api_core_v1_EndpointAddress>): io_k8s_api_core_v1_EndpointAddress {
  return {
-   targetRef: data?.targetRef !== undefined ? data.targetRef : createio_k8s_api_core_v1_ObjectReference(),
    hostname: data?.hostname !== undefined ? data.hostname : '',
    ip: data?.ip !== undefined ? data.ip : '',
    nodeName: data?.nodeName !== undefined ? data.nodeName : '',
+   targetRef: data?.targetRef !== undefined ? data.targetRef : createio_k8s_api_core_v1_ObjectReference(),
  };
 }
 // Required imports

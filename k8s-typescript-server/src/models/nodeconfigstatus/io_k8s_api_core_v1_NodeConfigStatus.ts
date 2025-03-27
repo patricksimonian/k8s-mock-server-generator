@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_NodeConfigStatus {
 /**
-* Active reports the checkpointed config the node is actively using. Active will represent either the current version of the Assigned config, or the current LastKnownGood config, depending on whether attempting to use the Assigned config results in an error.
-* @references io.k8s.api.core.v1.NodeConfigSource
-*/
-active?: io_k8s_api_core_v1_NodeConfigSource;
-/**
 * Assigned reports the checkpointed config the node will try to use. When Node.Spec.ConfigSource is updated, the node checkpoints the associated config payload to local disk, along with a record indicating intended config. The node refers to this record to choose its config checkpoint, and reports this record in Assigned. Assigned only updates in the status after the record has been checkpointed to disk. When the Kubelet is restarted, it tries to make the Assigned config the Active config by loading and validating the checkpointed payload identified by Assigned.
 * @references io.k8s.api.core.v1.NodeConfigSource
 */
@@ -23,6 +18,11 @@ error?: string;
 * @references io.k8s.api.core.v1.NodeConfigSource
 */
 lastKnownGood?: io_k8s_api_core_v1_NodeConfigSource;
+/**
+* Active reports the checkpointed config the node is actively using. Active will represent either the current version of the Assigned config, or the current LastKnownGood config, depending on whether attempting to use the Assigned config results in an error.
+* @references io.k8s.api.core.v1.NodeConfigSource
+*/
+active?: io_k8s_api_core_v1_NodeConfigSource;
 }
 
 /**
@@ -32,10 +32,10 @@ lastKnownGood?: io_k8s_api_core_v1_NodeConfigSource;
 */
 export function createio_k8s_api_core_v1_NodeConfigStatus(data?: Partial<io_k8s_api_core_v1_NodeConfigStatus>): io_k8s_api_core_v1_NodeConfigStatus {
  return {
-   active: data?.active !== undefined ? data.active : createio_k8s_api_core_v1_NodeConfigSource(),
    assigned: data?.assigned !== undefined ? data.assigned : createio_k8s_api_core_v1_NodeConfigSource(),
    error: data?.error !== undefined ? data.error : '',
    lastKnownGood: data?.lastKnownGood !== undefined ? data.lastKnownGood : createio_k8s_api_core_v1_NodeConfigSource(),
+   active: data?.active !== undefined ? data.active : createio_k8s_api_core_v1_NodeConfigSource(),
  };
 }
 // Required imports

@@ -5,16 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler {
 /**
-* spec defines the behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
-* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerSpec
-*/
-spec?: io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec;
-/**
-* status is the current information about the autoscaler.
-* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerStatus
-*/
-status?: io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -27,6 +17,16 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec defines the behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerSpec
+*/
+spec?: io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec;
+/**
+* status is the current information about the autoscaler.
+* @references io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerStatus
+*/
+status?: io_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus;
 }
 
 /**
@@ -36,11 +36,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_autoscaling_v1_HorizontalPodAutoscaler(data?: Partial<io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler>): io_k8s_api_autoscaling_v1_HorizontalPodAutoscaler {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v1_HorizontalPodAutoscalerStatus(),
  };
 }
 // Required imports

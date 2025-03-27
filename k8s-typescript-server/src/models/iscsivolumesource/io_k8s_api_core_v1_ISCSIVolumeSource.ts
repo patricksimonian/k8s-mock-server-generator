@@ -9,14 +9,14 @@ export interface io_k8s_api_core_v1_ISCSIVolumeSource {
 */
 fsType?: string;
 /**
+* initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
+*/
+initiatorName?: string;
+/**
 * iqn is the target iSCSI Qualified Name.
 * @required
 */
 iqn: string;
-/**
-* iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
-*/
-iscsiInterface?: string;
 /**
 * secretRef is the CHAP Secret for iSCSI target and initiator authentication
 * @references io.k8s.api.core.v1.LocalObjectReference
@@ -36,9 +36,9 @@ chapAuthDiscovery?: boolean;
 */
 chapAuthSession?: boolean;
 /**
-* initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
+* iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
 */
-initiatorName?: string;
+iscsiInterface?: string;
 /**
 * lun represents iSCSI Target Lun number.
 * @required
@@ -63,13 +63,13 @@ readOnly?: boolean;
 export function createio_k8s_api_core_v1_ISCSIVolumeSource(data?: Partial<io_k8s_api_core_v1_ISCSIVolumeSource>): io_k8s_api_core_v1_ISCSIVolumeSource {
  return {
    fsType: data?.fsType !== undefined ? data.fsType : '',
+   initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
    iqn: data?.iqn !== undefined ? data.iqn : '',
-   iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
    secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
    targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
    chapAuthDiscovery: data?.chapAuthDiscovery !== undefined ? data.chapAuthDiscovery : false,
    chapAuthSession: data?.chapAuthSession !== undefined ? data.chapAuthSession : false,
-   initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
+   iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
    lun: data?.lun !== undefined ? data.lun : 0,
    portals: data?.portals !== undefined ? data.portals : [],
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,

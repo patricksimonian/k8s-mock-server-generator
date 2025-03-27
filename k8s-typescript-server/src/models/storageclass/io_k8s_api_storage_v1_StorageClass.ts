@@ -7,25 +7,6 @@ StorageClasses are non-namespaced; the name of the storage class according to et
 */
 export interface io_k8s_api_storage_v1_StorageClass {
 /**
-* allowedTopologies restrict the node topologies where volumes can be dynamically provisioned. Each volume plugin defines its own supported topology specifications. An empty TopologySelectorTerm list means there is no topology restriction. This field is only honored by servers that enable the VolumeScheduling feature.
-* @isArray
-*/
-allowedTopologies?: io_k8s_api_core_v1_TopologySelectorTerm[];
-/**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
-* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
-*/
-metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* mountOptions controls the mountOptions for dynamically provisioned PersistentVolumes of this storage class. e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
-* @isArray
-*/
-mountOptions?: string[];
-/**
 * parameters holds the parameters for the provisioner that should create volumes of this storage class.
 */
 parameters?: Record<string, any>;
@@ -37,6 +18,11 @@ allowVolumeExpansion?: boolean;
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
+/**
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
 * provisioner indicates the type of the provisioner.
 * @required
@@ -59,6 +45,20 @@ Possible enum values:
  - `"WaitForFirstConsumer"` indicates that PersistentVolumeClaims should not be provisioned and bound until the first Pod is created that references the PeristentVolumeClaim. The volume provisioning and binding will occur during Pod scheduing.
 */
 volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
+/**
+* allowedTopologies restrict the node topologies where volumes can be dynamically provisioned. Each volume plugin defines its own supported topology specifications. An empty TopologySelectorTerm list means there is no topology restriction. This field is only honored by servers that enable the VolumeScheduling feature.
+* @isArray
+*/
+allowedTopologies?: io_k8s_api_core_v1_TopologySelectorTerm[];
+/**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
+* mountOptions controls the mountOptions for dynamically provisioned PersistentVolumes of this storage class. e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
+* @isArray
+*/
+mountOptions?: string[];
 }
 
 /**
@@ -68,16 +68,16 @@ volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
 */
 export function createio_k8s_api_storage_v1_StorageClass(data?: Partial<io_k8s_api_storage_v1_StorageClass>): io_k8s_api_storage_v1_StorageClass {
  return {
-   allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
-   kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
    parameters: data?.parameters !== undefined ? data.parameters : {},
    allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    provisioner: data?.provisioner !== undefined ? data.provisioner : '',
    reclaimPolicy: data?.reclaimPolicy !== undefined ? data.reclaimPolicy : '',
    volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
+   allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
+   kind: data?.kind !== undefined ? data.kind : '',
+   mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
  };
 }
 // Required imports

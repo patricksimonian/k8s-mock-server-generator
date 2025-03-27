@@ -5,6 +5,17 @@
 */
 export interface io_k8s_api_admissionregistration_v1_WebhookClientConfig {
 /**
+* `caBundle` is a PEM encoded CA bundle which will be used to validate the webhook's server certificate. If unspecified, system trust roots on the apiserver are used.
+*/
+caBundle?: string;
+/**
+* `service` is a reference to the service for this webhook. Either `service` or `url` must be specified.
+
+If the webhook is running within the cluster, then you should use `service`.
+* @references io.k8s.api.admissionregistration.v1.ServiceReference
+*/
+service?: io_k8s_api_admissionregistration_v1_ServiceReference;
+/**
 * `url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
 
 The `host` should not refer to a service running in the cluster; use the `service` field instead. The host might be resolved via external DNS in some apiservers (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering violation). `host` may also be an IP address.
@@ -18,17 +29,6 @@ A path is optional, and if present may be any string permissible in a URL. You m
 Attempting to use a user or basic auth e.g. "user:password@" is not allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
 */
 url?: string;
-/**
-* `caBundle` is a PEM encoded CA bundle which will be used to validate the webhook's server certificate. If unspecified, system trust roots on the apiserver are used.
-*/
-caBundle?: string;
-/**
-* `service` is a reference to the service for this webhook. Either `service` or `url` must be specified.
-
-If the webhook is running within the cluster, then you should use `service`.
-* @references io.k8s.api.admissionregistration.v1.ServiceReference
-*/
-service?: io_k8s_api_admissionregistration_v1_ServiceReference;
 }
 
 /**
@@ -38,9 +38,9 @@ service?: io_k8s_api_admissionregistration_v1_ServiceReference;
 */
 export function createio_k8s_api_admissionregistration_v1_WebhookClientConfig(data?: Partial<io_k8s_api_admissionregistration_v1_WebhookClientConfig>): io_k8s_api_admissionregistration_v1_WebhookClientConfig {
  return {
-   url: data?.url !== undefined ? data.url : '',
    caBundle: data?.caBundle !== undefined ? data.caBundle : '',
    service: data?.service !== undefined ? data.service : createio_k8s_api_admissionregistration_v1_ServiceReference(),
+   url: data?.url !== undefined ? data.url : '',
  };
 }
 // Required imports

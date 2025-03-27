@@ -4,11 +4,33 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createlimitrangeRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
 //list or watch objects of kind LimitRange
-  router.get('/api/v1/namespaces/:namespace/limitranges', async (req, res, next) => {
+  router.get('/api/v1/limitranges', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing limitrange`);
+      
+      const resourceList = await storage.listResources('limitrange', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of LimitRange. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/limitranges', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -29,6 +51,7 @@ export function createlimitrangeRoutes(storage: Storage): express.Router {
   });
   //create a LimitRange
   router.post('/api/v1/namespaces/:namespace/limitranges', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -84,16 +107,16 @@ export function createlimitrangeRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of LimitRange. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/limitranges', async (req, res, next) => {
+//list or watch objects of kind LimitRange
+  router.get('/api/v1/namespaces/:namespace/limitranges', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       const limit = req.query.limit ? Number(req.query.limit) : undefined;
       const cont = req.query.continue as string | undefined;
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing limitrange`);
+      const namespace = req.params.namespace;
+      logger.info(`Listing limitrange in namespace ${namespace}`);
       
       const resourceList = await storage.listResources('limitrange', namespace, listOpts);
       
@@ -106,15 +129,15 @@ export function createlimitrangeRoutes(storage: Storage): express.Router {
   });
 
 //watch individual changes to a list of LimitRange. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/limitranges', async (req, res, next) => {
+  router.get('/api/v1/watch/limitranges', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       const limit = req.query.limit ? Number(req.query.limit) : undefined;
       const cont = req.query.continue as string | undefined;
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing limitrange in namespace ${namespace}`);
+      const namespace = null;
+      logger.info(`Listing limitrange`);
       
       const resourceList = await storage.listResources('limitrange', namespace, listOpts);
       
@@ -140,6 +163,42 @@ export function createlimitrangeRoutes(storage: Storage): express.Router {
       }
   
       res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/api/v1/namespaces/:namespace/limitranges/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      logger.info(`Patching limitrange ${name} in namespace ${namespace}`);
+      const resource = await storage.getResource('limitrange', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`limitrange ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('limitrange', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('limitrange', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -214,63 +273,6 @@ export function createlimitrangeRoutes(storage: Storage): express.Router {
           kind: 'limitrange'
         }
       });
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/api/v1/namespaces/:namespace/limitranges/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching limitrange ${name} in namespace ${namespace}`);
-      const resource = await storage.getResource('limitrange', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`limitrange ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('limitrange', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('limitrange', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind LimitRange
-  router.get('/api/v1/limitranges', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing limitrange`);
-      
-      const resourceList = await storage.listResources('limitrange', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

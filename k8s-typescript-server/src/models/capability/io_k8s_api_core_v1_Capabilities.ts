@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_core_v1_Capabilities {
 /**
-* Removed capabilities
-* @isArray
-*/
-drop?: string[];
-/**
 * Added capabilities
 * @isArray
 */
 add?: string[];
+/**
+* Removed capabilities
+* @isArray
+*/
+drop?: string[];
 }
 
 /**
@@ -23,7 +23,7 @@ add?: string[];
 */
 export function createio_k8s_api_core_v1_Capabilities(data?: Partial<io_k8s_api_core_v1_Capabilities>): io_k8s_api_core_v1_Capabilities {
  return {
-   drop: data?.drop !== undefined ? data.drop : [],
    add: data?.add !== undefined ? data.add : [],
+   drop: data?.drop !== undefined ? data.drop : [],
  };
 }

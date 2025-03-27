@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_Taint {
 /**
-* The taint value corresponding to the taint key.
-*/
-value?: string;
-/**
 * Required. The effect of the taint on pods that do not tolerate the taint. Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
 
 Possible enum values:
@@ -28,6 +24,10 @@ key: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
 timeAdded?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* The taint value corresponding to the taint key.
+*/
+value?: string;
 }
 
 /**
@@ -37,10 +37,10 @@ timeAdded?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 */
 export function createio_k8s_api_core_v1_Taint(data?: Partial<io_k8s_api_core_v1_Taint>): io_k8s_api_core_v1_Taint {
  return {
-   value: data?.value !== undefined ? data.value : '',
    effect: data?.effect !== undefined ? data.effect : '',
    key: data?.key !== undefined ? data.key : '',
    timeAdded: data?.timeAdded !== undefined ? data.timeAdded : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   value: data?.value !== undefined ? data.value : '',
  };
 }
 // Required imports

@@ -5,14 +5,6 @@
 */
 export interface io_k8s_api_core_v1_StorageOSVolumeSource {
 /**
-* volumeName is the human-readable name of the StorageOS volume.  Volume names are only unique within a namespace.
-*/
-volumeName?: string;
-/**
-* volumeNamespace specifies the scope of the volume within StorageOS.  If no namespace is specified then the Pod's namespace will be used.  This allows the Kubernetes name scoping to be mirrored within StorageOS for tighter integration. Set VolumeName to any name to override the default behaviour. Set to "default" if you are not using namespaces within StorageOS. Namespaces that do not pre-exist within StorageOS will be created.
-*/
-volumeNamespace?: string;
-/**
 * fsType is the filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 */
 fsType?: string;
@@ -25,6 +17,14 @@ readOnly?: boolean;
 * @references io.k8s.api.core.v1.LocalObjectReference
 */
 secretRef?: io_k8s_api_core_v1_LocalObjectReference;
+/**
+* volumeName is the human-readable name of the StorageOS volume.  Volume names are only unique within a namespace.
+*/
+volumeName?: string;
+/**
+* volumeNamespace specifies the scope of the volume within StorageOS.  If no namespace is specified then the Pod's namespace will be used.  This allows the Kubernetes name scoping to be mirrored within StorageOS for tighter integration. Set VolumeName to any name to override the default behaviour. Set to "default" if you are not using namespaces within StorageOS. Namespaces that do not pre-exist within StorageOS will be created.
+*/
+volumeNamespace?: string;
 }
 
 /**
@@ -34,11 +34,11 @@ secretRef?: io_k8s_api_core_v1_LocalObjectReference;
 */
 export function createio_k8s_api_core_v1_StorageOSVolumeSource(data?: Partial<io_k8s_api_core_v1_StorageOSVolumeSource>): io_k8s_api_core_v1_StorageOSVolumeSource {
  return {
-   volumeName: data?.volumeName !== undefined ? data.volumeName : '',
-   volumeNamespace: data?.volumeNamespace !== undefined ? data.volumeNamespace : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
+   volumeName: data?.volumeName !== undefined ? data.volumeName : '',
+   volumeNamespace: data?.volumeNamespace !== undefined ? data.volumeNamespace : '',
  };
 }
 // Required imports

@@ -5,21 +5,6 @@
 */
 export interface io_k8s_api_core_v1_PodAffinityTerm {
 /**
-* A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
-*/
-namespaceSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
-/**
-* namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
-* @isArray
-*/
-namespaces?: string[];
-/**
-* This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
-* @required
-*/
-topologyKey: string;
-/**
 * A label query over a set of resources, in this case pods. If it's null, this PodAffinityTerm matches with no Pods.
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
@@ -34,6 +19,21 @@ matchLabelKeys?: string[];
 * @isArray
 */
 mismatchLabelKeys?: string[];
+/**
+* A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
+*/
+namespaceSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
+/**
+* namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
+* @isArray
+*/
+namespaces?: string[];
+/**
+* This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
+* @required
+*/
+topologyKey: string;
 }
 
 /**
@@ -43,12 +43,12 @@ mismatchLabelKeys?: string[];
 */
 export function createio_k8s_api_core_v1_PodAffinityTerm(data?: Partial<io_k8s_api_core_v1_PodAffinityTerm>): io_k8s_api_core_v1_PodAffinityTerm {
  return {
-   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
-   namespaces: data?.namespaces !== undefined ? data.namespaces : [],
-   topologyKey: data?.topologyKey !== undefined ? data.topologyKey : '',
    labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    matchLabelKeys: data?.matchLabelKeys !== undefined ? data.matchLabelKeys : [],
    mismatchLabelKeys: data?.mismatchLabelKeys !== undefined ? data.mismatchLabelKeys : [],
+   namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   namespaces: data?.namespaces !== undefined ? data.namespaces : [],
+   topologyKey: data?.topologyKey !== undefined ? data.topologyKey : '',
  };
 }
 // Required imports

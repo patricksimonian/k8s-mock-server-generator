@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_NodeSelectorRequirement {
 /**
+* The label key that the selector applies to.
+* @required
+*/
+key: string;
+/**
 * Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
 
 Possible enum values:
@@ -22,11 +27,6 @@ operator: 'DoesNotExist' | 'Exists' | 'Gt' | 'In' | 'Lt' | 'NotIn';
 * @isArray
 */
 values?: string[];
-/**
-* The label key that the selector applies to.
-* @required
-*/
-key: string;
 }
 
 /**
@@ -36,8 +36,8 @@ key: string;
 */
 export function createio_k8s_api_core_v1_NodeSelectorRequirement(data?: Partial<io_k8s_api_core_v1_NodeSelectorRequirement>): io_k8s_api_core_v1_NodeSelectorRequirement {
  return {
+   key: data?.key !== undefined ? data.key : '',
    operator: data?.operator !== undefined ? data.operator : '',
    values: data?.values !== undefined ? data.values : [],
-   key: data?.key !== undefined ? data.key : '',
  };
 }

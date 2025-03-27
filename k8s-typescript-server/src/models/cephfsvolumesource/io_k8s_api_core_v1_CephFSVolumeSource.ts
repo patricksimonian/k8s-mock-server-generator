@@ -5,19 +5,6 @@
 */
 export interface io_k8s_api_core_v1_CephFSVolumeSource {
 /**
-* secretFile is Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
-*/
-secretFile?: string;
-/**
-* secretRef is Optional: SecretRef is reference to the authentication secret for User, default is empty. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
-* @references io.k8s.api.core.v1.LocalObjectReference
-*/
-secretRef?: io_k8s_api_core_v1_LocalObjectReference;
-/**
-* user is optional: User is the rados user name, default is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
-*/
-user?: string;
-/**
 * monitors is Required: Monitors is a collection of Ceph monitors More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 * @required
 * @isArray
@@ -31,6 +18,19 @@ path?: string;
 * readOnly is Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 */
 readOnly?: boolean;
+/**
+* secretFile is Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
+*/
+secretFile?: string;
+/**
+* secretRef is Optional: SecretRef is reference to the authentication secret for User, default is empty. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
+* @references io.k8s.api.core.v1.LocalObjectReference
+*/
+secretRef?: io_k8s_api_core_v1_LocalObjectReference;
+/**
+* user is optional: User is the rados user name, default is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
+*/
+user?: string;
 }
 
 /**
@@ -40,12 +40,12 @@ readOnly?: boolean;
 */
 export function createio_k8s_api_core_v1_CephFSVolumeSource(data?: Partial<io_k8s_api_core_v1_CephFSVolumeSource>): io_k8s_api_core_v1_CephFSVolumeSource {
  return {
-   secretFile: data?.secretFile !== undefined ? data.secretFile : '',
-   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
-   user: data?.user !== undefined ? data.user : '',
    monitors: data?.monitors !== undefined ? data.monitors : [],
    path: data?.path !== undefined ? data.path : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretFile: data?.secretFile !== undefined ? data.secretFile : '',
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
+   user: data?.user !== undefined ? data.user : '',
  };
 }
 // Required imports

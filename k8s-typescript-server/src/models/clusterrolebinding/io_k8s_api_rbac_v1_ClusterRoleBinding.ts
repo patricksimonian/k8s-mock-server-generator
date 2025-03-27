@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_rbac_v1_ClusterRoleBinding {
 /**
-* Subjects holds references to the objects the role applies to.
-* @isArray
-*/
-subjects?: io_k8s_api_rbac_v1_Subject[];
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -28,6 +23,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 * @references io.k8s.api.rbac.v1.RoleRef
 */
 roleRef: io_k8s_api_rbac_v1_RoleRef;
+/**
+* Subjects holds references to the objects the role applies to.
+* @isArray
+*/
+subjects?: io_k8s_api_rbac_v1_Subject[];
 }
 
 /**
@@ -37,11 +37,11 @@ roleRef: io_k8s_api_rbac_v1_RoleRef;
 */
 export function createio_k8s_api_rbac_v1_ClusterRoleBinding(data?: Partial<io_k8s_api_rbac_v1_ClusterRoleBinding>): io_k8s_api_rbac_v1_ClusterRoleBinding {
  return {
-   subjects: data?.subjects !== undefined ? data.subjects : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    roleRef: data?.roleRef !== undefined ? data.roleRef : createio_k8s_api_rbac_v1_RoleRef(),
+   subjects: data?.subjects !== undefined ? data.subjects : [],
  };
 }
 // Required imports

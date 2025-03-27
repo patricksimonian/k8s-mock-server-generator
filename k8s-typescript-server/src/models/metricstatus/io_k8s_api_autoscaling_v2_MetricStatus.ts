@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_autoscaling_v2_MetricStatus {
 /**
+* type is the type of metric source.  It will be one of "ContainerResource", "External", "Object", "Pods" or "Resource", each corresponds to a matching field in the object.
+* @required
+*/
+type: string;
+/**
+* container resource refers to a resource metric (such as those specified in requests and limits) known to Kubernetes describing a single container in each pod in the current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.
+* @references io.k8s.api.autoscaling.v2.ContainerResourceMetricStatus
+*/
+containerResource?: io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus;
+/**
 * external refers to a global metric that is not associated with any Kubernetes object. It allows autoscaling based on information coming from components running outside of cluster (for example length of queue in cloud messaging service, or QPS from loadbalancer running outside of cluster).
 * @references io.k8s.api.autoscaling.v2.ExternalMetricStatus
 */
@@ -24,16 +34,6 @@ pods?: io_k8s_api_autoscaling_v2_PodsMetricStatus;
 * @references io.k8s.api.autoscaling.v2.ResourceMetricStatus
 */
 resource?: io_k8s_api_autoscaling_v2_ResourceMetricStatus;
-/**
-* type is the type of metric source.  It will be one of "ContainerResource", "External", "Object", "Pods" or "Resource", each corresponds to a matching field in the object.
-* @required
-*/
-type: string;
-/**
-* container resource refers to a resource metric (such as those specified in requests and limits) known to Kubernetes describing a single container in each pod in the current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.
-* @references io.k8s.api.autoscaling.v2.ContainerResourceMetricStatus
-*/
-containerResource?: io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus;
 }
 
 /**
@@ -43,12 +43,12 @@ containerResource?: io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus;
 */
 export function createio_k8s_api_autoscaling_v2_MetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_MetricStatus>): io_k8s_api_autoscaling_v2_MetricStatus {
  return {
+   type: data?.type !== undefined ? data.type : '',
+   containerResource: data?.containerResource !== undefined ? data.containerResource : createio_k8s_api_autoscaling_v2_ContainerResourceMetricStatus(),
    external: data?.external !== undefined ? data.external : createio_k8s_api_autoscaling_v2_ExternalMetricStatus(),
    object: data?.object !== undefined ? data.object : createio_k8s_api_autoscaling_v2_ObjectMetricStatus(),
    pods: data?.pods !== undefined ? data.pods : createio_k8s_api_autoscaling_v2_PodsMetricStatus(),
    resource: data?.resource !== undefined ? data.resource : createio_k8s_api_autoscaling_v2_ResourceMetricStatus(),
-   type: data?.type !== undefined ? data.type : '',
-   containerResource: data?.containerResource !== undefined ? data.containerResource : createio_k8s_api_autoscaling_v2_ContainerResourceMetricStatus(),
  };
 }
 // Required imports

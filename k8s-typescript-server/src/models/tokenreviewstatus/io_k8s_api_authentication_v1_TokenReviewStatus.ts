@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_authentication_v1_TokenReviewStatus {
 /**
+* Authenticated indicates that the token was associated with a known user.
+*/
+authenticated?: boolean;
+/**
 * Error indicates that the token couldn't be checked
 */
 error?: string;
@@ -18,10 +22,6 @@ user?: io_k8s_api_authentication_v1_UserInfo;
 * @isArray
 */
 audiences?: string[];
-/**
-* Authenticated indicates that the token was associated with a known user.
-*/
-authenticated?: boolean;
 }
 
 /**
@@ -31,10 +31,10 @@ authenticated?: boolean;
 */
 export function createio_k8s_api_authentication_v1_TokenReviewStatus(data?: Partial<io_k8s_api_authentication_v1_TokenReviewStatus>): io_k8s_api_authentication_v1_TokenReviewStatus {
  return {
+   authenticated: data?.authenticated !== undefined ? data.authenticated : false,
    error: data?.error !== undefined ? data.error : '',
    user: data?.user !== undefined ? data.user : createio_k8s_api_authentication_v1_UserInfo(),
    audiences: data?.audiences !== undefined ? data.audiences : [],
-   authenticated: data?.authenticated !== undefined ? data.authenticated : false,
  };
 }
 // Required imports

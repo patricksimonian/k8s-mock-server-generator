@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSetSpec {
 /**
-* An update strategy to replace existing DaemonSet pods with new pods.
-* @references io.k8s.api.apps.v1.DaemonSetUpdateStrategy
-*/
-updateStrategy?: io_k8s_api_apps_v1_DaemonSetUpdateStrategy;
-/**
 * The minimum number of seconds for which a newly created DaemonSet pod should be ready without any of its container crashing, for it to be considered available. Defaults to 0 (pod will be considered available as soon as it is ready).
 */
 minReadySeconds?: number;
@@ -29,6 +24,11 @@ selector: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 * @references io.k8s.api.core.v1.PodTemplateSpec
 */
 template: io_k8s_api_core_v1_PodTemplateSpec;
+/**
+* An update strategy to replace existing DaemonSet pods with new pods.
+* @references io.k8s.api.apps.v1.DaemonSetUpdateStrategy
+*/
+updateStrategy?: io_k8s_api_apps_v1_DaemonSetUpdateStrategy;
 }
 
 /**
@@ -38,11 +38,11 @@ template: io_k8s_api_core_v1_PodTemplateSpec;
 */
 export function createio_k8s_api_apps_v1_DaemonSetSpec(data?: Partial<io_k8s_api_apps_v1_DaemonSetSpec>): io_k8s_api_apps_v1_DaemonSetSpec {
  return {
-   updateStrategy: data?.updateStrategy !== undefined ? data.updateStrategy : createio_k8s_api_apps_v1_DaemonSetUpdateStrategy(),
    minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
    revisionHistoryLimit: data?.revisionHistoryLimit !== undefined ? data.revisionHistoryLimit : 0,
    selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
+   updateStrategy: data?.updateStrategy !== undefined ? data.updateStrategy : createio_k8s_api_apps_v1_DaemonSetUpdateStrategy(),
  };
 }
 // Required imports

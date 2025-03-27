@@ -4,8 +4,70 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createpoddisruptionbudgetRoutes(storage: Storage): express.Router {
   const router = express.Router();
+
+//watch individual changes to a list of PodDisruptionBudget. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/policy/v1/watch/poddisruptionbudgets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing poddisruptionbudget`);
+      
+      const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind PodDisruptionBudget. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/policy/v1/watch/namespaces/:namespace/poddisruptionbudgets/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting poddisruptionbudget ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('poddisruptionbudget', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`poddisruptionbudget ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind PodDisruptionBudget
+  router.get('/apis/policy/v1/poddisruptionbudgets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing poddisruptionbudget`);
+      
+      const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 //watch individual changes to a list of PodDisruptionBudget. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/policy/v1/watch/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
@@ -23,6 +85,84 @@ export function createpoddisruptionbudgetRoutes(storage: Storage): express.Route
 
       
       res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind PodDisruptionBudget
+  router.get('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing poddisruptionbudget in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a PodDisruptionBudget
+  router.post('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
+
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating poddisruptionbudget in namespace ${namespace}`);
+      
+      
+      // Set namespace in metadata
+      resource.metadata.namespace = namespace;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of PodDisruptionBudget
+  router.delete('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all poddisruptionbudget in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('poddisruptionbudget', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`poddisruptionbudget not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`poddisruptionbudget not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'poddisruptionbudget'
+        }
+      });
     } catch (error) {
       next(error);
     }
@@ -138,48 +278,8 @@ export function createpoddisruptionbudgetRoutes(storage: Storage): express.Route
     }
   });
 
-//list or watch objects of kind PodDisruptionBudget
-  router.get('/apis/policy/v1/poddisruptionbudgets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing poddisruptionbudget`);
-      
-      const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind PodDisruptionBudget. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/policy/v1/watch/namespaces/:namespace/poddisruptionbudgets/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting poddisruptionbudget ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('poddisruptionbudget', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`poddisruptionbudget ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind PodDisruptionBudget
-  router.get('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
+//read status of the specified PodDisruptionBudget
+  router.get('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets/:name/status', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -188,83 +288,6 @@ export function createpoddisruptionbudgetRoutes(storage: Storage): express.Route
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
       logger.info(`Listing poddisruptionbudget in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a PodDisruptionBudget
-  router.post('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating poddisruptionbudget in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of PodDisruptionBudget
-  router.delete('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all poddisruptionbudget in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('poddisruptionbudget', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`poddisruptionbudget not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`poddisruptionbudget not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'poddisruptionbudget'
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of PodDisruptionBudget. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/policy/v1/watch/poddisruptionbudgets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing poddisruptionbudget`);
       
       const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
       
@@ -311,27 +334,6 @@ export function createpoddisruptionbudgetRoutes(storage: Storage): express.Route
       const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
       const updatedResource = await storage.updateSubresource('poddisruptionbudget', name, subresource, patchData, namespace);
       return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified PodDisruptionBudget
-  router.get('/apis/policy/v1/namespaces/:namespace/poddisruptionbudgets/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing poddisruptionbudget in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('poddisruptionbudget', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

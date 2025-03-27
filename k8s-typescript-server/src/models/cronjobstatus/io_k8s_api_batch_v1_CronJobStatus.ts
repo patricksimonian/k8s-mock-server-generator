@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_batch_v1_CronJobStatus {
 /**
-* A list of pointers to currently running jobs.
-* @isArray
-*/
-active?: io_k8s_api_core_v1_ObjectReference[];
-/**
 * Information when was the last time the job was successfully scheduled.
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
@@ -19,6 +14,11 @@ lastScheduleTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
 lastSuccessfulTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* A list of pointers to currently running jobs.
+* @isArray
+*/
+active?: io_k8s_api_core_v1_ObjectReference[];
 }
 
 /**
@@ -28,9 +28,9 @@ lastSuccessfulTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 */
 export function createio_k8s_api_batch_v1_CronJobStatus(data?: Partial<io_k8s_api_batch_v1_CronJobStatus>): io_k8s_api_batch_v1_CronJobStatus {
  return {
-   active: data?.active !== undefined ? data.active : [],
    lastScheduleTime: data?.lastScheduleTime !== undefined ? data.lastScheduleTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    lastSuccessfulTime: data?.lastSuccessfulTime !== undefined ? data.lastSuccessfulTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   active: data?.active !== undefined ? data.active : [],
  };
 }
 // Required imports

@@ -4,8 +4,150 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createserviceaccountRoutes(storage: Storage): express.Router {
   const router = express.Router();
+
+//watch individual changes to a list of ServiceAccount. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing serviceaccount in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ServiceAccount. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/serviceaccounts', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing serviceaccount`);
+      
+      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ServiceAccount
+  router.get('/api/v1/serviceaccounts', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing serviceaccount`);
+      
+      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ServiceAccount
+  router.get('/api/v1/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing serviceaccount in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a ServiceAccount
+  router.post('/api/v1/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
+
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating serviceaccount in namespace ${namespace}`);
+      
+      
+      // Set namespace in metadata
+      resource.metadata.namespace = namespace;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of ServiceAccount
+  router.delete('/api/v1/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all serviceaccount in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('serviceaccount', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`serviceaccount not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`serviceaccount not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'serviceaccount'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 //read the specified ServiceAccount
   router.get('/api/v1/namespaces/:namespace/serviceaccounts/:name', async (req, res, next) => {
@@ -116,103 +258,17 @@ export function createserviceaccountRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//list or watch objects of kind ServiceAccount
-  router.get('/api/v1/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing serviceaccount in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a ServiceAccount
-  router.post('/api/v1/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
+  //create token of a ServiceAccount
+  router.post('/api/v1/namespaces/:namespace/serviceaccounts/:name/token', async (req, res, next) => {
+     const resource = req.body;
+     // Ensure resource has metadata
       if (!resource.metadata) {
         resource.metadata = {};
       }
       const namespace = req.params.namespace;
-      logger.info(`Creating serviceaccount in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
+      logger.info(`Creating ${resource.kind} in namespace ${namespace}`);
       const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
       res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of ServiceAccount
-  router.delete('/api/v1/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all serviceaccount in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('serviceaccount', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`serviceaccount not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`serviceaccount not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'serviceaccount'
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of ServiceAccount. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/serviceaccounts', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing serviceaccount in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
   });
 
 //watch changes to an object of kind ServiceAccount. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
@@ -229,71 +285,6 @@ export function createserviceaccountRoutes(storage: Storage): express.Router {
       }
   
       res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create token of a ServiceAccount
-  router.post('/api/v1/namespaces/:namespace/serviceaccounts/:name/token', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating serviceaccount in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ServiceAccount
-  router.get('/api/v1/serviceaccounts', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing serviceaccount`);
-      
-      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of ServiceAccount. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/serviceaccounts', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing serviceaccount`);
-      
-      const resourceList = await storage.listResources('serviceaccount', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

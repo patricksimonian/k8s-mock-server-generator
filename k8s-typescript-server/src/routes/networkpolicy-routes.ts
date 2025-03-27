@@ -4,88 +4,9 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createnetworkpolicyRoutes(storage: Storage): express.Router {
   const router = express.Router();
-
-//list or watch objects of kind NetworkPolicy
-  router.get('/apis/networking.k8s.io/v1/networkpolicies', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing networkpolicy`);
-      
-      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/networking.k8s.io/v1/watch/namespaces/:namespace/networkpolicies', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing networkpolicy in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/networking.k8s.io/v1/watch/namespaces/:namespace/networkpolicies/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting networkpolicy ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('networkpolicy', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`networkpolicy ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified NetworkPolicy
-  router.get('/apis/networking.k8s.io/v1/namespaces/:namespace/networkpolicies/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting networkpolicy ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('networkpolicy', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`networkpolicy ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
 //replace the specified NetworkPolicy
   router.put('/apis/networking.k8s.io/v1/namespaces/:namespace/networkpolicies/:name', async (req, res, next) => {
     try {
@@ -178,8 +99,48 @@ export function createnetworkpolicyRoutes(storage: Storage): express.Router {
     }
   });
 
+//read the specified NetworkPolicy
+  router.get('/apis/networking.k8s.io/v1/namespaces/:namespace/networkpolicies/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting networkpolicy ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('networkpolicy', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`networkpolicy ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/networking.k8s.io/v1/watch/networkpolicies', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing networkpolicy`);
+      
+      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind NetworkPolicy
+  router.get('/apis/networking.k8s.io/v1/networkpolicies', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -221,6 +182,7 @@ export function createnetworkpolicyRoutes(storage: Storage): express.Router {
   });
   //create a NetworkPolicy
   router.post('/apis/networking.k8s.io/v1/namespaces/:namespace/networkpolicies', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -271,6 +233,46 @@ export function createnetworkpolicyRoutes(storage: Storage): express.Router {
           kind: 'networkpolicy'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/networking.k8s.io/v1/watch/namespaces/:namespace/networkpolicies', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing networkpolicy in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/networking.k8s.io/v1/watch/namespaces/:namespace/networkpolicies/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting networkpolicy ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('networkpolicy', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`networkpolicy ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
     } catch (error) {
       next(error);
     }

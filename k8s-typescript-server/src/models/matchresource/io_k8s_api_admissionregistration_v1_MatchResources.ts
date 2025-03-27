@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_admissionregistration_v1_MatchResources {
 /**
+* ResourceRules describes what operations on what resources/subresources the ValidatingAdmissionPolicy matches. The policy cares about an operation if it matches _any_ Rule.
+* @isArray
+*/
+resourceRules?: io_k8s_api_admissionregistration_v1_NamedRuleWithOperations[];
+/**
+* ExcludeResourceRules describes what operations on what resources/subresources the ValidatingAdmissionPolicy should not care about. The exclude rules take precedence over include rules (if a resource matches both, it is excluded)
+* @isArray
+*/
+excludeResourceRules?: io_k8s_api_admissionregistration_v1_NamedRuleWithOperations[];
+/**
 * matchPolicy defines how the "MatchResources" list is used to match incoming requests. Allowed values are "Exact" or "Equivalent".
 
 - Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but "rules" only included `apiGroups:["apps"], apiVersions:["v1"], resources: ["deployments"]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the ValidatingAdmissionPolicy.
@@ -58,16 +68,6 @@ namespaceSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
 objectSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
-/**
-* ResourceRules describes what operations on what resources/subresources the ValidatingAdmissionPolicy matches. The policy cares about an operation if it matches _any_ Rule.
-* @isArray
-*/
-resourceRules?: io_k8s_api_admissionregistration_v1_NamedRuleWithOperations[];
-/**
-* ExcludeResourceRules describes what operations on what resources/subresources the ValidatingAdmissionPolicy should not care about. The exclude rules take precedence over include rules (if a resource matches both, it is excluded)
-* @isArray
-*/
-excludeResourceRules?: io_k8s_api_admissionregistration_v1_NamedRuleWithOperations[];
 }
 
 /**
@@ -77,11 +77,11 @@ excludeResourceRules?: io_k8s_api_admissionregistration_v1_NamedRuleWithOperatio
 */
 export function createio_k8s_api_admissionregistration_v1_MatchResources(data?: Partial<io_k8s_api_admissionregistration_v1_MatchResources>): io_k8s_api_admissionregistration_v1_MatchResources {
  return {
+   resourceRules: data?.resourceRules !== undefined ? data.resourceRules : [],
+   excludeResourceRules: data?.excludeResourceRules !== undefined ? data.excludeResourceRules : [],
    matchPolicy: data?.matchPolicy !== undefined ? data.matchPolicy : '',
    namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    objectSelector: data?.objectSelector !== undefined ? data.objectSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
-   resourceRules: data?.resourceRules !== undefined ? data.resourceRules : [],
-   excludeResourceRules: data?.excludeResourceRules !== undefined ? data.excludeResourceRules : [],
  };
 }
 // Required imports

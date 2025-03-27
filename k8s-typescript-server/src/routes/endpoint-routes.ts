@@ -4,69 +4,9 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createendpointRoutes(storage: Storage): express.Router {
   const router = express.Router();
-
-//list or watch objects of kind Endpoints
-  router.get('/api/v1/endpoints', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing endpoint`);
-      
-      const resourceList = await storage.listResources('endpoint', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind Endpoints. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/api/v1/watch/namespaces/:namespace/endpoints/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting endpoint ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('endpoint', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`endpoint ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of Endpoints. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/endpoints', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing endpoint`);
-      
-      const resourceList = await storage.listResources('endpoint', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
 
 //read the specified Endpoints
   router.get('/api/v1/namespaces/:namespace/endpoints/:name', async (req, res, next) => {
@@ -178,6 +118,46 @@ export function createendpointRoutes(storage: Storage): express.Router {
     }
   });
 
+//watch changes to an object of kind Endpoints. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/api/v1/watch/namespaces/:namespace/endpoints/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting endpoint ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('endpoint', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`endpoint ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of Endpoints. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/endpoints', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing endpoint`);
+      
+      const resourceList = await storage.listResources('endpoint', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //list or watch objects of kind Endpoints
   router.get('/api/v1/namespaces/:namespace/endpoints', async (req, res, next) => {
     try {
@@ -200,6 +180,7 @@ export function createendpointRoutes(storage: Storage): express.Router {
   });
   //create Endpoints
   router.post('/api/v1/namespaces/:namespace/endpoints', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -265,6 +246,27 @@ export function createendpointRoutes(storage: Storage): express.Router {
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
       logger.info(`Listing endpoint in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('endpoint', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind Endpoints
+  router.get('/api/v1/endpoints', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing endpoint`);
       
       const resourceList = await storage.listResources('endpoint', namespace, listOpts);
       

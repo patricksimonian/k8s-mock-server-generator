@@ -4,10 +4,12 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createselfsubjectreviewRoutes(storage: Storage): express.Router {
   const router = express.Router();
   //create a SelfSubjectReview
   router.post('/apis/authentication.k8s.io/v1/selfsubjectreviews', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata

@@ -4,8 +4,22 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createpodRoutes(storage: Storage): express.Router {
   const router = express.Router();
+  //create binding of a Pod
+  router.post('/api/v1/namespaces/:namespace/pods/:name/binding', async (req, res, next) => {
+    logger.info(`/api/v1/namespaces/:namespace/pods/:name/binding not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
+  });
 
 //list or watch objects of kind Pod
   router.get('/api/v1/pods', async (req, res, next) => {
@@ -27,9 +41,61 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
+  //create eviction of a Pod
+  router.post('/api/v1/namespaces/:namespace/pods/:name/eviction', async (req, res, next) => {
+     const resource = req.body;
+     // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating ${resource.kind} in namespace ${namespace}`);
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      res.status(201).json(createdResource);
+  });
 
-//read status of the specified Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name/status', async (req, res, next) => {
+//watch individual changes to a list of Pod. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/pods', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing pod`);
+      
+      const resourceList = await storage.listResources('pod', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind Pod. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/api/v1/watch/namespaces/:namespace/pods/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting pod ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('pod', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`pod ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//connect GET requests to proxy of Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -48,8 +114,8 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-//replace status of the specified Pod
-  router.put('/api/v1/namespaces/:namespace/pods/:name/status', async (req, res, next) => {
+//connect PUT requests to proxy of Pod
+  router.put('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
     try {
       const name = req.params.name;
       const resource = req.body;
@@ -63,7 +129,7 @@ export function createpodRoutes(storage: Storage): express.Router {
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-      const subresource = "status";
+      const subresource = "proxy";
       const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
       const updatedResource = await storage.updateSubresource('pod', name, subresource, resource, namespace);
       
@@ -72,25 +138,22 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-  router.patch('/api/v1/namespaces/:namespace/pods/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching pod ${name} in namespace ${namespace}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('pod', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
+  //connect POST requests to proxy of Pod
+  router.post('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
+    logger.info(`/api/v1/namespaces/:namespace/pods/:name/proxy not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
   });
 
-//delete collection of Pod
-  router.delete('/api/v1/namespaces/:namespace/pods', async (req, res, next) => {
+//connect DELETE requests to proxy of Pod
+  router.delete('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -121,9 +184,25 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
+  router.patch('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      logger.info(`Patching pod ${name} in namespace ${namespace}`);
+      const subresource = "proxy";
 
-//list or watch objects of kind Pod
-  router.get('/api/v1/namespaces/:namespace/pods', async (req, res, next) => {
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('pod', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of Pod. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/pods', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -142,28 +221,39 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-  //create a Pod
-  router.post('/api/v1/namespaces/:namespace/pods', async (req, res, next) => {
+
+//connect GET requests to attach of Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name/attach', async (req, res, next) => {
     try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
-      logger.info(`Creating pod in namespace ${namespace}`);
+      logger.info(`Listing pod in namespace ${namespace}`);
       
+      const resourceList = await storage.listResources('pod', namespace, listOpts);
       
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
+
       
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
+  });
+  //connect POST requests to attach of Pod
+  router.post('/api/v1/namespaces/:namespace/pods/:name/attach', async (req, res, next) => {
+    logger.info(`/api/v1/namespaces/:namespace/pods/:name/attach not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
   });
 
 //connect GET requests to portforward of Pod
@@ -188,30 +278,20 @@ export function createpodRoutes(storage: Storage): express.Router {
   });
   //connect POST requests to portforward of Pod
   router.post('/api/v1/namespaces/:namespace/pods/:name/portforward', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating pod in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
+    logger.info(`/api/v1/namespaces/:namespace/pods/:name/portforward not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
   });
 
-//watch changes to an object of kind Pod. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/api/v1/watch/namespaces/:namespace/pods/:name', async (req, res, next) => {
+//read the specified Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
       const namespace = req.params.namespace;
@@ -224,6 +304,29 @@ export function createpodRoutes(storage: Storage): express.Router {
       }
   
       res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace the specified Pod
+  router.put('/api/v1/namespaces/:namespace/pods/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating pod ${name} in namespace ${namespace}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('pod', name, resource, namespace, resource.metadata.resourceVersion);
+      
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -297,73 +400,8 @@ export function createpodRoutes(storage: Storage): express.Router {
     }
   });
 
-//read the specified Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting pod ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('pod', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`pod ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace the specified Pod
-  router.put('/api/v1/namespaces/:namespace/pods/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating pod ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-
-      const updatedResource = await storage.updateResource('pod', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create binding of a Pod
-  router.post('/api/v1/namespaces/:namespace/pods/:name/binding', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating pod in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//connect GET requests to attach of Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name/attach', async (req, res, next) => {
+//list or watch objects of kind Pod
+  router.get('/api/v1/namespaces/:namespace/pods', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -382,31 +420,9 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-  //connect POST requests to attach of Pod
-  router.post('/api/v1/namespaces/:namespace/pods/:name/attach', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating pod in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create eviction of a Pod
-  router.post('/api/v1/namespaces/:namespace/pods/:name/eviction', async (req, res, next) => {
+  //create a Pod
+  router.post('/api/v1/namespaces/:namespace/pods', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -429,162 +445,8 @@ export function createpodRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of Pod. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/pods', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing pod`);
-      
-      const resourceList = await storage.listResources('pod', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read log of the specified Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name/log', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing pod in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('pod', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//connect GET requests to exec of Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name/exec', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing pod in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('pod', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //connect POST requests to exec of Pod
-  router.post('/api/v1/namespaces/:namespace/pods/:name/exec', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating pod in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//connect GET requests to proxy of Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing pod in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('pod', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-//connect PUT requests to proxy of Pod
-  router.put('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating pod ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "proxy";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('pod', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //connect POST requests to proxy of Pod
-  router.post('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating pod in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//connect DELETE requests to proxy of Pod
-  router.delete('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
+//delete collection of Pod
+  router.delete('/api/v1/namespaces/:namespace/pods', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -615,14 +477,59 @@ export function createpodRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-  router.patch('/api/v1/namespaces/:namespace/pods/:name/proxy', async (req, res, next) => {
+
+//read status of the specified Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name/status', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing pod in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('pod', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+//replace status of the specified Pod
+  router.put('/api/v1/namespaces/:namespace/pods/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating pod ${name} in namespace ${namespace}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('pod', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/api/v1/namespaces/:namespace/pods/:name/status', async (req, res, next) => {
     try {
       const name = req.params.name;
       const patchData = req.body;
       const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
       logger.info(`Patching pod ${name} in namespace ${namespace}`);
-      const subresource = "proxy";
+      const subresource = "status";
 
       const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
       const updatedResource = await storage.updateSubresource('pod', name, subresource, patchData, namespace);
@@ -632,8 +539,42 @@ export function createpodRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of Pod. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/pods', async (req, res, next) => {
+//connect GET requests to exec of Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name/exec', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing pod in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('pod', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //connect POST requests to exec of Pod
+  router.post('/api/v1/namespaces/:namespace/pods/:name/exec', async (req, res, next) => {
+    logger.info(`/api/v1/namespaces/:namespace/pods/:name/exec not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
+  });
+
+//read log of the specified Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name/log', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;

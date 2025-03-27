@@ -4,46 +4,24 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createcontrollerrevisionRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list or watch objects of kind ControllerRevision
-  router.get('/apis/apps/v1/controllerrevisions', async (req, res, next) => {
+//watch changes to an object of kind ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/controllerrevisions/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing controllerrevision`);
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting controllerrevision ${name} in namespace ${namespace}`);
       
-      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
+      const resource = await storage.getResource('controllerrevision', name, namespace);
       
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/controllerrevisions', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing controllerrevision`);
-      
-      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
+      if (!resource) {
+        return handleResourceError(new Error(`controllerrevision ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
     } catch (error) {
       next(error);
     }
@@ -159,27 +137,6 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
     }
   });
 
-//watch individual changes to a list of ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing controllerrevision in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //list or watch objects of kind ControllerRevision
   router.get('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
     try {
@@ -202,6 +159,7 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
   });
   //create a ControllerRevision
   router.post('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -257,20 +215,64 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
     }
   });
 
-//watch changes to an object of kind ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/controllerrevisions/:name', async (req, res, next) => {
+//list or watch objects of kind ControllerRevision
+  router.get('/apis/apps/v1/controllerrevisions', async (req, res, next) => {
     try {
-      const name = req.params.name;
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing controllerrevision`);
+      
+      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
-      logger.info(`Getting controllerrevision ${name} in namespace ${namespace}`);
+      logger.info(`Listing controllerrevision in namespace ${namespace}`);
       
-      const resource = await storage.getResource('controllerrevision', name, namespace);
+      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
       
-      if (!resource) {
-        return handleResourceError(new Error(`controllerrevision ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/controllerrevisions', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing controllerrevision`);
+      
+      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

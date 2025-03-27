@@ -4,6 +4,7 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createdeploymentRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
@@ -23,67 +24,6 @@ export function createdeploymentRoutes(storage: Storage): express.Router {
 
       
       res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read scale of the specified Deployment
-  router.get('/apis/apps/v1/namespaces/:namespace/deployments/:name/scale', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing deployment in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('deployment', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace scale of the specified Deployment
-  router.put('/apis/apps/v1/namespaces/:namespace/deployments/:name/scale', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating deployment ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "scale";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('deployment', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/apps/v1/namespaces/:namespace/deployments/:name/scale', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching deployment ${name} in namespace ${namespace}`);
-      const subresource = "scale";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('deployment', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -150,56 +90,62 @@ export function createdeploymentRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind Deployment. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/deployments/:name', async (req, res, next) => {
+//read scale of the specified Deployment
+  router.get('/apis/apps/v1/namespaces/:namespace/deployments/:name/scale', async (req, res, next) => {
     try {
-      const name = req.params.name;
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
-      logger.info(`Getting deployment ${name} in namespace ${namespace}`);
+      logger.info(`Listing deployment in namespace ${namespace}`);
       
-      const resource = await storage.getResource('deployment', name, namespace);
+      const resourceList = await storage.listResources('deployment', namespace, listOpts);
       
-      if (!resource) {
-        return handleResourceError(new Error(`deployment ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
   });
-  router.patch('/apis/apps/v1/namespaces/:namespace/deployments/:name', async (req, res, next) => {
+//replace scale of the specified Deployment
+  router.put('/apis/apps/v1/namespaces/:namespace/deployments/:name/scale', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating deployment ${name} in namespace ${namespace}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "scale";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('deployment', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/apps/v1/namespaces/:namespace/deployments/:name/scale', async (req, res, next) => {
     try {
       const name = req.params.name;
       const patchData = req.body;
       const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
       logger.info(`Patching deployment ${name} in namespace ${namespace}`);
-      const resource = await storage.getResource('deployment', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`deployment ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('deployment', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('deployment', name, patchData, namespace, resource.metadata.resourceVersion);
+      const subresource = "scale";
 
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('deployment', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -278,44 +224,38 @@ export function createdeploymentRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
-
-//watch individual changes to a list of Deployment. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/deployments', async (req, res, next) => {
+  router.patch('/apis/apps/v1/namespaces/:namespace/deployments/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
-      logger.info(`Listing deployment in namespace ${namespace}`);
+      logger.info(`Patching deployment ${name} in namespace ${namespace}`);
+      const resource = await storage.getResource('deployment', name, namespace);
       
-      const resourceList = await storage.listResources('deployment', namespace, listOpts);
+      if (!resource) {
+        return handleResourceError(new Error(`deployment ${name} not found in namespace ${namespace}`), res);
+      }
       
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = storage.mergePatchResource('deployment', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = storage.jsonPatchResource('deployment', name, patchData, namespace, resource.metadata.resourceVersion);
 
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind Deployment
-  router.get('/apis/apps/v1/deployments', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing deployment`);
-      
-      const resourceList = await storage.listResources('deployment', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -343,6 +283,7 @@ export function createdeploymentRoutes(storage: Storage): express.Router {
   });
   //create a Deployment
   router.post('/apis/apps/v1/namespaces/:namespace/deployments', async (req, res, next) => {
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -393,6 +334,67 @@ export function createdeploymentRoutes(storage: Storage): express.Router {
           kind: 'deployment'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of Deployment. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/deployments', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing deployment in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('deployment', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind Deployment
+  router.get('/apis/apps/v1/deployments', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing deployment`);
+      
+      const resourceList = await storage.listResources('deployment', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind Deployment. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/deployments/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting deployment ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('deployment', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`deployment ${name} not found in namespace ${namespace}`), res);
+      }
+  
+      res.json(resource);
     } catch (error) {
       next(error);
     }

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_VolumeAttachmentStatus {
 /**
-* detachError represents the last error encountered during detach operation, if any. This field must only be set by the entity completing the detach operation, i.e. the external-attacher.
-* @references io.k8s.api.storage.v1.VolumeError
-*/
-detachError?: io_k8s_api_storage_v1_VolumeError;
-/**
 * attachError represents the last error encountered during attach operation, if any. This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
 * @references io.k8s.api.storage.v1.VolumeError
 */
@@ -23,6 +18,11 @@ attached: boolean;
 * attachmentMetadata is populated with any information returned by the attach operation, upon successful attach, that must be passed into subsequent WaitForAttach or Mount calls. This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
 */
 attachmentMetadata?: Record<string, any>;
+/**
+* detachError represents the last error encountered during detach operation, if any. This field must only be set by the entity completing the detach operation, i.e. the external-attacher.
+* @references io.k8s.api.storage.v1.VolumeError
+*/
+detachError?: io_k8s_api_storage_v1_VolumeError;
 }
 
 /**
@@ -32,10 +32,10 @@ attachmentMetadata?: Record<string, any>;
 */
 export function createio_k8s_api_storage_v1_VolumeAttachmentStatus(data?: Partial<io_k8s_api_storage_v1_VolumeAttachmentStatus>): io_k8s_api_storage_v1_VolumeAttachmentStatus {
  return {
-   detachError: data?.detachError !== undefined ? data.detachError : createio_k8s_api_storage_v1_VolumeError(),
    attachError: data?.attachError !== undefined ? data.attachError : createio_k8s_api_storage_v1_VolumeError(),
    attached: data?.attached !== undefined ? data.attached : false,
    attachmentMetadata: data?.attachmentMetadata !== undefined ? data.attachmentMetadata : {},
+   detachError: data?.detachError !== undefined ? data.detachError : createio_k8s_api_storage_v1_VolumeError(),
  };
 }
 // Required imports

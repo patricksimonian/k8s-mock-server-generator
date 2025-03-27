@@ -4,23 +4,26 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function createcsidriverRoutes(storage: Storage): express.Router {
   const router = express.Router();
-  //create a CSIDriver
-  router.post('/apis/storage.k8s.io/v1/csidrivers', async (req, res, next) => {
+
+//watch individual changes to a list of CSIDriver. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/storage.k8s.io/v1/watch/csidrivers', async (req, res, next) => {
     try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      logger.info(`Creating csidriver`);
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = null;
+      logger.info(`Listing csidriver`);
       
+      const resourceList = await storage.listResources('csidriver', namespace, listOpts);
       
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+
       
-      res.status(201).json(createdResource);
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -75,6 +78,26 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
 
       
       res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a CSIDriver
+  router.post('/apis/storage.k8s.io/v1/csidrivers', async (req, res, next) => {
+
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      logger.info(`Creating csidriver`);
+      const namespace = null;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
     } catch (error) {
       next(error);
     }
@@ -184,27 +207,6 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of CSIDriver. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/storage.k8s.io/v1/watch/csidrivers', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing csidriver`);
-      
-      const resourceList = await storage.listResources('csidriver', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

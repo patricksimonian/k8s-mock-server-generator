@@ -5,6 +5,10 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_DeleteOptions {
 /**
+* The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+*/
+gracePeriodSeconds?: number;
+/**
 * if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
 */
 ignoreStoreReadErrorWithClusterBreakingPotential?: boolean;
@@ -34,10 +38,6 @@ apiVersion?: string;
 * @isArray
 */
 dryRun?: string[];
-/**
-* The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
-*/
-gracePeriodSeconds?: number;
 }
 
 /**
@@ -47,6 +47,7 @@ gracePeriodSeconds?: number;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_DeleteOptions(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_DeleteOptions>): io_k8s_apimachinery_pkg_apis_meta_v1_DeleteOptions {
  return {
+   gracePeriodSeconds: data?.gracePeriodSeconds !== undefined ? data.gracePeriodSeconds : 0,
    ignoreStoreReadErrorWithClusterBreakingPotential: data?.ignoreStoreReadErrorWithClusterBreakingPotential !== undefined ? data.ignoreStoreReadErrorWithClusterBreakingPotential : false,
    kind: data?.kind !== undefined ? data.kind : '',
    orphanDependents: data?.orphanDependents !== undefined ? data.orphanDependents : false,
@@ -54,7 +55,6 @@ export function createio_k8s_apimachinery_pkg_apis_meta_v1_DeleteOptions(data?: 
    propagationPolicy: data?.propagationPolicy !== undefined ? data.propagationPolicy : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    dryRun: data?.dryRun !== undefined ? data.dryRun : [],
-   gracePeriodSeconds: data?.gracePeriodSeconds !== undefined ? data.gracePeriodSeconds : 0,
  };
 }
 // Required imports

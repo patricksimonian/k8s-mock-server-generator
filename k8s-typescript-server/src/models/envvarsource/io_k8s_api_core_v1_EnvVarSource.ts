@@ -5,16 +5,6 @@
 */
 export interface io_k8s_api_core_v1_EnvVarSource {
 /**
-* Selects a key of a secret in the pod's namespace
-* @references io.k8s.api.core.v1.SecretKeySelector
-*/
-secretKeyRef?: io_k8s_api_core_v1_SecretKeySelector;
-/**
-* Selects a key of a ConfigMap.
-* @references io.k8s.api.core.v1.ConfigMapKeySelector
-*/
-configMapKeyRef?: io_k8s_api_core_v1_ConfigMapKeySelector;
-/**
 * Selects a field of the pod: supports metadata.name, metadata.namespace, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.
 * @references io.k8s.api.core.v1.ObjectFieldSelector
 */
@@ -24,6 +14,16 @@ fieldRef?: io_k8s_api_core_v1_ObjectFieldSelector;
 * @references io.k8s.api.core.v1.ResourceFieldSelector
 */
 resourceFieldRef?: io_k8s_api_core_v1_ResourceFieldSelector;
+/**
+* Selects a key of a secret in the pod's namespace
+* @references io.k8s.api.core.v1.SecretKeySelector
+*/
+secretKeyRef?: io_k8s_api_core_v1_SecretKeySelector;
+/**
+* Selects a key of a ConfigMap.
+* @references io.k8s.api.core.v1.ConfigMapKeySelector
+*/
+configMapKeyRef?: io_k8s_api_core_v1_ConfigMapKeySelector;
 }
 
 /**
@@ -33,10 +33,10 @@ resourceFieldRef?: io_k8s_api_core_v1_ResourceFieldSelector;
 */
 export function createio_k8s_api_core_v1_EnvVarSource(data?: Partial<io_k8s_api_core_v1_EnvVarSource>): io_k8s_api_core_v1_EnvVarSource {
  return {
-   secretKeyRef: data?.secretKeyRef !== undefined ? data.secretKeyRef : createio_k8s_api_core_v1_SecretKeySelector(),
-   configMapKeyRef: data?.configMapKeyRef !== undefined ? data.configMapKeyRef : createio_k8s_api_core_v1_ConfigMapKeySelector(),
    fieldRef: data?.fieldRef !== undefined ? data.fieldRef : createio_k8s_api_core_v1_ObjectFieldSelector(),
    resourceFieldRef: data?.resourceFieldRef !== undefined ? data.resourceFieldRef : createio_k8s_api_core_v1_ResourceFieldSelector(),
+   secretKeyRef: data?.secretKeyRef !== undefined ? data.secretKeyRef : createio_k8s_api_core_v1_SecretKeySelector(),
+   configMapKeyRef: data?.configMapKeyRef !== undefined ? data.configMapKeyRef : createio_k8s_api_core_v1_ConfigMapKeySelector(),
  };
 }
 // Required imports

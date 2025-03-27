@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus {
 /**
+* currentReplicas is current number of replicas of pods managed by this autoscaler, as last seen by the autoscaler.
+*/
+currentReplicas?: number;
+/**
 * desiredReplicas is the desired number of replicas of pods managed by this autoscaler, as last calculated by the autoscaler.
 * @required
 */
@@ -28,10 +32,6 @@ conditions?: io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerCondition[];
 * @isArray
 */
 currentMetrics?: io_k8s_api_autoscaling_v2_MetricStatus[];
-/**
-* currentReplicas is current number of replicas of pods managed by this autoscaler, as last seen by the autoscaler.
-*/
-currentReplicas?: number;
 }
 
 /**
@@ -41,12 +41,12 @@ currentReplicas?: number;
 */
 export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus(data?: Partial<io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus>): io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus {
  return {
+   currentReplicas: data?.currentReplicas !== undefined ? data.currentReplicas : 0,
    desiredReplicas: data?.desiredReplicas !== undefined ? data.desiredReplicas : 0,
    lastScaleTime: data?.lastScaleTime !== undefined ? data.lastScaleTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    conditions: data?.conditions !== undefined ? data.conditions : [],
    currentMetrics: data?.currentMetrics !== undefined ? data.currentMetrics : [],
-   currentReplicas: data?.currentReplicas !== undefined ? data.currentReplicas : 0,
  };
 }
 // Required imports

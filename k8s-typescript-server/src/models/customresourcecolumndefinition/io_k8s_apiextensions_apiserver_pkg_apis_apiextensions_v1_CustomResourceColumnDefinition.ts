@@ -5,11 +5,6 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition {
 /**
-* name is a human readable name for the column.
-* @required
-*/
-name: string;
-/**
 * priority is an integer defining the relative importance of this column compared to others. Lower numbers are considered higher priority. Columns that may be omitted in limited space scenarios should be given a priority greater than 0.
 */
 priority?: number;
@@ -31,6 +26,11 @@ format?: string;
 * @required
 */
 jsonPath: string;
+/**
+* name is a human readable name for the column.
+* @required
+*/
+name: string;
 }
 
 /**
@@ -40,11 +40,11 @@ jsonPath: string;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceColumnDefinition {
  return {
-   name: data?.name !== undefined ? data.name : '',
    priority: data?.priority !== undefined ? data.priority : 0,
    type: data?.type !== undefined ? data.type : '',
    description: data?.description !== undefined ? data.description : '',
    format: data?.format !== undefined ? data.format : '',
    jsonPath: data?.jsonPath !== undefined ? data.jsonPath : '',
+   name: data?.name !== undefined ? data.name : '',
  };
 }

@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_node_v1_RuntimeClass {
 /**
+* scheduling holds the scheduling constraints to ensure that pods running with this RuntimeClass are scheduled to nodes that support it. If scheduling is nil, this RuntimeClass is assumed to be supported by all nodes.
+* @references io.k8s.api.node.v1.Scheduling
+*/
+scheduling?: io_k8s_api_node_v1_Scheduling;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -28,11 +33,6 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 * @references io.k8s.api.node.v1.Overhead
 */
 overhead?: io_k8s_api_node_v1_Overhead;
-/**
-* scheduling holds the scheduling constraints to ensure that pods running with this RuntimeClass are scheduled to nodes that support it. If scheduling is nil, this RuntimeClass is assumed to be supported by all nodes.
-* @references io.k8s.api.node.v1.Scheduling
-*/
-scheduling?: io_k8s_api_node_v1_Scheduling;
 }
 
 /**
@@ -42,12 +42,12 @@ scheduling?: io_k8s_api_node_v1_Scheduling;
 */
 export function createio_k8s_api_node_v1_RuntimeClass(data?: Partial<io_k8s_api_node_v1_RuntimeClass>): io_k8s_api_node_v1_RuntimeClass {
  return {
+   scheduling: data?.scheduling !== undefined ? data.scheduling : createio_k8s_api_node_v1_Scheduling(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    handler: data?.handler !== undefined ? data.handler : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    overhead: data?.overhead !== undefined ? data.overhead : createio_k8s_api_node_v1_Overhead(),
-   scheduling: data?.scheduling !== undefined ? data.scheduling : createio_k8s_api_node_v1_Scheduling(),
  };
 }
 // Required imports

@@ -5,12 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus {
 /**
-* current contains the current value for the given metric
-* @required
-* @references io.k8s.api.autoscaling.v2.MetricValueStatus
-*/
-current: io_k8s_api_autoscaling_v2_MetricValueStatus;
-/**
 * name is the name of the resource in question.
 * @required
 */
@@ -20,6 +14,12 @@ name: string;
 * @required
 */
 container: string;
+/**
+* current contains the current value for the given metric
+* @required
+* @references io.k8s.api.autoscaling.v2.MetricValueStatus
+*/
+current: io_k8s_api_autoscaling_v2_MetricValueStatus;
 }
 
 /**
@@ -29,9 +29,9 @@ container: string;
 */
 export function createio_k8s_api_autoscaling_v2_ContainerResourceMetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus>): io_k8s_api_autoscaling_v2_ContainerResourceMetricStatus {
  return {
-   current: data?.current !== undefined ? data.current : createio_k8s_api_autoscaling_v2_MetricValueStatus(),
    name: data?.name !== undefined ? data.name : '',
    container: data?.container !== undefined ? data.container : '',
+   current: data?.current !== undefined ? data.current : createio_k8s_api_autoscaling_v2_MetricValueStatus(),
  };
 }
 // Required imports

@@ -5,6 +5,10 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta {
 /**
+* Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
+*/
+selfLink?: string;
+/**
 * continue may be set if the user set a limit on the number of items returned, and indicates that the server has more data available. The value is opaque and may be used to issue another request to the endpoint that served this list to retrieve the next set of available objects. Continuing a consistent list may not be possible if the server configuration has changed or more than a few minutes have passed. The resourceVersion field returned when using this continue value will be identical to the value in the first response, unless you have received this token from an error message.
 */
 continue?: string;
@@ -16,10 +20,6 @@ remainingItemCount?: number;
 * String that identifies the server's internal version of this object that can be used by clients to determine when objects have changed. Value must be treated as opaque by clients and passed unmodified back to the server. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
 */
 resourceVersion?: string;
-/**
-* Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
-*/
-selfLink?: string;
 }
 
 /**
@@ -29,9 +29,9 @@ selfLink?: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta>): io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta {
  return {
+   selfLink: data?.selfLink !== undefined ? data.selfLink : '',
    continue: data?.continue !== undefined ? data.continue : '',
    remainingItemCount: data?.remainingItemCount !== undefined ? data.remainingItemCount : 0,
    resourceVersion: data?.resourceVersion !== undefined ? data.resourceVersion : '',
-   selfLink: data?.selfLink !== undefined ? data.selfLink : '',
  };
 }

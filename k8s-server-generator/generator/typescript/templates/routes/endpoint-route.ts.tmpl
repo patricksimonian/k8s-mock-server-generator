@@ -4,6 +4,7 @@ import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
 import { handleResourceError } from '../utils';
 
+
 export function create{{ .ResourceType }}Routes(storage: Storage): express.Router {
   const router = express.Router();
 
@@ -123,6 +124,32 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
 {{- if eq .Method "post" }}
   // {{- .Description }}
   router.post('{{ .Path }}', async (req, res, next) => {
+  {{- if .Operational }}
+  {{- $subResource := getSubresource .Path }}
+    {{- if or (eq $subResource "exec") (eq $subResource "attach") (eq $subResource "proxy") (eq $subResource "portforward") (eq $subResource "attach") (eq $subResource "binding")}}
+    logger.info(`{{ .Path }} not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
+    {{- else }}
+     const resource = req.body;
+     // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating ${resource.kind} in namespace ${namespace}`);
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      res.status(201).json(createdResource); 
+    {{- end }}
+  {{- else }}
+
     try {
       const resource = req.body;
       // Ensure resource has metadata
@@ -148,6 +175,7 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
     } catch (error) {
       next(error);
     }
+  {{- end }}
   });
   {{- end }}
   
