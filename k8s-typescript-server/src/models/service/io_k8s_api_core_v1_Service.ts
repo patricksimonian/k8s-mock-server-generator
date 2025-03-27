@@ -5,16 +5,6 @@
 */
 export interface io_k8s_api_core_v1_Service {
 /**
-* Spec defines the behavior of a service. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.core.v1.ServiceSpec
-*/
-spec?: io_k8s_api_core_v1_ServiceSpec;
-/**
-* Most recently observed status of the service. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.core.v1.ServiceStatus
-*/
-status?: io_k8s_api_core_v1_ServiceStatus;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -27,6 +17,16 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* Spec defines the behavior of a service. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ServiceSpec
+*/
+spec?: io_k8s_api_core_v1_ServiceSpec;
+/**
+* Most recently observed status of the service. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ServiceStatus
+*/
+status?: io_k8s_api_core_v1_ServiceStatus;
 }
 
 /**
@@ -36,11 +36,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_core_v1_Service(data?: Partial<io_k8s_api_core_v1_Service>): io_k8s_api_core_v1_Service {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_ServiceSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_ServiceStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_ServiceSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_ServiceStatus(),
  };
 }
 // Required imports

@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_apps_v1_ReplicaSetStatus {
 /**
+* The number of available replicas (ready for at least minReadySeconds) for this replica set.
+*/
+availableReplicas?: number;
+/**
 * Represents the latest available observations of a replica set's current state.
 * @isArray
 */
@@ -26,10 +30,6 @@ readyReplicas?: number;
 * @required
 */
 replicas: number;
-/**
-* The number of available replicas (ready for at least minReadySeconds) for this replica set.
-*/
-availableReplicas?: number;
 }
 
 /**
@@ -39,12 +39,12 @@ availableReplicas?: number;
 */
 export function createio_k8s_api_apps_v1_ReplicaSetStatus(data?: Partial<io_k8s_api_apps_v1_ReplicaSetStatus>): io_k8s_api_apps_v1_ReplicaSetStatus {
  return {
+   availableReplicas: data?.availableReplicas !== undefined ? data.availableReplicas : 0,
    conditions: data?.conditions !== undefined ? data.conditions : [],
    fullyLabeledReplicas: data?.fullyLabeledReplicas !== undefined ? data.fullyLabeledReplicas : 0,
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    readyReplicas: data?.readyReplicas !== undefined ? data.readyReplicas : 0,
    replicas: data?.replicas !== undefined ? data.replicas : 0,
-   availableReplicas: data?.availableReplicas !== undefined ? data.availableReplicas : 0,
  };
 }
 // Required imports

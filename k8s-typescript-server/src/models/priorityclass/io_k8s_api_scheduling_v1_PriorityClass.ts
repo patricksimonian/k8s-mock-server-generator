@@ -5,19 +5,6 @@
 */
 export interface io_k8s_api_scheduling_v1_PriorityClass {
 /**
-* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
-*/
-metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* preemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
-
-Possible enum values:
- - `"Never"` means that pod never preempts other pods with lower priority.
- - `"PreemptLowerPriority"` means that pod can preempt other pods with lower priority.
-*/
-preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
-/**
 * value represents the integer value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.
 * @required
 */
@@ -38,6 +25,19 @@ globalDefault?: boolean;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* preemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
+
+Possible enum values:
+ - `"Never"` means that pod never preempts other pods with lower priority.
+ - `"PreemptLowerPriority"` means that pod can preempt other pods with lower priority.
+*/
+preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
 }
 
 /**
@@ -47,13 +47,13 @@ kind?: string;
 */
 export function createio_k8s_api_scheduling_v1_PriorityClass(data?: Partial<io_k8s_api_scheduling_v1_PriorityClass>): io_k8s_api_scheduling_v1_PriorityClass {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   preemptionPolicy: data?.preemptionPolicy !== undefined ? data.preemptionPolicy : '',
    value: data?.value !== undefined ? data.value : 0,
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    description: data?.description !== undefined ? data.description : '',
    globalDefault: data?.globalDefault !== undefined ? data.globalDefault : false,
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   preemptionPolicy: data?.preemptionPolicy !== undefined ? data.preemptionPolicy : '',
  };
 }
 // Required imports

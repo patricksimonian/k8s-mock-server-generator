@@ -5,6 +5,29 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaimStatus {
 /**
+* currentVolumeAttributesClassName is the current name of the VolumeAttributesClass the PVC is using. When unset, there is no VolumeAttributeClass applied to this PersistentVolumeClaim This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
+*/
+currentVolumeAttributesClassName?: string;
+/**
+* ModifyVolumeStatus represents the status object of ControllerModifyVolume operation. When this is unset, there is no ModifyVolume operation being attempted. This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
+* @references io.k8s.api.core.v1.ModifyVolumeStatus
+*/
+modifyVolumeStatus?: io_k8s_api_core_v1_ModifyVolumeStatus;
+/**
+* phase represents the current phase of PersistentVolumeClaim.
+
+Possible enum values:
+ - `"Bound"` used for PersistentVolumeClaims that are bound
+ - `"Lost"` used for PersistentVolumeClaims that lost their underlying PersistentVolume. The claim was bound to a PersistentVolume and this volume does not exist any longer and all data on it was lost.
+ - `"Pending"` used for PersistentVolumeClaims that are not yet bound
+*/
+phase?: 'Bound' | 'Lost' | 'Pending';
+/**
+* accessModes contains the actual access modes the volume backing the PVC has. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
+* @isArray
+*/
+accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[];
+/**
 * allocatedResourceStatuses stores status of resource being resized for the given PVC. Key names follow standard Kubernetes label syntax. Valid values are either:
 	* Un-prefixed keys:
 		- storage - the capacity of the volume.
@@ -60,29 +83,6 @@ capacity?: Record<string, any>;
 * @isArray
 */
 conditions?: io_k8s_api_core_v1_PersistentVolumeClaimCondition[];
-/**
-* currentVolumeAttributesClassName is the current name of the VolumeAttributesClass the PVC is using. When unset, there is no VolumeAttributeClass applied to this PersistentVolumeClaim This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
-*/
-currentVolumeAttributesClassName?: string;
-/**
-* ModifyVolumeStatus represents the status object of ControllerModifyVolume operation. When this is unset, there is no ModifyVolume operation being attempted. This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
-* @references io.k8s.api.core.v1.ModifyVolumeStatus
-*/
-modifyVolumeStatus?: io_k8s_api_core_v1_ModifyVolumeStatus;
-/**
-* phase represents the current phase of PersistentVolumeClaim.
-
-Possible enum values:
- - `"Bound"` used for PersistentVolumeClaims that are bound
- - `"Lost"` used for PersistentVolumeClaims that lost their underlying PersistentVolume. The claim was bound to a PersistentVolume and this volume does not exist any longer and all data on it was lost.
- - `"Pending"` used for PersistentVolumeClaims that are not yet bound
-*/
-phase?: 'Bound' | 'Lost' | 'Pending';
-/**
-* accessModes contains the actual access modes the volume backing the PVC has. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
-* @isArray
-*/
-accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[];
 }
 
 /**
@@ -92,14 +92,14 @@ accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOnc
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaimStatus(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaimStatus>): io_k8s_api_core_v1_PersistentVolumeClaimStatus {
  return {
-   allocatedResourceStatuses: data?.allocatedResourceStatuses !== undefined ? data.allocatedResourceStatuses : {},
-   allocatedResources: data?.allocatedResources !== undefined ? data.allocatedResources : {},
-   capacity: data?.capacity !== undefined ? data.capacity : {},
-   conditions: data?.conditions !== undefined ? data.conditions : [],
    currentVolumeAttributesClassName: data?.currentVolumeAttributesClassName !== undefined ? data.currentVolumeAttributesClassName : '',
    modifyVolumeStatus: data?.modifyVolumeStatus !== undefined ? data.modifyVolumeStatus : createio_k8s_api_core_v1_ModifyVolumeStatus(),
    phase: data?.phase !== undefined ? data.phase : '',
    accessModes: data?.accessModes !== undefined ? data.accessModes : [],
+   allocatedResourceStatuses: data?.allocatedResourceStatuses !== undefined ? data.allocatedResourceStatuses : {},
+   allocatedResources: data?.allocatedResources !== undefined ? data.allocatedResources : {},
+   capacity: data?.capacity !== undefined ? data.capacity : {},
+   conditions: data?.conditions !== undefined ? data.conditions : [],
  };
 }
 // Required imports

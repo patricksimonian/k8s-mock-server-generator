@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_ReplicaSetCondition {
 /**
-* The last time the condition transitioned from one status to another.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
-/**
-* A human readable message indicating details about the transition.
-*/
-message?: string;
-/**
 * The reason for the condition's last transition.
 */
 reason?: string;
@@ -27,6 +18,15 @@ status: string;
 * @required
 */
 type: string;
+/**
+* The last time the condition transitioned from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* A human readable message indicating details about the transition.
+*/
+message?: string;
 }
 
 /**
@@ -36,11 +36,11 @@ type: string;
 */
 export function createio_k8s_api_apps_v1_ReplicaSetCondition(data?: Partial<io_k8s_api_apps_v1_ReplicaSetCondition>): io_k8s_api_apps_v1_ReplicaSetCondition {
  return {
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
-   message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   message: data?.message !== undefined ? data.message : '',
  };
 }
 // Required imports

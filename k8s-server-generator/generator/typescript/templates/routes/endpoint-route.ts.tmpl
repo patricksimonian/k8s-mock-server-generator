@@ -2,7 +2,7 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function create{{ .ResourceType }}Routes(storage: Storage): express.Router {
@@ -64,12 +64,85 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
 
 
   {{- if eq .Method "get" }}
+  {{- $subResource := getSubresource .Path }}
     {{- $parts := split .Path "/" }}
   {{- $lastPart := index $parts (sub (len $parts) 1) }}
-  {{- if eq $lastPart ":name" }}
+  {{- $secondLastPart := index $parts (sub (len $parts) 2) }}
+  {{- if or (eq $lastPart ":name") (eq $secondLastPart ":name") }}
 
 // {{- .Description }}
   router.get('{{ .Path }}', async (req, res, next) => {
+  {{- if .Operational }}
+ 
+  // the subresource {{- $subResource }}
+    {{- if or (eq $subResource "exec") (eq $subResource "attach") (eq $subResource "proxy") (eq $subResource "portforward") (eq $subResource "attach") (eq $subResource "binding")}}
+    logger.info(`{{ .Path }} not supported`);
+    res.status(405).json({
+      kind: 'Status',
+      apiVersion: 'v1',
+      metadata: {},
+      status: 'Failure',
+      reason: 'MethodNotAllowed',
+      message: 'Method not allowed'
+    });
+    return;
+    {{- else if (eq $subResource "log") }}
+        const { namespace, name } = req.params;
+        const cluster = "default"; // or extract if you support multi-cluster
+        let container = req.query.container as string;
+
+        const follow = req.query.follow === 'true';
+        const stdout = req.query.stdout !== 'false'; // default true
+        const stderr = req.query.stderr !== 'false'; // default true
+
+        try {
+          // Get container if not specified
+          if (!container) {
+            const pod = await storage.getResource("Pod", name, namespace);
+            if ("status" in pod) {
+              return res.status(pod.code || 500).json(pod);
+            }
+            container = getPrimaryContainer(pod);
+          }
+
+          const logStream = await storage.readLogs(name, namespace, container, cluster, {
+            follow,
+            stdout,
+            stderr
+          });
+
+          if ("status" in logStream) {
+            return res.status(logStream.code || 500).json(logStream);
+          }
+
+          res.setHeader("Content-Type", "text/plain");
+          logStream.pipe(res);
+        } catch (err) {
+          logger.error("Error fetching logs:", err);
+          res.status(500).send("Internal server error.");
+        }
+    {{- else }}
+      try {
+        const name = req.params.name;
+        {{- if .Namespaced }}
+        const namespace = req.params.namespace;
+        logger.info(`Getting {{ $subResource }} ${name} in namespace ${namespace}`);
+        {{- else }}
+        const namespace = null;
+        logger.info(`Getting {{ $subResource }} ${name}`);
+        {{- end }}
+        
+        const resource = await storage.getResource('{{ $subResource }}', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`{{ $subResource }} ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+    {{- end }}
+    {{- else }}
     try {
       const name = req.params.name;
       {{- if .Namespaced }}
@@ -85,11 +158,13 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
       if (!resource) {
         return handleResourceError(new Error(`{{ $.ResourceType }} ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+    {{- end }}
+  
+   
   });
   {{- else }}
 

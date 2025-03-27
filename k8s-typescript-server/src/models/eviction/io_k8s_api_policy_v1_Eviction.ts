@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_policy_v1_Eviction {
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
 * DeleteOptions may be provided
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions
 */
@@ -18,10 +22,6 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
 }
 
 /**
@@ -31,10 +31,10 @@ apiVersion?: string;
 */
 export function createio_k8s_api_policy_v1_Eviction(data?: Partial<io_k8s_api_policy_v1_Eviction>): io_k8s_api_policy_v1_Eviction {
  return {
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    deleteOptions: data?.deleteOptions !== undefined ? data.deleteOptions : createio_k8s_apimachinery_pkg_apis_meta_v1_DeleteOptions(),
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

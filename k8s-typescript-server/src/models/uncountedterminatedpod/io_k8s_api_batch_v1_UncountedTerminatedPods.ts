@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_batch_v1_UncountedTerminatedPods {
 /**
-* succeeded holds UIDs of succeeded Pods.
-* @isArray
-*/
-succeeded?: string[];
-/**
 * failed holds UIDs of failed Pods.
 * @isArray
 */
 failed?: string[];
+/**
+* succeeded holds UIDs of succeeded Pods.
+* @isArray
+*/
+succeeded?: string[];
 }
 
 /**
@@ -23,7 +23,7 @@ failed?: string[];
 */
 export function createio_k8s_api_batch_v1_UncountedTerminatedPods(data?: Partial<io_k8s_api_batch_v1_UncountedTerminatedPods>): io_k8s_api_batch_v1_UncountedTerminatedPods {
  return {
-   succeeded: data?.succeeded !== undefined ? data.succeeded : [],
    failed: data?.failed !== undefined ? data.failed : [],
+   succeeded: data?.succeeded !== undefined ? data.succeeded : [],
  };
 }

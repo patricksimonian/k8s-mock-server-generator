@@ -259,6 +259,7 @@ func (g *Generator) createTemplateFuncMap() template.FuncMap {
 		},
 		"getSubresource": func(path string) string {
 			segments := strings.Split(path, "/")
+			fmt.Printf("subResource: \n %v", segments[len(segments)-1])
 			return segments[len(segments)-1]
 		},
 		"getDefaultValue": func(schema ir.Schema) string {
@@ -370,6 +371,7 @@ func (g *Generator) loadTemplates() error {
 		"routes/discovery-routes.ts.tmpl",
 		"routes/endpoint-route.ts.tmpl",
 		"routes/openapi-routes.ts.tmpl",
+		"routes/utility-routes.ts.tmpl",
 	}
 
 	// Load each template
@@ -1210,6 +1212,11 @@ func (g *Generator) generateRoutes() error {
 		return fmt.Errorf("failed to generate openapi routes: %w", err)
 	}
 
+	// Generate utility routes file
+	if err := g.generateUtilityRoutes(); err != nil {
+		return fmt.Errorf("failed to generate utility routes: %w", err)
+	}
+
 	// Generate individual route files for each endpoint
 	if err := g.generateEndpointRoutes(); err != nil {
 		return fmt.Errorf("failed to generate endpoint routes: %w", err)
@@ -1305,6 +1312,29 @@ func (g *Generator) generateOpenAPIRoutes() error {
 
 	if err := tmpl.Execute(file, nil); err != nil {
 		return fmt.Errorf("failed to execute template for openapi routes: %w", err)
+	}
+
+	return nil
+}
+
+// generateUtilityRoutes generates the API discovery routes file
+func (g *Generator) generateUtilityRoutes() error {
+	// Get the template
+	tmpl, ok := g.Templates["routes/utility-routes.ts.tmpl"]
+	if !ok {
+		return fmt.Errorf("template routes/utility-routes.ts.tmpl not found")
+	}
+
+	// Create file
+	filePath := filepath.Join(g.OutputDir, "src", "routes", "utility-routes.ts")
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", filePath, err)
+	}
+	defer file.Close()
+
+	if err := tmpl.Execute(file, nil); err != nil {
+		return fmt.Errorf("failed to execute template for utility routes: %w", err)
 	}
 
 	return nil

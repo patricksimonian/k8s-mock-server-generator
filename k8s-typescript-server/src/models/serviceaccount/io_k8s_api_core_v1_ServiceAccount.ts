@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ServiceAccount {
 /**
-* AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. Can be overridden at the pod level.
-*/
-automountServiceAccountToken?: boolean;
-/**
 * ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount. ImagePullSecrets are distinct from Secrets because Secrets can be mounted in the pod, but ImagePullSecrets are only accessed by the kubelet. More info: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
 * @isArray
 */
@@ -31,6 +27,10 @@ secrets?: io_k8s_api_core_v1_ObjectReference[];
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
+/**
+* AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. Can be overridden at the pod level.
+*/
+automountServiceAccountToken?: boolean;
 }
 
 /**
@@ -40,12 +40,12 @@ apiVersion?: string;
 */
 export function createio_k8s_api_core_v1_ServiceAccount(data?: Partial<io_k8s_api_core_v1_ServiceAccount>): io_k8s_api_core_v1_ServiceAccount {
  return {
-   automountServiceAccountToken: data?.automountServiceAccountToken !== undefined ? data.automountServiceAccountToken : false,
    imagePullSecrets: data?.imagePullSecrets !== undefined ? data.imagePullSecrets : [],
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    secrets: data?.secrets !== undefined ? data.secrets : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   automountServiceAccountToken: data?.automountServiceAccountToken !== undefined ? data.automountServiceAccountToken : false,
  };
 }
 // Required imports

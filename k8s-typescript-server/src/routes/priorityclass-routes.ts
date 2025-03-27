@@ -2,14 +2,14 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createpriorityclassRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch individual changes to a list of PriorityClass. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/scheduling.k8s.io/v1/watch/priorityclasses', async (req, res, next) => {
+//list or watch objects of kind PriorityClass
+  router.get('/apis/scheduling.k8s.io/v1/priorityclasses', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -24,25 +24,6 @@ export function createpriorityclassRoutes(storage: Storage): express.Router {
 
       
       res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind PriorityClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/scheduling.k8s.io/v1/watch/priorityclasses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting priorityclass ${name}`);
-      
-      const resource = await storage.getResource('priorityclass', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`priorityclass ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
     } catch (error) {
       next(error);
     }
@@ -101,25 +82,24 @@ export function createpriorityclassRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind PriorityClass
-  router.get('/apis/scheduling.k8s.io/v1/priorityclasses', async (req, res, next) => {
+//watch changes to an object of kind PriorityClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/scheduling.k8s.io/v1/watch/priorityclasses/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
       const namespace = null;
-      logger.info(`Listing priorityclass`);
+      logger.info(`Getting priorityclass ${name}`);
       
-      const resourceList = await storage.listResources('priorityclass', namespace, listOpts);
+      const resource = await storage.getResource('priorityclass', name, namespace);
       
-
-      
-      res.json(resourceList);
+      if (!resource) {
+        return handleResourceError(new Error(`priorityclass ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 //replace the specified PriorityClass
   router.put('/apis/scheduling.k8s.io/v1/priorityclasses/:name', async (req, res, next) => {
@@ -224,8 +204,30 @@ export function createpriorityclassRoutes(storage: Storage): express.Router {
       if (!resource) {
         return handleResourceError(new Error(`priorityclass ${name} not found in namespace ${namespace}`), res);
       }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
   
-      res.json(resource);
+   
+  });
+
+//watch individual changes to a list of PriorityClass. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/scheduling.k8s.io/v1/watch/priorityclasses', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing priorityclass`);
+      
+      const resourceList = await storage.listResources('priorityclass', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

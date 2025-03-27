@@ -5,14 +5,6 @@
 */
 export interface io_k8s_api_core_v1_HTTPGetAction {
 /**
-* Scheme to use for connecting to the host. Defaults to HTTP.
-
-Possible enum values:
- - `"HTTP"` means that the scheme used will be http://
- - `"HTTPS"` means that the scheme used will be https://
-*/
-scheme?: 'HTTP' | 'HTTPS';
-/**
 * Host name to connect to, defaults to the pod IP. You probably want to set "Host" in httpHeaders instead.
 */
 host?: string;
@@ -31,6 +23,14 @@ path?: string;
 * @references io.k8s.apimachinery.pkg.util.intstr.IntOrString
 */
 port: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
+/**
+* Scheme to use for connecting to the host. Defaults to HTTP.
+
+Possible enum values:
+ - `"HTTP"` means that the scheme used will be http://
+ - `"HTTPS"` means that the scheme used will be https://
+*/
+scheme?: 'HTTP' | 'HTTPS';
 }
 
 /**
@@ -40,11 +40,11 @@ port: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
 */
 export function createio_k8s_api_core_v1_HTTPGetAction(data?: Partial<io_k8s_api_core_v1_HTTPGetAction>): io_k8s_api_core_v1_HTTPGetAction {
  return {
-   scheme: data?.scheme !== undefined ? data.scheme : '',
    host: data?.host !== undefined ? data.host : '',
    httpHeaders: data?.httpHeaders !== undefined ? data.httpHeaders : [],
    path: data?.path !== undefined ? data.path : '',
    port: data?.port !== undefined ? data.port : createio_k8s_apimachinery_pkg_util_intstr_IntOrString(),
+   scheme: data?.scheme !== undefined ? data.scheme : '',
  };
 }
 // Required imports

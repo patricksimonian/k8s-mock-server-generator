@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec {
 /**
+* auditAnnotations contains CEL expressions which are used to produce audit annotations for the audit event of the API request. validations and auditAnnotations may not both be empty; a least one of validations or auditAnnotations is required.
+* @isArray
+*/
+auditAnnotations?: io_k8s_api_admissionregistration_v1_AuditAnnotation[];
+/**
 * failurePolicy defines how to handle failures for the admission policy. Failures can occur from CEL expression parse errors, type check errors, runtime errors and invalid or mis-configured policy definitions or bindings.
 
 A policy is invalid if spec.paramKind refers to a non-existent Kind. A binding is invalid if spec.paramRef.name refers to a non-existent resource.
@@ -56,11 +61,6 @@ The expression of a variable can refer to other variables defined earlier in the
 * @isArray
 */
 variables?: io_k8s_api_admissionregistration_v1_Variable[];
-/**
-* auditAnnotations contains CEL expressions which are used to produce audit annotations for the audit event of the API request. validations and auditAnnotations may not both be empty; a least one of validations or auditAnnotations is required.
-* @isArray
-*/
-auditAnnotations?: io_k8s_api_admissionregistration_v1_AuditAnnotation[];
 }
 
 /**
@@ -70,13 +70,13 @@ auditAnnotations?: io_k8s_api_admissionregistration_v1_AuditAnnotation[];
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec {
  return {
+   auditAnnotations: data?.auditAnnotations !== undefined ? data.auditAnnotations : [],
    failurePolicy: data?.failurePolicy !== undefined ? data.failurePolicy : '',
    matchConditions: data?.matchConditions !== undefined ? data.matchConditions : [],
    matchConstraints: data?.matchConstraints !== undefined ? data.matchConstraints : createio_k8s_api_admissionregistration_v1_MatchResources(),
    paramKind: data?.paramKind !== undefined ? data.paramKind : createio_k8s_api_admissionregistration_v1_ParamKind(),
    validations: data?.validations !== undefined ? data.validations : [],
    variables: data?.variables !== undefined ? data.variables : [],
-   auditAnnotations: data?.auditAnnotations !== undefined ? data.auditAnnotations : [],
  };
 }
 // Required imports

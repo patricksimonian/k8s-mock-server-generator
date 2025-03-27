@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_autoscaling_v2_MetricStatus {
 /**
+* resource refers to a resource metric (such as those specified in requests and limits) known to Kubernetes describing each pod in the current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.
+* @references io.k8s.api.autoscaling.v2.ResourceMetricStatus
+*/
+resource?: io_k8s_api_autoscaling_v2_ResourceMetricStatus;
+/**
 * type is the type of metric source.  It will be one of "ContainerResource", "External", "Object", "Pods" or "Resource", each corresponds to a matching field in the object.
 * @required
 */
@@ -29,11 +34,6 @@ object?: io_k8s_api_autoscaling_v2_ObjectMetricStatus;
 * @references io.k8s.api.autoscaling.v2.PodsMetricStatus
 */
 pods?: io_k8s_api_autoscaling_v2_PodsMetricStatus;
-/**
-* resource refers to a resource metric (such as those specified in requests and limits) known to Kubernetes describing each pod in the current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.
-* @references io.k8s.api.autoscaling.v2.ResourceMetricStatus
-*/
-resource?: io_k8s_api_autoscaling_v2_ResourceMetricStatus;
 }
 
 /**
@@ -43,12 +43,12 @@ resource?: io_k8s_api_autoscaling_v2_ResourceMetricStatus;
 */
 export function createio_k8s_api_autoscaling_v2_MetricStatus(data?: Partial<io_k8s_api_autoscaling_v2_MetricStatus>): io_k8s_api_autoscaling_v2_MetricStatus {
  return {
+   resource: data?.resource !== undefined ? data.resource : createio_k8s_api_autoscaling_v2_ResourceMetricStatus(),
    type: data?.type !== undefined ? data.type : '',
    containerResource: data?.containerResource !== undefined ? data.containerResource : createio_k8s_api_autoscaling_v2_ContainerResourceMetricStatus(),
    external: data?.external !== undefined ? data.external : createio_k8s_api_autoscaling_v2_ExternalMetricStatus(),
    object: data?.object !== undefined ? data.object : createio_k8s_api_autoscaling_v2_ObjectMetricStatus(),
    pods: data?.pods !== undefined ? data.pods : createio_k8s_api_autoscaling_v2_PodsMetricStatus(),
-   resource: data?.resource !== undefined ? data.resource : createio_k8s_api_autoscaling_v2_ResourceMetricStatus(),
  };
 }
 // Required imports

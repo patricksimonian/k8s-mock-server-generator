@@ -9,14 +9,15 @@ export interface io_k8s_api_core_v1_ISCSIVolumeSource {
 */
 fsType?: string;
 /**
-* initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
-*/
-initiatorName?: string;
-/**
 * iqn is the target iSCSI Qualified Name.
 * @required
 */
 iqn: string;
+/**
+* portals is the iSCSI Target Portal List. The portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
+* @isArray
+*/
+portals?: string[];
 /**
 * secretRef is the CHAP Secret for iSCSI target and initiator authentication
 * @references io.k8s.api.core.v1.LocalObjectReference
@@ -28,6 +29,10 @@ secretRef?: io_k8s_api_core_v1_LocalObjectReference;
 */
 targetPortal: string;
 /**
+* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
+*/
+readOnly?: boolean;
+/**
 * chapAuthDiscovery defines whether support iSCSI Discovery CHAP authentication
 */
 chapAuthDiscovery?: boolean;
@@ -35,6 +40,10 @@ chapAuthDiscovery?: boolean;
 * chapAuthSession defines whether support iSCSI Session CHAP authentication
 */
 chapAuthSession?: boolean;
+/**
+* initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
+*/
+initiatorName?: string;
 /**
 * iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
 */
@@ -44,15 +53,6 @@ iscsiInterface?: string;
 * @required
 */
 lun: number;
-/**
-* portals is the iSCSI Target Portal List. The portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
-* @isArray
-*/
-portals?: string[];
-/**
-* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
-*/
-readOnly?: boolean;
 }
 
 /**
@@ -63,16 +63,16 @@ readOnly?: boolean;
 export function createio_k8s_api_core_v1_ISCSIVolumeSource(data?: Partial<io_k8s_api_core_v1_ISCSIVolumeSource>): io_k8s_api_core_v1_ISCSIVolumeSource {
  return {
    fsType: data?.fsType !== undefined ? data.fsType : '',
-   initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
    iqn: data?.iqn !== undefined ? data.iqn : '',
+   portals: data?.portals !== undefined ? data.portals : [],
    secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
    targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    chapAuthDiscovery: data?.chapAuthDiscovery !== undefined ? data.chapAuthDiscovery : false,
    chapAuthSession: data?.chapAuthSession !== undefined ? data.chapAuthSession : false,
+   initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
    iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
    lun: data?.lun !== undefined ? data.lun : 0,
-   portals: data?.portals !== undefined ? data.portals : [],
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
  };
 }
 // Required imports

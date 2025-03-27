@@ -5,11 +5,6 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_Status {
 /**
-* Extended data associated with the reason.  Each reason may define its own extended details. This field is optional and the data returned is not guaranteed to conform to any schema except that defined by the reason type.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.StatusDetails
-*/
-details?: io_k8s_apimachinery_pkg_apis_meta_v1_StatusDetails;
-/**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
@@ -38,6 +33,11 @@ apiVersion?: string;
 * Suggested HTTP return code for this status, 0 if not set.
 */
 code?: number;
+/**
+* Extended data associated with the reason.  Each reason may define its own extended details. This field is optional and the data returned is not guaranteed to conform to any schema except that defined by the reason type.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.StatusDetails
+*/
+details?: io_k8s_apimachinery_pkg_apis_meta_v1_StatusDetails;
 }
 
 /**
@@ -47,7 +47,6 @@ code?: number;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_Status(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_Status>): io_k8s_apimachinery_pkg_apis_meta_v1_Status {
  return {
-   details: data?.details !== undefined ? data.details : createio_k8s_apimachinery_pkg_apis_meta_v1_StatusDetails(),
    kind: data?.kind !== undefined ? data.kind : '',
    message: data?.message !== undefined ? data.message : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta(),
@@ -55,6 +54,7 @@ export function createio_k8s_apimachinery_pkg_apis_meta_v1_Status(data?: Partial
    status: data?.status !== undefined ? data.status : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    code: data?.code !== undefined ? data.code : 0,
+   details: data?.details !== undefined ? data.details : createio_k8s_apimachinery_pkg_apis_meta_v1_StatusDetails(),
  };
 }
 // Required imports

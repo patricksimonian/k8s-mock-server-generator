@@ -5,35 +5,35 @@
 */
 export interface io_k8s_api_apps_v1_StatefulSetStatus {
 /**
-* currentReplicas is the number of Pods created by the StatefulSet controller from the StatefulSet version indicated by currentRevision.
-*/
-currentReplicas?: number;
-/**
 * readyReplicas is the number of pods created for this StatefulSet with a Ready Condition.
 */
 readyReplicas?: number;
 /**
-* updateRevision, if not empty, indicates the version of the StatefulSet used to generate Pods in the sequence [replicas-updatedReplicas,replicas)
+* replicas is the number of Pods created by the StatefulSet controller.
+* @required
 */
-updateRevision?: string;
-/**
-* collisionCount is the count of hash collisions for the StatefulSet. The StatefulSet controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ControllerRevision.
-*/
-collisionCount?: number;
+replicas: number;
 /**
 * Represents the latest available observations of a statefulset's current state.
 * @isArray
 */
 conditions?: io_k8s_api_apps_v1_StatefulSetCondition[];
 /**
+* currentReplicas is the number of Pods created by the StatefulSet controller from the StatefulSet version indicated by currentRevision.
+*/
+currentReplicas?: number;
+/**
+* currentRevision, if not empty, indicates the version of the StatefulSet used to generate Pods in the sequence [0,currentReplicas).
+*/
+currentRevision?: string;
+/**
 * observedGeneration is the most recent generation observed for this StatefulSet. It corresponds to the StatefulSet's generation, which is updated on mutation by the API Server.
 */
 observedGeneration?: number;
 /**
-* replicas is the number of Pods created by the StatefulSet controller.
-* @required
+* updateRevision, if not empty, indicates the version of the StatefulSet used to generate Pods in the sequence [replicas-updatedReplicas,replicas)
 */
-replicas: number;
+updateRevision?: string;
 /**
 * updatedReplicas is the number of Pods created by the StatefulSet controller from the StatefulSet version indicated by updateRevision.
 */
@@ -43,9 +43,9 @@ updatedReplicas?: number;
 */
 availableReplicas?: number;
 /**
-* currentRevision, if not empty, indicates the version of the StatefulSet used to generate Pods in the sequence [0,currentReplicas).
+* collisionCount is the count of hash collisions for the StatefulSet. The StatefulSet controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ControllerRevision.
 */
-currentRevision?: string;
+collisionCount?: number;
 }
 
 /**
@@ -55,16 +55,16 @@ currentRevision?: string;
 */
 export function createio_k8s_api_apps_v1_StatefulSetStatus(data?: Partial<io_k8s_api_apps_v1_StatefulSetStatus>): io_k8s_api_apps_v1_StatefulSetStatus {
  return {
-   currentReplicas: data?.currentReplicas !== undefined ? data.currentReplicas : 0,
    readyReplicas: data?.readyReplicas !== undefined ? data.readyReplicas : 0,
-   updateRevision: data?.updateRevision !== undefined ? data.updateRevision : '',
-   collisionCount: data?.collisionCount !== undefined ? data.collisionCount : 0,
-   conditions: data?.conditions !== undefined ? data.conditions : [],
-   observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    replicas: data?.replicas !== undefined ? data.replicas : 0,
+   conditions: data?.conditions !== undefined ? data.conditions : [],
+   currentReplicas: data?.currentReplicas !== undefined ? data.currentReplicas : 0,
+   currentRevision: data?.currentRevision !== undefined ? data.currentRevision : '',
+   observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
+   updateRevision: data?.updateRevision !== undefined ? data.updateRevision : '',
    updatedReplicas: data?.updatedReplicas !== undefined ? data.updatedReplicas : 0,
    availableReplicas: data?.availableReplicas !== undefined ? data.availableReplicas : 0,
-   currentRevision: data?.currentRevision !== undefined ? data.currentRevision : '',
+   collisionCount: data?.collisionCount !== undefined ? data.collisionCount : 0,
  };
 }
 // Required imports

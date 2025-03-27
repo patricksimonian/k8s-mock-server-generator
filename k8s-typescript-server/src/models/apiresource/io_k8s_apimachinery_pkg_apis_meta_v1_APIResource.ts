@@ -15,43 +15,43 @@ categories?: string[];
 */
 kind: string;
 /**
-* namespaced indicates if a resource is namespaced or not.
-* @required
-*/
-namespaced: boolean;
-/**
-* The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
-*/
-storageVersionHash?: string;
-/**
-* verbs is a list of supported kube verbs (this includes get, list, watch, create, update, patch, delete, deletecollection, and proxy)
-* @required
-* @isArray
-*/
-verbs: string[];
-/**
-* group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale".
-*/
-group?: string;
-/**
 * name is the plural name of the resource.
 * @required
 */
 name: string;
+/**
+* namespaced indicates if a resource is namespaced or not.
+* @required
+*/
+namespaced: boolean;
 /**
 * shortNames is a list of suggested short names of the resource.
 * @isArray
 */
 shortNames?: string[];
 /**
+* The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
+*/
+storageVersionHash?: string;
+/**
+* version is the preferred version of the resource.  Empty implies the version of the containing resource list For subresources, this may have a different value, for example: v1 (while inside a v1beta1 version of the core resource's group)".
+*/
+version?: string;
+/**
+* group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale".
+*/
+group?: string;
+/**
 * singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 * @required
 */
 singularName: string;
 /**
-* version is the preferred version of the resource.  Empty implies the version of the containing resource list For subresources, this may have a different value, for example: v1 (while inside a v1beta1 version of the core resource's group)".
+* verbs is a list of supported kube verbs (this includes get, list, watch, create, update, patch, delete, deletecollection, and proxy)
+* @required
+* @isArray
 */
-version?: string;
+verbs: string[];
 }
 
 /**
@@ -63,13 +63,13 @@ export function createio_k8s_apimachinery_pkg_apis_meta_v1_APIResource(data?: Pa
  return {
    categories: data?.categories !== undefined ? data.categories : [],
    kind: data?.kind !== undefined ? data.kind : '',
-   namespaced: data?.namespaced !== undefined ? data.namespaced : false,
-   storageVersionHash: data?.storageVersionHash !== undefined ? data.storageVersionHash : '',
-   verbs: data?.verbs !== undefined ? data.verbs : [],
-   group: data?.group !== undefined ? data.group : '',
    name: data?.name !== undefined ? data.name : '',
+   namespaced: data?.namespaced !== undefined ? data.namespaced : false,
    shortNames: data?.shortNames !== undefined ? data.shortNames : [],
-   singularName: data?.singularName !== undefined ? data.singularName : '',
+   storageVersionHash: data?.storageVersionHash !== undefined ? data.storageVersionHash : '',
    version: data?.version !== undefined ? data.version : '',
+   group: data?.group !== undefined ? data.group : '',
+   singularName: data?.singularName !== undefined ? data.singularName : '',
+   verbs: data?.verbs !== undefined ? data.verbs : [],
  };
 }

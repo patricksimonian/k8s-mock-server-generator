@@ -190,17 +190,17 @@ async function handleApiGroups(
       name: 'autoscaling',
       versions: [
         {
-          groupVersion: 'autoscaling/v1',
-          version: 'v1'
-        },
-        {
           groupVersion: 'autoscaling/v2',
           version: 'v2'
         },
+        {
+          groupVersion: 'autoscaling/v1',
+          version: 'v1'
+        },
       ],
       preferredVersion: {
-        groupVersion: 'autoscaling/v1',
-        version: 'v1'
+        groupVersion: 'autoscaling/v2',
+        version: 'v2'
       }
     },
     {
@@ -405,10 +405,10 @@ async function handleApiResources(
 
   // Process the pre-extracted core resources
   {
-    const singularName = pluralize.singular('limitranges');
+    const singularName = pluralize.singular('endpoints');
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
-      name: 'limitranges',
+      name: 'endpoints',
       singularName: singularName,
       namespaced: true,
       kind: kind,
@@ -427,6 +427,17 @@ async function handleApiResources(
     });
   }
   {
+    const singularName = pluralize.singular('resourcequotas');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'resourcequotas',
+      singularName: singularName,
+      namespaced: true,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
     const singularName = pluralize.singular('finalize');
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
@@ -438,12 +449,12 @@ async function handleApiResources(
     });
   }
   {
-    const singularName = pluralize.singular('status');
+    const singularName = pluralize.singular('configmaps');
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
-      name: 'status',
+      name: 'configmaps',
       singularName: singularName,
-      namespaced: false,
+      namespaced: true,
       kind: kind,
       verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
     });
@@ -460,10 +471,21 @@ async function handleApiResources(
     });
   }
   {
-    const singularName = pluralize.singular('endpoints');
+    const singularName = pluralize.singular('replicationcontrollers');
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
-      name: 'endpoints',
+      name: 'replicationcontrollers',
+      singularName: singularName,
+      namespaced: true,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
+    const singularName = pluralize.singular('events');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'events',
       singularName: singularName,
       namespaced: false,
       kind: kind,
@@ -471,10 +493,21 @@ async function handleApiResources(
     });
   }
   {
-    const singularName = pluralize.singular('resourcequotas');
+    const singularName = pluralize.singular('persistentvolumes');
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
-      name: 'resourcequotas',
+      name: 'persistentvolumes',
+      singularName: singularName,
+      namespaced: false,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
+    const singularName = pluralize.singular('secrets');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'secrets',
       singularName: singularName,
       namespaced: true,
       kind: kind,
@@ -486,6 +519,50 @@ async function handleApiResources(
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
       name: 'services',
+      singularName: singularName,
+      namespaced: true,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
+    const singularName = pluralize.singular('limitranges');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'limitranges',
+      singularName: singularName,
+      namespaced: true,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
+    const singularName = pluralize.singular('nodes');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'nodes',
+      singularName: singularName,
+      namespaced: false,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
+    const singularName = pluralize.singular('podtemplates');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'podtemplates',
+      singularName: singularName,
+      namespaced: true,
+      kind: kind,
+      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
+    });
+  }
+  {
+    const singularName = pluralize.singular('serviceaccounts');
+    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
+    resources.push({
+      name: 'serviceaccounts',
       singularName: singularName,
       namespaced: true,
       kind: kind,
@@ -515,45 +592,12 @@ async function handleApiResources(
     });
   }
   {
-    const singularName = pluralize.singular('events');
+    const singularName = pluralize.singular('status');
     const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
     resources.push({
-      name: 'events',
-      singularName: singularName,
-      namespaced: true,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('podtemplates');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'podtemplates',
+      name: 'status',
       singularName: singularName,
       namespaced: false,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('secrets');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'secrets',
-      singularName: singularName,
-      namespaced: false,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('serviceaccounts');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'serviceaccounts',
-      singularName: singularName,
-      namespaced: true,
       kind: kind,
       verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
     });
@@ -565,50 +609,6 @@ async function handleApiResources(
       name: 'namespaces',
       singularName: singularName,
       namespaced: false,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('replicationcontrollers');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'replicationcontrollers',
-      singularName: singularName,
-      namespaced: false,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('nodes');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'nodes',
-      singularName: singularName,
-      namespaced: false,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('persistentvolumes');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'persistentvolumes',
-      singularName: singularName,
-      namespaced: false,
-      kind: kind,
-      verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
-    });
-  }
-  {
-    const singularName = pluralize.singular('configmaps');
-    const kind = singularName.charAt(0).toUpperCase() + singularName.slice(1);
-    resources.push({
-      name: 'configmaps',
-      singularName: singularName,
-      namespaced: true,
       kind: kind,
       verbs: ['get', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection', 'watch']
     });
@@ -644,11 +644,7 @@ async function handleApiResources(
 const apiGroupResourcesMap = {
   'admissionregistration.k8s.io/v1': [
     { 
-      name: 'validatingwebhookconfigurations',
-      namespaced: false
-    },
-    { 
-      name: 'validatingadmissionpolicies',
+      name: 'mutatingwebhookconfigurations',
       namespaced: false
     },
     { 
@@ -656,7 +652,11 @@ const apiGroupResourcesMap = {
       namespaced: false
     },
     { 
-      name: 'mutatingwebhookconfigurations',
+      name: 'validatingadmissionpolicies',
+      namespaced: false
+    },
+    { 
+      name: 'validatingwebhookconfigurations',
       namespaced: false
     },
   ],
@@ -674,33 +674,33 @@ const apiGroupResourcesMap = {
   ],
   'apps/v1': [
     { 
+      name: 'replicasets',
+      namespaced: true
+    },
+    { 
       name: 'statefulsets',
       namespaced: true
+    },
+    { 
+      name: 'daemonsets',
+      namespaced: false
     },
     { 
       name: 'deployments',
       namespaced: true
     },
     { 
-      name: 'daemonsets',
-      namespaced: true
-    },
-    { 
       name: 'controllerrevisions',
-      namespaced: true
-    },
-    { 
-      name: 'replicasets',
-      namespaced: true
+      namespaced: false
     },
   ],
   'authentication.k8s.io/v1': [
     { 
-      name: 'selfsubjectreviews',
+      name: 'tokenreviews',
       namespaced: false
     },
     { 
-      name: 'tokenreviews',
+      name: 'selfsubjectreviews',
       namespaced: false
     },
   ],
@@ -710,15 +710,15 @@ const apiGroupResourcesMap = {
       namespaced: true
     },
     { 
-      name: 'selfsubjectrulesreviews',
-      namespaced: false
-    },
-    { 
       name: 'selfsubjectaccessreviews',
       namespaced: false
     },
     { 
       name: 'subjectaccessreviews',
+      namespaced: false
+    },
+    { 
+      name: 'selfsubjectrulesreviews',
       namespaced: false
     },
   ],
@@ -765,31 +765,31 @@ const apiGroupResourcesMap = {
   'events.k8s.io/v1': [
     { 
       name: 'events',
-      namespaced: false
+      namespaced: true
     },
   ],
   'flowcontrol.apiserver.k8s.io/v1': [
     { 
-      name: 'flowschemas',
+      name: 'prioritylevelconfigurations',
       namespaced: false
     },
     { 
-      name: 'prioritylevelconfigurations',
+      name: 'flowschemas',
       namespaced: false
     },
   ],
   'networking.k8s.io/v1': [
     { 
-      name: 'networkpolicies',
-      namespaced: true
-    },
-    { 
       name: 'ingresses',
-      namespaced: false
+      namespaced: true
     },
     { 
       name: 'ingressclasses',
       namespaced: false
+    },
+    { 
+      name: 'networkpolicies',
+      namespaced: true
     },
   ],
   'node.k8s.io/v1': [
@@ -801,17 +801,17 @@ const apiGroupResourcesMap = {
   'policy/v1': [
     { 
       name: 'poddisruptionbudgets',
-      namespaced: false
+      namespaced: true
     },
   ],
   'rbac.authorization.k8s.io/v1': [
     { 
-      name: 'clusterroles',
+      name: 'rolebindings',
       namespaced: false
     },
     { 
-      name: 'rolebindings',
-      namespaced: true
+      name: 'clusterroles',
+      namespaced: false
     },
     { 
       name: 'roles',
@@ -830,23 +830,23 @@ const apiGroupResourcesMap = {
   ],
   'storage.k8s.io/v1': [
     { 
-      name: 'csinodes',
+      name: 'storageclasses',
       namespaced: false
-    },
-    { 
-      name: 'csistoragecapacities',
-      namespaced: true
     },
     { 
       name: 'csidrivers',
       namespaced: false
     },
     { 
-      name: 'storageclasses',
+      name: 'volumeattachments',
       namespaced: false
     },
     { 
-      name: 'volumeattachments',
+      name: 'csistoragecapacities',
+      namespaced: false
+    },
+    { 
+      name: 'csinodes',
       namespaced: false
     },
   ],

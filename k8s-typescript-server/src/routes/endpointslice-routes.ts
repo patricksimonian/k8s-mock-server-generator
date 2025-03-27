@@ -2,11 +2,73 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createendpointsliceRoutes(storage: Storage): express.Router {
   const router = express.Router();
+
+//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing endpointslice in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/discovery.k8s.io/v1/watch/endpointslices', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing endpointslice`);
+      
+      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch changes to an object of kind EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('endpointslice', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
 
 //list or watch objects of kind EndpointSlice
   router.get('/apis/discovery.k8s.io/v1/endpointslices', async (req, res, next) => {
@@ -29,22 +91,34 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices', async (req, res, next) => {
+//delete collection of EndpointSlice
+  router.delete('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
-      logger.info(`Listing endpointslice in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
-      
+      logger.info(`Deleting all endpointslice in namespace ${namespace}`);
+      try {
 
+        const deleted = await storage.deleteAllResources('endpointslice', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`endpointslice not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`endpointslice not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
       
-      res.json(resourceList);
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'endpointslice'
+        }
+      });
     } catch (error) {
       next(error);
     }
@@ -95,34 +169,44 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
     }
   });
 
-//delete collection of EndpointSlice
-  router.delete('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices', async (req, res, next) => {
+//read the specified EndpointSlice
+  router.get('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const name = req.params.name;
       const namespace = req.params.namespace;
-      logger.info(`Deleting all endpointslice in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('endpointslice', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`endpointslice not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`endpointslice not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
+      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'endpointslice'
-        }
-      });
+      const resource = await storage.getResource('endpointslice', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
+//replace the specified EndpointSlice
+  router.put('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating endpointslice ${name} in namespace ${namespace}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('endpointslice', name, resource, namespace, resource.metadata.resourceVersion);
+      
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -191,88 +275,6 @@ export function createendpointsliceRoutes(storage: Storage): express.Router {
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified EndpointSlice
-  router.get('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('endpointslice', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace the specified EndpointSlice
-  router.put('/apis/discovery.k8s.io/v1/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating endpointslice ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-
-      const updatedResource = await storage.updateResource('endpointslice', name, resource, namespace, resource.metadata.resourceVersion);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/discovery.k8s.io/v1/watch/endpointslices', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing endpointslice`);
-      
-      const resourceList = await storage.listResources('endpointslice', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind EndpointSlice. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/discovery.k8s.io/v1/watch/namespaces/:namespace/endpointslices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting endpointslice ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('endpointslice', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`endpointslice ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
     } catch (error) {
       next(error);
     }

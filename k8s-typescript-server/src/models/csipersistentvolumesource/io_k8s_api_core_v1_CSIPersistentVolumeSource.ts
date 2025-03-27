@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_core_v1_CSIPersistentVolumeSource {
 /**
-* nodePublishSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodePublishVolume and NodeUnpublishVolume calls. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
+* controllerExpandSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI ControllerExpandVolume call. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
 * @references io.k8s.api.core.v1.SecretReference
 */
-nodePublishSecretRef?: io_k8s_api_core_v1_SecretReference;
+controllerExpandSecretRef?: io_k8s_api_core_v1_SecretReference;
 /**
-* nodeStageSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodeStageVolume and NodeStageVolume and NodeUnstageVolume calls. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
-* @references io.k8s.api.core.v1.SecretReference
+* driver is the name of the driver to use for this volume. Required.
+* @required
 */
-nodeStageSecretRef?: io_k8s_api_core_v1_SecretReference;
+driver: string;
 /**
 * readOnly value to pass to ControllerPublishVolumeRequest. Defaults to false (read/write).
 */
@@ -23,20 +23,15 @@ readOnly?: boolean;
 */
 volumeAttributes?: Record<string, any>;
 /**
-* controllerExpandSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI ControllerExpandVolume call. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
-* @references io.k8s.api.core.v1.SecretReference
+* volumeHandle is the unique volume name returned by the CSI volume plugin’s CreateVolume to refer to the volume on all subsequent calls. Required.
+* @required
 */
-controllerExpandSecretRef?: io_k8s_api_core_v1_SecretReference;
+volumeHandle: string;
 /**
 * controllerPublishSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI ControllerPublishVolume and ControllerUnpublishVolume calls. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
 * @references io.k8s.api.core.v1.SecretReference
 */
 controllerPublishSecretRef?: io_k8s_api_core_v1_SecretReference;
-/**
-* driver is the name of the driver to use for this volume. Required.
-* @required
-*/
-driver: string;
 /**
 * fsType to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs".
 */
@@ -47,10 +42,15 @@ fsType?: string;
 */
 nodeExpandSecretRef?: io_k8s_api_core_v1_SecretReference;
 /**
-* volumeHandle is the unique volume name returned by the CSI volume plugin’s CreateVolume to refer to the volume on all subsequent calls. Required.
-* @required
+* nodePublishSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodePublishVolume and NodeUnpublishVolume calls. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
+* @references io.k8s.api.core.v1.SecretReference
 */
-volumeHandle: string;
+nodePublishSecretRef?: io_k8s_api_core_v1_SecretReference;
+/**
+* nodeStageSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodeStageVolume and NodeStageVolume and NodeUnstageVolume calls. This field is optional, and may be empty if no secret is required. If the secret object contains more than one secret, all secrets are passed.
+* @references io.k8s.api.core.v1.SecretReference
+*/
+nodeStageSecretRef?: io_k8s_api_core_v1_SecretReference;
 }
 
 /**
@@ -60,16 +60,16 @@ volumeHandle: string;
 */
 export function createio_k8s_api_core_v1_CSIPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_CSIPersistentVolumeSource>): io_k8s_api_core_v1_CSIPersistentVolumeSource {
  return {
-   nodePublishSecretRef: data?.nodePublishSecretRef !== undefined ? data.nodePublishSecretRef : createio_k8s_api_core_v1_SecretReference(),
-   nodeStageSecretRef: data?.nodeStageSecretRef !== undefined ? data.nodeStageSecretRef : createio_k8s_api_core_v1_SecretReference(),
+   controllerExpandSecretRef: data?.controllerExpandSecretRef !== undefined ? data.controllerExpandSecretRef : createio_k8s_api_core_v1_SecretReference(),
+   driver: data?.driver !== undefined ? data.driver : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    volumeAttributes: data?.volumeAttributes !== undefined ? data.volumeAttributes : {},
-   controllerExpandSecretRef: data?.controllerExpandSecretRef !== undefined ? data.controllerExpandSecretRef : createio_k8s_api_core_v1_SecretReference(),
+   volumeHandle: data?.volumeHandle !== undefined ? data.volumeHandle : '',
    controllerPublishSecretRef: data?.controllerPublishSecretRef !== undefined ? data.controllerPublishSecretRef : createio_k8s_api_core_v1_SecretReference(),
-   driver: data?.driver !== undefined ? data.driver : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    nodeExpandSecretRef: data?.nodeExpandSecretRef !== undefined ? data.nodeExpandSecretRef : createio_k8s_api_core_v1_SecretReference(),
-   volumeHandle: data?.volumeHandle !== undefined ? data.volumeHandle : '',
+   nodePublishSecretRef: data?.nodePublishSecretRef !== undefined ? data.nodePublishSecretRef : createio_k8s_api_core_v1_SecretReference(),
+   nodeStageSecretRef: data?.nodeStageSecretRef !== undefined ? data.nodeStageSecretRef : createio_k8s_api_core_v1_SecretReference(),
  };
 }
 // Required imports

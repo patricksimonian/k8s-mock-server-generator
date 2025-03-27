@@ -2,7 +2,7 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createconfigmapRoutes(storage: Storage): express.Router {
@@ -29,46 +29,6 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind ConfigMap. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/api/v1/watch/namespaces/:namespace/configmaps/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting configmap ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('configmap', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`configmap ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of ConfigMap. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/configmaps', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing configmap`);
-      
-      const resourceList = await storage.listResources('configmap', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //read the specified ConfigMap
   router.get('/api/v1/namespaces/:namespace/configmaps/:name', async (req, res, next) => {
     try {
@@ -81,11 +41,12 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
       if (!resource) {
         return handleResourceError(new Error(`configmap ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 //replace the specified ConfigMap
   router.put('/api/v1/namespaces/:namespace/configmaps/:name', async (req, res, next) => {
@@ -177,6 +138,26 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
     } catch (error) {
       next(error);
     }
+  });
+
+//watch changes to an object of kind ConfigMap. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/api/v1/watch/namespaces/:namespace/configmaps/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting configmap ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('configmap', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`configmap ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
   });
 
 //list or watch objects of kind ConfigMap
@@ -273,6 +254,27 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
           kind: 'configmap'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ConfigMap. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/configmaps', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing configmap`);
+      
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

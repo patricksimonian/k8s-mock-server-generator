@@ -5,6 +5,11 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition {
 /**
+* lastTransitionTime last time the condition transitioned from one status to another.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
 * message is a human-readable message indicating details about last transition.
 */
 message?: string;
@@ -22,11 +27,6 @@ status: string;
 * @required
 */
 type: string;
-/**
-* lastTransitionTime last time the condition transitioned from one status to another.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -36,11 +36,11 @@ lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceDefinitionCondition {
  return {
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
 // Required imports

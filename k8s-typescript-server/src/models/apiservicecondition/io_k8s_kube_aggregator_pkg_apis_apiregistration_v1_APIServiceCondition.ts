@@ -5,6 +5,11 @@
 */
 export interface io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition {
 /**
+* Type is the type of the condition.
+* @required
+*/
+type: string;
+/**
 * Last time the condition transitioned from one status to another.
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
@@ -22,11 +27,6 @@ reason?: string;
 * @required
 */
 status: string;
-/**
-* Type is the type of the condition.
-* @required
-*/
-type: string;
 }
 
 /**
@@ -36,11 +36,11 @@ type: string;
 */
 export function createio_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition(data?: Partial<io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition>): io_k8s_kube_aggregator_pkg_apis_apiregistration_v1_APIServiceCondition {
  return {
+   type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
-   type: data?.type !== undefined ? data.type : '',
  };
 }
 // Required imports

@@ -2,30 +2,11 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createapiserviceRoutes(storage: Storage): express.Router {
   const router = express.Router();
-
-//read the specified APIService
-  router.get('/apis/apiregistration.k8s.io/v1/apiservices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting apiservice ${name}`);
-      
-      const resource = await storage.getResource('apiservice', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`apiservice ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
 //replace the specified APIService
   router.put('/apis/apiregistration.k8s.io/v1/apiservices/:name', async (req, res, next) => {
     try {
@@ -116,6 +97,128 @@ export function createapiserviceRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
+
+//read the specified APIService
+  router.get('/apis/apiregistration.k8s.io/v1/apiservices/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting apiservice ${name}`);
+      
+      const resource = await storage.getResource('apiservice', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`apiservice ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
+
+//watch changes to an object of kind APIService. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/apiregistration.k8s.io/v1/watch/apiservices/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting apiservice ${name}`);
+      
+      const resource = await storage.getResource('apiservice', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`apiservice ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
+
+//read status of the specified APIService
+  router.get('/apis/apiregistration.k8s.io/v1/apiservices/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = null;
+        logger.info(`Getting status ${name}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
+  });
+//replace status of the specified APIService
+  router.put('/apis/apiregistration.k8s.io/v1/apiservices/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating apiservice ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('apiservice', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/apiregistration.k8s.io/v1/apiservices/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting apiservice ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('apiservice', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of APIService. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apiregistration.k8s.io/v1/watch/apiservices', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing apiservice`);
+      
+      const resourceList = await storage.listResources('apiservice', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
   //create an APIService
   router.post('/apis/apiregistration.k8s.io/v1/apiservices', async (req, res, next) => {
 
@@ -172,106 +275,6 @@ export function createapiserviceRoutes(storage: Storage): express.Router {
 
 //list or watch objects of kind APIService
   router.get('/apis/apiregistration.k8s.io/v1/apiservices', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing apiservice`);
-      
-      const resourceList = await storage.listResources('apiservice', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind APIService. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/apiregistration.k8s.io/v1/watch/apiservices/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting apiservice ${name}`);
-      
-      const resource = await storage.getResource('apiservice', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`apiservice ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified APIService
-  router.get('/apis/apiregistration.k8s.io/v1/apiservices/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing apiservice`);
-      
-      const resourceList = await storage.listResources('apiservice', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace status of the specified APIService
-  router.put('/apis/apiregistration.k8s.io/v1/apiservices/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating apiservice ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('apiservice', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/apiregistration.k8s.io/v1/apiservices/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting apiservice ${name}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('apiservice', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of APIService. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apiregistration.k8s.io/v1/watch/apiservices', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;

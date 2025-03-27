@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_flowcontrol_v1_ResourcePolicyRule {
 /**
+* `resources` is a list of matching resources (i.e., lowercase and plural) with, if desired, subresource.  For example, [ "services", "nodes/status" ].  This list may not be empty. "*" matches all resources and, if present, must be the only entry. Required.
+* @required
+* @isArray
+*/
+resources: string[];
+/**
 * `verbs` is a list of matching verbs and may not be empty. "*" matches all verbs and, if present, must be the only entry. Required.
 * @required
 * @isArray
@@ -25,12 +31,6 @@ clusterScope?: boolean;
 * @isArray
 */
 namespaces?: string[];
-/**
-* `resources` is a list of matching resources (i.e., lowercase and plural) with, if desired, subresource.  For example, [ "services", "nodes/status" ].  This list may not be empty. "*" matches all resources and, if present, must be the only entry. Required.
-* @required
-* @isArray
-*/
-resources: string[];
 }
 
 /**
@@ -40,10 +40,10 @@ resources: string[];
 */
 export function createio_k8s_api_flowcontrol_v1_ResourcePolicyRule(data?: Partial<io_k8s_api_flowcontrol_v1_ResourcePolicyRule>): io_k8s_api_flowcontrol_v1_ResourcePolicyRule {
  return {
+   resources: data?.resources !== undefined ? data.resources : [],
    verbs: data?.verbs !== undefined ? data.verbs : [],
    apiGroups: data?.apiGroups !== undefined ? data.apiGroups : [],
    clusterScope: data?.clusterScope !== undefined ? data.clusterScope : false,
    namespaces: data?.namespaces !== undefined ? data.namespaces : [],
-   resources: data?.resources !== undefined ? data.resources : [],
  };
 }

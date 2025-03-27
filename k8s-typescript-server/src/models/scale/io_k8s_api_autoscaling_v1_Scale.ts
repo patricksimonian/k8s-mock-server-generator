@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_autoscaling_v1_Scale {
 /**
+* status is the current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.
+* @references io.k8s.api.autoscaling.v1.ScaleStatus
+*/
+status?: io_k8s_api_autoscaling_v1_ScaleStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -22,11 +27,6 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 * @references io.k8s.api.autoscaling.v1.ScaleSpec
 */
 spec?: io_k8s_api_autoscaling_v1_ScaleSpec;
-/**
-* status is the current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.
-* @references io.k8s.api.autoscaling.v1.ScaleStatus
-*/
-status?: io_k8s_api_autoscaling_v1_ScaleStatus;
 }
 
 /**
@@ -36,11 +36,11 @@ status?: io_k8s_api_autoscaling_v1_ScaleStatus;
 */
 export function createio_k8s_api_autoscaling_v1_Scale(data?: Partial<io_k8s_api_autoscaling_v1_Scale>): io_k8s_api_autoscaling_v1_Scale {
  return {
+   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v1_ScaleStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    spec: data?.spec !== undefined ? data.spec : createio_k8s_api_autoscaling_v1_ScaleSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_autoscaling_v1_ScaleStatus(),
  };
 }
 // Required imports

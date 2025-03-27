@@ -14,6 +14,20 @@ exec?: io_k8s_api_core_v1_ExecAction;
 */
 failureThreshold?: number;
 /**
+* GRPC specifies a GRPC HealthCheckRequest.
+* @references io.k8s.api.core.v1.GRPCAction
+*/
+grpc?: io_k8s_api_core_v1_GRPCAction;
+/**
+* How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1.
+*/
+periodSeconds?: number;
+/**
+* TCPSocket specifies a connection to a TCP port.
+* @references io.k8s.api.core.v1.TCPSocketAction
+*/
+tcpSocket?: io_k8s_api_core_v1_TCPSocketAction;
+/**
 * HTTPGet specifies an HTTP GET request to perform.
 * @references io.k8s.api.core.v1.HTTPGetAction
 */
@@ -23,10 +37,6 @@ httpGet?: io_k8s_api_core_v1_HTTPGetAction;
 */
 initialDelaySeconds?: number;
 /**
-* How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1.
-*/
-periodSeconds?: number;
-/**
 * Minimum consecutive successes for the probe to be considered successful after having failed. Defaults to 1. Must be 1 for liveness and startup. Minimum value is 1.
 */
 successThreshold?: number;
@@ -34,16 +44,6 @@ successThreshold?: number;
 * Optional duration in seconds the pod needs to terminate gracefully upon probe failure. The grace period is the duration in seconds after the processes running in the pod are sent a termination signal and the time when the processes are forcibly halted with a kill signal. Set this value longer than the expected cleanup time for your process. If this value is nil, the pod's terminationGracePeriodSeconds will be used. Otherwise, this value overrides the value provided by the pod spec. Value must be non-negative integer. The value zero indicates stop immediately via the kill signal (no opportunity to shut down). This is a beta field and requires enabling ProbeTerminationGracePeriod feature gate. Minimum value is 1. spec.terminationGracePeriodSeconds is used if unset.
 */
 terminationGracePeriodSeconds?: number;
-/**
-* GRPC specifies a GRPC HealthCheckRequest.
-* @references io.k8s.api.core.v1.GRPCAction
-*/
-grpc?: io_k8s_api_core_v1_GRPCAction;
-/**
-* TCPSocket specifies a connection to a TCP port.
-* @references io.k8s.api.core.v1.TCPSocketAction
-*/
-tcpSocket?: io_k8s_api_core_v1_TCPSocketAction;
 /**
 * Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
 */
@@ -59,13 +59,13 @@ export function createio_k8s_api_core_v1_Probe(data?: Partial<io_k8s_api_core_v1
  return {
    exec: data?.exec !== undefined ? data.exec : createio_k8s_api_core_v1_ExecAction(),
    failureThreshold: data?.failureThreshold !== undefined ? data.failureThreshold : 0,
+   grpc: data?.grpc !== undefined ? data.grpc : createio_k8s_api_core_v1_GRPCAction(),
+   periodSeconds: data?.periodSeconds !== undefined ? data.periodSeconds : 0,
+   tcpSocket: data?.tcpSocket !== undefined ? data.tcpSocket : createio_k8s_api_core_v1_TCPSocketAction(),
    httpGet: data?.httpGet !== undefined ? data.httpGet : createio_k8s_api_core_v1_HTTPGetAction(),
    initialDelaySeconds: data?.initialDelaySeconds !== undefined ? data.initialDelaySeconds : 0,
-   periodSeconds: data?.periodSeconds !== undefined ? data.periodSeconds : 0,
    successThreshold: data?.successThreshold !== undefined ? data.successThreshold : 0,
    terminationGracePeriodSeconds: data?.terminationGracePeriodSeconds !== undefined ? data.terminationGracePeriodSeconds : 0,
-   grpc: data?.grpc !== undefined ? data.grpc : createio_k8s_api_core_v1_GRPCAction(),
-   tcpSocket: data?.tcpSocket !== undefined ? data.tcpSocket : createio_k8s_api_core_v1_TCPSocketAction(),
    timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
  };
 }

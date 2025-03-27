@@ -5,17 +5,17 @@
 */
 export interface io_k8s_api_autoscaling_v2_ExternalMetricSource {
 /**
-* target specifies the target value for the given metric
-* @required
-* @references io.k8s.api.autoscaling.v2.MetricTarget
-*/
-target: io_k8s_api_autoscaling_v2_MetricTarget;
-/**
 * metric identifies the target metric by name and selector
 * @required
 * @references io.k8s.api.autoscaling.v2.MetricIdentifier
 */
 metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
+/**
+* target specifies the target value for the given metric
+* @required
+* @references io.k8s.api.autoscaling.v2.MetricTarget
+*/
+target: io_k8s_api_autoscaling_v2_MetricTarget;
 }
 
 /**
@@ -25,8 +25,8 @@ metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 */
 export function createio_k8s_api_autoscaling_v2_ExternalMetricSource(data?: Partial<io_k8s_api_autoscaling_v2_ExternalMetricSource>): io_k8s_api_autoscaling_v2_ExternalMetricSource {
  return {
-   target: data?.target !== undefined ? data.target : createio_k8s_api_autoscaling_v2_MetricTarget(),
    metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
+   target: data?.target !== undefined ? data.target : createio_k8s_api_autoscaling_v2_MetricTarget(),
  };
 }
 // Required imports

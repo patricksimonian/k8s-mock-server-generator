@@ -5,19 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentStatus {
 /**
-* Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
-*/
-availableReplicas?: number;
-/**
-* Count of hash collisions for the Deployment. The Deployment controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ReplicaSet.
-*/
-collisionCount?: number;
-/**
-* Represents the latest available observations of a deployment's current state.
-* @isArray
-*/
-conditions?: io_k8s_api_apps_v1_DeploymentCondition[];
-/**
 * The generation observed by the deployment controller.
 */
 observedGeneration?: number;
@@ -37,6 +24,19 @@ unavailableReplicas?: number;
 * Total number of non-terminated pods targeted by this deployment that have the desired template spec.
 */
 updatedReplicas?: number;
+/**
+* Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
+*/
+availableReplicas?: number;
+/**
+* Count of hash collisions for the Deployment. The Deployment controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ReplicaSet.
+*/
+collisionCount?: number;
+/**
+* Represents the latest available observations of a deployment's current state.
+* @isArray
+*/
+conditions?: io_k8s_api_apps_v1_DeploymentCondition[];
 }
 
 /**
@@ -46,14 +46,14 @@ updatedReplicas?: number;
 */
 export function createio_k8s_api_apps_v1_DeploymentStatus(data?: Partial<io_k8s_api_apps_v1_DeploymentStatus>): io_k8s_api_apps_v1_DeploymentStatus {
  return {
-   availableReplicas: data?.availableReplicas !== undefined ? data.availableReplicas : 0,
-   collisionCount: data?.collisionCount !== undefined ? data.collisionCount : 0,
-   conditions: data?.conditions !== undefined ? data.conditions : [],
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    readyReplicas: data?.readyReplicas !== undefined ? data.readyReplicas : 0,
    replicas: data?.replicas !== undefined ? data.replicas : 0,
    unavailableReplicas: data?.unavailableReplicas !== undefined ? data.unavailableReplicas : 0,
    updatedReplicas: data?.updatedReplicas !== undefined ? data.updatedReplicas : 0,
+   availableReplicas: data?.availableReplicas !== undefined ? data.availableReplicas : 0,
+   collisionCount: data?.collisionCount !== undefined ? data.collisionCount : 0,
+   conditions: data?.conditions !== undefined ? data.conditions : [],
  };
 }
 // Required imports

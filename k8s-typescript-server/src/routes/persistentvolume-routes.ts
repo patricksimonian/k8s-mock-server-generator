@@ -2,7 +2,7 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createpersistentvolumeRoutes(storage: Storage): express.Router {
@@ -41,11 +41,32 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
       if (!resource) {
         return handleResourceError(new Error(`persistentvolume ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
+  });
+
+//read the specified PersistentVolume
+  router.get('/api/v1/persistentvolumes/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting persistentvolume ${name}`);
+      
+      const resource = await storage.getResource('persistentvolume', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`persistentvolume ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
   });
 //replace the specified PersistentVolume
   router.put('/api/v1/persistentvolumes/:name', async (req, res, next) => {
@@ -138,44 +159,26 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
     }
   });
 
-//read the specified PersistentVolume
-  router.get('/api/v1/persistentvolumes/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting persistentvolume ${name}`);
-      
-      const resource = await storage.getResource('persistentvolume', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`persistentvolume ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //read status of the specified PersistentVolume
   router.get('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing persistentvolume`);
-      
-      const resourceList = await storage.listResources('persistentvolume', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = null;
+        logger.info(`Getting status ${name}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
   });
 //replace status of the specified PersistentVolume
   router.put('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
@@ -212,27 +215,6 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
       const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
       const updatedResource = await storage.updateSubresource('persistentvolume', name, subresource, patchData, namespace);
       return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind PersistentVolume
-  router.get('/api/v1/persistentvolumes', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing persistentvolume`);
-      
-      const resourceList = await storage.listResources('persistentvolume', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -286,6 +268,27 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
           kind: 'persistentvolume'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind PersistentVolume
+  router.get('/api/v1/persistentvolumes', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing persistentvolume`);
+      
+      const resourceList = await storage.listResources('persistentvolume', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

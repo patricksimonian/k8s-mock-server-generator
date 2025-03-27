@@ -2,7 +2,7 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createlocalsubjectaccessreviewRoutes(storage: Storage): express.Router {

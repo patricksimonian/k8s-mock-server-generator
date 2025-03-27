@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequestCondition {
 /**
-* lastUpdateTime is the time of the last update to this condition
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-lastUpdateTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
-/**
-* message contains a human readable message with details about the request state
-*/
-message?: string;
-/**
 * reason indicates a brief reason for the request state
 */
 reason?: string;
@@ -42,6 +33,15 @@ type: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
 lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* lastUpdateTime is the time of the last update to this condition
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastUpdateTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* message contains a human readable message with details about the request state
+*/
+message?: string;
 }
 
 /**
@@ -51,12 +51,12 @@ lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequestCondition(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequestCondition>): io_k8s_api_certificates_v1_CertificateSigningRequestCondition {
  return {
-   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
-   message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   lastUpdateTime: data?.lastUpdateTime !== undefined ? data.lastUpdateTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   message: data?.message !== undefined ? data.message : '',
  };
 }
 // Required imports

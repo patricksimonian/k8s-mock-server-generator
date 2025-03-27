@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_storage_v1_CSINode {
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
@@ -19,10 +23,6 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 * @references io.k8s.api.storage.v1.CSINodeSpec
 */
 spec: io_k8s_api_storage_v1_CSINodeSpec;
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
 }
 
 /**
@@ -32,10 +32,10 @@ apiVersion?: string;
 */
 export function createio_k8s_api_storage_v1_CSINode(data?: Partial<io_k8s_api_storage_v1_CSINode>): io_k8s_api_storage_v1_CSINode {
  return {
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    spec: data?.spec !== undefined ? data.spec : createio_k8s_api_storage_v1_CSINodeSpec(),
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_coordination_v1_LeaseSpec {
 /**
+* Strategy indicates the strategy for picking the leader for coordinated leader election. If the field is not specified, there is no active coordination for this lease. (Alpha) Using this field requires the CoordinatedLeaderElection feature gate to be enabled.
+*/
+strategy?: string;
+/**
 * acquireTime is a time when the current lease was acquired.
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
 */
@@ -30,10 +34,6 @@ preferredHolder?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
 */
 renewTime?: io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime;
-/**
-* Strategy indicates the strategy for picking the leader for coordinated leader election. If the field is not specified, there is no active coordination for this lease. (Alpha) Using this field requires the CoordinatedLeaderElection feature gate to be enabled.
-*/
-strategy?: string;
 }
 
 /**
@@ -43,13 +43,13 @@ strategy?: string;
 */
 export function createio_k8s_api_coordination_v1_LeaseSpec(data?: Partial<io_k8s_api_coordination_v1_LeaseSpec>): io_k8s_api_coordination_v1_LeaseSpec {
  return {
+   strategy: data?.strategy !== undefined ? data.strategy : '',
    acquireTime: data?.acquireTime !== undefined ? data.acquireTime : createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime(),
    holderIdentity: data?.holderIdentity !== undefined ? data.holderIdentity : '',
    leaseDurationSeconds: data?.leaseDurationSeconds !== undefined ? data.leaseDurationSeconds : 0,
    leaseTransitions: data?.leaseTransitions !== undefined ? data.leaseTransitions : 0,
    preferredHolder: data?.preferredHolder !== undefined ? data.preferredHolder : '',
    renewTime: data?.renewTime !== undefined ? data.renewTime : createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime(),
-   strategy: data?.strategy !== undefined ? data.strategy : '',
  };
 }
 // Required imports

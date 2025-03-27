@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_core_v1_QuobyteVolumeSource {
 /**
-* user to map volume access to Defaults to serivceaccount user
-*/
-user?: string;
-/**
-* volume is a string that references an already created Quobyte volume by name.
-* @required
-*/
-volume: string;
-/**
 * group to map volume access to Default is no group
 */
 group?: string;
@@ -30,6 +21,15 @@ registry: string;
 * tenant owning the given Quobyte volume in the Backend Used with dynamically provisioned Quobyte volumes, value is set by the plugin
 */
 tenant?: string;
+/**
+* user to map volume access to Defaults to serivceaccount user
+*/
+user?: string;
+/**
+* volume is a string that references an already created Quobyte volume by name.
+* @required
+*/
+volume: string;
 }
 
 /**
@@ -39,11 +39,11 @@ tenant?: string;
 */
 export function createio_k8s_api_core_v1_QuobyteVolumeSource(data?: Partial<io_k8s_api_core_v1_QuobyteVolumeSource>): io_k8s_api_core_v1_QuobyteVolumeSource {
  return {
-   user: data?.user !== undefined ? data.user : '',
-   volume: data?.volume !== undefined ? data.volume : '',
    group: data?.group !== undefined ? data.group : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    registry: data?.registry !== undefined ? data.registry : '',
    tenant: data?.tenant !== undefined ? data.tenant : '',
+   user: data?.user !== undefined ? data.user : '',
+   volume: data?.volume !== undefined ? data.volume : '',
  };
 }

@@ -13,7 +13,7 @@ import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
 import { applyPatch } from "fast-json-patch";
 import { isClusterScoped, createStatusFailure, matchesFieldSelector, matchesLabelSelector, merge, capitalize } from "../utils";
-
+import { Readable } from "stream";
 // ----------------------------------------------------------------
 // Pagination: base64-encoded tokens with offset + resourceVersion
 // ----------------------------------------------------------------
@@ -45,6 +45,7 @@ export class InMemoryStorage implements Storage {
 
   /**
    * data layout:
+   *
    * {
    *   "__cluster__": {
    *      "node": { "<name>": KubeResource },
@@ -62,6 +63,27 @@ export class InMemoryStorage implements Storage {
     "__cluster__": {}
   };
 
+  private logStore: Record<string, Record<string, {
+    stdout: string[];
+    stderr: string[];
+    emitter: EventEmitter;
+  }>> = {
+    "default_cluster": {}
+  };
+  
+  private getLogKey(namespace: string, podName: string, container: string): string {
+    return `${namespace}/${podName}/${container}`;
+  }
+
+  private appendLogLine(logArray: string[], line: string): void {
+    logArray.push(line);
+    if (logArray.length > this.MAX_LOG_LINES) {
+      logArray.shift(); // remove the oldest line
+    }
+  }
+
+  private readonly MAX_LOG_LINES = 1000;
+  
   constructor() {
     this.eventEmitter.setMaxListeners(100);
   }
@@ -75,6 +97,105 @@ export class InMemoryStorage implements Storage {
 
   async markInitialized(): Promise<void> {
     this.initialized = true;
+  }
+  // ---------------------------------------------------------------------------
+  // LOGS
+  // ---------------------------------------------------------------------------
+  async writeLogs(
+    name: string,
+    namespace: string,
+    container: string,
+    stdout: string,
+    stderr: string,
+    cluster: string = "default_cluster"
+  ): Promise<true | Status> {
+    const key = this.getLogKey(namespace, name, container);
+    try {
+      const resource = await this.getResource("Pod", name, namespace);
+      if (resource.kind === "Status") {
+        return createStatusFailure(`Unable to write logs: ${resource.message}`, resource.code, resource.reason);
+      }
+    } catch (error) {
+      return createStatusFailure(`Resource Pod/${name} not found in namespace ${namespace}`, 404, "NotFound");
+    }
+    if (!this.logStore[cluster]) {
+      this.logStore[cluster] = {};
+    }
+
+    if (!this.logStore[cluster][key]) {
+      this.logStore[cluster][key] = {
+        stdout: [],
+        stderr: [],
+        emitter: new EventEmitter()
+      };
+    }
+
+    const entry = this.logStore[cluster][key];
+
+    if (stdout) {
+      this.appendLogLine(entry.stdout, stdout);
+      entry.emitter.emit("stdout", stdout);
+    }
+
+    if (stderr) {
+      this.appendLogLine(entry.stderr, stderr);
+      entry.emitter.emit("stderr", stderr);
+    }
+
+    return true;
+  }
+
+  async readLogs(
+    name: string,
+    namespace: string,
+    container: string,
+    cluster: string = "default_cluster",
+    options?: { follow?: boolean; stderr?: boolean; stdout?: boolean }
+  ): Promise<Readable | Status> {
+    const key = this.getLogKey(namespace, name, container);
+    const entry = this.logStore[cluster]?.[key];
+ 
+    if (!entry) {
+      return createStatusFailure(`No logs found for pod ${name} in namespace ${namespace}`, 404, "NotFound");
+    }
+
+    const stream = new Readable({ read() {} });
+
+    const includeStdout = options?.stdout ?? true;
+    const includeStderr = options?.stderr ?? true;
+
+    const write = (line: string, type: "stdout" | "stderr") => {
+      stream.push(`[${type.toUpperCase()}] ${line}\n`);
+    };
+
+    if (includeStdout) {
+      for (const line of entry.stdout) {
+        write(line, "stdout");
+      }
+    }
+
+    if (includeStderr) {
+      for (const line of entry.stderr) {
+        write(line, "stderr");
+      }
+    }
+
+    if (!options?.follow) {
+      stream.push(null);
+    } else {
+      const onStdout = (data: string) => includeStdout && write(data, "stdout");
+      const onStderr = (data: string) => includeStderr && write(data, "stderr");
+
+      entry.emitter.on("stdout", onStdout);
+      entry.emitter.on("stderr", onStderr);
+
+      stream.on("close", () => {
+        entry.emitter.off("stdout", onStdout);
+        entry.emitter.off("stderr", onStderr);
+      });
+    }
+
+    return stream;
   }
 
   // ---------------------------------------------------------------------------

@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_authentication_v1_SelfSubjectReview {
 /**
+* Status is filled in by the server with the user attributes.
+* @references io.k8s.api.authentication.v1.SelfSubjectReviewStatus
+*/
+status?: io_k8s_api_authentication_v1_SelfSubjectReviewStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -17,11 +22,6 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* Status is filled in by the server with the user attributes.
-* @references io.k8s.api.authentication.v1.SelfSubjectReviewStatus
-*/
-status?: io_k8s_api_authentication_v1_SelfSubjectReviewStatus;
 }
 
 /**
@@ -31,10 +31,10 @@ status?: io_k8s_api_authentication_v1_SelfSubjectReviewStatus;
 */
 export function createio_k8s_api_authentication_v1_SelfSubjectReview(data?: Partial<io_k8s_api_authentication_v1_SelfSubjectReview>): io_k8s_api_authentication_v1_SelfSubjectReview {
  return {
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authentication_v1_SelfSubjectReviewStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_authentication_v1_SelfSubjectReviewStatus(),
  };
 }
 // Required imports

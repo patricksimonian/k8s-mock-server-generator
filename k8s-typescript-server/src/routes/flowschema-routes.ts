@@ -2,7 +2,7 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createflowschemaRoutes(storage: Storage): express.Router {
@@ -41,71 +41,12 @@ export function createflowschemaRoutes(storage: Storage): express.Router {
       if (!resource) {
         return handleResourceError(new Error(`flowschema ${name} not found in namespace ${namespace}`), res);
       }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
   
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified FlowSchema
-  router.get('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing flowschema`);
-      
-      const resourceList = await storage.listResources('flowschema', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace status of the specified FlowSchema
-  router.put('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating flowschema ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('flowschema', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting flowschema ${name}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('flowschema', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
+   
   });
 
 //read the specified FlowSchema
@@ -120,11 +61,12 @@ export function createflowschemaRoutes(storage: Storage): express.Router {
       if (!resource) {
         return handleResourceError(new Error(`flowschema ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 //replace the specified FlowSchema
   router.put('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name', async (req, res, next) => {
@@ -286,6 +228,67 @@ export function createflowschemaRoutes(storage: Storage): express.Router {
           kind: 'flowschema'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read status of the specified FlowSchema
+  router.get('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = null;
+        logger.info(`Getting status ${name}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
+  });
+//replace status of the specified FlowSchema
+  router.put('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating flowschema ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('flowschema', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/flowcontrol.apiserver.k8s.io/v1/flowschemas/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting flowschema ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('flowschema', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }

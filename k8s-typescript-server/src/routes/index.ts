@@ -1,6 +1,7 @@
 import express from 'express';
 import { createDiscoveryRoutes } from './discovery-routes';
 import { createOpenAPIRoutes } from './openapi-routes';
+import { createUtilityRoutes } from './utility-routes';
 import storage from '../storage';
 
 // Import all route handlers
@@ -74,7 +75,8 @@ import { createvolumeattachmentRoutes } from './volumeattachment-routes';
 */
 export function createRoutes(): express.Router {
  const router = express.Router();
- 
+ // Add utility routes
+ router.use('/', createUtilityRoutes(storage));
  // Add discovery routes
  router.use('/', createDiscoveryRoutes(storage));
  // Add OpenAPI routes

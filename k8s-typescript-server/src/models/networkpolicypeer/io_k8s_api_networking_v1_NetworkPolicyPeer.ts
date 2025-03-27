@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_networking_v1_NetworkPolicyPeer {
 /**
-* ipBlock defines policy on a particular IPBlock. If this field is set then neither of the other fields can be.
-* @references io.k8s.api.networking.v1.IPBlock
-*/
-ipBlock?: io_k8s_api_networking_v1_IPBlock;
-/**
 * namespaceSelector selects namespaces using cluster-scoped labels. This field follows standard label selector semantics; if present but empty, it selects all namespaces.
 
 If podSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the namespaces selected by namespaceSelector. Otherwise it selects all pods in the namespaces selected by namespaceSelector.
@@ -23,6 +18,11 @@ If namespaceSelector is also set, then the NetworkPolicyPeer as a whole selects 
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
 podSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
+/**
+* ipBlock defines policy on a particular IPBlock. If this field is set then neither of the other fields can be.
+* @references io.k8s.api.networking.v1.IPBlock
+*/
+ipBlock?: io_k8s_api_networking_v1_IPBlock;
 }
 
 /**
@@ -32,9 +32,9 @@ podSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 */
 export function createio_k8s_api_networking_v1_NetworkPolicyPeer(data?: Partial<io_k8s_api_networking_v1_NetworkPolicyPeer>): io_k8s_api_networking_v1_NetworkPolicyPeer {
  return {
-   ipBlock: data?.ipBlock !== undefined ? data.ipBlock : createio_k8s_api_networking_v1_IPBlock(),
    namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    podSelector: data?.podSelector !== undefined ? data.podSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   ipBlock: data?.ipBlock !== undefined ? data.ipBlock : createio_k8s_api_networking_v1_IPBlock(),
  };
 }
 // Required imports

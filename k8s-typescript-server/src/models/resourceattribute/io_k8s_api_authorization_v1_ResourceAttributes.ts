@@ -9,17 +9,13 @@ export interface io_k8s_api_authorization_v1_ResourceAttributes {
 */
 group?: string;
 /**
-* Resource is one of the existing resource types.  "*" means all.
+* Namespace is the namespace of the action being requested.  Currently, there is no distinction between no namespace and all namespaces "" (empty) is defaulted for LocalSubjectAccessReviews "" (empty) is empty for cluster-scoped resources "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
 */
-resource?: string;
+namespace?: string;
 /**
 * Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  "*" means all.
 */
 verb?: string;
-/**
-* Version is the API Version of the Resource.  "*" means all.
-*/
-version?: string;
 /**
 * fieldSelector describes the limitation on access based on field.  It can only limit access, not broaden it.
 
@@ -39,13 +35,17 @@ labelSelector?: io_k8s_api_authorization_v1_LabelSelectorAttributes;
 */
 name?: string;
 /**
-* Namespace is the namespace of the action being requested.  Currently, there is no distinction between no namespace and all namespaces "" (empty) is defaulted for LocalSubjectAccessReviews "" (empty) is empty for cluster-scoped resources "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
+* Resource is one of the existing resource types.  "*" means all.
 */
-namespace?: string;
+resource?: string;
 /**
 * Subresource is one of the existing resource types.  "" means none.
 */
 subresource?: string;
+/**
+* Version is the API Version of the Resource.  "*" means all.
+*/
+version?: string;
 }
 
 /**
@@ -56,14 +56,14 @@ subresource?: string;
 export function createio_k8s_api_authorization_v1_ResourceAttributes(data?: Partial<io_k8s_api_authorization_v1_ResourceAttributes>): io_k8s_api_authorization_v1_ResourceAttributes {
  return {
    group: data?.group !== undefined ? data.group : '',
-   resource: data?.resource !== undefined ? data.resource : '',
+   namespace: data?.namespace !== undefined ? data.namespace : '',
    verb: data?.verb !== undefined ? data.verb : '',
-   version: data?.version !== undefined ? data.version : '',
    fieldSelector: data?.fieldSelector !== undefined ? data.fieldSelector : createio_k8s_api_authorization_v1_FieldSelectorAttributes(),
    labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_api_authorization_v1_LabelSelectorAttributes(),
    name: data?.name !== undefined ? data.name : '',
-   namespace: data?.namespace !== undefined ? data.namespace : '',
+   resource: data?.resource !== undefined ? data.resource : '',
    subresource: data?.subresource !== undefined ? data.subresource : '',
+   version: data?.version !== undefined ? data.version : '',
  };
 }
 // Required imports

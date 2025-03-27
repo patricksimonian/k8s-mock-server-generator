@@ -7,27 +7,18 @@ StorageClasses are non-namespaced; the name of the storage class according to et
 */
 export interface io_k8s_api_storage_v1_StorageClass {
 /**
-* parameters holds the parameters for the provisioner that should create volumes of this storage class.
-*/
-parameters?: Record<string, any>;
-/**
 * allowVolumeExpansion shows whether the storage class allow volume expand.
 */
 allowVolumeExpansion?: boolean;
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
-apiVersion?: string;
+kind?: string;
 /**
 * Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* provisioner indicates the type of the provisioner.
-* @required
-*/
-provisioner: string;
 /**
 * reclaimPolicy controls the reclaimPolicy for dynamically provisioned PersistentVolumes of this storage class. Defaults to Delete.
 
@@ -51,14 +42,23 @@ volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
 */
 allowedTopologies?: io_k8s_api_core_v1_TopologySelectorTerm[];
 /**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
-kind?: string;
+apiVersion?: string;
 /**
 * mountOptions controls the mountOptions for dynamically provisioned PersistentVolumes of this storage class. e.g. ["ro", "soft"]. Not validated - mount of the PVs will simply fail if one is invalid.
 * @isArray
 */
 mountOptions?: string[];
+/**
+* parameters holds the parameters for the provisioner that should create volumes of this storage class.
+*/
+parameters?: Record<string, any>;
+/**
+* provisioner indicates the type of the provisioner.
+* @required
+*/
+provisioner: string;
 }
 
 /**
@@ -68,16 +68,16 @@ mountOptions?: string[];
 */
 export function createio_k8s_api_storage_v1_StorageClass(data?: Partial<io_k8s_api_storage_v1_StorageClass>): io_k8s_api_storage_v1_StorageClass {
  return {
-   parameters: data?.parameters !== undefined ? data.parameters : {},
    allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   provisioner: data?.provisioner !== undefined ? data.provisioner : '',
    reclaimPolicy: data?.reclaimPolicy !== undefined ? data.reclaimPolicy : '',
    volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
    allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
-   kind: data?.kind !== undefined ? data.kind : '',
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
+   parameters: data?.parameters !== undefined ? data.parameters : {},
+   provisioner: data?.provisioner !== undefined ? data.provisioner : '',
  };
 }
 // Required imports

@@ -5,15 +5,15 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery {
 /**
-* groupVersion specifies the API group and version in the form "group/version"
-* @required
-*/
-groupVersion: string;
-/**
 * version specifies the version in the form of "version". This is to save the clients the trouble of splitting the GroupVersion.
 * @required
 */
 version: string;
+/**
+* groupVersion specifies the API group and version in the form "group/version"
+* @required
+*/
+groupVersion: string;
 }
 
 /**
@@ -23,7 +23,7 @@ version: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery>): io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery {
  return {
-   groupVersion: data?.groupVersion !== undefined ? data.groupVersion : '',
    version: data?.version !== undefined ? data.version : '',
+   groupVersion: data?.groupVersion !== undefined ? data.groupVersion : '',
  };
 }

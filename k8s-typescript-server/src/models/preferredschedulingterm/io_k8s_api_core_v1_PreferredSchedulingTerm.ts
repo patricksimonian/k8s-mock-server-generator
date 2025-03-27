@@ -5,16 +5,16 @@
 */
 export interface io_k8s_api_core_v1_PreferredSchedulingTerm {
 /**
+* Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
+* @required
+*/
+weight: number;
+/**
 * A node selector term, associated with the corresponding weight.
 * @required
 * @references io.k8s.api.core.v1.NodeSelectorTerm
 */
 preference: io_k8s_api_core_v1_NodeSelectorTerm;
-/**
-* Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
-* @required
-*/
-weight: number;
 }
 
 /**
@@ -24,8 +24,8 @@ weight: number;
 */
 export function createio_k8s_api_core_v1_PreferredSchedulingTerm(data?: Partial<io_k8s_api_core_v1_PreferredSchedulingTerm>): io_k8s_api_core_v1_PreferredSchedulingTerm {
  return {
-   preference: data?.preference !== undefined ? data.preference : createio_k8s_api_core_v1_NodeSelectorTerm(),
    weight: data?.weight !== undefined ? data.weight : 0,
+   preference: data?.preference !== undefined ? data.preference : createio_k8s_api_core_v1_NodeSelectorTerm(),
  };
 }
 // Required imports

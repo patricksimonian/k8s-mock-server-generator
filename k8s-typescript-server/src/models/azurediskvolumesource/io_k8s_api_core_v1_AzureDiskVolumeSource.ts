@@ -5,6 +5,20 @@
 */
 export interface io_k8s_api_core_v1_AzureDiskVolumeSource {
 /**
+* cachingMode is the Host Caching mode: None, Read Only, Read Write.
+
+Possible enum values:
+ - `"None"`
+ - `"ReadOnly"`
+ - `"ReadWrite"`
+*/
+cachingMode?: 'None' | 'ReadOnly' | 'ReadWrite';
+/**
+* diskName is the Name of the data disk in the blob storage
+* @required
+*/
+diskName: string;
+/**
 * diskURI is the URI of data disk in the blob storage
 * @required
 */
@@ -26,20 +40,6 @@ kind?: 'Dedicated' | 'Managed' | 'Shared';
 * readOnly Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
 */
 readOnly?: boolean;
-/**
-* cachingMode is the Host Caching mode: None, Read Only, Read Write.
-
-Possible enum values:
- - `"None"`
- - `"ReadOnly"`
- - `"ReadWrite"`
-*/
-cachingMode?: 'None' | 'ReadOnly' | 'ReadWrite';
-/**
-* diskName is the Name of the data disk in the blob storage
-* @required
-*/
-diskName: string;
 }
 
 /**
@@ -49,11 +49,11 @@ diskName: string;
 */
 export function createio_k8s_api_core_v1_AzureDiskVolumeSource(data?: Partial<io_k8s_api_core_v1_AzureDiskVolumeSource>): io_k8s_api_core_v1_AzureDiskVolumeSource {
  return {
+   cachingMode: data?.cachingMode !== undefined ? data.cachingMode : '',
+   diskName: data?.diskName !== undefined ? data.diskName : '',
    diskURI: data?.diskURI !== undefined ? data.diskURI : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    kind: data?.kind !== undefined ? data.kind : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   cachingMode: data?.cachingMode !== undefined ? data.cachingMode : '',
-   diskName: data?.diskName !== undefined ? data.diskName : '',
  };
 }

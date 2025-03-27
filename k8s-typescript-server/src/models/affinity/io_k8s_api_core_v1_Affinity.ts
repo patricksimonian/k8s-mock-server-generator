@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_Affinity {
 /**
-* Describes node affinity scheduling rules for the pod.
-* @references io.k8s.api.core.v1.NodeAffinity
-*/
-nodeAffinity?: io_k8s_api_core_v1_NodeAffinity;
-/**
 * Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
 * @references io.k8s.api.core.v1.PodAffinity
 */
@@ -19,6 +14,11 @@ podAffinity?: io_k8s_api_core_v1_PodAffinity;
 * @references io.k8s.api.core.v1.PodAntiAffinity
 */
 podAntiAffinity?: io_k8s_api_core_v1_PodAntiAffinity;
+/**
+* Describes node affinity scheduling rules for the pod.
+* @references io.k8s.api.core.v1.NodeAffinity
+*/
+nodeAffinity?: io_k8s_api_core_v1_NodeAffinity;
 }
 
 /**
@@ -28,9 +28,9 @@ podAntiAffinity?: io_k8s_api_core_v1_PodAntiAffinity;
 */
 export function createio_k8s_api_core_v1_Affinity(data?: Partial<io_k8s_api_core_v1_Affinity>): io_k8s_api_core_v1_Affinity {
  return {
-   nodeAffinity: data?.nodeAffinity !== undefined ? data.nodeAffinity : createio_k8s_api_core_v1_NodeAffinity(),
    podAffinity: data?.podAffinity !== undefined ? data.podAffinity : createio_k8s_api_core_v1_PodAffinity(),
    podAntiAffinity: data?.podAntiAffinity !== undefined ? data.podAntiAffinity : createio_k8s_api_core_v1_PodAntiAffinity(),
+   nodeAffinity: data?.nodeAffinity !== undefined ? data.nodeAffinity : createio_k8s_api_core_v1_NodeAffinity(),
  };
 }
 // Required imports

@@ -11,44 +11,23 @@ export interface io_k8s_api_core_v1_Event {
 */
 metadata: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 /**
-* Optional secondary object for more complex actions.
-* @references io.k8s.api.core.v1.ObjectReference
+* The component reporting this event. Should be a short machine understandable string.
+* @references io.k8s.api.core.v1.EventSource
 */
-related?: io_k8s_api_core_v1_ObjectReference;
-/**
-* ID of the controller instance, e.g. `kubelet-xyzf`.
-*/
-reportingInstance?: string;
-/**
-* Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.
-*/
-reportingComponent?: string;
-/**
-* What action was taken/failed regarding to the Regarding object.
-*/
-action?: string;
-/**
-* The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-firstTimestamp?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+source?: io_k8s_api_core_v1_EventSource;
 /**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
 /**
-* The time at which the most recent occurrence of this event was recorded.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-lastTimestamp?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
-/**
 * A human-readable description of the status of this operation.
 */
 message?: string;
 /**
-* The number of times this event has occurred.
+* Optional secondary object for more complex actions.
+* @references io.k8s.api.core.v1.ObjectReference
 */
-count?: number;
+related?: io_k8s_api_core_v1_ObjectReference;
 /**
 * The object that this event is about.
 * @required
@@ -60,28 +39,49 @@ involvedObject: io_k8s_api_core_v1_ObjectReference;
 */
 reason?: string;
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+* Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.
 */
-apiVersion?: string;
-/**
-* Time when this Event was first observed.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
-*/
-eventTime?: io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime;
+reportingComponent?: string;
 /**
 * Data about the Event series this event represents or nil if it's a singleton Event.
 * @references io.k8s.api.core.v1.EventSeries
 */
 series?: io_k8s_api_core_v1_EventSeries;
 /**
-* The component reporting this event. Should be a short machine understandable string.
-* @references io.k8s.api.core.v1.EventSource
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
-source?: io_k8s_api_core_v1_EventSource;
+apiVersion?: string;
+/**
+* The number of times this event has occurred.
+*/
+count?: number;
+/**
+* The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+firstTimestamp?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* ID of the controller instance, e.g. `kubelet-xyzf`.
+*/
+reportingInstance?: string;
 /**
 * Type of this event (Normal, Warning), new types could be added in the future
 */
 type?: string;
+/**
+* What action was taken/failed regarding to the Regarding object.
+*/
+action?: string;
+/**
+* Time when this Event was first observed.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
+*/
+eventTime?: io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime;
+/**
+* The time at which the most recent occurrence of this event was recorded.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastTimestamp?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -92,22 +92,22 @@ type?: string;
 export function createio_k8s_api_core_v1_Event(data?: Partial<io_k8s_api_core_v1_Event>): io_k8s_api_core_v1_Event {
  return {
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   related: data?.related !== undefined ? data.related : createio_k8s_api_core_v1_ObjectReference(),
-   reportingInstance: data?.reportingInstance !== undefined ? data.reportingInstance : '',
-   reportingComponent: data?.reportingComponent !== undefined ? data.reportingComponent : '',
-   action: data?.action !== undefined ? data.action : '',
-   firstTimestamp: data?.firstTimestamp !== undefined ? data.firstTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   source: data?.source !== undefined ? data.source : createio_k8s_api_core_v1_EventSource(),
    kind: data?.kind !== undefined ? data.kind : '',
-   lastTimestamp: data?.lastTimestamp !== undefined ? data.lastTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
-   count: data?.count !== undefined ? data.count : 0,
+   related: data?.related !== undefined ? data.related : createio_k8s_api_core_v1_ObjectReference(),
    involvedObject: data?.involvedObject !== undefined ? data.involvedObject : createio_k8s_api_core_v1_ObjectReference(),
    reason: data?.reason !== undefined ? data.reason : '',
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
-   eventTime: data?.eventTime !== undefined ? data.eventTime : createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime(),
+   reportingComponent: data?.reportingComponent !== undefined ? data.reportingComponent : '',
    series: data?.series !== undefined ? data.series : createio_k8s_api_core_v1_EventSeries(),
-   source: data?.source !== undefined ? data.source : createio_k8s_api_core_v1_EventSource(),
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   count: data?.count !== undefined ? data.count : 0,
+   firstTimestamp: data?.firstTimestamp !== undefined ? data.firstTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   reportingInstance: data?.reportingInstance !== undefined ? data.reportingInstance : '',
    type: data?.type !== undefined ? data.type : '',
+   action: data?.action !== undefined ? data.action : '',
+   eventTime: data?.eventTime !== undefined ? data.eventTime : createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime(),
+   lastTimestamp: data?.lastTimestamp !== undefined ? data.lastTimestamp : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
 // Required imports

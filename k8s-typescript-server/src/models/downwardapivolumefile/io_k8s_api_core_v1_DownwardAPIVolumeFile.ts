@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_DownwardAPIVolumeFile {
 /**
+* Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
+* @references io.k8s.api.core.v1.ResourceFieldSelector
+*/
+resourceFieldRef?: io_k8s_api_core_v1_ResourceFieldSelector;
+/**
 * Required: Selects a field of the pod: only annotations, labels, name, namespace and uid are supported.
 * @references io.k8s.api.core.v1.ObjectFieldSelector
 */
@@ -18,11 +23,6 @@ mode?: number;
 * @required
 */
 path: string;
-/**
-* Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
-* @references io.k8s.api.core.v1.ResourceFieldSelector
-*/
-resourceFieldRef?: io_k8s_api_core_v1_ResourceFieldSelector;
 }
 
 /**
@@ -32,10 +32,10 @@ resourceFieldRef?: io_k8s_api_core_v1_ResourceFieldSelector;
 */
 export function createio_k8s_api_core_v1_DownwardAPIVolumeFile(data?: Partial<io_k8s_api_core_v1_DownwardAPIVolumeFile>): io_k8s_api_core_v1_DownwardAPIVolumeFile {
  return {
+   resourceFieldRef: data?.resourceFieldRef !== undefined ? data.resourceFieldRef : createio_k8s_api_core_v1_ResourceFieldSelector(),
    fieldRef: data?.fieldRef !== undefined ? data.fieldRef : createio_k8s_api_core_v1_ObjectFieldSelector(),
    mode: data?.mode !== undefined ? data.mode : 0,
    path: data?.path !== undefined ? data.path : '',
-   resourceFieldRef: data?.resourceFieldRef !== undefined ? data.resourceFieldRef : createio_k8s_api_core_v1_ResourceFieldSelector(),
  };
 }
 // Required imports

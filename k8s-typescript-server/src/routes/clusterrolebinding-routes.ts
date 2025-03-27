@@ -2,32 +2,11 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createclusterrolebindingRoutes(storage: Storage): express.Router {
   const router = express.Router();
-
-//watch individual changes to a list of ClusterRoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterrolebindings', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing clusterrolebinding`);
-      
-      const resourceList = await storage.listResources('clusterrolebinding', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
 
 //watch changes to an object of kind ClusterRoleBinding. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
   router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterrolebindings/:name', async (req, res, next) => {
@@ -41,11 +20,12 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
       if (!resource) {
         return handleResourceError(new Error(`clusterrolebinding ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 
 //list or watch objects of kind ClusterRoleBinding
@@ -122,6 +102,27 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
     }
   });
 
+//watch individual changes to a list of ClusterRoleBinding. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/rbac.authorization.k8s.io/v1/watch/clusterrolebindings', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing clusterrolebinding`);
+      
+      const resourceList = await storage.listResources('clusterrolebinding', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //read the specified ClusterRoleBinding
   router.get('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings/:name', async (req, res, next) => {
     try {
@@ -134,11 +135,12 @@ export function createclusterrolebindingRoutes(storage: Storage): express.Router
       if (!resource) {
         return handleResourceError(new Error(`clusterrolebinding ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 //replace the specified ClusterRoleBinding
   router.put('/apis/rbac.authorization.k8s.io/v1/clusterrolebindings/:name', async (req, res, next) => {

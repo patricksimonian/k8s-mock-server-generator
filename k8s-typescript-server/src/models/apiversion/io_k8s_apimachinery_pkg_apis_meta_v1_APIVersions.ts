@@ -5,12 +5,6 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_APIVersions {
 /**
-* versions are the api versions that are available.
-* @required
-* @isArray
-*/
-versions: string[];
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -24,6 +18,12 @@ kind?: string;
 * @isArray
 */
 serverAddressByClientCIDRs: io_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressByClientCIDR[];
+/**
+* versions are the api versions that are available.
+* @required
+* @isArray
+*/
+versions: string[];
 }
 
 /**
@@ -33,10 +33,10 @@ serverAddressByClientCIDRs: io_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressBy
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_APIVersions(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_APIVersions>): io_k8s_apimachinery_pkg_apis_meta_v1_APIVersions {
  return {
-   versions: data?.versions !== undefined ? data.versions : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    serverAddressByClientCIDRs: data?.serverAddressByClientCIDRs !== undefined ? data.serverAddressByClientCIDRs : [],
+   versions: data?.versions !== undefined ? data.versions : [],
  };
 }
 // Required imports

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v2_MetricSpec {
 /**
-* external refers to a global metric that is not associated with any Kubernetes object. It allows autoscaling based on information coming from components running outside of cluster (for example length of queue in cloud messaging service, or QPS from loadbalancer running outside of cluster).
-* @references io.k8s.api.autoscaling.v2.ExternalMetricSource
-*/
-external?: io_k8s_api_autoscaling_v2_ExternalMetricSource;
-/**
 * object refers to a metric describing a single kubernetes object (for example, hits-per-second on an Ingress object).
 * @references io.k8s.api.autoscaling.v2.ObjectMetricSource
 */
@@ -34,6 +29,11 @@ type: string;
 * @references io.k8s.api.autoscaling.v2.ContainerResourceMetricSource
 */
 containerResource?: io_k8s_api_autoscaling_v2_ContainerResourceMetricSource;
+/**
+* external refers to a global metric that is not associated with any Kubernetes object. It allows autoscaling based on information coming from components running outside of cluster (for example length of queue in cloud messaging service, or QPS from loadbalancer running outside of cluster).
+* @references io.k8s.api.autoscaling.v2.ExternalMetricSource
+*/
+external?: io_k8s_api_autoscaling_v2_ExternalMetricSource;
 }
 
 /**
@@ -43,12 +43,12 @@ containerResource?: io_k8s_api_autoscaling_v2_ContainerResourceMetricSource;
 */
 export function createio_k8s_api_autoscaling_v2_MetricSpec(data?: Partial<io_k8s_api_autoscaling_v2_MetricSpec>): io_k8s_api_autoscaling_v2_MetricSpec {
  return {
-   external: data?.external !== undefined ? data.external : createio_k8s_api_autoscaling_v2_ExternalMetricSource(),
    object: data?.object !== undefined ? data.object : createio_k8s_api_autoscaling_v2_ObjectMetricSource(),
    pods: data?.pods !== undefined ? data.pods : createio_k8s_api_autoscaling_v2_PodsMetricSource(),
    resource: data?.resource !== undefined ? data.resource : createio_k8s_api_autoscaling_v2_ResourceMetricSource(),
    type: data?.type !== undefined ? data.type : '',
    containerResource: data?.containerResource !== undefined ? data.containerResource : createio_k8s_api_autoscaling_v2_ContainerResourceMetricSource(),
+   external: data?.external !== undefined ? data.external : createio_k8s_api_autoscaling_v2_ExternalMetricSource(),
  };
 }
 // Required imports

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeStatus {
 /**
-* lastPhaseTransitionTime is the time the phase transitioned from one to another and automatically resets to current time everytime a volume phase transitions.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-lastPhaseTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
-/**
 * message is a human-readable message indicating details about why the volume is in this state.
 */
 message?: string;
@@ -28,6 +23,11 @@ phase?: 'Available' | 'Bound' | 'Failed' | 'Pending' | 'Released';
 * reason is a brief CamelCase string that describes any failure and is meant for machine parsing and tidy display in the CLI.
 */
 reason?: string;
+/**
+* lastPhaseTransitionTime is the time the phase transitioned from one to another and automatically resets to current time everytime a volume phase transitions.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastPhaseTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 }
 
 /**
@@ -37,10 +37,10 @@ reason?: string;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeStatus(data?: Partial<io_k8s_api_core_v1_PersistentVolumeStatus>): io_k8s_api_core_v1_PersistentVolumeStatus {
  return {
-   lastPhaseTransitionTime: data?.lastPhaseTransitionTime !== undefined ? data.lastPhaseTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    phase: data?.phase !== undefined ? data.phase : '',
    reason: data?.reason !== undefined ? data.reason : '',
+   lastPhaseTransitionTime: data?.lastPhaseTransitionTime !== undefined ? data.lastPhaseTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
 // Required imports

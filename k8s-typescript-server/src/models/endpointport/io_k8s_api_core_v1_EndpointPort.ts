@@ -5,20 +5,6 @@
 */
 export interface io_k8s_api_core_v1_EndpointPort {
 /**
-* The port number of the endpoint.
-* @required
-*/
-port: number;
-/**
-* The IP protocol for this port. Must be UDP, TCP, or SCTP. Default is TCP.
-
-Possible enum values:
- - `"SCTP"` is the SCTP protocol.
- - `"TCP"` is the TCP protocol.
- - `"UDP"` is the UDP protocol.
-*/
-protocol?: 'SCTP' | 'TCP' | 'UDP';
-/**
 * The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:
 
 * Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).
@@ -35,6 +21,20 @@ appProtocol?: string;
 * The name of this port.  This must match the 'name' field in the corresponding ServicePort. Must be a DNS_LABEL. Optional only if one port is defined.
 */
 name?: string;
+/**
+* The port number of the endpoint.
+* @required
+*/
+port: number;
+/**
+* The IP protocol for this port. Must be UDP, TCP, or SCTP. Default is TCP.
+
+Possible enum values:
+ - `"SCTP"` is the SCTP protocol.
+ - `"TCP"` is the TCP protocol.
+ - `"UDP"` is the UDP protocol.
+*/
+protocol?: 'SCTP' | 'TCP' | 'UDP';
 }
 
 /**
@@ -44,9 +44,9 @@ name?: string;
 */
 export function createio_k8s_api_core_v1_EndpointPort(data?: Partial<io_k8s_api_core_v1_EndpointPort>): io_k8s_api_core_v1_EndpointPort {
  return {
-   port: data?.port !== undefined ? data.port : 0,
-   protocol: data?.protocol !== undefined ? data.protocol : '',
    appProtocol: data?.appProtocol !== undefined ? data.appProtocol : '',
    name: data?.name !== undefined ? data.name : '',
+   port: data?.port !== undefined ? data.port : 0,
+   protocol: data?.protocol !== undefined ? data.protocol : '',
  };
 }

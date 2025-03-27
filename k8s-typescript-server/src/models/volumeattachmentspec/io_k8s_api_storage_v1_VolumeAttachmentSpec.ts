@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_storage_v1_VolumeAttachmentSpec {
 /**
+* nodeName represents the node that the volume should be attached to.
+* @required
+*/
+nodeName: string;
+/**
 * source represents the volume that should be attached.
 * @required
 * @references io.k8s.api.storage.v1.VolumeAttachmentSource
@@ -15,11 +20,6 @@ source: io_k8s_api_storage_v1_VolumeAttachmentSource;
 * @required
 */
 attacher: string;
-/**
-* nodeName represents the node that the volume should be attached to.
-* @required
-*/
-nodeName: string;
 }
 
 /**
@@ -29,9 +29,9 @@ nodeName: string;
 */
 export function createio_k8s_api_storage_v1_VolumeAttachmentSpec(data?: Partial<io_k8s_api_storage_v1_VolumeAttachmentSpec>): io_k8s_api_storage_v1_VolumeAttachmentSpec {
  return {
+   nodeName: data?.nodeName !== undefined ? data.nodeName : '',
    source: data?.source !== undefined ? data.source : createio_k8s_api_storage_v1_VolumeAttachmentSource(),
    attacher: data?.attacher !== undefined ? data.attacher : '',
-   nodeName: data?.nodeName !== undefined ? data.nodeName : '',
  };
 }
 // Required imports

@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_rbac_v1_Subject {
 /**
+* Namespace of the referenced object.  If the object kind is non-namespace, such as "User" or "Group", and this value is not empty the Authorizer should report an error.
+*/
+namespace?: string;
+/**
 * APIGroup holds the API group of the referenced subject. Defaults to "" for ServiceAccount subjects. Defaults to "rbac.authorization.k8s.io" for User and Group subjects.
 */
 apiGroup?: string;
@@ -18,10 +22,6 @@ kind: string;
 * @required
 */
 name: string;
-/**
-* Namespace of the referenced object.  If the object kind is non-namespace, such as "User" or "Group", and this value is not empty the Authorizer should report an error.
-*/
-namespace?: string;
 }
 
 /**
@@ -31,9 +31,9 @@ namespace?: string;
 */
 export function createio_k8s_api_rbac_v1_Subject(data?: Partial<io_k8s_api_rbac_v1_Subject>): io_k8s_api_rbac_v1_Subject {
  return {
+   namespace: data?.namespace !== undefined ? data.namespace : '',
    apiGroup: data?.apiGroup !== undefined ? data.apiGroup : '',
    kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
-   namespace: data?.namespace !== undefined ? data.namespace : '',
  };
 }

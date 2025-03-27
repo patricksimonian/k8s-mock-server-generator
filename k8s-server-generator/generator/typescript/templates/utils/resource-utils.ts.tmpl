@@ -1,4 +1,4 @@
-import { Storage } from '../storage/Storage';
+import { Storage, KubeResource } from '../storage/Storage';
 import { logger } from '../logger';
 import express from 'express';
 
@@ -106,4 +106,11 @@ export function createNotFoundResponse(resourceType: string, name: string, names
     },
     code: 404
   };
+}
+
+export function getPrimaryContainer(resource: KubeResource): string {
+  if (resource.spec && resource.spec.containers && resource.spec.containers.length > 0) {
+    return resource.spec.containers[0].name;
+  }
+  return 'default';
 }

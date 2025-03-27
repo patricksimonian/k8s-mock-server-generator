@@ -2,11 +2,31 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createephemeralcontainerRoutes(storage: Storage): express.Router {
   const router = express.Router();
+
+//read ephemeralcontainers of the specified Pod
+  router.get('/api/v1/namespaces/:namespace/pods/:name/ephemeralcontainers', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting ephemeralcontainer ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('ephemeralcontainer', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`ephemeralcontainer ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
 //replace ephemeralcontainers of the specified Pod
   router.put('/api/v1/namespaces/:namespace/pods/:name/ephemeralcontainers', async (req, res, next) => {
     try {
@@ -62,27 +82,6 @@ export function createephemeralcontainerRoutes(storage: Storage): express.Router
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read ephemeralcontainers of the specified Pod
-  router.get('/api/v1/namespaces/:namespace/pods/:name/ephemeralcontainers', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing ephemeralcontainer in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('ephemeralcontainer', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

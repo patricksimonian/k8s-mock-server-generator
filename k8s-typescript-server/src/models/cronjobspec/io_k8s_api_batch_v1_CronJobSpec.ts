@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_batch_v1_CronJobSpec {
 /**
-* The number of failed finished jobs to retain. Value must be non-negative integer. Defaults to 1.
-*/
-failedJobsHistoryLimit?: number;
-/**
 * Specifies the job that will be created when executing a CronJob.
 * @required
 * @references io.k8s.api.batch.v1.JobTemplateSpec
@@ -46,6 +42,10 @@ Possible enum values:
  - `"Replace"` cancels currently running job and replaces it with a new one.
 */
 concurrencyPolicy?: 'Allow' | 'Forbid' | 'Replace';
+/**
+* The number of failed finished jobs to retain. Value must be non-negative integer. Defaults to 1.
+*/
+failedJobsHistoryLimit?: number;
 }
 
 /**
@@ -55,7 +55,6 @@ concurrencyPolicy?: 'Allow' | 'Forbid' | 'Replace';
 */
 export function createio_k8s_api_batch_v1_CronJobSpec(data?: Partial<io_k8s_api_batch_v1_CronJobSpec>): io_k8s_api_batch_v1_CronJobSpec {
  return {
-   failedJobsHistoryLimit: data?.failedJobsHistoryLimit !== undefined ? data.failedJobsHistoryLimit : 0,
    jobTemplate: data?.jobTemplate !== undefined ? data.jobTemplate : createio_k8s_api_batch_v1_JobTemplateSpec(),
    schedule: data?.schedule !== undefined ? data.schedule : '',
    startingDeadlineSeconds: data?.startingDeadlineSeconds !== undefined ? data.startingDeadlineSeconds : 0,
@@ -63,6 +62,7 @@ export function createio_k8s_api_batch_v1_CronJobSpec(data?: Partial<io_k8s_api_
    suspend: data?.suspend !== undefined ? data.suspend : false,
    timeZone: data?.timeZone !== undefined ? data.timeZone : '',
    concurrencyPolicy: data?.concurrencyPolicy !== undefined ? data.concurrencyPolicy : '',
+   failedJobsHistoryLimit: data?.failedJobsHistoryLimit !== undefined ? data.failedJobsHistoryLimit : 0,
  };
 }
 // Required imports

@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_authentication_v1_TokenReview {
 /**
+* Status is filled in by the server and indicates whether the request can be authenticated.
+* @references io.k8s.api.authentication.v1.TokenReviewStatus
+*/
+status?: io_k8s_api_authentication_v1_TokenReviewStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -23,11 +28,6 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 * @references io.k8s.api.authentication.v1.TokenReviewSpec
 */
 spec: io_k8s_api_authentication_v1_TokenReviewSpec;
-/**
-* Status is filled in by the server and indicates whether the request can be authenticated.
-* @references io.k8s.api.authentication.v1.TokenReviewStatus
-*/
-status?: io_k8s_api_authentication_v1_TokenReviewStatus;
 }
 
 /**
@@ -37,11 +37,11 @@ status?: io_k8s_api_authentication_v1_TokenReviewStatus;
 */
 export function createio_k8s_api_authentication_v1_TokenReview(data?: Partial<io_k8s_api_authentication_v1_TokenReview>): io_k8s_api_authentication_v1_TokenReview {
  return {
+   status: data?.status !== undefined ? data.status : createio_k8s_api_authentication_v1_TokenReviewStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    spec: data?.spec !== undefined ? data.spec : createio_k8s_api_authentication_v1_TokenReviewSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_authentication_v1_TokenReviewStatus(),
  };
 }
 // Required imports

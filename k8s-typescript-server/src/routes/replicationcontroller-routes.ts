@@ -2,40 +2,28 @@
 import express from 'express';
 import { KubeResource, Storage } from '../storage/Storage';
 import { logger } from '../logger';
-import { handleResourceError } from '../utils';
+import { getPrimaryContainer, handleResourceError } from '../utils';
 
 
 export function createreplicationcontrollerRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//delete collection of ReplicationController
-  router.delete('/api/v1/namespaces/:namespace/replicationcontrollers', async (req, res, next) => {
+//list or watch objects of kind ReplicationController
+  router.get('/api/v1/replicationcontrollers', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all replicationcontroller in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('replicationcontroller', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`replicationcontroller not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`replicationcontroller not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing replicationcontroller`);
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'replicationcontroller'
-        }
-      });
+      const resourceList = await storage.listResources('replicationcontroller', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -86,6 +74,39 @@ export function createreplicationcontrollerRoutes(storage: Storage): express.Rou
     }
   });
 
+//delete collection of ReplicationController
+  router.delete('/api/v1/namespaces/:namespace/replicationcontrollers', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all replicationcontroller in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('replicationcontroller', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`replicationcontroller not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`replicationcontroller not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'replicationcontroller'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //watch individual changes to a list of ReplicationController. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/api/v1/watch/replicationcontrollers', async (req, res, next) => {
     try {
@@ -106,26 +127,43 @@ export function createreplicationcontrollerRoutes(storage: Storage): express.Rou
       next(error);
     }
   });
-
-//read scale of the specified ReplicationController
-  router.get('/api/v1/namespaces/:namespace/replicationcontrollers/:name/scale', async (req, res, next) => {
+  router.patch('/api/v1/namespaces/:namespace/replicationcontrollers/:name/scale', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
-      logger.info(`Listing replicationcontroller in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('replicationcontroller', namespace, listOpts);
-      
+      logger.info(`Patching replicationcontroller ${name} in namespace ${namespace}`);
+      const subresource = "scale";
 
-      
-      res.json(resourceList);
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('replicationcontroller', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }
+  });
+
+//read scale of the specified ReplicationController
+  router.get('/api/v1/namespaces/:namespace/replicationcontrollers/:name/scale', async (req, res, next) => {
+ 
+  // the subresourcescale
+      try {
+        const name = req.params.name;
+        const namespace = req.params.namespace;
+        logger.info(`Getting scale ${name} in namespace ${namespace}`);
+        
+        const resource = await storage.getResource('scale', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`scale ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
   });
 //replace scale of the specified ReplicationController
   router.put('/api/v1/namespaces/:namespace/replicationcontrollers/:name/scale', async (req, res, next) => {
@@ -151,14 +189,60 @@ export function createreplicationcontrollerRoutes(storage: Storage): express.Rou
       next(error);
     }
   });
-  router.patch('/api/v1/namespaces/:namespace/replicationcontrollers/:name/scale', async (req, res, next) => {
+
+//read status of the specified ReplicationController
+  router.get('/api/v1/namespaces/:namespace/replicationcontrollers/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = req.params.namespace;
+        logger.info(`Getting status ${name} in namespace ${namespace}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
+  });
+//replace status of the specified ReplicationController
+  router.put('/api/v1/namespaces/:namespace/replicationcontrollers/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating replicationcontroller ${name} in namespace ${namespace}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('replicationcontroller', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/api/v1/namespaces/:namespace/replicationcontrollers/:name/status', async (req, res, next) => {
     try {
       const name = req.params.name;
       const patchData = req.body;
       const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
       logger.info(`Patching replicationcontroller ${name} in namespace ${namespace}`);
-      const subresource = "scale";
+      const subresource = "status";
 
       const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
       const updatedResource = await storage.updateSubresource('replicationcontroller', name, subresource, patchData, namespace);
@@ -180,11 +264,32 @@ export function createreplicationcontrollerRoutes(storage: Storage): express.Rou
       if (!resource) {
         return handleResourceError(new Error(`replicationcontroller ${name} not found in namespace ${namespace}`), res);
       }
-  
-      res.json(resource);
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
+  });
+
+//read the specified ReplicationController
+  router.get('/api/v1/namespaces/:namespace/replicationcontrollers/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting replicationcontroller ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('replicationcontroller', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`replicationcontroller ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
   });
 //replace the specified ReplicationController
   router.put('/api/v1/namespaces/:namespace/replicationcontrollers/:name', async (req, res, next) => {
@@ -273,107 +378,6 @@ export function createreplicationcontrollerRoutes(storage: Storage): express.Rou
       } else {
         return res.status(415).json({ error: 'Unsupported Media Type' });
       }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified ReplicationController
-  router.get('/api/v1/namespaces/:namespace/replicationcontrollers/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting replicationcontroller ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('replicationcontroller', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`replicationcontroller ${name} not found in namespace ${namespace}`), res);
-      }
-  
-      res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  });
-//replace status of the specified ReplicationController
-  router.put('/api/v1/namespaces/:namespace/replicationcontrollers/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating replicationcontroller ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('replicationcontroller', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/api/v1/namespaces/:namespace/replicationcontrollers/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching replicationcontroller ${name} in namespace ${namespace}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('replicationcontroller', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified ReplicationController
-  router.get('/api/v1/namespaces/:namespace/replicationcontrollers/:name/status', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing replicationcontroller in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('replicationcontroller', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ReplicationController
-  router.get('/api/v1/replicationcontrollers', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing replicationcontroller`);
-      
-      const resourceList = await storage.listResources('replicationcontroller', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }

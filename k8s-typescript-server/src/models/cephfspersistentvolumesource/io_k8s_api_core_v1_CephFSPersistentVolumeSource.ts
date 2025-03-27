@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_CephFSPersistentVolumeSource {
 /**
+* secretFile is Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
+*/
+secretFile?: string;
+/**
 * secretRef is Optional: SecretRef is reference to the authentication secret for User, default is empty. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 * @references io.k8s.api.core.v1.SecretReference
 */
@@ -27,10 +31,6 @@ path?: string;
 * readOnly is Optional: Defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts. More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
 */
 readOnly?: boolean;
-/**
-* secretFile is Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
-*/
-secretFile?: string;
 }
 
 /**
@@ -40,12 +40,12 @@ secretFile?: string;
 */
 export function createio_k8s_api_core_v1_CephFSPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_CephFSPersistentVolumeSource>): io_k8s_api_core_v1_CephFSPersistentVolumeSource {
  return {
+   secretFile: data?.secretFile !== undefined ? data.secretFile : '',
    secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretReference(),
    user: data?.user !== undefined ? data.user : '',
    monitors: data?.monitors !== undefined ? data.monitors : [],
    path: data?.path !== undefined ? data.path : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretFile: data?.secretFile !== undefined ? data.secretFile : '',
  };
 }
 // Required imports

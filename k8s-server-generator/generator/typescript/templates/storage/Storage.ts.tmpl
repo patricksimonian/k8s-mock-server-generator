@@ -1,3 +1,4 @@
+import { Readable } from "stream";
 // A standard Kubernetes Status object for errors or system-level responses.
 export interface Status {
   kind: "Status";
@@ -90,6 +91,30 @@ export interface Storage {
   markInitialized(): Promise<void>;
 
   getResource(kind: string, name: string, namespace?: string | null): Promise<KubeResource | Status>;
+
+  writeLogs(
+    name: string,
+    namespace: string,
+    container: string,
+    stdout: string,
+    stderr: string,
+    cluster: string 
+  ): Promise<true | Status>;
+
+  readLogs(
+    name: string,
+    namespace: string,
+    container: string,
+    cluster: string,
+    options?: {
+      follow?: boolean;
+      tailLines?: number;
+      sinceTime?: string;
+      timestamps?: boolean;
+      stdout?: boolean;
+      stderr?: boolean;
+    }
+  ): Promise<Readable | Status>;
 
   listResources(
     kind: string,
