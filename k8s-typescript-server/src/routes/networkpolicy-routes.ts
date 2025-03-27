@@ -8,6 +8,69 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createnetworkpolicyRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/networking.k8s.io/v1/watch/namespaces/:namespace/networkpolicies', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing networkpolicy in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind NetworkPolicy
+  router.get('/apis/networking.k8s.io/v1/networkpolicies', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing networkpolicy`);
+      
+      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/networking.k8s.io/v1/watch/networkpolicies', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing networkpolicy`);
+      
+      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //list or watch objects of kind NetworkPolicy
   router.get('/apis/networking.k8s.io/v1/namespaces/:namespace/networkpolicies', async (req, res, next) => {
     try {
@@ -81,27 +144,6 @@ export function createnetworkpolicyRoutes(storage: Storage): express.Router {
           kind: 'networkpolicy'
         }
       });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/networking.k8s.io/v1/watch/networkpolicies', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing networkpolicy`);
-      
-      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -199,12 +241,12 @@ export function createnetworkpolicyRoutes(storage: Storage): express.Router {
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('networkpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('networkpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('networkpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('networkpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -236,48 +278,6 @@ export function createnetworkpolicyRoutes(storage: Storage): express.Router {
     }
   
    
-  });
-
-//list or watch objects of kind NetworkPolicy
-  router.get('/apis/networking.k8s.io/v1/networkpolicies', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing networkpolicy`);
-      
-      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of NetworkPolicy. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/networking.k8s.io/v1/watch/namespaces/:namespace/networkpolicies', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing networkpolicy in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('networkpolicy', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
   });
 
   return router;

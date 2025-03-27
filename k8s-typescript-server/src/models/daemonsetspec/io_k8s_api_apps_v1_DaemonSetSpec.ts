@@ -5,12 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSetSpec {
 /**
-* An object that describes the pod that will be created. The DaemonSet will create exactly one copy of this pod on every node that matches the template's node selector (or on every node if no node selector is specified). The only allowed template.spec.restartPolicy value is "Always". More info: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template
-* @required
-* @references io.k8s.api.core.v1.PodTemplateSpec
-*/
-template: io_k8s_api_core_v1_PodTemplateSpec;
-/**
 * An update strategy to replace existing DaemonSet pods with new pods.
 * @references io.k8s.api.apps.v1.DaemonSetUpdateStrategy
 */
@@ -29,6 +23,12 @@ revisionHistoryLimit?: number;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
 selector: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
+/**
+* An object that describes the pod that will be created. The DaemonSet will create exactly one copy of this pod on every node that matches the template's node selector (or on every node if no node selector is specified). The only allowed template.spec.restartPolicy value is "Always". More info: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template
+* @required
+* @references io.k8s.api.core.v1.PodTemplateSpec
+*/
+template: io_k8s_api_core_v1_PodTemplateSpec;
 }
 
 /**
@@ -38,11 +38,11 @@ selector: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 */
 export function createio_k8s_api_apps_v1_DaemonSetSpec(data?: Partial<io_k8s_api_apps_v1_DaemonSetSpec>): io_k8s_api_apps_v1_DaemonSetSpec {
  return {
-   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
    updateStrategy: data?.updateStrategy !== undefined ? data.updateStrategy : createio_k8s_api_apps_v1_DaemonSetUpdateStrategy(),
    minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
    revisionHistoryLimit: data?.revisionHistoryLimit !== undefined ? data.revisionHistoryLimit : 0,
    selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
  };
 }
 // Required imports

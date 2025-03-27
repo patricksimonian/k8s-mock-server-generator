@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_ContainerState {
 /**
+* Details about a waiting container
+* @references io.k8s.api.core.v1.ContainerStateWaiting
+*/
+waiting?: io_k8s_api_core_v1_ContainerStateWaiting;
+/**
 * Details about a running container
 * @references io.k8s.api.core.v1.ContainerStateRunning
 */
@@ -14,11 +19,6 @@ running?: io_k8s_api_core_v1_ContainerStateRunning;
 * @references io.k8s.api.core.v1.ContainerStateTerminated
 */
 terminated?: io_k8s_api_core_v1_ContainerStateTerminated;
-/**
-* Details about a waiting container
-* @references io.k8s.api.core.v1.ContainerStateWaiting
-*/
-waiting?: io_k8s_api_core_v1_ContainerStateWaiting;
 }
 
 /**
@@ -28,9 +28,9 @@ waiting?: io_k8s_api_core_v1_ContainerStateWaiting;
 */
 export function createio_k8s_api_core_v1_ContainerState(data?: Partial<io_k8s_api_core_v1_ContainerState>): io_k8s_api_core_v1_ContainerState {
  return {
+   waiting: data?.waiting !== undefined ? data.waiting : createio_k8s_api_core_v1_ContainerStateWaiting(),
    running: data?.running !== undefined ? data.running : createio_k8s_api_core_v1_ContainerStateRunning(),
    terminated: data?.terminated !== undefined ? data.terminated : createio_k8s_api_core_v1_ContainerStateTerminated(),
-   waiting: data?.waiting !== undefined ? data.waiting : createio_k8s_api_core_v1_ContainerStateWaiting(),
  };
 }
 // Required imports

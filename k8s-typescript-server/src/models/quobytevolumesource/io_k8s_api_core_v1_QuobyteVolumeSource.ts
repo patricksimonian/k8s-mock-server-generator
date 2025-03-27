@@ -5,19 +5,6 @@
 */
 export interface io_k8s_api_core_v1_QuobyteVolumeSource {
 /**
-* group to map volume access to Default is no group
-*/
-group?: string;
-/**
-* readOnly here will force the Quobyte volume to be mounted with read-only permissions. Defaults to false.
-*/
-readOnly?: boolean;
-/**
-* registry represents a single or multiple Quobyte Registry services specified as a string as host:port pair (multiple entries are separated with commas) which acts as the central registry for volumes
-* @required
-*/
-registry: string;
-/**
 * tenant owning the given Quobyte volume in the Backend Used with dynamically provisioned Quobyte volumes, value is set by the plugin
 */
 tenant?: string;
@@ -30,6 +17,19 @@ user?: string;
 * @required
 */
 volume: string;
+/**
+* group to map volume access to Default is no group
+*/
+group?: string;
+/**
+* readOnly here will force the Quobyte volume to be mounted with read-only permissions. Defaults to false.
+*/
+readOnly?: boolean;
+/**
+* registry represents a single or multiple Quobyte Registry services specified as a string as host:port pair (multiple entries are separated with commas) which acts as the central registry for volumes
+* @required
+*/
+registry: string;
 }
 
 /**
@@ -39,11 +39,11 @@ volume: string;
 */
 export function createio_k8s_api_core_v1_QuobyteVolumeSource(data?: Partial<io_k8s_api_core_v1_QuobyteVolumeSource>): io_k8s_api_core_v1_QuobyteVolumeSource {
  return {
-   group: data?.group !== undefined ? data.group : '',
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   registry: data?.registry !== undefined ? data.registry : '',
    tenant: data?.tenant !== undefined ? data.tenant : '',
    user: data?.user !== undefined ? data.user : '',
    volume: data?.volume !== undefined ? data.volume : '',
+   group: data?.group !== undefined ? data.group : '',
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   registry: data?.registry !== undefined ? data.registry : '',
  };
 }

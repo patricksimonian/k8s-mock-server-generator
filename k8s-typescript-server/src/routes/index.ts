@@ -74,74 +74,74 @@ import { createvolumeattachmentRoutes } from './volumeattachment-routes';
 * Create all routes for the API server
 */
 export function createRoutes(): express.Router {
- const router = express.Router();
- // Add utility routes
- router.use('/', createUtilityRoutes(storage));
- // Add discovery routes
- router.use('/', createDiscoveryRoutes(storage));
- // Add OpenAPI routes
- router.use('/', createOpenAPIRoutes());
- // Add resource routes
- router.use('/', createapiserviceRoutes(storage));
- router.use('/', createbindingRoutes(storage));
- router.use('/', createcertificatesigningrequestRoutes(storage));
- router.use('/', createclusterroleRoutes(storage));
- router.use('/', createclusterrolebindingRoutes(storage));
- router.use('/', createcomponentstatusRoutes(storage));
- router.use('/', createconfigmapRoutes(storage));
- router.use('/', createcontrollerrevisionRoutes(storage));
- router.use('/', createcronjobRoutes(storage));
- router.use('/', createcsidriverRoutes(storage));
- router.use('/', createcsinodeRoutes(storage));
- router.use('/', createcsistoragecapacityRoutes(storage));
- router.use('/', createcustomresourcedefinitionRoutes(storage));
- router.use('/', createdaemonsetRoutes(storage));
- router.use('/', createdeploymentRoutes(storage));
- router.use('/', createendpointRoutes(storage));
- router.use('/', createendpointsliceRoutes(storage));
- router.use('/', createephemeralcontainerRoutes(storage));
- router.use('/', createeventRoutes(storage));
- router.use('/', createflowschemaRoutes(storage));
- router.use('/', createhorizontalpodautoscalerRoutes(storage));
- router.use('/', createingressRoutes(storage));
- router.use('/', createingressclassRoutes(storage));
- router.use('/', createjobRoutes(storage));
- router.use('/', createjwkRoutes(storage));
- router.use('/', createleaseRoutes(storage));
- router.use('/', createlimitrangeRoutes(storage));
- router.use('/', createlocalsubjectaccessreviewRoutes(storage));
- router.use('/', createmutatingwebhookconfigurationRoutes(storage));
- router.use('/', createnamespaceRoutes(storage));
- router.use('/', createnetworkpolicyRoutes(storage));
- router.use('/', createnodeRoutes(storage));
- router.use('/', createpersistentvolumeRoutes(storage));
- router.use('/', createpersistentvolumeclaimRoutes(storage));
- router.use('/', createpodRoutes(storage));
- router.use('/', createpoddisruptionbudgetRoutes(storage));
- router.use('/', createpodtemplateRoutes(storage));
- router.use('/', createpriorityclassRoutes(storage));
- router.use('/', createprioritylevelconfigurationRoutes(storage));
- router.use('/', createproxyRoutes(storage));
- router.use('/', createreplicasetRoutes(storage));
- router.use('/', createreplicationcontrollerRoutes(storage));
- router.use('/', createresourcequotaRoutes(storage));
- router.use('/', createroleRoutes(storage));
- router.use('/', createrolebindingRoutes(storage));
- router.use('/', createruntimeclassRoutes(storage));
- router.use('/', createsecretRoutes(storage));
- router.use('/', createselfsubjectaccessreviewRoutes(storage));
- router.use('/', createselfsubjectreviewRoutes(storage));
- router.use('/', createselfsubjectrulesreviewRoutes(storage));
- router.use('/', createserviceRoutes(storage));
- router.use('/', createserviceaccountRoutes(storage));
- router.use('/', createstatefulsetRoutes(storage));
- router.use('/', createstorageclassRoutes(storage));
- router.use('/', createsubjectaccessreviewRoutes(storage));
- router.use('/', createtokenreviewRoutes(storage));
- router.use('/', createvalidatingadmissionpolicyRoutes(storage));
- router.use('/', createvalidatingadmissionpolicybindingRoutes(storage));
- router.use('/', createvalidatingwebhookconfigurationRoutes(storage));
- router.use('/', createvolumeattachmentRoutes(storage));
- 
- return router;
+    const router = express.Router();
+    // Add utility routes
+    router.use('/', createUtilityRoutes(storage));
+    router.use(express.json())
+    // Add discovery routes
+    router.use('/', createDiscoveryRoutes(storage));
+    // Add OpenAPI routes
+    router.use('/', createOpenAPIRoutes());
+    // Add resource routes
+    router.use('/', createapiserviceRoutes(storage));
+    router.use('/', createbindingRoutes(storage));
+    router.use('/', createcertificatesigningrequestRoutes(storage));
+    router.use('/', createclusterroleRoutes(storage));
+    router.use('/', createclusterrolebindingRoutes(storage));
+    router.use('/', createcomponentstatusRoutes(storage));
+    router.use('/', createconfigmapRoutes(storage));
+    router.use('/', createcontrollerrevisionRoutes(storage));
+    router.use('/', createcronjobRoutes(storage));
+    router.use('/', createcsidriverRoutes(storage));
+    router.use('/', createcsinodeRoutes(storage));
+    router.use('/', createcsistoragecapacityRoutes(storage));
+    router.use('/', createcustomresourcedefinitionRoutes(storage));
+    router.use('/', createdaemonsetRoutes(storage));
+    router.use('/', createdeploymentRoutes(storage));
+    router.use('/', createendpointRoutes(storage));
+    router.use('/', createendpointsliceRoutes(storage));
+    router.use('/', createephemeralcontainerRoutes(storage));
+    router.use('/', createeventRoutes(storage));
+    router.use('/', createflowschemaRoutes(storage));
+    router.use('/', createhorizontalpodautoscalerRoutes(storage));
+    router.use('/', createingressRoutes(storage));
+    router.use('/', createingressclassRoutes(storage));
+    router.use('/', createjobRoutes(storage));
+    router.use('/', createjwkRoutes(storage));
+    router.use('/', createleaseRoutes(storage));
+    router.use('/', createlimitrangeRoutes(storage));
+    router.use('/', createlocalsubjectaccessreviewRoutes(storage));
+    router.use('/', createmutatingwebhookconfigurationRoutes(storage));
+    router.use('/', createnamespaceRoutes(storage));
+    router.use('/', createnetworkpolicyRoutes(storage));
+    router.use('/', createnodeRoutes(storage));
+    router.use('/', createpersistentvolumeRoutes(storage));
+    router.use('/', createpersistentvolumeclaimRoutes(storage));
+    router.use('/', createpodRoutes(storage));
+    router.use('/', createpoddisruptionbudgetRoutes(storage));
+    router.use('/', createpodtemplateRoutes(storage));
+    router.use('/', createpriorityclassRoutes(storage));
+    router.use('/', createprioritylevelconfigurationRoutes(storage));
+    router.use('/', createproxyRoutes(storage));
+    router.use('/', createreplicasetRoutes(storage));
+    router.use('/', createreplicationcontrollerRoutes(storage));
+    router.use('/', createresourcequotaRoutes(storage));
+    router.use('/', createroleRoutes(storage));
+    router.use('/', createrolebindingRoutes(storage));
+    router.use('/', createruntimeclassRoutes(storage));
+    router.use('/', createsecretRoutes(storage));
+    router.use('/', createselfsubjectaccessreviewRoutes(storage));
+    router.use('/', createselfsubjectreviewRoutes(storage));
+    router.use('/', createselfsubjectrulesreviewRoutes(storage));
+    router.use('/', createserviceRoutes(storage));
+    router.use('/', createserviceaccountRoutes(storage));
+    router.use('/', createstatefulsetRoutes(storage));
+    router.use('/', createstorageclassRoutes(storage));
+    router.use('/', createsubjectaccessreviewRoutes(storage));
+    router.use('/', createtokenreviewRoutes(storage));
+    router.use('/', createvalidatingadmissionpolicyRoutes(storage));
+    router.use('/', createvalidatingadmissionpolicybindingRoutes(storage));
+    router.use('/', createvalidatingwebhookconfigurationRoutes(storage));
+    router.use('/', createvolumeattachmentRoutes(storage));
+    return router;
 }

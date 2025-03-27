@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_flowcontrol_v1_FlowSchemaSpec {
 /**
-* `matchingPrecedence` is used to choose among the FlowSchemas that match a given request. The chosen FlowSchema is among those with the numerically lowest (which we take to be logically highest) MatchingPrecedence.  Each MatchingPrecedence value must be ranged in [1,10000]. Note that if the precedence is not specified, it will be set to 1000 as default.
-*/
-matchingPrecedence?: number;
-/**
 * `priorityLevelConfiguration` should reference a PriorityLevelConfiguration in the cluster. If the reference cannot be resolved, the FlowSchema will be ignored and marked as invalid in its status. Required.
 * @required
 * @references io.k8s.api.flowcontrol.v1.PriorityLevelConfigurationReference
@@ -24,6 +20,10 @@ rules?: io_k8s_api_flowcontrol_v1_PolicyRulesWithSubjects[];
 * @references io.k8s.api.flowcontrol.v1.FlowDistinguisherMethod
 */
 distinguisherMethod?: io_k8s_api_flowcontrol_v1_FlowDistinguisherMethod;
+/**
+* `matchingPrecedence` is used to choose among the FlowSchemas that match a given request. The chosen FlowSchema is among those with the numerically lowest (which we take to be logically highest) MatchingPrecedence.  Each MatchingPrecedence value must be ranged in [1,10000]. Note that if the precedence is not specified, it will be set to 1000 as default.
+*/
+matchingPrecedence?: number;
 }
 
 /**
@@ -33,10 +33,10 @@ distinguisherMethod?: io_k8s_api_flowcontrol_v1_FlowDistinguisherMethod;
 */
 export function createio_k8s_api_flowcontrol_v1_FlowSchemaSpec(data?: Partial<io_k8s_api_flowcontrol_v1_FlowSchemaSpec>): io_k8s_api_flowcontrol_v1_FlowSchemaSpec {
  return {
-   matchingPrecedence: data?.matchingPrecedence !== undefined ? data.matchingPrecedence : 0,
    priorityLevelConfiguration: data?.priorityLevelConfiguration !== undefined ? data.priorityLevelConfiguration : createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationReference(),
    rules: data?.rules !== undefined ? data.rules : [],
    distinguisherMethod: data?.distinguisherMethod !== undefined ? data.distinguisherMethod : createio_k8s_api_flowcontrol_v1_FlowDistinguisherMethod(),
+   matchingPrecedence: data?.matchingPrecedence !== undefined ? data.matchingPrecedence : 0,
  };
 }
 // Required imports

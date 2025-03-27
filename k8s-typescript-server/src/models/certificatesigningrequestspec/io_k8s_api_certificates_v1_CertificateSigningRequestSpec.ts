@@ -5,6 +5,35 @@
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequestSpec {
 /**
+* signerName indicates the requested signer, and is a qualified name.
+
+List/watch requests for CertificateSigningRequests can filter on this field using a "spec.signerName=NAME" fieldSelector.
+
+Well-known Kubernetes signers are:
+ 1. "kubernetes.io/kube-apiserver-client": issues client certificates that can be used to authenticate to kube-apiserver.
+  Requests for this signer are never auto-approved by kube-controller-manager, can be issued by the "csrsigning" controller in kube-controller-manager.
+ 2. "kubernetes.io/kube-apiserver-client-kubelet": issues client certificates that kubelets use to authenticate to kube-apiserver.
+  Requests for this signer can be auto-approved by the "csrapproving" controller in kube-controller-manager, and can be issued by the "csrsigning" controller in kube-controller-manager.
+ 3. "kubernetes.io/kubelet-serving" issues serving certificates that kubelets use to serve TLS endpoints, which kube-apiserver can connect to securely.
+  Requests for this signer are never auto-approved by kube-controller-manager, and can be issued by the "csrsigning" controller in kube-controller-manager.
+
+More details are available at https://k8s.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers
+
+Custom signerNames can also be specified. The signer defines:
+ 1. Trust distribution: how trust (CA bundles) are distributed.
+ 2. Permitted subjects: and behavior when a disallowed subject is requested.
+ 3. Required, permitted, or forbidden x509 extensions in the request (including whether subjectAltNames are allowed, which types, restrictions on allowed values) and behavior when a disallowed extension is requested.
+ 4. Required, permitted, or forbidden key usages / extended key usages.
+ 5. Expiration/certificate lifetime: whether it is fixed by the signer, configurable by the admin.
+ 6. Whether or not requests for CA certificates are allowed.
+* @required
+*/
+signerName: string;
+/**
+* uid contains the uid of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.
+*/
+uid?: string;
+/**
 * usages specifies a set of key usages requested in the issued certificate.
 
 Requests for TLS client certificates typically request: "digital signature", "key encipherment", "client auth".
@@ -55,35 +84,6 @@ groups?: string[];
 * @required
 */
 request: string;
-/**
-* signerName indicates the requested signer, and is a qualified name.
-
-List/watch requests for CertificateSigningRequests can filter on this field using a "spec.signerName=NAME" fieldSelector.
-
-Well-known Kubernetes signers are:
- 1. "kubernetes.io/kube-apiserver-client": issues client certificates that can be used to authenticate to kube-apiserver.
-  Requests for this signer are never auto-approved by kube-controller-manager, can be issued by the "csrsigning" controller in kube-controller-manager.
- 2. "kubernetes.io/kube-apiserver-client-kubelet": issues client certificates that kubelets use to authenticate to kube-apiserver.
-  Requests for this signer can be auto-approved by the "csrapproving" controller in kube-controller-manager, and can be issued by the "csrsigning" controller in kube-controller-manager.
- 3. "kubernetes.io/kubelet-serving" issues serving certificates that kubelets use to serve TLS endpoints, which kube-apiserver can connect to securely.
-  Requests for this signer are never auto-approved by kube-controller-manager, and can be issued by the "csrsigning" controller in kube-controller-manager.
-
-More details are available at https://k8s.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers
-
-Custom signerNames can also be specified. The signer defines:
- 1. Trust distribution: how trust (CA bundles) are distributed.
- 2. Permitted subjects: and behavior when a disallowed subject is requested.
- 3. Required, permitted, or forbidden x509 extensions in the request (including whether subjectAltNames are allowed, which types, restrictions on allowed values) and behavior when a disallowed extension is requested.
- 4. Required, permitted, or forbidden key usages / extended key usages.
- 5. Expiration/certificate lifetime: whether it is fixed by the signer, configurable by the admin.
- 6. Whether or not requests for CA certificates are allowed.
-* @required
-*/
-signerName: string;
-/**
-* uid contains the uid of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.
-*/
-uid?: string;
 }
 
 /**
@@ -93,13 +93,13 @@ uid?: string;
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequestSpec(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequestSpec>): io_k8s_api_certificates_v1_CertificateSigningRequestSpec {
  return {
+   signerName: data?.signerName !== undefined ? data.signerName : '',
+   uid: data?.uid !== undefined ? data.uid : '',
    usages: data?.usages !== undefined ? data.usages : [],
    username: data?.username !== undefined ? data.username : '',
    expirationSeconds: data?.expirationSeconds !== undefined ? data.expirationSeconds : 0,
    extra: data?.extra !== undefined ? data.extra : {},
    groups: data?.groups !== undefined ? data.groups : [],
    request: data?.request !== undefined ? data.request : '',
-   signerName: data?.signerName !== undefined ? data.signerName : '',
-   uid: data?.uid !== undefined ? data.uid : '',
  };
 }

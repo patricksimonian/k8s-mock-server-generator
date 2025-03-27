@@ -13,20 +13,6 @@ They are consumed by the kube-scheduler when a CSI driver opts into capacity-awa
 */
 export interface io_k8s_api_storage_v1_CSIStorageCapacity {
 /**
-* Standard object's metadata. The name has no particular meaning. It must be a DNS subdomain (dots allowed, 253 characters). To ensure that there are no conflicts with other CSI drivers on the cluster, the recommendation is to use csisc-<uuid>, a generated name, or a reverse-domain name which ends with the unique CSI driver name.
-
-Objects are namespaced.
-
-More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
-*/
-metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* nodeTopology defines which nodes have access to the storage for which capacity was reported. If not set, the storage is not accessible from any node in the cluster. If empty, the storage is accessible from all nodes. This field is immutable.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
-*/
-nodeTopology?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
-/**
 * storageClassName represents the name of the StorageClass that the reported capacity applies to. It must meet the same requirements as the name of a StorageClass object (non-empty, DNS subdomain). If that object no longer exists, the CSIStorageCapacity object is obsolete and should be removed by its creator. This field is immutable.
 * @required
 */
@@ -53,6 +39,20 @@ This is defined since CSI spec 1.4.0 as the largest size that may be used in a C
 * @references io.k8s.apimachinery.pkg.api.resource.Quantity
 */
 maximumVolumeSize?: io_k8s_apimachinery_pkg_api_resource_Quantity;
+/**
+* Standard object's metadata. The name has no particular meaning. It must be a DNS subdomain (dots allowed, 253 characters). To ensure that there are no conflicts with other CSI drivers on the cluster, the recommendation is to use csisc-<uuid>, a generated name, or a reverse-domain name which ends with the unique CSI driver name.
+
+Objects are namespaced.
+
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* nodeTopology defines which nodes have access to the storage for which capacity was reported. If not set, the storage is not accessible from any node in the cluster. If empty, the storage is accessible from all nodes. This field is immutable.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
+*/
+nodeTopology?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 }
 
 /**
@@ -62,13 +62,13 @@ maximumVolumeSize?: io_k8s_apimachinery_pkg_api_resource_Quantity;
 */
 export function createio_k8s_api_storage_v1_CSIStorageCapacity(data?: Partial<io_k8s_api_storage_v1_CSIStorageCapacity>): io_k8s_api_storage_v1_CSIStorageCapacity {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    capacity: data?.capacity !== undefined ? data.capacity : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
    kind: data?.kind !== undefined ? data.kind : '',
    maximumVolumeSize: data?.maximumVolumeSize !== undefined ? data.maximumVolumeSize : createio_k8s_apimachinery_pkg_api_resource_Quantity(),
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   nodeTopology: data?.nodeTopology !== undefined ? data.nodeTopology : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
  };
 }
 // Required imports

@@ -5,14 +5,14 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaimVolumeSource {
 /**
-* readOnly Will force the ReadOnly setting in VolumeMounts. Default false.
-*/
-readOnly?: boolean;
-/**
 * claimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
 * @required
 */
 claimName: string;
+/**
+* readOnly Will force the ReadOnly setting in VolumeMounts. Default false.
+*/
+readOnly?: boolean;
 }
 
 /**
@@ -22,7 +22,7 @@ claimName: string;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaimVolumeSource(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaimVolumeSource>): io_k8s_api_core_v1_PersistentVolumeClaimVolumeSource {
  return {
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    claimName: data?.claimName !== undefined ? data.claimName : '',
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
  };
 }

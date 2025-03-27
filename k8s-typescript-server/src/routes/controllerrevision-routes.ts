@@ -29,16 +29,16 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
     }
   });
 
-//watch individual changes to a list of ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
+//list or watch objects of kind ControllerRevision
+  router.get('/apis/apps/v1/controllerrevisions', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       const limit = req.query.limit ? Number(req.query.limit) : undefined;
       const cont = req.query.continue as string | undefined;
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing controllerrevision in namespace ${namespace}`);
+      const namespace = null;
+      logger.info(`Listing controllerrevision`);
       
       const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
       
@@ -70,29 +70,8 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
    
   });
 
-//list or watch objects of kind ControllerRevision
-  router.get('/apis/apps/v1/controllerrevisions', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing controllerrevision`);
-      
-      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ControllerRevision
-  router.get('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
+//watch individual changes to a list of ControllerRevision. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -111,59 +90,38 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
       next(error);
     }
   });
-  //create a ControllerRevision
-  router.post('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
-
+  router.patch('/apis/apps/v1/namespaces/:namespace/controllerrevisions/:name', async (req, res, next) => {
     try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
       const namespace = req.params.namespace;
-      logger.info(`Creating controllerrevision in namespace ${namespace}`);
+      logger.info(`Patching controllerrevision ${name} in namespace ${namespace}`);
+      const resource = await storage.getResource('controllerrevision', name, namespace);
       
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of ControllerRevision
-  router.delete('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all controllerrevision in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('controllerrevision', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`controllerrevision not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`controllerrevision not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      if (!resource) {
+        return handleResourceError(new Error(`controllerrevision ${name} not found in namespace ${namespace}`), res);
       }
-    
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'controllerrevision'
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = await storage.mergePatchResource('controllerrevision', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = await storage.jsonPatchResource('controllerrevision', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
         }
-      });
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -243,38 +201,80 @@ export function createcontrollerrevisionRoutes(storage: Storage): express.Router
       next(error);
     }
   });
-  router.patch('/apis/apps/v1/namespaces/:namespace/controllerrevisions/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching controllerrevision ${name} in namespace ${namespace}`);
-      const resource = await storage.getResource('controllerrevision', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`controllerrevision ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('controllerrevision', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('controllerrevision', name, patchData, namespace, resource.metadata.resourceVersion);
+  //create a ControllerRevision
+  router.post('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
 
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
       }
+      const namespace = req.params.namespace;
+      logger.info(`Creating controllerrevision in namespace ${namespace}`);
+      
+      
+      // Set namespace in metadata
+      resource.metadata.namespace = namespace;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of ControllerRevision
+  router.delete('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all controllerrevision in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('controllerrevision', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`controllerrevision not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`controllerrevision not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'controllerrevision'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ControllerRevision
+  router.get('/apis/apps/v1/namespaces/:namespace/controllerrevisions', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing controllerrevision in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('controllerrevision', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

@@ -7,42 +7,6 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 
 export function createingressclassRoutes(storage: Storage): express.Router {
   const router = express.Router();
-  router.patch('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting ingressclass ${name}`);
-      const resource = await storage.getResource('ingressclass', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('ingressclass', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = storage.jsonPatchResource('ingressclass', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
 
 //read the specified IngressClass
   router.get('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
@@ -117,6 +81,75 @@ export function createingressclassRoutes(storage: Storage): express.Router {
       next(error);
     }
   });
+  router.patch('/apis/networking.k8s.io/v1/ingressclasses/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting ingressclass ${name}`);
+      const resource = await storage.getResource('ingressclass', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = await storage.mergePatchResource('ingressclass', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = await storage.jsonPatchResource('ingressclass', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of IngressClass
+  router.delete('/apis/networking.k8s.io/v1/ingressclasses', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = null;
+      logger.info(`Deleting all ingressclass ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('ingressclass', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`ingressclass not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`ingressclass not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'ingressclass'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 //list or watch objects of kind IngressClass
   router.get('/apis/networking.k8s.io/v1/ingressclasses', async (req, res, next) => {
@@ -159,37 +192,24 @@ export function createingressclassRoutes(storage: Storage): express.Router {
     }
   });
 
-//delete collection of IngressClass
-  router.delete('/apis/networking.k8s.io/v1/ingressclasses', async (req, res, next) => {
+//watch changes to an object of kind IngressClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const name = req.params.name;
       const namespace = null;
-      logger.info(`Deleting all ingressclass ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('ingressclass', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`ingressclass not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`ingressclass not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
+      logger.info(`Getting ingressclass ${name}`);
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'ingressclass'
-        }
-      });
+      const resource = await storage.getResource('ingressclass', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 
 //watch individual changes to a list of IngressClass. deprecated: use the 'watch' parameter with a list operation instead.
@@ -211,26 +231,6 @@ export function createingressclassRoutes(storage: Storage): express.Router {
     } catch (error) {
       next(error);
     }
-  });
-
-//watch changes to an object of kind IngressClass. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/networking.k8s.io/v1/watch/ingressclasses/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting ingressclass ${name}`);
-      
-      const resource = await storage.getResource('ingressclass', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`ingressclass ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
   });
 
   return router;

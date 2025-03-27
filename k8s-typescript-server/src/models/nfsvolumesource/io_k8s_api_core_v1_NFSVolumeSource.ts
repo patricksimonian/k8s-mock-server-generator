@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_NFSVolumeSource {
 /**
+* server is the hostname or IP address of the NFS server. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
+* @required
+*/
+server: string;
+/**
 * path that is exported by the NFS server. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
 * @required
 */
@@ -13,11 +18,6 @@ path: string;
 * readOnly here will force the NFS export to be mounted with read-only permissions. Defaults to false. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
 */
 readOnly?: boolean;
-/**
-* server is the hostname or IP address of the NFS server. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
-* @required
-*/
-server: string;
 }
 
 /**
@@ -27,8 +27,8 @@ server: string;
 */
 export function createio_k8s_api_core_v1_NFSVolumeSource(data?: Partial<io_k8s_api_core_v1_NFSVolumeSource>): io_k8s_api_core_v1_NFSVolumeSource {
  return {
+   server: data?.server !== undefined ? data.server : '',
    path: data?.path !== undefined ? data.path : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   server: data?.server !== undefined ? data.server : '',
  };
 }

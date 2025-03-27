@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_core_v1_GlusterfsPersistentVolumeSource {
 /**
+* readOnly here will force the Glusterfs volume to be mounted with read-only permissions. Defaults to false. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod
+*/
+readOnly?: boolean;
+/**
 * endpoints is the endpoint name that details Glusterfs topology. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod
 * @required
 */
@@ -18,10 +22,6 @@ endpointsNamespace?: string;
 * @required
 */
 path: string;
-/**
-* readOnly here will force the Glusterfs volume to be mounted with read-only permissions. Defaults to false. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod
-*/
-readOnly?: boolean;
 }
 
 /**
@@ -31,9 +31,9 @@ readOnly?: boolean;
 */
 export function createio_k8s_api_core_v1_GlusterfsPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_GlusterfsPersistentVolumeSource>): io_k8s_api_core_v1_GlusterfsPersistentVolumeSource {
  return {
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    endpoints: data?.endpoints !== undefined ? data.endpoints : '',
    endpointsNamespace: data?.endpointsNamespace !== undefined ? data.endpointsNamespace : '',
    path: data?.path !== undefined ? data.path : '',
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
  };
 }

@@ -5,20 +5,6 @@
 */
 export interface io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus {
 /**
-* desiredReplicas is the desired number of replicas of pods managed by this autoscaler, as last calculated by the autoscaler.
-* @required
-*/
-desiredReplicas: number;
-/**
-* lastScaleTime is the last time the HorizontalPodAutoscaler scaled the number of pods, used by the autoscaler to control how often the number of pods is changed.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
-*/
-lastScaleTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
-/**
-* observedGeneration is the most recent generation observed by this autoscaler.
-*/
-observedGeneration?: number;
-/**
 * conditions is the set of conditions required for this autoscaler to scale its target, and indicates whether or not those conditions are met.
 * @isArray
 */
@@ -32,6 +18,20 @@ currentMetrics?: io_k8s_api_autoscaling_v2_MetricStatus[];
 * currentReplicas is current number of replicas of pods managed by this autoscaler, as last seen by the autoscaler.
 */
 currentReplicas?: number;
+/**
+* desiredReplicas is the desired number of replicas of pods managed by this autoscaler, as last calculated by the autoscaler.
+* @required
+*/
+desiredReplicas: number;
+/**
+* lastScaleTime is the last time the HorizontalPodAutoscaler scaled the number of pods, used by the autoscaler to control how often the number of pods is changed.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
+*/
+lastScaleTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* observedGeneration is the most recent generation observed by this autoscaler.
+*/
+observedGeneration?: number;
 }
 
 /**
@@ -41,12 +41,12 @@ currentReplicas?: number;
 */
 export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus(data?: Partial<io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus>): io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerStatus {
  return {
-   desiredReplicas: data?.desiredReplicas !== undefined ? data.desiredReplicas : 0,
-   lastScaleTime: data?.lastScaleTime !== undefined ? data.lastScaleTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
-   observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    conditions: data?.conditions !== undefined ? data.conditions : [],
    currentMetrics: data?.currentMetrics !== undefined ? data.currentMetrics : [],
    currentReplicas: data?.currentReplicas !== undefined ? data.currentReplicas : 0,
+   desiredReplicas: data?.desiredReplicas !== undefined ? data.desiredReplicas : 0,
+   lastScaleTime: data?.lastScaleTime !== undefined ? data.lastScaleTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
  };
 }
 // Required imports

@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_core_v1_NodeStatus {
 /**
-* NodePhase is the recently observed lifecycle phase of the node. More info: https://kubernetes.io/docs/concepts/nodes/node/#phase The field is never populated, and now is deprecated.
-
-Possible enum values:
- - `"Pending"` means the node has been created/added by the system, but not configured.
- - `"Running"` means the node has been configured and has Kubernetes components running.
- - `"Terminated"` means the node has been removed from the cluster.
-*/
-phase?: 'Pending' | 'Running' | 'Terminated';
-/**
 * List of attachable volumes in use (mounted) by the node.
 * @isArray
 */
@@ -24,15 +15,52 @@ volumesInUse?: string[];
 */
 addresses?: io_k8s_api_core_v1_NodeAddress[];
 /**
-* Features describes the set of features implemented by the CRI implementation.
-* @references io.k8s.api.core.v1.NodeFeatures
+* Allocatable represents the resources of a node that are available for scheduling. Defaults to Capacity.
 */
-features?: io_k8s_api_core_v1_NodeFeatures;
+allocatable?: Record<string, any>;
 /**
 * Set of ids/uuids to uniquely identify the node. More info: https://kubernetes.io/docs/reference/node/node-status/#info
 * @references io.k8s.api.core.v1.NodeSystemInfo
 */
 nodeInfo?: io_k8s_api_core_v1_NodeSystemInfo;
+/**
+* List of volumes that are attached to the node.
+* @isArray
+*/
+volumesAttached?: io_k8s_api_core_v1_AttachedVolume[];
+/**
+* Features describes the set of features implemented by the CRI implementation.
+* @references io.k8s.api.core.v1.NodeFeatures
+*/
+features?: io_k8s_api_core_v1_NodeFeatures;
+/**
+* List of container images on this node
+* @isArray
+*/
+images?: io_k8s_api_core_v1_ContainerImage[];
+/**
+* NodePhase is the recently observed lifecycle phase of the node. More info: https://kubernetes.io/docs/concepts/nodes/node/#phase The field is never populated, and now is deprecated.
+
+Possible enum values:
+ - `"Pending"` means the node has been created/added by the system, but not configured.
+ - `"Running"` means the node has been configured and has Kubernetes components running.
+ - `"Terminated"` means the node has been removed from the cluster.
+*/
+phase?: 'Pending' | 'Running' | 'Terminated';
+/**
+* The available runtime handlers.
+* @isArray
+*/
+runtimeHandlers?: io_k8s_api_core_v1_NodeRuntimeHandler[];
+/**
+* Capacity represents the total resources of a node. More info: https://kubernetes.io/docs/reference/node/node-status/#capacity
+*/
+capacity?: Record<string, any>;
+/**
+* Conditions is an array of current observed node conditions. More info: https://kubernetes.io/docs/reference/node/node-status/#condition
+* @isArray
+*/
+conditions?: io_k8s_api_core_v1_NodeCondition[];
 /**
 * Status of the config assigned to the node via the dynamic Kubelet config feature.
 * @references io.k8s.api.core.v1.NodeConfigStatus
@@ -43,34 +71,6 @@ config?: io_k8s_api_core_v1_NodeConfigStatus;
 * @references io.k8s.api.core.v1.NodeDaemonEndpoints
 */
 daemonEndpoints?: io_k8s_api_core_v1_NodeDaemonEndpoints;
-/**
-* List of container images on this node
-* @isArray
-*/
-images?: io_k8s_api_core_v1_ContainerImage[];
-/**
-* The available runtime handlers.
-* @isArray
-*/
-runtimeHandlers?: io_k8s_api_core_v1_NodeRuntimeHandler[];
-/**
-* List of volumes that are attached to the node.
-* @isArray
-*/
-volumesAttached?: io_k8s_api_core_v1_AttachedVolume[];
-/**
-* Allocatable represents the resources of a node that are available for scheduling. Defaults to Capacity.
-*/
-allocatable?: Record<string, any>;
-/**
-* Capacity represents the total resources of a node. More info: https://kubernetes.io/docs/reference/node/node-status/#capacity
-*/
-capacity?: Record<string, any>;
-/**
-* Conditions is an array of current observed node conditions. More info: https://kubernetes.io/docs/reference/node/node-status/#condition
-* @isArray
-*/
-conditions?: io_k8s_api_core_v1_NodeCondition[];
 }
 
 /**
@@ -80,19 +80,19 @@ conditions?: io_k8s_api_core_v1_NodeCondition[];
 */
 export function createio_k8s_api_core_v1_NodeStatus(data?: Partial<io_k8s_api_core_v1_NodeStatus>): io_k8s_api_core_v1_NodeStatus {
  return {
-   phase: data?.phase !== undefined ? data.phase : '',
    volumesInUse: data?.volumesInUse !== undefined ? data.volumesInUse : [],
    addresses: data?.addresses !== undefined ? data.addresses : [],
-   features: data?.features !== undefined ? data.features : createio_k8s_api_core_v1_NodeFeatures(),
-   nodeInfo: data?.nodeInfo !== undefined ? data.nodeInfo : createio_k8s_api_core_v1_NodeSystemInfo(),
-   config: data?.config !== undefined ? data.config : createio_k8s_api_core_v1_NodeConfigStatus(),
-   daemonEndpoints: data?.daemonEndpoints !== undefined ? data.daemonEndpoints : createio_k8s_api_core_v1_NodeDaemonEndpoints(),
-   images: data?.images !== undefined ? data.images : [],
-   runtimeHandlers: data?.runtimeHandlers !== undefined ? data.runtimeHandlers : [],
-   volumesAttached: data?.volumesAttached !== undefined ? data.volumesAttached : [],
    allocatable: data?.allocatable !== undefined ? data.allocatable : {},
+   nodeInfo: data?.nodeInfo !== undefined ? data.nodeInfo : createio_k8s_api_core_v1_NodeSystemInfo(),
+   volumesAttached: data?.volumesAttached !== undefined ? data.volumesAttached : [],
+   features: data?.features !== undefined ? data.features : createio_k8s_api_core_v1_NodeFeatures(),
+   images: data?.images !== undefined ? data.images : [],
+   phase: data?.phase !== undefined ? data.phase : '',
+   runtimeHandlers: data?.runtimeHandlers !== undefined ? data.runtimeHandlers : [],
    capacity: data?.capacity !== undefined ? data.capacity : {},
    conditions: data?.conditions !== undefined ? data.conditions : [],
+   config: data?.config !== undefined ? data.config : createio_k8s_api_core_v1_NodeConfigStatus(),
+   daemonEndpoints: data?.daemonEndpoints !== undefined ? data.daemonEndpoints : createio_k8s_api_core_v1_NodeDaemonEndpoints(),
  };
 }
 // Required imports

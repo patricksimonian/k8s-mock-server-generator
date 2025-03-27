@@ -7,6 +7,7 @@ import {
   WatchOptions,
   WatchEventType,
   KubeScale,
+  LogEntry,
 
 } from "./Storage"; // Adjust import paths as needed
 import { EventEmitter } from "events";
@@ -64,26 +65,27 @@ export class InMemoryStorage implements Storage {
   };
 
   private logStore: Record<string, Record<string, {
-    stdout: string[];
-    stderr: string[];
+    stdout: LogEntry[];
+    stderr: LogEntry[];
     emitter: EventEmitter;
   }>> = {
-    "default_cluster": {}
-  };
-  
+      "default_cluster": {}
+    };
+
   private getLogKey(namespace: string, podName: string, container: string): string {
     return `${namespace}/${podName}/${container}`;
   }
 
-  private appendLogLine(logArray: string[], line: string): void {
-    logArray.push(line);
+  private appendLogLine(logArray: LogEntry[], line: string, stream: 'stdout' | 'stderr'): void {
+    const timestamp = new Date().toISOString();
+    logArray.push({ line, timestamp, stream });
     if (logArray.length > this.MAX_LOG_LINES) {
       logArray.shift(); // remove the oldest line
     }
   }
 
   private readonly MAX_LOG_LINES = 1000;
-  
+
   constructor() {
     this.eventEmitter.setMaxListeners(100);
   }
@@ -133,12 +135,12 @@ export class InMemoryStorage implements Storage {
     const entry = this.logStore[cluster][key];
 
     if (stdout) {
-      this.appendLogLine(entry.stdout, stdout);
+      this.appendLogLine(entry.stdout, stdout, 'stdout');
       entry.emitter.emit("stdout", stdout);
     }
 
     if (stderr) {
-      this.appendLogLine(entry.stderr, stderr);
+      this.appendLogLine(entry.stderr, stderr, 'stderr');
       entry.emitter.emit("stderr", stderr);
     }
 
@@ -154,31 +156,29 @@ export class InMemoryStorage implements Storage {
   ): Promise<Readable | Status> {
     const key = this.getLogKey(namespace, name, container);
     const entry = this.logStore[cluster]?.[key];
- 
+
     if (!entry) {
       return createStatusFailure(`No logs found for pod ${name} in namespace ${namespace}`, 404, "NotFound");
     }
 
-    const stream = new Readable({ read() {} });
+    const stream = new Readable({ read() { } });
 
     const includeStdout = options?.stdout ?? true;
     const includeStderr = options?.stderr ?? true;
 
     const write = (line: string, type: "stdout" | "stderr") => {
-      stream.push(`[${type.toUpperCase()}] ${line}\n`);
+      stream.push(`${type === "stderr" ? "\x1b[31;1m" : ""} ${line}\x1b[0m\n`);
     };
-
+    const linesToWrite = []
     if (includeStdout) {
-      for (const line of entry.stdout) {
-        write(line, "stdout");
-      }
+      linesToWrite.push(...entry.stdout);
     }
-
     if (includeStderr) {
-      for (const line of entry.stderr) {
-        write(line, "stderr");
-      }
+      linesToWrite.push(...entry.stderr);
     }
+    linesToWrite.sort((a, b) => a.timestamp.localeCompare(b.timestamp)).forEach((line) => {
+      write(line.line, line.stream);
+    });
 
     if (!options?.follow) {
       stream.push(null);

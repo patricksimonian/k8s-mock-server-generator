@@ -17,6 +17,11 @@
 */
 export interface io_k8s_api_core_v1_Endpoints {
 /**
+* The set of all endpoints is the union of all subsets. Addresses are placed into subsets according to the IPs they share. A single address with multiple ports, some of which are ready and some of which are not (because they come from different containers) will result in the address being displayed in different subsets for the different ports. No address will appear in both Addresses and NotReadyAddresses in the same subset. Sets of addresses and ports that comprise a service.
+* @isArray
+*/
+subsets?: io_k8s_api_core_v1_EndpointSubset[];
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -29,11 +34,6 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* The set of all endpoints is the union of all subsets. Addresses are placed into subsets according to the IPs they share. A single address with multiple ports, some of which are ready and some of which are not (because they come from different containers) will result in the address being displayed in different subsets for the different ports. No address will appear in both Addresses and NotReadyAddresses in the same subset. Sets of addresses and ports that comprise a service.
-* @isArray
-*/
-subsets?: io_k8s_api_core_v1_EndpointSubset[];
 }
 
 /**
@@ -43,10 +43,10 @@ subsets?: io_k8s_api_core_v1_EndpointSubset[];
 */
 export function createio_k8s_api_core_v1_Endpoints(data?: Partial<io_k8s_api_core_v1_Endpoints>): io_k8s_api_core_v1_Endpoints {
  return {
+   subsets: data?.subsets !== undefined ? data.subsets : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   subsets: data?.subsets !== undefined ? data.subsets : [],
  };
 }
 // Required imports

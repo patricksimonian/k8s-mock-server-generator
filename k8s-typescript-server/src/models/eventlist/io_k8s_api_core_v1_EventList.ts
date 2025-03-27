@@ -12,9 +12,9 @@ apiVersion?: string;
 * List of events
 * @required
 * @isArray
-* @references io.k8s.api.events.v1.Event
+* @references io.k8s.api.core.v1.Event
 */
-items: io_k8s_api_events_v1_Event[];
+items: io_k8s_api_core_v1_Event[];
 /**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
@@ -40,5 +40,5 @@ export function createio_k8s_api_core_v1_EventList(data?: Partial<io_k8s_api_cor
  };
 }
 // Required imports
-import { io_k8s_api_events_v1_Event, createio_k8s_api_events_v1_Event } from '../event/io_k8s_api_events_v1_Event';
+import { io_k8s_api_core_v1_Event, createio_k8s_api_core_v1_Event } from '../event/io_k8s_api_core_v1_Event';
 import { io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta, createio_k8s_apimachinery_pkg_apis_meta_v1_ListMeta } from '../listmetum/io_k8s_apimachinery_pkg_apis_meta_v1_ListMeta';

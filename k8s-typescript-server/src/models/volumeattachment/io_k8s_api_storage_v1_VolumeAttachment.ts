@@ -7,17 +7,6 @@ VolumeAttachment objects are non-namespaced.
 */
 export interface io_k8s_api_storage_v1_VolumeAttachment {
 /**
-* spec represents specification of the desired attach/detach volume behavior. Populated by the Kubernetes system.
-* @required
-* @references io.k8s.api.storage.v1.VolumeAttachmentSpec
-*/
-spec: io_k8s_api_storage_v1_VolumeAttachmentSpec;
-/**
-* status represents status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.
-* @references io.k8s.api.storage.v1.VolumeAttachmentStatus
-*/
-status?: io_k8s_api_storage_v1_VolumeAttachmentStatus;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -30,6 +19,17 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec represents specification of the desired attach/detach volume behavior. Populated by the Kubernetes system.
+* @required
+* @references io.k8s.api.storage.v1.VolumeAttachmentSpec
+*/
+spec: io_k8s_api_storage_v1_VolumeAttachmentSpec;
+/**
+* status represents status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.
+* @references io.k8s.api.storage.v1.VolumeAttachmentStatus
+*/
+status?: io_k8s_api_storage_v1_VolumeAttachmentStatus;
 }
 
 /**
@@ -39,11 +39,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_storage_v1_VolumeAttachment(data?: Partial<io_k8s_api_storage_v1_VolumeAttachment>): io_k8s_api_storage_v1_VolumeAttachment {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_storage_v1_VolumeAttachmentSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_storage_v1_VolumeAttachmentStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_storage_v1_VolumeAttachmentSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_storage_v1_VolumeAttachmentStatus(),
  };
 }
 // Required imports

@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_rbac_v1_Subject {
 /**
+* Name of the object being referenced.
+* @required
+*/
+name: string;
+/**
 * Namespace of the referenced object.  If the object kind is non-namespace, such as "User" or "Group", and this value is not empty the Authorizer should report an error.
 */
 namespace?: string;
@@ -17,11 +22,6 @@ apiGroup?: string;
 * @required
 */
 kind: string;
-/**
-* Name of the object being referenced.
-* @required
-*/
-name: string;
 }
 
 /**
@@ -31,9 +31,9 @@ name: string;
 */
 export function createio_k8s_api_rbac_v1_Subject(data?: Partial<io_k8s_api_rbac_v1_Subject>): io_k8s_api_rbac_v1_Subject {
  return {
+   name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
    apiGroup: data?.apiGroup !== undefined ? data.apiGroup : '',
    kind: data?.kind !== undefined ? data.kind : '',
-   name: data?.name !== undefined ? data.name : '',
  };
 }

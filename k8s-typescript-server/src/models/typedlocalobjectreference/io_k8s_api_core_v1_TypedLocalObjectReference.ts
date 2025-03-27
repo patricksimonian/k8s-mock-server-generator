@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_TypedLocalObjectReference {
 /**
-* Name is the name of resource being referenced
-* @required
-*/
-name: string;
-/**
 * APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.
 */
 apiGroup?: string;
@@ -18,6 +13,11 @@ apiGroup?: string;
 * @required
 */
 kind: string;
+/**
+* Name is the name of resource being referenced
+* @required
+*/
+name: string;
 }
 
 /**
@@ -27,8 +27,8 @@ kind: string;
 */
 export function createio_k8s_api_core_v1_TypedLocalObjectReference(data?: Partial<io_k8s_api_core_v1_TypedLocalObjectReference>): io_k8s_api_core_v1_TypedLocalObjectReference {
  return {
-   name: data?.name !== undefined ? data.name : '',
    apiGroup: data?.apiGroup !== undefined ? data.apiGroup : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   name: data?.name !== undefined ? data.name : '',
  };
 }

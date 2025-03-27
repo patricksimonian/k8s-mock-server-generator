@@ -5,6 +5,10 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup {
 /**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
+/**
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
@@ -29,10 +33,6 @@ serverAddressByClientCIDRs?: io_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressB
 * @isArray
 */
 versions: io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery[];
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
 }
 
 /**
@@ -42,12 +42,12 @@ apiVersion?: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_APIGroup(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup>): io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup {
  return {
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
    preferredVersion: data?.preferredVersion !== undefined ? data.preferredVersion : createio_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery(),
    serverAddressByClientCIDRs: data?.serverAddressByClientCIDRs !== undefined ? data.serverAddressByClientCIDRs : [],
    versions: data?.versions !== undefined ? data.versions : [],
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_flowcontrol_v1_PriorityLevelConfiguration {
 /**
+* `spec` is the specification of the desired behavior of a "request-priority". More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.flowcontrol.v1.PriorityLevelConfigurationSpec
+*/
+spec?: io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec;
+/**
+* `status` is the current status of a "request-priority". More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.flowcontrol.v1.PriorityLevelConfigurationStatus
+*/
+status?: io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -17,16 +27,6 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* `spec` is the specification of the desired behavior of a "request-priority". More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.flowcontrol.v1.PriorityLevelConfigurationSpec
-*/
-spec?: io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec;
-/**
-* `status` is the current status of a "request-priority". More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.flowcontrol.v1.PriorityLevelConfigurationStatus
-*/
-status?: io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationStatus;
 }
 
 /**
@@ -36,11 +36,11 @@ status?: io_k8s_api_flowcontrol_v1_PriorityLevelConfigurationStatus;
 */
 export function createio_k8s_api_flowcontrol_v1_PriorityLevelConfiguration(data?: Partial<io_k8s_api_flowcontrol_v1_PriorityLevelConfiguration>): io_k8s_api_flowcontrol_v1_PriorityLevelConfiguration {
  return {
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_flowcontrol_v1_PriorityLevelConfigurationStatus(),
  };
 }
 // Required imports

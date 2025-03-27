@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_LimitRangeItem {
 /**
-* Type of resource that this limit applies to.
-* @required
-*/
-type: string;
-/**
 * Default resource requirement limit value by resource name if resource limit is omitted.
 */
 default?: Record<string, any>;
@@ -29,6 +24,11 @@ maxLimitRequestRatio?: Record<string, any>;
 * Min usage constraints on this kind by resource name.
 */
 min?: Record<string, any>;
+/**
+* Type of resource that this limit applies to.
+* @required
+*/
+type: string;
 }
 
 /**
@@ -38,11 +38,11 @@ min?: Record<string, any>;
 */
 export function createio_k8s_api_core_v1_LimitRangeItem(data?: Partial<io_k8s_api_core_v1_LimitRangeItem>): io_k8s_api_core_v1_LimitRangeItem {
  return {
-   type: data?.type !== undefined ? data.type : '',
    default: data?.default !== undefined ? data.default : {},
    defaultRequest: data?.defaultRequest !== undefined ? data.defaultRequest : {},
    max: data?.max !== undefined ? data.max : {},
    maxLimitRequestRatio: data?.maxLimitRequestRatio !== undefined ? data.maxLimitRequestRatio : {},
    min: data?.min !== undefined ? data.min : {},
+   type: data?.type !== undefined ? data.type : '',
  };
 }

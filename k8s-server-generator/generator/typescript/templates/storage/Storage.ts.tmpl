@@ -66,6 +66,12 @@ export enum WatchEventType {
   ERROR = "ERROR"
 }
 
+export interface LogEntry {
+  timestamp: string;
+  line: string;
+  stream: "stdout" | "stderr";
+}
+
 // The "Scale" object used by the /scale subresource in real K8s
 export interface KubeScale {
   apiVersion: "autoscaling/v1";

@@ -5,6 +5,18 @@
 */
 export interface io_k8s_api_core_v1_SecurityContext {
 /**
+* procMount denotes the type of proc mount to use for the containers. The default value is Default which uses the container runtime defaults for readonly paths and masked paths. This requires the ProcMountType feature flag to be enabled. Note that this field cannot be set when spec.os.name is windows.
+
+Possible enum values:
+ - `"Default"` uses the container runtime defaults for readonly and masked paths for /proc. Most container runtimes mask certain paths in /proc to avoid accidental security exposure of special devices or information.
+ - `"Unmasked"` bypasses the default masking behavior of the container runtime and ensures the newly created /proc the container stays in tact with no modifications.
+*/
+procMount?: 'Default' | 'Unmasked';
+/**
+* The GID to run the entrypoint of the container process. Uses runtime default if unset. May also be set in PodSecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is windows.
+*/
+runAsGroup?: number;
+/**
 * AllowPrivilegeEscalation controls whether a process can gain more privileges than its parent process. This bool directly controls if the no_new_privs flag will be set on the container process. AllowPrivilegeEscalation is true always when the container is: 1) run as Privileged 2) has CAP_SYS_ADMIN Note that this field cannot be set when spec.os.name is windows.
 */
 allowPrivilegeEscalation?: boolean;
@@ -26,36 +38,24 @@ readOnlyRootFilesystem?: boolean;
 */
 runAsNonRoot?: boolean;
 /**
+* The UID to run the entrypoint of the container process. Defaults to user specified in image metadata if unspecified. May also be set in PodSecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is windows.
+*/
+runAsUser?: number;
+/**
 * The SELinux context to be applied to the container. If unspecified, the container runtime will allocate a random SELinux context for each container.  May also be set in PodSecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is windows.
 * @references io.k8s.api.core.v1.SELinuxOptions
 */
 seLinuxOptions?: io_k8s_api_core_v1_SELinuxOptions;
 /**
-* appArmorProfile is the AppArmor options to use by this container. If set, this profile overrides the pod's appArmorProfile. Note that this field cannot be set when spec.os.name is windows.
-* @references io.k8s.api.core.v1.AppArmorProfile
-*/
-appArmorProfile?: io_k8s_api_core_v1_AppArmorProfile;
-/**
-* procMount denotes the type of proc mount to use for the containers. The default value is Default which uses the container runtime defaults for readonly paths and masked paths. This requires the ProcMountType feature flag to be enabled. Note that this field cannot be set when spec.os.name is windows.
-
-Possible enum values:
- - `"Default"` uses the container runtime defaults for readonly and masked paths for /proc. Most container runtimes mask certain paths in /proc to avoid accidental security exposure of special devices or information.
- - `"Unmasked"` bypasses the default masking behavior of the container runtime and ensures the newly created /proc the container stays in tact with no modifications.
-*/
-procMount?: 'Default' | 'Unmasked';
-/**
-* The GID to run the entrypoint of the container process. Uses runtime default if unset. May also be set in PodSecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is windows.
-*/
-runAsGroup?: number;
-/**
-* The UID to run the entrypoint of the container process. Defaults to user specified in image metadata if unspecified. May also be set in PodSecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is windows.
-*/
-runAsUser?: number;
-/**
 * The seccomp options to use by this container. If seccomp options are provided at both the pod & container level, the container options override the pod options. Note that this field cannot be set when spec.os.name is windows.
 * @references io.k8s.api.core.v1.SeccompProfile
 */
 seccompProfile?: io_k8s_api_core_v1_SeccompProfile;
+/**
+* appArmorProfile is the AppArmor options to use by this container. If set, this profile overrides the pod's appArmorProfile. Note that this field cannot be set when spec.os.name is windows.
+* @references io.k8s.api.core.v1.AppArmorProfile
+*/
+appArmorProfile?: io_k8s_api_core_v1_AppArmorProfile;
 /**
 * The Windows specific settings applied to all containers. If unspecified, the options from the PodSecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. Note that this field cannot be set when spec.os.name is linux.
 * @references io.k8s.api.core.v1.WindowsSecurityContextOptions
@@ -70,17 +70,17 @@ windowsOptions?: io_k8s_api_core_v1_WindowsSecurityContextOptions;
 */
 export function createio_k8s_api_core_v1_SecurityContext(data?: Partial<io_k8s_api_core_v1_SecurityContext>): io_k8s_api_core_v1_SecurityContext {
  return {
+   procMount: data?.procMount !== undefined ? data.procMount : '',
+   runAsGroup: data?.runAsGroup !== undefined ? data.runAsGroup : 0,
    allowPrivilegeEscalation: data?.allowPrivilegeEscalation !== undefined ? data.allowPrivilegeEscalation : false,
    capabilities: data?.capabilities !== undefined ? data.capabilities : createio_k8s_api_core_v1_Capabilities(),
    privileged: data?.privileged !== undefined ? data.privileged : false,
    readOnlyRootFilesystem: data?.readOnlyRootFilesystem !== undefined ? data.readOnlyRootFilesystem : false,
    runAsNonRoot: data?.runAsNonRoot !== undefined ? data.runAsNonRoot : false,
-   seLinuxOptions: data?.seLinuxOptions !== undefined ? data.seLinuxOptions : createio_k8s_api_core_v1_SELinuxOptions(),
-   appArmorProfile: data?.appArmorProfile !== undefined ? data.appArmorProfile : createio_k8s_api_core_v1_AppArmorProfile(),
-   procMount: data?.procMount !== undefined ? data.procMount : '',
-   runAsGroup: data?.runAsGroup !== undefined ? data.runAsGroup : 0,
    runAsUser: data?.runAsUser !== undefined ? data.runAsUser : 0,
+   seLinuxOptions: data?.seLinuxOptions !== undefined ? data.seLinuxOptions : createio_k8s_api_core_v1_SELinuxOptions(),
    seccompProfile: data?.seccompProfile !== undefined ? data.seccompProfile : createio_k8s_api_core_v1_SeccompProfile(),
+   appArmorProfile: data?.appArmorProfile !== undefined ? data.appArmorProfile : createio_k8s_api_core_v1_AppArmorProfile(),
    windowsOptions: data?.windowsOptions !== undefined ? data.windowsOptions : createio_k8s_api_core_v1_WindowsSecurityContextOptions(),
  };
 }

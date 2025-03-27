@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_TopologySpreadConstraint {
 /**
+* TopologyKey is the key of node labels. Nodes that have a label with this key and identical values are considered to be in the same topology. We consider each <key, value> as a "bucket", and try to put balanced number of pods into each bucket. We define a domain as a particular instance of a topology. Also, we define an eligible domain as a domain whose nodes meet the requirements of nodeAffinityPolicy and nodeTaintsPolicy. e.g. If TopologyKey is "kubernetes.io/hostname", each Node is a domain of that topology. And, if TopologyKey is "topology.kubernetes.io/zone", each zone is a domain of that topology. It's a required field.
+* @required
+*/
+topologyKey: string;
+/**
 * WhenUnsatisfiable indicates how to deal with a pod if it doesn't satisfy the spread constraint. - DoNotSchedule (default) tells the scheduler not to schedule it. - ScheduleAnyway tells the scheduler to schedule the pod in any location,
   but giving higher precedence to topologies that would help reduce the
   skew.
@@ -59,11 +64,6 @@ Possible enum values:
  - `"Ignore"` means ignore this scheduling directive when calculating pod topology spread skew.
 */
 nodeTaintsPolicy?: 'Honor' | 'Ignore';
-/**
-* TopologyKey is the key of node labels. Nodes that have a label with this key and identical values are considered to be in the same topology. We consider each <key, value> as a "bucket", and try to put balanced number of pods into each bucket. We define a domain as a particular instance of a topology. Also, we define an eligible domain as a domain whose nodes meet the requirements of nodeAffinityPolicy and nodeTaintsPolicy. e.g. If TopologyKey is "kubernetes.io/hostname", each Node is a domain of that topology. And, if TopologyKey is "topology.kubernetes.io/zone", each zone is a domain of that topology. It's a required field.
-* @required
-*/
-topologyKey: string;
 }
 
 /**
@@ -73,6 +73,7 @@ topologyKey: string;
 */
 export function createio_k8s_api_core_v1_TopologySpreadConstraint(data?: Partial<io_k8s_api_core_v1_TopologySpreadConstraint>): io_k8s_api_core_v1_TopologySpreadConstraint {
  return {
+   topologyKey: data?.topologyKey !== undefined ? data.topologyKey : '',
    whenUnsatisfiable: data?.whenUnsatisfiable !== undefined ? data.whenUnsatisfiable : '',
    labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    matchLabelKeys: data?.matchLabelKeys !== undefined ? data.matchLabelKeys : [],
@@ -80,7 +81,6 @@ export function createio_k8s_api_core_v1_TopologySpreadConstraint(data?: Partial
    minDomains: data?.minDomains !== undefined ? data.minDomains : 0,
    nodeAffinityPolicy: data?.nodeAffinityPolicy !== undefined ? data.nodeAffinityPolicy : '',
    nodeTaintsPolicy: data?.nodeTaintsPolicy !== undefined ? data.nodeTaintsPolicy : '',
-   topologyKey: data?.topologyKey !== undefined ? data.topologyKey : '',
  };
 }
 // Required imports

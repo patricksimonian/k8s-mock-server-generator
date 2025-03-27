@@ -5,24 +5,16 @@
 */
 export interface io_k8s_api_authorization_v1_ResourceAttributes {
 /**
-* Group is the API Group of the Resource.  "*" means all.
-*/
-group?: string;
-/**
-* Namespace is the namespace of the action being requested.  Currently, there is no distinction between no namespace and all namespaces "" (empty) is defaulted for LocalSubjectAccessReviews "" (empty) is empty for cluster-scoped resources "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
-*/
-namespace?: string;
-/**
-* Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  "*" means all.
-*/
-verb?: string;
-/**
 * fieldSelector describes the limitation on access based on field.  It can only limit access, not broaden it.
 
 This field  is alpha-level. To use this field, you must enable the `AuthorizeWithSelectors` feature gate (disabled by default).
 * @references io.k8s.api.authorization.v1.FieldSelectorAttributes
 */
 fieldSelector?: io_k8s_api_authorization_v1_FieldSelectorAttributes;
+/**
+* Group is the API Group of the Resource.  "*" means all.
+*/
+group?: string;
 /**
 * labelSelector describes the limitation on access based on labels.  It can only limit access, not broaden it.
 
@@ -35,6 +27,14 @@ labelSelector?: io_k8s_api_authorization_v1_LabelSelectorAttributes;
 */
 name?: string;
 /**
+* Version is the API Version of the Resource.  "*" means all.
+*/
+version?: string;
+/**
+* Namespace is the namespace of the action being requested.  Currently, there is no distinction between no namespace and all namespaces "" (empty) is defaulted for LocalSubjectAccessReviews "" (empty) is empty for cluster-scoped resources "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
+*/
+namespace?: string;
+/**
 * Resource is one of the existing resource types.  "*" means all.
 */
 resource?: string;
@@ -43,9 +43,9 @@ resource?: string;
 */
 subresource?: string;
 /**
-* Version is the API Version of the Resource.  "*" means all.
+* Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  "*" means all.
 */
-version?: string;
+verb?: string;
 }
 
 /**
@@ -55,15 +55,15 @@ version?: string;
 */
 export function createio_k8s_api_authorization_v1_ResourceAttributes(data?: Partial<io_k8s_api_authorization_v1_ResourceAttributes>): io_k8s_api_authorization_v1_ResourceAttributes {
  return {
-   group: data?.group !== undefined ? data.group : '',
-   namespace: data?.namespace !== undefined ? data.namespace : '',
-   verb: data?.verb !== undefined ? data.verb : '',
    fieldSelector: data?.fieldSelector !== undefined ? data.fieldSelector : createio_k8s_api_authorization_v1_FieldSelectorAttributes(),
+   group: data?.group !== undefined ? data.group : '',
    labelSelector: data?.labelSelector !== undefined ? data.labelSelector : createio_k8s_api_authorization_v1_LabelSelectorAttributes(),
    name: data?.name !== undefined ? data.name : '',
+   version: data?.version !== undefined ? data.version : '',
+   namespace: data?.namespace !== undefined ? data.namespace : '',
    resource: data?.resource !== undefined ? data.resource : '',
    subresource: data?.subresource !== undefined ? data.subresource : '',
-   version: data?.version !== undefined ? data.version : '',
+   verb: data?.verb !== undefined ? data.verb : '',
  };
 }
 // Required imports

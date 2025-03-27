@@ -5,11 +5,6 @@
 */
 export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ServiceReference {
 /**
-* name is the name of the service. Required
-* @required
-*/
-name: string;
-/**
 * namespace is the namespace of the service. Required
 * @required
 */
@@ -22,6 +17,11 @@ path?: string;
 * port is an optional service port at which the webhook will be contacted. `port` should be a valid port number (1-65535, inclusive). Defaults to 443 for backward compatibility.
 */
 port?: number;
+/**
+* name is the name of the service. Required
+* @required
+*/
+name: string;
 }
 
 /**
@@ -31,9 +31,9 @@ port?: number;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ServiceReference(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ServiceReference>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ServiceReference {
  return {
-   name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
    path: data?.path !== undefined ? data.path : '',
    port: data?.port !== undefined ? data.port : 0,
+   name: data?.name !== undefined ? data.name : '',
  };
 }

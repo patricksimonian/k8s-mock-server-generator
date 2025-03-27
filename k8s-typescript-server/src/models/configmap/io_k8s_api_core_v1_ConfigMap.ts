@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ConfigMap {
 /**
-* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-*/
-kind?: string;
-/**
-* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
-*/
-metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -29,6 +20,15 @@ data?: Record<string, any>;
 * Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated (only object metadata can be modified). If not set to true, the field can be modified at any time. Defaulted to nil.
 */
 immutable?: boolean;
+/**
+* Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+*/
+kind?: string;
+/**
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -38,12 +38,12 @@ immutable?: boolean;
 */
 export function createio_k8s_api_core_v1_ConfigMap(data?: Partial<io_k8s_api_core_v1_ConfigMap>): io_k8s_api_core_v1_ConfigMap {
  return {
-   kind: data?.kind !== undefined ? data.kind : '',
-   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    binaryData: data?.binaryData !== undefined ? data.binaryData : {},
    data: data?.data !== undefined ? data.data : {},
    immutable: data?.immutable !== undefined ? data.immutable : false,
+   kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
 // Required imports

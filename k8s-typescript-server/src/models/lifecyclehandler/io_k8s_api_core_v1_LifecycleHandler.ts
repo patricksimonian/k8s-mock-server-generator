@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_LifecycleHandler {
 /**
+* Exec specifies a command to execute in the container.
+* @references io.k8s.api.core.v1.ExecAction
+*/
+exec?: io_k8s_api_core_v1_ExecAction;
+/**
 * HTTPGet specifies an HTTP GET request to perform.
 * @references io.k8s.api.core.v1.HTTPGetAction
 */
@@ -19,11 +24,6 @@ sleep?: io_k8s_api_core_v1_SleepAction;
 * @references io.k8s.api.core.v1.TCPSocketAction
 */
 tcpSocket?: io_k8s_api_core_v1_TCPSocketAction;
-/**
-* Exec specifies a command to execute in the container.
-* @references io.k8s.api.core.v1.ExecAction
-*/
-exec?: io_k8s_api_core_v1_ExecAction;
 }
 
 /**
@@ -33,10 +33,10 @@ exec?: io_k8s_api_core_v1_ExecAction;
 */
 export function createio_k8s_api_core_v1_LifecycleHandler(data?: Partial<io_k8s_api_core_v1_LifecycleHandler>): io_k8s_api_core_v1_LifecycleHandler {
  return {
+   exec: data?.exec !== undefined ? data.exec : createio_k8s_api_core_v1_ExecAction(),
    httpGet: data?.httpGet !== undefined ? data.httpGet : createio_k8s_api_core_v1_HTTPGetAction(),
    sleep: data?.sleep !== undefined ? data.sleep : createio_k8s_api_core_v1_SleepAction(),
    tcpSocket: data?.tcpSocket !== undefined ? data.tcpSocket : createio_k8s_api_core_v1_TCPSocketAction(),
-   exec: data?.exec !== undefined ? data.exec : createio_k8s_api_core_v1_ExecAction(),
  };
 }
 // Required imports

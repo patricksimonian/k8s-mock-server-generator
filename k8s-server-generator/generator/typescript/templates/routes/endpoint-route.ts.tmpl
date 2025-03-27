@@ -41,12 +41,12 @@ export function create{{ .ResourceType }}Routes(storage: Storage): express.Route
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('{{ $.ResourceType }}', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('{{ $.ResourceType }}', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('{{ $.ResourceType }}', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('{{ $.ResourceType }}', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_Condition {
 /**
-* status of the condition, one of True, False, Unknown.
-* @required
-*/
-status: string;
-/**
 * type of condition in CamelCase or in foo.example.com/CamelCase.
 * @required
 */
@@ -34,6 +29,11 @@ observedGeneration?: number;
 * @required
 */
 reason: string;
+/**
+* status of the condition, one of True, False, Unknown.
+* @required
+*/
+status: string;
 }
 
 /**
@@ -43,12 +43,12 @@ reason: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_Condition(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_Condition>): io_k8s_apimachinery_pkg_apis_meta_v1_Condition {
  return {
-   status: data?.status !== undefined ? data.status : '',
    type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    reason: data?.reason !== undefined ? data.reason : '',
+   status: data?.status !== undefined ? data.status : '',
  };
 }
 // Required imports

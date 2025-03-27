@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_discovery_v1_Endpoint {
 /**
+* nodeName represents the name of the Node hosting this endpoint. This can be used to determine endpoints local to a Node.
+*/
+nodeName?: string;
+/**
 * targetRef is a reference to a Kubernetes object that represents this endpoint.
 * @references io.k8s.api.core.v1.ObjectReference
 */
@@ -37,10 +41,6 @@ hints?: io_k8s_api_discovery_v1_EndpointHints;
 * hostname of this endpoint. This field may be used by consumers of endpoints to distinguish endpoints from each other (e.g. in DNS names). Multiple endpoints which use the same hostname should be considered fungible (e.g. multiple A values in DNS). Must be lowercase and pass DNS Label (RFC 1123) validation.
 */
 hostname?: string;
-/**
-* nodeName represents the name of the Node hosting this endpoint. This can be used to determine endpoints local to a Node.
-*/
-nodeName?: string;
 }
 
 /**
@@ -50,6 +50,7 @@ nodeName?: string;
 */
 export function createio_k8s_api_discovery_v1_Endpoint(data?: Partial<io_k8s_api_discovery_v1_Endpoint>): io_k8s_api_discovery_v1_Endpoint {
  return {
+   nodeName: data?.nodeName !== undefined ? data.nodeName : '',
    targetRef: data?.targetRef !== undefined ? data.targetRef : createio_k8s_api_core_v1_ObjectReference(),
    zone: data?.zone !== undefined ? data.zone : '',
    addresses: data?.addresses !== undefined ? data.addresses : [],
@@ -57,7 +58,6 @@ export function createio_k8s_api_discovery_v1_Endpoint(data?: Partial<io_k8s_api
    deprecatedTopology: data?.deprecatedTopology !== undefined ? data.deprecatedTopology : {},
    hints: data?.hints !== undefined ? data.hints : createio_k8s_api_discovery_v1_EndpointHints(),
    hostname: data?.hostname !== undefined ? data.hostname : '',
-   nodeName: data?.nodeName !== undefined ? data.nodeName : '',
  };
 }
 // Required imports

@@ -5,13 +5,13 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ParamKind {
 /**
-* Kind is the API kind the resources belong to. Required.
-*/
-kind?: string;
-/**
 * APIVersion is the API group version the resources belong to. In format of "group/version". Required.
 */
 apiVersion?: string;
+/**
+* Kind is the API kind the resources belong to. Required.
+*/
+kind?: string;
 }
 
 /**
@@ -21,7 +21,7 @@ apiVersion?: string;
 */
 export function createio_k8s_api_admissionregistration_v1_ParamKind(data?: Partial<io_k8s_api_admissionregistration_v1_ParamKind>): io_k8s_api_admissionregistration_v1_ParamKind {
  return {
-   kind: data?.kind !== undefined ? data.kind : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
+   kind: data?.kind !== undefined ? data.kind : '',
  };
 }

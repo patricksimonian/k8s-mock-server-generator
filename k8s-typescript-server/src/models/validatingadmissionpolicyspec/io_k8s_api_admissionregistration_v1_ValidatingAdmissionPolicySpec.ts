@@ -5,6 +5,13 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec {
 /**
+* Variables contain definitions of variables that can be used in composition of other expressions. Each variable is defined as a named CEL expression. The variables defined here will be available under `variables` in other expressions of the policy except MatchConditions because MatchConditions are evaluated before the rest of the policy.
+
+The expression of a variable can refer to other variables defined earlier in the list but not those after. Thus, Variables must be sorted by the order of first appearance and acyclic.
+* @isArray
+*/
+variables?: io_k8s_api_admissionregistration_v1_Variable[];
+/**
 * auditAnnotations contains CEL expressions which are used to produce audit annotations for the audit event of the API request. validations and auditAnnotations may not both be empty; a least one of validations or auditAnnotations is required.
 * @isArray
 */
@@ -54,13 +61,6 @@ paramKind?: io_k8s_api_admissionregistration_v1_ParamKind;
 * @isArray
 */
 validations?: io_k8s_api_admissionregistration_v1_Validation[];
-/**
-* Variables contain definitions of variables that can be used in composition of other expressions. Each variable is defined as a named CEL expression. The variables defined here will be available under `variables` in other expressions of the policy except MatchConditions because MatchConditions are evaluated before the rest of the policy.
-
-The expression of a variable can refer to other variables defined earlier in the list but not those after. Thus, Variables must be sorted by the order of first appearance and acyclic.
-* @isArray
-*/
-variables?: io_k8s_api_admissionregistration_v1_Variable[];
 }
 
 /**
@@ -70,13 +70,13 @@ variables?: io_k8s_api_admissionregistration_v1_Variable[];
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicySpec {
  return {
+   variables: data?.variables !== undefined ? data.variables : [],
    auditAnnotations: data?.auditAnnotations !== undefined ? data.auditAnnotations : [],
    failurePolicy: data?.failurePolicy !== undefined ? data.failurePolicy : '',
    matchConditions: data?.matchConditions !== undefined ? data.matchConditions : [],
    matchConstraints: data?.matchConstraints !== undefined ? data.matchConstraints : createio_k8s_api_admissionregistration_v1_MatchResources(),
    paramKind: data?.paramKind !== undefined ? data.paramKind : createio_k8s_api_admissionregistration_v1_ParamKind(),
    validations: data?.validations !== undefined ? data.validations : [],
-   variables: data?.variables !== undefined ? data.variables : [],
  };
 }
 // Required imports

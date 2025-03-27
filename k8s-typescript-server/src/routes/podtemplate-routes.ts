@@ -8,25 +8,24 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createpodtemplateRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch individual changes to a list of PodTemplate. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/podtemplates', async (req, res, next) => {
+//read the specified PodTemplate
+  router.get('/api/v1/namespaces/:namespace/podtemplates/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
       const namespace = req.params.namespace;
-      logger.info(`Listing podtemplate in namespace ${namespace}`);
+      logger.info(`Getting podtemplate ${name} in namespace ${namespace}`);
       
-      const resourceList = await storage.listResources('podtemplate', namespace, listOpts);
+      const resource = await storage.getResource('podtemplate', name, namespace);
       
-
-      
-      res.json(resourceList);
+      if (!resource) {
+        return handleResourceError(new Error(`podtemplate ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 //replace the specified PodTemplate
   router.put('/api/v1/namespaces/:namespace/podtemplates/:name', async (req, res, next) => {
@@ -101,12 +100,12 @@ export function createpodtemplateRoutes(storage: Storage): express.Router {
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('podtemplate', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('podtemplate', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('podtemplate', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('podtemplate', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -120,28 +119,8 @@ export function createpodtemplateRoutes(storage: Storage): express.Router {
     }
   });
 
-//read the specified PodTemplate
-  router.get('/api/v1/namespaces/:namespace/podtemplates/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting podtemplate ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('podtemplate', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`podtemplate ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
-  });
-
-//list or watch objects of kind PodTemplate
-  router.get('/api/v1/podtemplates', async (req, res, next) => {
+//watch individual changes to a list of PodTemplate. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/podtemplates', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -179,27 +158,6 @@ export function createpodtemplateRoutes(storage: Storage): express.Router {
     }
   
    
-  });
-
-//watch individual changes to a list of PodTemplate. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/podtemplates', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing podtemplate`);
-      
-      const resourceList = await storage.listResources('podtemplate', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
   });
 
 //list or watch objects of kind PodTemplate
@@ -275,6 +233,48 @@ export function createpodtemplateRoutes(storage: Storage): express.Router {
           kind: 'podtemplate'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of PodTemplate. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/podtemplates', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing podtemplate in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('podtemplate', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind PodTemplate
+  router.get('/api/v1/podtemplates', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing podtemplate`);
+      
+      const resourceList = await storage.listResources('podtemplate', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

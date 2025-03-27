@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_scheduling_v1_PriorityClass {
 /**
-* value represents the integer value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.
-* @required
-*/
-value: number;
-/**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * description is an arbitrary string that usually provides guidelines on when this priority class should be used.
 */
 description?: string;
@@ -38,6 +29,15 @@ Possible enum values:
  - `"PreemptLowerPriority"` means that pod can preempt other pods with lower priority.
 */
 preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
+/**
+* value represents the integer value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.
+* @required
+*/
+value: number;
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -47,13 +47,13 @@ preemptionPolicy?: 'Never' | 'PreemptLowerPriority';
 */
 export function createio_k8s_api_scheduling_v1_PriorityClass(data?: Partial<io_k8s_api_scheduling_v1_PriorityClass>): io_k8s_api_scheduling_v1_PriorityClass {
  return {
-   value: data?.value !== undefined ? data.value : 0,
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    description: data?.description !== undefined ? data.description : '',
    globalDefault: data?.globalDefault !== undefined ? data.globalDefault : false,
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    preemptionPolicy: data?.preemptionPolicy !== undefined ? data.preemptionPolicy : '',
+   value: data?.value !== undefined ? data.value : 0,
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

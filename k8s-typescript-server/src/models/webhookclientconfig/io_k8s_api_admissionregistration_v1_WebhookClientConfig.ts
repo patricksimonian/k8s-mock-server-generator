@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_admissionregistration_v1_WebhookClientConfig {
 /**
-* `caBundle` is a PEM encoded CA bundle which will be used to validate the webhook's server certificate. If unspecified, system trust roots on the apiserver are used.
-*/
-caBundle?: string;
-/**
 * `service` is a reference to the service for this webhook. Either `service` or `url` must be specified.
 
 If the webhook is running within the cluster, then you should use `service`.
@@ -29,6 +25,10 @@ A path is optional, and if present may be any string permissible in a URL. You m
 Attempting to use a user or basic auth e.g. "user:password@" is not allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
 */
 url?: string;
+/**
+* `caBundle` is a PEM encoded CA bundle which will be used to validate the webhook's server certificate. If unspecified, system trust roots on the apiserver are used.
+*/
+caBundle?: string;
 }
 
 /**
@@ -38,9 +38,9 @@ url?: string;
 */
 export function createio_k8s_api_admissionregistration_v1_WebhookClientConfig(data?: Partial<io_k8s_api_admissionregistration_v1_WebhookClientConfig>): io_k8s_api_admissionregistration_v1_WebhookClientConfig {
  return {
-   caBundle: data?.caBundle !== undefined ? data.caBundle : '',
    service: data?.service !== undefined ? data.service : createio_k8s_api_admissionregistration_v1_ServiceReference(),
    url: data?.url !== undefined ? data.url : '',
+   caBundle: data?.caBundle !== undefined ? data.caBundle : '',
  };
 }
 // Required imports

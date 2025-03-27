@@ -5,17 +5,19 @@
 */
 export interface io_k8s_api_core_v1_ISCSIPersistentVolumeSource {
 /**
-* chapAuthDiscovery defines whether support iSCSI Discovery CHAP authentication
+* initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
 */
-chapAuthDiscovery?: boolean;
+initiatorName?: string;
 /**
-* chapAuthSession defines whether support iSCSI Session CHAP authentication
+* iqn is Target iSCSI Qualified Name.
+* @required
 */
-chapAuthSession?: boolean;
+iqn: string;
 /**
-* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
+* lun is iSCSI Target Lun number.
+* @required
 */
-readOnly?: boolean;
+lun: number;
 /**
 * secretRef is the CHAP Secret for iSCSI target and initiator authentication
 * @references io.k8s.api.core.v1.SecretReference
@@ -27,32 +29,30 @@ secretRef?: io_k8s_api_core_v1_SecretReference;
 */
 targetPortal: string;
 /**
-* fsType is the filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#iscsi
+* chapAuthDiscovery defines whether support iSCSI Discovery CHAP authentication
 */
-fsType?: string;
+chapAuthDiscovery?: boolean;
 /**
-* initiatorName is the custom iSCSI Initiator Name. If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
+* chapAuthSession defines whether support iSCSI Session CHAP authentication
 */
-initiatorName?: string;
-/**
-* iqn is Target iSCSI Qualified Name.
-* @required
-*/
-iqn: string;
-/**
-* iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
-*/
-iscsiInterface?: string;
-/**
-* lun is iSCSI Target Lun number.
-* @required
-*/
-lun: number;
+chapAuthSession?: boolean;
 /**
 * portals is the iSCSI Target Portal List. The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
 * @isArray
 */
 portals?: string[];
+/**
+* readOnly here will force the ReadOnly setting in VolumeMounts. Defaults to false.
+*/
+readOnly?: boolean;
+/**
+* fsType is the filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: https://kubernetes.io/docs/concepts/storage/volumes#iscsi
+*/
+fsType?: string;
+/**
+* iscsiInterface is the interface Name that uses an iSCSI transport. Defaults to 'default' (tcp).
+*/
+iscsiInterface?: string;
 }
 
 /**
@@ -62,17 +62,17 @@ portals?: string[];
 */
 export function createio_k8s_api_core_v1_ISCSIPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_ISCSIPersistentVolumeSource>): io_k8s_api_core_v1_ISCSIPersistentVolumeSource {
  return {
-   chapAuthDiscovery: data?.chapAuthDiscovery !== undefined ? data.chapAuthDiscovery : false,
-   chapAuthSession: data?.chapAuthSession !== undefined ? data.chapAuthSession : false,
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretReference(),
-   targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
-   fsType: data?.fsType !== undefined ? data.fsType : '',
    initiatorName: data?.initiatorName !== undefined ? data.initiatorName : '',
    iqn: data?.iqn !== undefined ? data.iqn : '',
-   iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
    lun: data?.lun !== undefined ? data.lun : 0,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretReference(),
+   targetPortal: data?.targetPortal !== undefined ? data.targetPortal : '',
+   chapAuthDiscovery: data?.chapAuthDiscovery !== undefined ? data.chapAuthDiscovery : false,
+   chapAuthSession: data?.chapAuthSession !== undefined ? data.chapAuthSession : false,
    portals: data?.portals !== undefined ? data.portals : [],
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   fsType: data?.fsType !== undefined ? data.fsType : '',
+   iscsiInterface: data?.iscsiInterface !== undefined ? data.iscsiInterface : '',
  };
 }
 // Required imports

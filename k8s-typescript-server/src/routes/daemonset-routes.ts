@@ -8,79 +8,24 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createdaemonsetRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list or watch objects of kind DaemonSet
-  router.get('/apis/apps/v1/daemonsets', async (req, res, next) => {
+//watch changes to an object of kind DaemonSet. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing daemonset`);
-      
-      const resourceList = await storage.listResources('daemonset', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch individual changes to a list of DaemonSet. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/daemonsets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const name = req.params.name;
       const namespace = req.params.namespace;
-      logger.info(`Listing daemonset in namespace ${namespace}`);
+      logger.info(`Getting daemonset ${name} in namespace ${namespace}`);
       
-      const resourceList = await storage.listResources('daemonset', namespace, listOpts);
+      const resource = await storage.getResource('daemonset', name, namespace);
       
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of DaemonSet
-  router.delete('/apis/apps/v1/namespaces/:namespace/daemonsets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all daemonset in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('daemonset', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`daemonset not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`daemonset not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      if (!resource) {
+        return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
       }
-    
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'daemonset'
-        }
-      });
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 
 //list or watch objects of kind DaemonSet
@@ -128,24 +73,58 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind DaemonSet. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+//delete collection of DaemonSet
+  router.delete('/apis/apps/v1/namespaces/:namespace/daemonsets', async (req, res, next) => {
     try {
-      const name = req.params.name;
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
       const namespace = req.params.namespace;
-      logger.info(`Getting daemonset ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('daemonset', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
+      logger.info(`Deleting all daemonset in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('daemonset', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`daemonset not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`daemonset not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
       }
-         res.json(resource);
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'daemonset'
+        }
+      });
     } catch (error) {
       next(error);
     }
-  
-   
+  });
+
+//watch individual changes to a list of DaemonSet. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/daemonsets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing daemonset in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('daemonset', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
   });
 
 //read status of the specified DaemonSet
@@ -210,33 +189,43 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
     }
   });
 
-//delete a DaemonSet
-  router.delete('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
+//list or watch objects of kind DaemonSet
+  router.get('/apis/apps/v1/daemonsets', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting daemonset ${name} in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteResource('daemonset', name, namespace);
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`daemonset ${name} not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing daemonset`);
       
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          name: name,
-          kind: 'daemonset'
-        }
-      });
+      const resourceList = await storage.listResources('daemonset', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of DaemonSet. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/daemonsets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing daemonset`);
+      
+      const resourceList = await storage.listResources('daemonset', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -259,12 +248,12 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('daemonset', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('daemonset', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('daemonset', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('daemonset', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -321,22 +310,33 @@ export function createdaemonsetRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of DaemonSet. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/daemonsets', async (req, res, next) => {
+//delete a DaemonSet
+  router.delete('/apis/apps/v1/namespaces/:namespace/daemonsets/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing daemonset`);
-      
-      const resourceList = await storage.listResources('daemonset', namespace, listOpts);
-      
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting daemonset ${name} in namespace ${namespace}`);
+      try {
 
+        const deleted = await storage.deleteResource('daemonset', name, namespace);
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`daemonset ${name} not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`daemonset ${name} not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
       
-      res.json(resourceList);
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          name: name,
+          kind: 'daemonset'
+        }
+      });
     } catch (error) {
       next(error);
     }

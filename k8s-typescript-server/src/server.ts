@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import { createRoutes } from './routes';
 import { errorHandler } from './middleware/error-handler';
@@ -13,23 +12,23 @@ import config from './config';
  */
 export function createServer() {
   const app = express();
-  
+
   // Middleware
   app.use(cors());
-  app.use(bodyParser.json());
+
   app.use(morgan('dev'));
   app.use(clusterHandler);
   // Routes
   app.use(createRoutes());
-  
+
   // Error handler
   app.use(errorHandler);
-  
+
   // Health check
   app.get('/healthz', (req, res) => {
     res.status(200).json({ status: 'ok' });
   });
-  
+
   return app;
 }
 
@@ -39,10 +38,10 @@ export function createServer() {
 export function startServer() {
   const app = createServer();
   const port = config.server.port;
-  
+
   app.listen(port, () => {
     logger.info(`Server listening on port ${port}`);
   });
-  
+
   return app;
 }

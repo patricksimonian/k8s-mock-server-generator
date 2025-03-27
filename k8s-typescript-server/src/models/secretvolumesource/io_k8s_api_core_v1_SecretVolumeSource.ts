@@ -7,10 +7,6 @@ The contents of the target Secret's Data field will be presented in a volume as 
 */
 export interface io_k8s_api_core_v1_SecretVolumeSource {
 /**
-* secretName is the name of the secret in the pod's namespace to use. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret
-*/
-secretName?: string;
-/**
 * defaultMode is Optional: mode bits used to set permissions on created files by default. Must be an octal value between 0000 and 0777 or a decimal value between 0 and 511. YAML accepts both octal and decimal values, JSON requires decimal values for mode bits. Defaults to 0644. Directories within the path are not affected by this setting. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
 */
 defaultMode?: number;
@@ -23,6 +19,10 @@ items?: io_k8s_api_core_v1_KeyToPath[];
 * optional field specify whether the Secret or its keys must be defined
 */
 optional?: boolean;
+/**
+* secretName is the name of the secret in the pod's namespace to use. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret
+*/
+secretName?: string;
 }
 
 /**
@@ -32,10 +32,10 @@ optional?: boolean;
 */
 export function createio_k8s_api_core_v1_SecretVolumeSource(data?: Partial<io_k8s_api_core_v1_SecretVolumeSource>): io_k8s_api_core_v1_SecretVolumeSource {
  return {
-   secretName: data?.secretName !== undefined ? data.secretName : '',
    defaultMode: data?.defaultMode !== undefined ? data.defaultMode : 0,
    items: data?.items !== undefined ? data.items : [],
    optional: data?.optional !== undefined ? data.optional : false,
+   secretName: data?.secretName !== undefined ? data.secretName : '',
  };
 }
 // Required imports

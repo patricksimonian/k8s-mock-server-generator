@@ -1,5 +1,4 @@
 import express from 'express';
-import path from 'path'
 import { getPrimaryContainer } from '../utils/resource-utils';
 import { logger } from '../logger';
 import { Storage } from '../storage/Storage';
@@ -9,26 +8,29 @@ export function createUtilityRoutes(storage: Storage): express.Router {
   const router = express.Router();
   // Root path handler
   router.post('/k8s.emulator.v1.core/namespaces/:namespace/pods/:name/logs', async (req, res, next) => {
+    req.setEncoding('utf8')
     const sessionId = uuidv4();
-    if (!req.is('application/json')) {
-      return res.status(415).send('Expected application/json');
-    }
     const { namespace, name } = req.params;
+
     logger.info(`[${sessionId}] Receiving stream for pod ${name} in namespace ${namespace}`);
 
+    const contentType = req.headers['content-type'] || '';
+    if (!contentType.includes('application/json')) {
+      return res.status(415).send('Expected application/json');
+    }
+
     let container = req.query.container;
-    if(!container) {
+    if (!container) {
       try {
         const resource = await storage.getResource("Pod", name, namespace);
-        if(resource.kind === "Pod") {
+        if (resource.kind === "Pod") {
           container = getPrimaryContainer(resource);
         } else {
-          res.status(resource.code).json(resource)
+          return res.status(resource.code).json(resource)
         }
       } catch (error) {
         console.error("Error getting pod resource:", error);
-        res.status(500).send("Error getting pod resource.");
-        return;
+        return res.status(500).send("Error getting pod resource.");
       }
     }
 

@@ -8,87 +8,6 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createvalidatingadmissionpolicyRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch changes to an object of kind ValidatingAdmissionPolicy. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingadmissionpolicies/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting validatingadmissionpolicy ${name}`);
-      
-      const resource = await storage.getResource('validatingadmissionpolicy', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`validatingadmissionpolicy ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
-  });
-
-//read status of the specified ValidatingAdmissionPolicy
-  router.get('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name/status', async (req, res, next) => {
- 
-  // the subresourcestatus
-      try {
-        const name = req.params.name;
-        const namespace = null;
-        logger.info(`Getting status ${name}`);
-        
-        const resource = await storage.getResource('status', name, namespace);
-        
-        if (!resource) {
-          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
-        }
-        res.json(resource);
-      } catch (error) {
-        next(error);
-      }
-  
-   
-  });
-//replace status of the specified ValidatingAdmissionPolicy
-  router.put('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating validatingadmissionpolicy ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('validatingadmissionpolicy', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting validatingadmissionpolicy ${name}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('validatingadmissionpolicy', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //watch individual changes to a list of ValidatingAdmissionPolicy. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingadmissionpolicies', async (req, res, next) => {
     try {
@@ -108,6 +27,26 @@ export function createvalidatingadmissionpolicyRoutes(storage: Storage): express
     } catch (error) {
       next(error);
     }
+  });
+
+//watch changes to an object of kind ValidatingAdmissionPolicy. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/validatingadmissionpolicies/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting validatingadmissionpolicy ${name}`);
+      
+      const resource = await storage.getResource('validatingadmissionpolicy', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`validatingadmissionpolicy ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
   });
 
 //list or watch objects of kind ValidatingAdmissionPolicy
@@ -183,26 +122,6 @@ export function createvalidatingadmissionpolicyRoutes(storage: Storage): express
       next(error);
     }
   });
-
-//read the specified ValidatingAdmissionPolicy
-  router.get('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting validatingadmissionpolicy ${name}`);
-      
-      const resource = await storage.getResource('validatingadmissionpolicy', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`validatingadmissionpolicy ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
-  });
 //replace the specified ValidatingAdmissionPolicy
   router.put('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name', async (req, res, next) => {
     try {
@@ -275,12 +194,12 @@ export function createvalidatingadmissionpolicyRoutes(storage: Storage): express
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('validatingadmissionpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('validatingadmissionpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('validatingadmissionpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('validatingadmissionpolicy', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -292,6 +211,87 @@ export function createvalidatingadmissionpolicyRoutes(storage: Storage): express
     } catch (error) {
       next(error);
     }
+  });
+
+//read the specified ValidatingAdmissionPolicy
+  router.get('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting validatingadmissionpolicy ${name}`);
+      
+      const resource = await storage.getResource('validatingadmissionpolicy', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`validatingadmissionpolicy ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
+//replace status of the specified ValidatingAdmissionPolicy
+  router.put('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating validatingadmissionpolicy ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('validatingadmissionpolicy', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting validatingadmissionpolicy ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('validatingadmissionpolicy', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//read status of the specified ValidatingAdmissionPolicy
+  router.get('/apis/admissionregistration.k8s.io/v1/validatingadmissionpolicies/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = null;
+        logger.info(`Getting status ${name}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
   });
 
   return router;

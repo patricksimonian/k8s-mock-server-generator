@@ -5,6 +5,14 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ParamRef {
 /**
+* name is the name of the resource being referenced.
+
+One of `name` or `selector` must be set, but `name` and `selector` are mutually exclusive properties. If one is set, the other must be unset.
+
+A single parameter used for all admission requests can be configured by setting the `name` field, leaving `selector` blank, and setting namespace if `paramKind` is namespace-scoped.
+*/
+name?: string;
+/**
 * namespace is the namespace of the referenced resource. Allows limiting the search for params to a specific namespace. Applies to both `name` and `selector` fields.
 
 A per-namespace parameter may be used by specifying a namespace-scoped `paramKind` in the policy and leaving this field empty.
@@ -31,14 +39,6 @@ One of `name` or `selector` must be set, but `name` and `selector` are mutually 
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 */
 selector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
-/**
-* name is the name of the resource being referenced.
-
-One of `name` or `selector` must be set, but `name` and `selector` are mutually exclusive properties. If one is set, the other must be unset.
-
-A single parameter used for all admission requests can be configured by setting the `name` field, leaving `selector` blank, and setting namespace if `paramKind` is namespace-scoped.
-*/
-name?: string;
 }
 
 /**
@@ -48,10 +48,10 @@ name?: string;
 */
 export function createio_k8s_api_admissionregistration_v1_ParamRef(data?: Partial<io_k8s_api_admissionregistration_v1_ParamRef>): io_k8s_api_admissionregistration_v1_ParamRef {
  return {
+   name: data?.name !== undefined ? data.name : '',
    namespace: data?.namespace !== undefined ? data.namespace : '',
    parameterNotFoundAction: data?.parameterNotFoundAction !== undefined ? data.parameterNotFoundAction : '',
    selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
-   name: data?.name !== undefined ? data.name : '',
  };
 }
 // Required imports

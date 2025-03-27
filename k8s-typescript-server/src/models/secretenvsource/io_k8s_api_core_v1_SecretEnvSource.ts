@@ -7,13 +7,13 @@ The contents of the target Secret's Data field will represent the key-value pair
 */
 export interface io_k8s_api_core_v1_SecretEnvSource {
 /**
-* Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-*/
-name?: string;
-/**
 * Specify whether the Secret must be defined
 */
 optional?: boolean;
+/**
+* Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+*/
+name?: string;
 }
 
 /**
@@ -23,7 +23,7 @@ optional?: boolean;
 */
 export function createio_k8s_api_core_v1_SecretEnvSource(data?: Partial<io_k8s_api_core_v1_SecretEnvSource>): io_k8s_api_core_v1_SecretEnvSource {
  return {
-   name: data?.name !== undefined ? data.name : '',
    optional: data?.optional !== undefined ? data.optional : false,
+   name: data?.name !== undefined ? data.name : '',
  };
 }

@@ -102,6 +102,26 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
       next(error);
     }
   });
+
+//watch changes to an object of kind MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting mutatingwebhookconfiguration ${name}`);
+      
+      const resource = await storage.getResource('mutatingwebhookconfiguration', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
 //replace the specified MutatingWebhookConfiguration
   router.put('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
@@ -174,12 +194,12 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('mutatingwebhookconfiguration', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('mutatingwebhookconfiguration', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('mutatingwebhookconfiguration', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('mutatingwebhookconfiguration', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -195,26 +215,6 @@ export function createmutatingwebhookconfigurationRoutes(storage: Storage): expr
 
 //read the specified MutatingWebhookConfiguration
   router.get('/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting mutatingwebhookconfiguration ${name}`);
-      
-      const resource = await storage.getResource('mutatingwebhookconfiguration', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`mutatingwebhookconfiguration ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
-  });
-
-//watch changes to an object of kind MutatingWebhookConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/admissionregistration.k8s.io/v1/watch/mutatingwebhookconfigurations/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
       const namespace = null;

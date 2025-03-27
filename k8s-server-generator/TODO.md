@@ -9,6 +9,9 @@ I need to finish implementing the subresource generation. It could be that I nee
 Updates March 26th
 I need to handle subresources for get and post requests seperatly. Eviction, exec, attach, and logs all act differently. I should also allow for a plugin for exec and attach as well as logs. 
 
+Updates March 27th
+supported log writing and reading. need to catch edge case where body parser can't be used for the log write endpoint 
+additionally patching of objects have been fixed there was no await being used
 TODO
 
 - i know that the endpoint generatoin is almost there  

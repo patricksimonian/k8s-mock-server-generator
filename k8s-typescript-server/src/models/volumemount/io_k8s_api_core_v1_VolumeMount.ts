@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_VolumeMount {
 /**
+* This must match the Name of a Volume.
+* @required
+*/
+name: string;
+/**
 * Mounted read-only if true, read-write otherwise (false or unspecified). Defaults to false.
 */
 readOnly?: boolean;
@@ -42,11 +47,6 @@ Possible enum values:
  - `"None"` means that the volume in a container will not receive new mounts from the host or other containers, and filesystems mounted inside the container won't be propagated to the host or other containers. Note that this mode corresponds to "private" in Linux terminology.
 */
 mountPropagation?: 'Bidirectional' | 'HostToContainer' | 'None';
-/**
-* This must match the Name of a Volume.
-* @required
-*/
-name: string;
 }
 
 /**
@@ -56,12 +56,12 @@ name: string;
 */
 export function createio_k8s_api_core_v1_VolumeMount(data?: Partial<io_k8s_api_core_v1_VolumeMount>): io_k8s_api_core_v1_VolumeMount {
  return {
+   name: data?.name !== undefined ? data.name : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    recursiveReadOnly: data?.recursiveReadOnly !== undefined ? data.recursiveReadOnly : '',
    subPath: data?.subPath !== undefined ? data.subPath : '',
    subPathExpr: data?.subPathExpr !== undefined ? data.subPathExpr : '',
    mountPath: data?.mountPath !== undefined ? data.mountPath : '',
    mountPropagation: data?.mountPropagation !== undefined ? data.mountPropagation : '',
-   name: data?.name !== undefined ? data.name : '',
  };
 }

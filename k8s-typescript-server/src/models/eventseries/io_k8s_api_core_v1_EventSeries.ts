@@ -5,14 +5,14 @@
 */
 export interface io_k8s_api_core_v1_EventSeries {
 /**
-* Number of occurrences in this series up to the last heartbeat time
-*/
-count?: number;
-/**
 * Time of the last occurrence observed
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
 */
 lastObservedTime?: io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime;
+/**
+* Number of occurrences in this series up to the last heartbeat time
+*/
+count?: number;
 }
 
 /**
@@ -22,8 +22,8 @@ lastObservedTime?: io_k8s_apimachinery_pkg_apis_meta_v1_MicroTime;
 */
 export function createio_k8s_api_core_v1_EventSeries(data?: Partial<io_k8s_api_core_v1_EventSeries>): io_k8s_api_core_v1_EventSeries {
  return {
-   count: data?.count !== undefined ? data.count : 0,
    lastObservedTime: data?.lastObservedTime !== undefined ? data.lastObservedTime : createio_k8s_apimachinery_pkg_apis_meta_v1_MicroTime(),
+   count: data?.count !== undefined ? data.count : 0,
  };
 }
 // Required imports

@@ -5,11 +5,6 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_FieldSelectorRequirement {
 /**
-* values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty.
-* @isArray
-*/
-values?: string[];
-/**
 * key is the field selector key that the requirement applies to.
 * @required
 */
@@ -19,6 +14,11 @@ key: string;
 * @required
 */
 operator: string;
+/**
+* values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty.
+* @isArray
+*/
+values?: string[];
 }
 
 /**
@@ -28,8 +28,8 @@ operator: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_FieldSelectorRequirement(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_FieldSelectorRequirement>): io_k8s_apimachinery_pkg_apis_meta_v1_FieldSelectorRequirement {
  return {
-   values: data?.values !== undefined ? data.values : [],
    key: data?.key !== undefined ? data.key : '',
    operator: data?.operator !== undefined ? data.operator : '',
+   values: data?.values !== undefined ? data.values : [],
  };
 }

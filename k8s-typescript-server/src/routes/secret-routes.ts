@@ -107,16 +107,36 @@ export function createsecretRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind Secret
-  router.get('/api/v1/secrets', async (req, res, next) => {
+//watch changes to an object of kind Secret. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/api/v1/watch/namespaces/:namespace/secrets/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting secret ${name} in namespace ${namespace}`);
+      
+      const resource = await storage.getResource('secret', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`secret ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
+
+//watch individual changes to a list of Secret. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/secrets', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       const limit = req.query.limit ? Number(req.query.limit) : undefined;
       const cont = req.query.continue as string | undefined;
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing secret`);
+      const namespace = req.params.namespace;
+      logger.info(`Listing secret in namespace ${namespace}`);
       
       const resourceList = await storage.listResources('secret', namespace, listOpts);
       
@@ -220,12 +240,12 @@ export function createsecretRoutes(storage: Storage): express.Router {
         contentType === 'application/merge-patch+json'
       ) {
         // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = storage.mergePatchResource('secret', name, patchData, namespace, resource.metadata.resourceVersion);
+        const updatedResource = await storage.mergePatchResource('secret', name, patchData, namespace, resource.metadata.resourceVersion);
         return res.json(updatedResource);
       } else if (contentType === 'application/json-patch+json') {
         // JSON patch: apply an array of operations
         try {
-          const updatedResource = storage.jsonPatchResource('secret', name, patchData, namespace, resource.metadata.resourceVersion);
+          const updatedResource = await storage.jsonPatchResource('secret', name, patchData, namespace, resource.metadata.resourceVersion);
 
           return res.json(updatedResource);
         } catch (error) {
@@ -239,16 +259,16 @@ export function createsecretRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of Secret. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/secrets', async (req, res, next) => {
+//list or watch objects of kind Secret
+  router.get('/api/v1/secrets', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       const limit = req.query.limit ? Number(req.query.limit) : undefined;
       const cont = req.query.continue as string | undefined;
       const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing secret in namespace ${namespace}`);
+      const namespace = null;
+      logger.info(`Listing secret`);
       
       const resourceList = await storage.listResources('secret', namespace, listOpts);
       
@@ -258,26 +278,6 @@ export function createsecretRoutes(storage: Storage): express.Router {
     } catch (error) {
       next(error);
     }
-  });
-
-//watch changes to an object of kind Secret. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/api/v1/watch/namespaces/:namespace/secrets/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting secret ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('secret', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`secret ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
   });
 
   return router;

@@ -32,17 +32,17 @@ import { create{{ $sanitizedResourceType }}Routes } from './{{ $sanitizedResourc
 * Create all routes for the API server
 */
 export function createRoutes(): express.Router {
- const router = express.Router();
- // Add utility routes
- router.use('/', createUtilityRoutes(storage));
- // Add discovery routes
- router.use('/', createDiscoveryRoutes(storage));
- // Add OpenAPI routes
- router.use('/', createOpenAPIRoutes());
- // Add resource routes
-{{- range $sanitizedResourceType, $resourceTypeList := $resourceTypes }}
- router.use('/', create{{ $sanitizedResourceType }}Routes(storage));
-{{- end }}
- 
- return router;
+    const router = express.Router();
+    // Add utility routes
+    router.use('/', createUtilityRoutes(storage));
+    router.use(express.json())
+    // Add discovery routes
+    router.use('/', createDiscoveryRoutes(storage));
+    // Add OpenAPI routes
+    router.use('/', createOpenAPIRoutes());
+    // Add resource routes
+    {{- range $sanitizedResourceType, $resourceTypeList := $resourceTypes }}
+    router.use('/', create{{ $sanitizedResourceType }}Routes(storage));
+    {{- end }}
+    return router;
 }

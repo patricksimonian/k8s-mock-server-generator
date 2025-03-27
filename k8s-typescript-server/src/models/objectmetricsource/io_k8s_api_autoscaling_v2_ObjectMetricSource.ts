@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_autoscaling_v2_ObjectMetricSource {
 /**
+* describedObject specifies the descriptions of a object,such as kind,name apiVersion
+* @required
+* @references io.k8s.api.autoscaling.v2.CrossVersionObjectReference
+*/
+describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
+/**
 * metric identifies the target metric by name and selector
 * @required
 * @references io.k8s.api.autoscaling.v2.MetricIdentifier
@@ -16,12 +22,6 @@ metric: io_k8s_api_autoscaling_v2_MetricIdentifier;
 * @references io.k8s.api.autoscaling.v2.MetricTarget
 */
 target: io_k8s_api_autoscaling_v2_MetricTarget;
-/**
-* describedObject specifies the descriptions of a object,such as kind,name apiVersion
-* @required
-* @references io.k8s.api.autoscaling.v2.CrossVersionObjectReference
-*/
-describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
 }
 
 /**
@@ -31,9 +31,9 @@ describedObject: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
 */
 export function createio_k8s_api_autoscaling_v2_ObjectMetricSource(data?: Partial<io_k8s_api_autoscaling_v2_ObjectMetricSource>): io_k8s_api_autoscaling_v2_ObjectMetricSource {
  return {
+   describedObject: data?.describedObject !== undefined ? data.describedObject : createio_k8s_api_autoscaling_v2_CrossVersionObjectReference(),
    metric: data?.metric !== undefined ? data.metric : createio_k8s_api_autoscaling_v2_MetricIdentifier(),
    target: data?.target !== undefined ? data.target : createio_k8s_api_autoscaling_v2_MetricTarget(),
-   describedObject: data?.describedObject !== undefined ? data.describedObject : createio_k8s_api_autoscaling_v2_CrossVersionObjectReference(),
  };
 }
 // Required imports
