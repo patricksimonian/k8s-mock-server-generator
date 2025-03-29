@@ -5,6 +5,17 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup {
 /**
+* a map of client CIDR to server address that is serving this group. This is to help clients reach servers in the most network-efficient way possible. Clients can use the appropriate server address as per the CIDR that they match. In case of multiple matches, clients should use the longest matching CIDR. The server returns only those CIDRs that it thinks that the client can match. For example: the master will return an internal IP CIDR only, if the client reaches the server using an internal IP. Server looks at X-Forwarded-For header or X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
+* @isArray
+*/
+serverAddressByClientCIDRs?: io_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressByClientCIDR[];
+/**
+* versions are the versions supported in this group.
+* @required
+* @isArray
+*/
+versions: io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery[];
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -22,17 +33,6 @@ name: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.GroupVersionForDiscovery
 */
 preferredVersion?: io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery;
-/**
-* a map of client CIDR to server address that is serving this group. This is to help clients reach servers in the most network-efficient way possible. Clients can use the appropriate server address as per the CIDR that they match. In case of multiple matches, clients should use the longest matching CIDR. The server returns only those CIDRs that it thinks that the client can match. For example: the master will return an internal IP CIDR only, if the client reaches the server using an internal IP. Server looks at X-Forwarded-For header or X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
-* @isArray
-*/
-serverAddressByClientCIDRs?: io_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressByClientCIDR[];
-/**
-* versions are the versions supported in this group.
-* @required
-* @isArray
-*/
-versions: io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery[];
 }
 
 /**
@@ -42,14 +42,14 @@ versions: io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery[];
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_APIGroup(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup>): io_k8s_apimachinery_pkg_apis_meta_v1_APIGroup {
  return {
+   serverAddressByClientCIDRs: data?.serverAddressByClientCIDRs !== undefined ? data.serverAddressByClientCIDRs : [],
+   versions: data?.versions !== undefined ? data.versions : [],
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
    preferredVersion: data?.preferredVersion !== undefined ? data.preferredVersion : createio_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery(),
-   serverAddressByClientCIDRs: data?.serverAddressByClientCIDRs !== undefined ? data.serverAddressByClientCIDRs : [],
-   versions: data?.versions !== undefined ? data.versions : [],
  };
 }
 // Required imports
-import { io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery, createio_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery } from '../io.k8s.apimachinery.pkg.apis.meta.v1.GroupVersionForDiscovery';
+import { io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery, createio_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery } from '../groupversionfordiscovery/io_k8s_apimachinery_pkg_apis_meta_v1_GroupVersionForDiscovery';
 import { io_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressByClientCIDR, createio_k8s_apimachinery_pkg_apis_meta_v1_ServerAddressByClientCIDR } from '../io.k8s.apimachinery.pkg.apis.meta.v1.ServerAddressByClientCIDR';

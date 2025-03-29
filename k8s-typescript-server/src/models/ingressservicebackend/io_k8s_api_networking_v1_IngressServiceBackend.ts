@@ -5,15 +5,15 @@
 */
 export interface io_k8s_api_networking_v1_IngressServiceBackend {
 /**
-* name is the referenced service. The service must exist in the same namespace as the Ingress object.
-* @required
-*/
-name: string;
-/**
 * port of the referenced service. A port name or port number is required for a IngressServiceBackend.
 * @references io.k8s.api.networking.v1.ServiceBackendPort
 */
 port?: io_k8s_api_networking_v1_ServiceBackendPort;
+/**
+* name is the referenced service. The service must exist in the same namespace as the Ingress object.
+* @required
+*/
+name: string;
 }
 
 /**
@@ -23,8 +23,8 @@ port?: io_k8s_api_networking_v1_ServiceBackendPort;
 */
 export function createio_k8s_api_networking_v1_IngressServiceBackend(data?: Partial<io_k8s_api_networking_v1_IngressServiceBackend>): io_k8s_api_networking_v1_IngressServiceBackend {
  return {
-   name: data?.name !== undefined ? data.name : '',
    port: data?.port !== undefined ? data.port : createio_k8s_api_networking_v1_ServiceBackendPort(),
+   name: data?.name !== undefined ? data.name : '',
  };
 }
 // Required imports

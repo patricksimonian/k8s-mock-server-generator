@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_VolumeAttachmentStatus {
 /**
-* attachError represents the last error encountered during attach operation, if any. This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
-* @references io.k8s.api.storage.v1.VolumeError
-*/
-attachError?: io_k8s_api_storage_v1_VolumeError;
-/**
 * attached indicates the volume is successfully attached. This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
 * @required
 */
@@ -23,6 +18,11 @@ attachmentMetadata?: Record<string, any>;
 * @references io.k8s.api.storage.v1.VolumeError
 */
 detachError?: io_k8s_api_storage_v1_VolumeError;
+/**
+* attachError represents the last error encountered during attach operation, if any. This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
+* @references io.k8s.api.storage.v1.VolumeError
+*/
+attachError?: io_k8s_api_storage_v1_VolumeError;
 }
 
 /**
@@ -32,10 +32,10 @@ detachError?: io_k8s_api_storage_v1_VolumeError;
 */
 export function createio_k8s_api_storage_v1_VolumeAttachmentStatus(data?: Partial<io_k8s_api_storage_v1_VolumeAttachmentStatus>): io_k8s_api_storage_v1_VolumeAttachmentStatus {
  return {
-   attachError: data?.attachError !== undefined ? data.attachError : createio_k8s_api_storage_v1_VolumeError(),
    attached: data?.attached !== undefined ? data.attached : false,
    attachmentMetadata: data?.attachmentMetadata !== undefined ? data.attachmentMetadata : {},
    detachError: data?.detachError !== undefined ? data.detachError : createio_k8s_api_storage_v1_VolumeError(),
+   attachError: data?.attachError !== undefined ? data.attachError : createio_k8s_api_storage_v1_VolumeError(),
  };
 }
 // Required imports

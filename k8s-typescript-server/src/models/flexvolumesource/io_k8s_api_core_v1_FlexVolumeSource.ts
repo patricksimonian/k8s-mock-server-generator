@@ -5,15 +5,6 @@
 */
 export interface io_k8s_api_core_v1_FlexVolumeSource {
 /**
-* readOnly is Optional: defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
-*/
-readOnly?: boolean;
-/**
-* secretRef is Optional: secretRef is reference to the secret object containing sensitive information to pass to the plugin scripts. This may be empty if no secret object is specified. If the secret object contains more than one secret, all secrets are passed to the plugin scripts.
-* @references io.k8s.api.core.v1.LocalObjectReference
-*/
-secretRef?: io_k8s_api_core_v1_LocalObjectReference;
-/**
 * driver is the name of the driver to use for this volume.
 * @required
 */
@@ -26,6 +17,15 @@ fsType?: string;
 * options is Optional: this field holds extra command options if any.
 */
 options?: Record<string, any>;
+/**
+* readOnly is Optional: defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
+*/
+readOnly?: boolean;
+/**
+* secretRef is Optional: secretRef is reference to the secret object containing sensitive information to pass to the plugin scripts. This may be empty if no secret object is specified. If the secret object contains more than one secret, all secrets are passed to the plugin scripts.
+* @references io.k8s.api.core.v1.LocalObjectReference
+*/
+secretRef?: io_k8s_api_core_v1_LocalObjectReference;
 }
 
 /**
@@ -35,11 +35,11 @@ options?: Record<string, any>;
 */
 export function createio_k8s_api_core_v1_FlexVolumeSource(data?: Partial<io_k8s_api_core_v1_FlexVolumeSource>): io_k8s_api_core_v1_FlexVolumeSource {
  return {
-   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
-   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
    driver: data?.driver !== undefined ? data.driver : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
    options: data?.options !== undefined ? data.options : {},
+   readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_LocalObjectReference(),
  };
 }
 // Required imports

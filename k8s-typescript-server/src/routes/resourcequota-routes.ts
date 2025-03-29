@@ -7,28 +7,25 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 
 export function createresourcequotaRoutes(storage: Storage): express.Router {
   const router = express.Router();
-//replace the specified ResourceQuota
-  router.put('/api/v1/namespaces/:namespace/resourcequotas/:name', async (req, res, next) => {
+
+//watch changes to an object of kind ResourceQuota. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/api/v1/watch/namespaces/:namespace/resourcequotas/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
       const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating resourcequota ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-
-      const updatedResource = await storage.updateResource('resourcequota', name, resource, namespace, resource.metadata.resourceVersion);
+      logger.info(`Getting resourcequota ${name} in namespace ${namespace}`);
       
-      res.json(updatedResource);
+      const resource = await storage.getResource('resourcequota', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`resourcequota ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 
 //delete a ResourceQuota
@@ -118,64 +115,25 @@ export function createresourcequotaRoutes(storage: Storage): express.Router {
   
    
   });
-
-//watch individual changes to a list of ResourceQuota. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/resourcequotas', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing resourcequota`);
-      
-      const resourceList = await storage.listResources('resourcequota', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//watch changes to an object of kind ResourceQuota. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/api/v1/watch/namespaces/:namespace/resourcequotas/:name', async (req, res, next) => {
+//replace the specified ResourceQuota
+  router.put('/api/v1/namespaces/:namespace/resourcequotas/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting resourcequota ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('resourcequota', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`resourcequota ${name} not found in namespace ${namespace}`), res);
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
       }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
-  });
-
-//watch individual changes to a list of ResourceQuota. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/resourcequotas', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
-      logger.info(`Listing resourcequota in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('resourcequota', namespace, listOpts);
-      
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating resourcequota ${name} in namespace ${namespace}`);
 
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('resourcequota', name, resource, namespace, resource.metadata.resourceVersion);
       
-      res.json(resourceList);
+      res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -238,27 +196,6 @@ export function createresourcequotaRoutes(storage: Storage): express.Router {
       const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
       const updatedResource = await storage.updateSubresource('resourcequota', name, subresource, patchData, namespace);
       return res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ResourceQuota
-  router.get('/api/v1/resourcequotas', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing resourcequota`);
-      
-      const resourceList = await storage.listResources('resourcequota', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
     } catch (error) {
       next(error);
     }
@@ -337,6 +274,69 @@ export function createresourcequotaRoutes(storage: Storage): express.Router {
           kind: 'resourcequota'
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ResourceQuota. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/resourcequotas', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing resourcequota`);
+      
+      const resourceList = await storage.listResources('resourcequota', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ResourceQuota
+  router.get('/api/v1/resourcequotas', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing resourcequota`);
+      
+      const resourceList = await storage.listResources('resourcequota', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ResourceQuota. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/resourcequotas', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing resourcequota in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('resourcequota', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

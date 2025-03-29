@@ -7,10 +7,6 @@ DEPRECATED: GitRepo is deprecated. To provision a container with a git repo, mou
 */
 export interface io_k8s_api_core_v1_GitRepoVolumeSource {
 /**
-* revision is the commit hash for the specified revision.
-*/
-revision?: string;
-/**
 * directory is the target directory name. Must not contain or start with '..'.  If '.' is supplied, the volume directory will be the git repository.  Otherwise, if specified, the volume will contain the git repository in the subdirectory with the given name.
 */
 directory?: string;
@@ -19,6 +15,10 @@ directory?: string;
 * @required
 */
 repository: string;
+/**
+* revision is the commit hash for the specified revision.
+*/
+revision?: string;
 }
 
 /**
@@ -28,8 +28,8 @@ repository: string;
 */
 export function createio_k8s_api_core_v1_GitRepoVolumeSource(data?: Partial<io_k8s_api_core_v1_GitRepoVolumeSource>): io_k8s_api_core_v1_GitRepoVolumeSource {
  return {
-   revision: data?.revision !== undefined ? data.revision : '',
    directory: data?.directory !== undefined ? data.directory : '',
    repository: data?.repository !== undefined ? data.repository : '',
+   revision: data?.revision !== undefined ? data.revision : '',
  };
 }

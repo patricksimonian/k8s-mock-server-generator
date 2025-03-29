@@ -8,116 +8,29 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createreplicasetRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//list or watch objects of kind ReplicaSet
-  router.get('/apis/apps/v1/replicasets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing replicaset`);
-      
-      const resourceList = await storage.listResources('replicaset', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete a ReplicaSet
-  router.delete('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting replicaset ${name} in namespace ${namespace}`);
+//read status of the specified ReplicaSet
+  router.get('/apis/apps/v1/namespaces/:namespace/replicasets/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
       try {
-
-        const deleted = await storage.deleteResource('replicaset', name, namespace);
+        const name = req.params.name;
+        const namespace = req.params.namespace;
+        logger.info(`Getting status ${name} in namespace ${namespace}`);
         
-        if (!deleted) {
-          return handleResourceError(new Error(`replicaset ${name} not found in namespace ${namespace}`), res);
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
         }
-      } catch(e) {
-          return handleResourceError(new Error(`replicaset ${name} not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+        res.json(resource);
+      } catch (error) {
+        next(error);
       }
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          name: name,
-          kind: 'replicaset'
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching replicaset ${name} in namespace ${namespace}`);
-      const resource = await storage.getResource('replicaset', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`replicaset ${name} not found in namespace ${namespace}`), res);
-      }
-      
-      if (
-        contentType === 'application/strategic-merge-patch+json' ||
-        contentType === 'application/merge-patch+json'
-      ) {
-        // JSON merge patch: recursively merge the patch with the existing resource
-        const updatedResource = await storage.mergePatchResource('replicaset', name, patchData, namespace, resource.metadata.resourceVersion);
-        return res.json(updatedResource);
-      } else if (contentType === 'application/json-patch+json') {
-        // JSON patch: apply an array of operations
-        try {
-          const updatedResource = await storage.jsonPatchResource('replicaset', name, patchData, namespace, resource.metadata.resourceVersion);
-
-          return res.json(updatedResource);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid JSON patch data' });
-        }
-      } else {
-        return res.status(415).json({ error: 'Unsupported Media Type' });
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read the specified ReplicaSet
-  router.get('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = req.params.namespace;
-      logger.info(`Getting replicaset ${name} in namespace ${namespace}`);
-      
-      const resource = await storage.getResource('replicaset', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`replicaset ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
   
    
   });
-//replace the specified ReplicaSet
-  router.put('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
+//replace status of the specified ReplicaSet
+  router.put('/apis/apps/v1/namespaces/:namespace/replicasets/:name/status', async (req, res, next) => {
     try {
       const name = req.params.name;
       const resource = req.body;
@@ -131,10 +44,27 @@ export function createreplicasetRoutes(storage: Storage): express.Router {
 
       // Set name and namespace in metadata
       resource.metadata.name = name;
-
-      const updatedResource = await storage.updateResource('replicaset', name, resource, namespace, resource.metadata.resourceVersion);
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('replicaset', name, subresource, resource, namespace);
       
       res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/apps/v1/namespaces/:namespace/replicasets/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      logger.info(`Patching replicaset ${name} in namespace ${namespace}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('replicaset', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -218,27 +148,6 @@ export function createreplicasetRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of ReplicaSet. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/namespaces/:namespace/replicasets', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing replicaset in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('replicaset', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
 //read scale of the specified ReplicaSet
   router.get('/apis/apps/v1/namespaces/:namespace/replicasets/:name/scale', async (req, res, next) => {
  
@@ -301,22 +210,112 @@ export function createreplicasetRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of ReplicaSet. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/apps/v1/watch/replicasets', async (req, res, next) => {
+//read the specified ReplicaSet
+  router.get('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
     try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing replicaset`);
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Getting replicaset ${name} in namespace ${namespace}`);
       
-      const resourceList = await storage.listResources('replicaset', namespace, listOpts);
+      const resource = await storage.getResource('replicaset', name, namespace);
       
+      if (!resource) {
+        return handleResourceError(new Error(`replicaset ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
+  });
+//replace the specified ReplicaSet
+  router.put('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      resource.metadata.namespace = namespace;
+      logger.info(`Updating replicaset ${name} in namespace ${namespace}`);
 
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('replicaset', name, resource, namespace, resource.metadata.resourceVersion);
       
-      res.json(resourceList);
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete a ReplicaSet
+  router.delete('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting replicaset ${name} in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteResource('replicaset', name, namespace);
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`replicaset ${name} not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`replicaset ${name} not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          name: name,
+          kind: 'replicaset'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/apps/v1/namespaces/:namespace/replicasets/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = req.params.namespace;
+      logger.info(`Patching replicaset ${name} in namespace ${namespace}`);
+      const resource = await storage.getResource('replicaset', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`replicaset ${name} not found in namespace ${namespace}`), res);
+      }
+      
+      if (
+        contentType === 'application/strategic-merge-patch+json' ||
+        contentType === 'application/merge-patch+json'
+      ) {
+        // JSON merge patch: recursively merge the patch with the existing resource
+        const updatedResource = await storage.mergePatchResource('replicaset', name, patchData, namespace, resource.metadata.resourceVersion);
+        return res.json(updatedResource);
+      } else if (contentType === 'application/json-patch+json') {
+        // JSON patch: apply an array of operations
+        try {
+          const updatedResource = await storage.jsonPatchResource('replicaset', name, patchData, namespace, resource.metadata.resourceVersion);
+
+          return res.json(updatedResource);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid JSON patch data' });
+        }
+      } else {
+        return res.status(415).json({ error: 'Unsupported Media Type' });
+      }
     } catch (error) {
       next(error);
     }
@@ -341,64 +340,65 @@ export function createreplicasetRoutes(storage: Storage): express.Router {
   
    
   });
-  router.patch('/apis/apps/v1/namespaces/:namespace/replicasets/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = req.params.namespace;
-      logger.info(`Patching replicaset ${name} in namespace ${namespace}`);
-      const subresource = "status";
 
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('replicaset', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
+//list or watch objects of kind ReplicaSet
+  router.get('/apis/apps/v1/replicasets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing replicaset`);
+      
+      const resourceList = await storage.listResources('replicaset', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }
   });
 
-//read status of the specified ReplicaSet
-  router.get('/apis/apps/v1/namespaces/:namespace/replicasets/:name/status', async (req, res, next) => {
- 
-  // the subresourcestatus
-      try {
-        const name = req.params.name;
-        const namespace = req.params.namespace;
-        logger.info(`Getting status ${name} in namespace ${namespace}`);
-        
-        const resource = await storage.getResource('status', name, namespace);
-        
-        if (!resource) {
-          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
-        }
-        res.json(resource);
-      } catch (error) {
-        next(error);
-      }
-  
-   
-  });
-//replace status of the specified ReplicaSet
-  router.put('/apis/apps/v1/namespaces/:namespace/replicasets/:name/status', async (req, res, next) => {
+//watch individual changes to a list of ReplicaSet. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/namespaces/:namespace/replicasets', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = req.params.namespace;
-      resource.metadata.namespace = namespace;
-      logger.info(`Updating replicaset ${name} in namespace ${namespace}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('replicaset', name, subresource, resource, namespace);
+      logger.info(`Listing replicaset in namespace ${namespace}`);
       
-      res.json(updatedResource);
+      const resourceList = await storage.listResources('replicaset', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//watch individual changes to a list of ReplicaSet. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/apps/v1/watch/replicasets', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing replicaset`);
+      
+      const resourceList = await storage.listResources('replicaset', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

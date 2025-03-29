@@ -5,16 +5,6 @@
 */
 export interface io_k8s_api_networking_v1_Ingress {
 /**
-* spec is the desired state of the Ingress. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.networking.v1.IngressSpec
-*/
-spec?: io_k8s_api_networking_v1_IngressSpec;
-/**
-* status is the current state of the Ingress. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.networking.v1.IngressStatus
-*/
-status?: io_k8s_api_networking_v1_IngressStatus;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -27,6 +17,16 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec is the desired state of the Ingress. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.networking.v1.IngressSpec
+*/
+spec?: io_k8s_api_networking_v1_IngressSpec;
+/**
+* status is the current state of the Ingress. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.networking.v1.IngressStatus
+*/
+status?: io_k8s_api_networking_v1_IngressStatus;
 }
 
 /**
@@ -36,11 +36,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_networking_v1_Ingress(data?: Partial<io_k8s_api_networking_v1_Ingress>): io_k8s_api_networking_v1_Ingress {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_networking_v1_IngressSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_networking_v1_IngressStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_networking_v1_IngressSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_networking_v1_IngressStatus(),
  };
 }
 // Required imports

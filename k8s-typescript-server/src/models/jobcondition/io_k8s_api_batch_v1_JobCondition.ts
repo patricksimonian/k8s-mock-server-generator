@@ -5,6 +5,19 @@
 */
 export interface io_k8s_api_batch_v1_JobCondition {
 /**
+* Human readable message indicating details about last transition.
+*/
+message?: string;
+/**
+* (brief) reason for the condition's last transition.
+*/
+reason?: string;
+/**
+* Status of the condition, one of True, False, Unknown.
+* @required
+*/
+status: string;
+/**
 * Type of job condition, Complete or Failed.
 * @required
 */
@@ -19,19 +32,6 @@ lastProbeTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
 lastTransitionTime?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
-/**
-* Human readable message indicating details about last transition.
-*/
-message?: string;
-/**
-* (brief) reason for the condition's last transition.
-*/
-reason?: string;
-/**
-* Status of the condition, one of True, False, Unknown.
-* @required
-*/
-status: string;
 }
 
 /**
@@ -41,12 +41,12 @@ status: string;
 */
 export function createio_k8s_api_batch_v1_JobCondition(data?: Partial<io_k8s_api_batch_v1_JobCondition>): io_k8s_api_batch_v1_JobCondition {
  return {
-   type: data?.type !== undefined ? data.type : '',
-   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
-   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    status: data?.status !== undefined ? data.status : '',
+   type: data?.type !== undefined ? data.type : '',
+   lastProbeTime: data?.lastProbeTime !== undefined ? data.lastProbeTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
  };
 }
 // Required imports

@@ -11,17 +11,6 @@ This API can be used to request client certificates to authenticate to kube-apis
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequest {
 /**
-* spec contains the certificate request, and is immutable after creation. Only the request, signerName, expirationSeconds, and usages fields can be set on creation. Other fields are derived by Kubernetes and cannot be modified by users.
-* @required
-* @references io.k8s.api.certificates.v1.CertificateSigningRequestSpec
-*/
-spec: io_k8s_api_certificates_v1_CertificateSigningRequestSpec;
-/**
-* status contains information about whether the request is approved or denied, and the certificate issued by the signer, or the failure condition indicating signer failure.
-* @references io.k8s.api.certificates.v1.CertificateSigningRequestStatus
-*/
-status?: io_k8s_api_certificates_v1_CertificateSigningRequestStatus;
-/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -34,6 +23,17 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* spec contains the certificate request, and is immutable after creation. Only the request, signerName, expirationSeconds, and usages fields can be set on creation. Other fields are derived by Kubernetes and cannot be modified by users.
+* @required
+* @references io.k8s.api.certificates.v1.CertificateSigningRequestSpec
+*/
+spec: io_k8s_api_certificates_v1_CertificateSigningRequestSpec;
+/**
+* status contains information about whether the request is approved or denied, and the certificate issued by the signer, or the failure condition indicating signer failure.
+* @references io.k8s.api.certificates.v1.CertificateSigningRequestStatus
+*/
+status?: io_k8s_api_certificates_v1_CertificateSigningRequestStatus;
 }
 
 /**
@@ -43,11 +43,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequest(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequest>): io_k8s_api_certificates_v1_CertificateSigningRequest {
  return {
-   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_certificates_v1_CertificateSigningRequestSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_certificates_v1_CertificateSigningRequestStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   spec: data?.spec !== undefined ? data.spec : createio_k8s_api_certificates_v1_CertificateSigningRequestSpec(),
+   status: data?.status !== undefined ? data.status : createio_k8s_api_certificates_v1_CertificateSigningRequestStatus(),
  };
 }
 // Required imports

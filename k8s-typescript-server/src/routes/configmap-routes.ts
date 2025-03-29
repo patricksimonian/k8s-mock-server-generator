@@ -8,6 +8,105 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createconfigmapRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
+//list or watch objects of kind ConfigMap
+  router.get('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = req.params.namespace;
+      logger.info(`Listing configmap in namespace ${namespace}`);
+      
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+  //create a ConfigMap
+  router.post('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
+
+    try {
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = req.params.namespace;
+      logger.info(`Creating configmap in namespace ${namespace}`);
+      
+      
+      // Set namespace in metadata
+      resource.metadata.namespace = namespace;
+      
+      
+      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      
+      res.status(201).json(createdResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//delete collection of ConfigMap
+  router.delete('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const namespace = req.params.namespace;
+      logger.info(`Deleting all configmap in namespace ${namespace}`);
+      try {
+
+        const deleted = await storage.deleteAllResources('configmap', namespace, { labelSelector, fieldSelector });
+        
+        if (!deleted) {
+          return handleResourceError(new Error(`configmap not found in namespace ${namespace}`), res);
+        }
+      } catch(e) {
+          return handleResourceError(new Error(`configmap not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
+      }
+    
+      
+      res.status(200).json({
+        kind: 'Status',
+        apiVersion: 'v1',
+        metadata: {},
+        status: 'Success',
+        details: {
+          kind: 'configmap'
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+//list or watch objects of kind ConfigMap
+  router.get('/api/v1/configmaps', async (req, res, next) => {
+    try {
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
+      const namespace = null;
+      logger.info(`Listing configmap`);
+      
+      const resourceList = await storage.listResources('configmap', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //watch individual changes to a list of ConfigMap. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/api/v1/watch/configmaps', async (req, res, next) => {
     try {
@@ -47,48 +146,6 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
     }
   
    
-  });
-
-//watch individual changes to a list of ConfigMap. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/api/v1/watch/namespaces/:namespace/configmaps', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = req.params.namespace;
-      logger.info(`Listing configmap in namespace ${namespace}`);
-      
-      const resourceList = await storage.listResources('configmap', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//list or watch objects of kind ConfigMap
-  router.get('/api/v1/configmaps', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing configmap`);
-      
-      const resourceList = await storage.listResources('configmap', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
   });
 
 //read the specified ConfigMap
@@ -202,8 +259,8 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
     }
   });
 
-//list or watch objects of kind ConfigMap
-  router.get('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
+//watch individual changes to a list of ConfigMap. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/api/v1/watch/namespaces/:namespace/configmaps', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -218,63 +275,6 @@ export function createconfigmapRoutes(storage: Storage): express.Router {
 
       
       res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
-  //create a ConfigMap
-  router.post('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
-
-    try {
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = req.params.namespace;
-      logger.info(`Creating configmap in namespace ${namespace}`);
-      
-      
-      // Set namespace in metadata
-      resource.metadata.namespace = namespace;
-      
-      
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
-      
-      res.status(201).json(createdResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//delete collection of ConfigMap
-  router.delete('/api/v1/namespaces/:namespace/configmaps', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const namespace = req.params.namespace;
-      logger.info(`Deleting all configmap in namespace ${namespace}`);
-      try {
-
-        const deleted = await storage.deleteAllResources('configmap', namespace, { labelSelector, fieldSelector });
-        
-        if (!deleted) {
-          return handleResourceError(new Error(`configmap not found in namespace ${namespace}`), res);
-        }
-      } catch(e) {
-          return handleResourceError(new Error(`configmap not deleted in namespace ${namespace}. Error: ${(e as Error).message}`), res);
-      }
-    
-      
-      res.status(200).json({
-        kind: 'Status',
-        apiVersion: 'v1',
-        metadata: {},
-        status: 'Success',
-        details: {
-          kind: 'configmap'
-        }
-      });
     } catch (error) {
       next(error);
     }

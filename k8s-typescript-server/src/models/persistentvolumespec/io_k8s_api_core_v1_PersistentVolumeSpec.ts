@@ -5,81 +5,54 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeSpec {
 /**
-* nfs represents an NFS mount on the host. Provisioned by an admin. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
-* @references io.k8s.api.core.v1.NFSVolumeSource
+* rbd represents a Rados Block Device mount on the host that shares a pod's lifetime. Deprecated: RBD is deprecated and the in-tree rbd type is no longer supported. More info: https://examples.k8s.io/volumes/rbd/README.md
+* @references io.k8s.api.core.v1.RBDPersistentVolumeSource
 */
-nfs?: io_k8s_api_core_v1_NFSVolumeSource;
-/**
-* storageClassName is the name of StorageClass to which this persistent volume belongs. Empty value means that this volume does not belong to any StorageClass.
-*/
-storageClassName?: string;
-/**
-* storageOS represents a StorageOS volume that is attached to the kubelet's host machine and mounted into the pod. Deprecated: StorageOS is deprecated and the in-tree storageos type is no longer supported. More info: https://examples.k8s.io/volumes/storageos/README.md
-* @references io.k8s.api.core.v1.StorageOSPersistentVolumeSource
-*/
-storageos?: io_k8s_api_core_v1_StorageOSPersistentVolumeSource;
+rbd?: io_k8s_api_core_v1_RBDPersistentVolumeSource;
 /**
 * Name of VolumeAttributesClass to which this persistent volume belongs. Empty value is not allowed. When this field is not set, it indicates that this volume does not belong to any VolumeAttributesClass. This field is mutable and can be changed by the CSI driver after a volume has been updated successfully to a new class. For an unbound PersistentVolume, the volumeAttributesClassName will be matched with unbound PersistentVolumeClaims during the binding process. This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
 */
 volumeAttributesClassName?: string;
 /**
-* cinder represents a cinder volume attached and mounted on kubelets host machine. Deprecated: Cinder is deprecated. All operations for the in-tree cinder type are redirected to the cinder.csi.openstack.org CSI driver. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
-* @references io.k8s.api.core.v1.CinderPersistentVolumeSource
+* iscsi represents an ISCSI Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Provisioned by an admin.
+* @references io.k8s.api.core.v1.ISCSIPersistentVolumeSource
 */
-cinder?: io_k8s_api_core_v1_CinderPersistentVolumeSource;
+iscsi?: io_k8s_api_core_v1_ISCSIPersistentVolumeSource;
 /**
-* csi represents storage that is handled by an external CSI driver.
-* @references io.k8s.api.core.v1.CSIPersistentVolumeSource
+* flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin. Deprecated: FlexVolume is deprecated. Consider using a CSIDriver instead.
+* @references io.k8s.api.core.v1.FlexPersistentVolumeSource
 */
-csi?: io_k8s_api_core_v1_CSIPersistentVolumeSource;
+flexVolume?: io_k8s_api_core_v1_FlexPersistentVolumeSource;
 /**
 * flocker represents a Flocker volume attached to a kubelet's host machine and exposed to the pod for its usage. This depends on the Flocker control service being running. Deprecated: Flocker is deprecated and the in-tree flocker type is no longer supported.
 * @references io.k8s.api.core.v1.FlockerVolumeSource
 */
 flocker?: io_k8s_api_core_v1_FlockerVolumeSource;
 /**
-* volumeMode defines if a volume is intended to be used with a formatted filesystem or to remain in raw block state. Value of Filesystem is implied when not included in spec.
-
-Possible enum values:
- - `"Block"` means the volume will not be formatted with a filesystem and will remain a raw block device.
- - `"Filesystem"` means the volume will be or is formatted with a filesystem.
+* nodeAffinity defines constraints that limit what nodes this volume can be accessed from. This field influences the scheduling of pods that use this volume.
+* @references io.k8s.api.core.v1.VolumeNodeAffinity
 */
-volumeMode?: 'Block' | 'Filesystem';
+nodeAffinity?: io_k8s_api_core_v1_VolumeNodeAffinity;
 /**
-* azureDisk represents an Azure Data Disk mount on the host and bind mount to the pod. Deprecated: AzureDisk is deprecated. All operations for the in-tree azureDisk type are redirected to the disk.csi.azure.com CSI driver.
-* @references io.k8s.api.core.v1.AzureDiskVolumeSource
+* photonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine. Deprecated: PhotonPersistentDisk is deprecated and the in-tree photonPersistentDisk type is no longer supported.
+* @references io.k8s.api.core.v1.PhotonPersistentDiskVolumeSource
 */
-azureDisk?: io_k8s_api_core_v1_AzureDiskVolumeSource;
-/**
-* claimRef is part of a bi-directional binding between PersistentVolume and PersistentVolumeClaim. Expected to be non-nil when bound. claim.VolumeName is the authoritative bind between PV and PVC. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#binding
-* @references io.k8s.api.core.v1.ObjectReference
-*/
-claimRef?: io_k8s_api_core_v1_ObjectReference;
-/**
-* gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Provisioned by an admin. Deprecated: GCEPersistentDisk is deprecated. All operations for the in-tree gcePersistentDisk type are redirected to the pd.csi.storage.gke.io CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
-* @references io.k8s.api.core.v1.GCEPersistentDiskVolumeSource
-*/
-gcePersistentDisk?: io_k8s_api_core_v1_GCEPersistentDiskVolumeSource;
+photonPersistentDisk?: io_k8s_api_core_v1_PhotonPersistentDiskVolumeSource;
 /**
 * portworxVolume represents a portworx volume attached and mounted on kubelets host machine. Deprecated: PortworxVolume is deprecated. All operations for the in-tree portworxVolume type are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate is on.
 * @references io.k8s.api.core.v1.PortworxVolumeSource
 */
 portworxVolume?: io_k8s_api_core_v1_PortworxVolumeSource;
 /**
-* vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine. Deprecated: VsphereVolume is deprecated. All operations for the in-tree vsphereVolume type are redirected to the csi.vsphere.vmware.com CSI driver.
-* @references io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource
+* storageOS represents a StorageOS volume that is attached to the kubelet's host machine and mounted into the pod. Deprecated: StorageOS is deprecated and the in-tree storageos type is no longer supported. More info: https://examples.k8s.io/volumes/storageos/README.md
+* @references io.k8s.api.core.v1.StorageOSPersistentVolumeSource
 */
-vsphereVolume?: io_k8s_api_core_v1_VsphereVirtualDiskVolumeSource;
+storageos?: io_k8s_api_core_v1_StorageOSPersistentVolumeSource;
 /**
-* cephFS represents a Ceph FS mount on the host that shares a pod's lifetime. Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer supported.
-* @references io.k8s.api.core.v1.CephFSPersistentVolumeSource
+* fc represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
+* @references io.k8s.api.core.v1.FCVolumeSource
 */
-cephfs?: io_k8s_api_core_v1_CephFSPersistentVolumeSource;
-/**
-* iscsi represents an ISCSI Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Provisioned by an admin.
-* @references io.k8s.api.core.v1.ISCSIPersistentVolumeSource
-*/
-iscsi?: io_k8s_api_core_v1_ISCSIPersistentVolumeSource;
+fc?: io_k8s_api_core_v1_FCVolumeSource;
 /**
 * persistentVolumeReclaimPolicy defines what happens to a persistent volume when released from its claim. Valid options are Retain (default for manually created PersistentVolumes), Delete (default for dynamically provisioned PersistentVolumes), and Recycle (deprecated). Recycle must be supported by the volume plugin underlying this PersistentVolume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#reclaiming
 
@@ -90,35 +63,10 @@ Possible enum values:
 */
 persistentVolumeReclaimPolicy?: 'Delete' | 'Recycle' | 'Retain';
 /**
-* fc represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
-* @references io.k8s.api.core.v1.FCVolumeSource
+* cephFS represents a Ceph FS mount on the host that shares a pod's lifetime. Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer supported.
+* @references io.k8s.api.core.v1.CephFSPersistentVolumeSource
 */
-fc?: io_k8s_api_core_v1_FCVolumeSource;
-/**
-* flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin. Deprecated: FlexVolume is deprecated. Consider using a CSIDriver instead.
-* @references io.k8s.api.core.v1.FlexPersistentVolumeSource
-*/
-flexVolume?: io_k8s_api_core_v1_FlexPersistentVolumeSource;
-/**
-* glusterfs represents a Glusterfs volume that is attached to a host and exposed to the pod. Provisioned by an admin. Deprecated: Glusterfs is deprecated and the in-tree glusterfs type is no longer supported. More info: https://examples.k8s.io/volumes/glusterfs/README.md
-* @references io.k8s.api.core.v1.GlusterfsPersistentVolumeSource
-*/
-glusterfs?: io_k8s_api_core_v1_GlusterfsPersistentVolumeSource;
-/**
-* hostPath represents a directory on the host. Provisioned by a developer or tester. This is useful for single-node development and testing only! On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
-* @references io.k8s.api.core.v1.HostPathVolumeSource
-*/
-hostPath?: io_k8s_api_core_v1_HostPathVolumeSource;
-/**
-* photonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine. Deprecated: PhotonPersistentDisk is deprecated and the in-tree photonPersistentDisk type is no longer supported.
-* @references io.k8s.api.core.v1.PhotonPersistentDiskVolumeSource
-*/
-photonPersistentDisk?: io_k8s_api_core_v1_PhotonPersistentDiskVolumeSource;
-/**
-* azureFile represents an Azure File Service mount on the host and bind mount to the pod. Deprecated: AzureFile is deprecated. All operations for the in-tree azureFile type are redirected to the file.csi.azure.com CSI driver.
-* @references io.k8s.api.core.v1.AzureFilePersistentVolumeSource
-*/
-azureFile?: io_k8s_api_core_v1_AzureFilePersistentVolumeSource;
+cephfs?: io_k8s_api_core_v1_CephFSPersistentVolumeSource;
 /**
 * quobyte represents a Quobyte mount on the host that shares a pod's lifetime. Deprecated: Quobyte is deprecated and the in-tree quobyte type is no longer supported.
 * @references io.k8s.api.core.v1.QuobyteVolumeSource
@@ -130,39 +78,91 @@ quobyte?: io_k8s_api_core_v1_QuobyteVolumeSource;
 */
 scaleIO?: io_k8s_api_core_v1_ScaleIOPersistentVolumeSource;
 /**
-* accessModes contains all ways the volume can be mounted. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes
-* @isArray
+* volumeMode defines if a volume is intended to be used with a formatted filesystem or to remain in raw block state. Value of Filesystem is implied when not included in spec.
+
+Possible enum values:
+ - `"Block"` means the volume will not be formatted with a filesystem and will remain a raw block device.
+ - `"Filesystem"` means the volume will be or is formatted with a filesystem.
 */
-accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[];
+volumeMode?: 'Block' | 'Filesystem';
 /**
-* capacity is the description of the persistent volume's resources and capacity. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity
+* hostPath represents a directory on the host. Provisioned by a developer or tester. This is useful for single-node development and testing only! On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
+* @references io.k8s.api.core.v1.HostPathVolumeSource
 */
-capacity?: Record<string, any>;
+hostPath?: io_k8s_api_core_v1_HostPathVolumeSource;
 /**
-* awsElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Deprecated: AWSElasticBlockStore is deprecated. All operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
-* @references io.k8s.api.core.v1.AWSElasticBlockStoreVolumeSource
+* gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Provisioned by an admin. Deprecated: GCEPersistentDisk is deprecated. All operations for the in-tree gcePersistentDisk type are redirected to the pd.csi.storage.gke.io CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
+* @references io.k8s.api.core.v1.GCEPersistentDiskVolumeSource
 */
-awsElasticBlockStore?: io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource;
+gcePersistentDisk?: io_k8s_api_core_v1_GCEPersistentDiskVolumeSource;
+/**
+* glusterfs represents a Glusterfs volume that is attached to a host and exposed to the pod. Provisioned by an admin. Deprecated: Glusterfs is deprecated and the in-tree glusterfs type is no longer supported. More info: https://examples.k8s.io/volumes/glusterfs/README.md
+* @references io.k8s.api.core.v1.GlusterfsPersistentVolumeSource
+*/
+glusterfs?: io_k8s_api_core_v1_GlusterfsPersistentVolumeSource;
 /**
 * local represents directly-attached storage with node affinity
 * @references io.k8s.api.core.v1.LocalVolumeSource
 */
 local?: io_k8s_api_core_v1_LocalVolumeSource;
 /**
+* nfs represents an NFS mount on the host. Provisioned by an admin. More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
+* @references io.k8s.api.core.v1.NFSVolumeSource
+*/
+nfs?: io_k8s_api_core_v1_NFSVolumeSource;
+/**
+* vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine. Deprecated: VsphereVolume is deprecated. All operations for the in-tree vsphereVolume type are redirected to the csi.vsphere.vmware.com CSI driver.
+* @references io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource
+*/
+vsphereVolume?: io_k8s_api_core_v1_VsphereVirtualDiskVolumeSource;
+/**
+* azureFile represents an Azure File Service mount on the host and bind mount to the pod. Deprecated: AzureFile is deprecated. All operations for the in-tree azureFile type are redirected to the file.csi.azure.com CSI driver.
+* @references io.k8s.api.core.v1.AzureFilePersistentVolumeSource
+*/
+azureFile?: io_k8s_api_core_v1_AzureFilePersistentVolumeSource;
+/**
+* capacity is the description of the persistent volume's resources and capacity. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity
+*/
+capacity?: Record<string, any>;
+/**
+* cinder represents a cinder volume attached and mounted on kubelets host machine. Deprecated: Cinder is deprecated. All operations for the in-tree cinder type are redirected to the cinder.csi.openstack.org CSI driver. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
+* @references io.k8s.api.core.v1.CinderPersistentVolumeSource
+*/
+cinder?: io_k8s_api_core_v1_CinderPersistentVolumeSource;
+/**
+* claimRef is part of a bi-directional binding between PersistentVolume and PersistentVolumeClaim. Expected to be non-nil when bound. claim.VolumeName is the authoritative bind between PV and PVC. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#binding
+* @references io.k8s.api.core.v1.ObjectReference
+*/
+claimRef?: io_k8s_api_core_v1_ObjectReference;
+/**
+* csi represents storage that is handled by an external CSI driver.
+* @references io.k8s.api.core.v1.CSIPersistentVolumeSource
+*/
+csi?: io_k8s_api_core_v1_CSIPersistentVolumeSource;
+/**
 * mountOptions is the list of mount options, e.g. ["ro", "soft"]. Not validated - mount will simply fail if one is invalid. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#mount-options
 * @isArray
 */
 mountOptions?: string[];
 /**
-* nodeAffinity defines constraints that limit what nodes this volume can be accessed from. This field influences the scheduling of pods that use this volume.
-* @references io.k8s.api.core.v1.VolumeNodeAffinity
+* awsElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Deprecated: AWSElasticBlockStore is deprecated. All operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
+* @references io.k8s.api.core.v1.AWSElasticBlockStoreVolumeSource
 */
-nodeAffinity?: io_k8s_api_core_v1_VolumeNodeAffinity;
+awsElasticBlockStore?: io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource;
 /**
-* rbd represents a Rados Block Device mount on the host that shares a pod's lifetime. Deprecated: RBD is deprecated and the in-tree rbd type is no longer supported. More info: https://examples.k8s.io/volumes/rbd/README.md
-* @references io.k8s.api.core.v1.RBDPersistentVolumeSource
+* azureDisk represents an Azure Data Disk mount on the host and bind mount to the pod. Deprecated: AzureDisk is deprecated. All operations for the in-tree azureDisk type are redirected to the disk.csi.azure.com CSI driver.
+* @references io.k8s.api.core.v1.AzureDiskVolumeSource
 */
-rbd?: io_k8s_api_core_v1_RBDPersistentVolumeSource;
+azureDisk?: io_k8s_api_core_v1_AzureDiskVolumeSource;
+/**
+* storageClassName is the name of StorageClass to which this persistent volume belongs. Empty value means that this volume does not belong to any StorageClass.
+*/
+storageClassName?: string;
+/**
+* accessModes contains all ways the volume can be mounted. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes
+* @isArray
+*/
+accessModes?: 'ReadOnlyMany' | 'ReadWriteMany' | 'ReadWriteOnce' | 'ReadWriteOncePod'[];
 }
 
 /**
@@ -172,37 +172,37 @@ rbd?: io_k8s_api_core_v1_RBDPersistentVolumeSource;
 */
 export function createio_k8s_api_core_v1_PersistentVolumeSpec(data?: Partial<io_k8s_api_core_v1_PersistentVolumeSpec>): io_k8s_api_core_v1_PersistentVolumeSpec {
  return {
-   nfs: data?.nfs !== undefined ? data.nfs : createio_k8s_api_core_v1_NFSVolumeSource(),
-   storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
-   storageos: data?.storageos !== undefined ? data.storageos : createio_k8s_api_core_v1_StorageOSPersistentVolumeSource(),
+   rbd: data?.rbd !== undefined ? data.rbd : createio_k8s_api_core_v1_RBDPersistentVolumeSource(),
    volumeAttributesClassName: data?.volumeAttributesClassName !== undefined ? data.volumeAttributesClassName : '',
-   cinder: data?.cinder !== undefined ? data.cinder : createio_k8s_api_core_v1_CinderPersistentVolumeSource(),
-   csi: data?.csi !== undefined ? data.csi : createio_k8s_api_core_v1_CSIPersistentVolumeSource(),
-   flocker: data?.flocker !== undefined ? data.flocker : createio_k8s_api_core_v1_FlockerVolumeSource(),
-   volumeMode: data?.volumeMode !== undefined ? data.volumeMode : '',
-   azureDisk: data?.azureDisk !== undefined ? data.azureDisk : createio_k8s_api_core_v1_AzureDiskVolumeSource(),
-   claimRef: data?.claimRef !== undefined ? data.claimRef : createio_k8s_api_core_v1_ObjectReference(),
-   gcePersistentDisk: data?.gcePersistentDisk !== undefined ? data.gcePersistentDisk : createio_k8s_api_core_v1_GCEPersistentDiskVolumeSource(),
-   portworxVolume: data?.portworxVolume !== undefined ? data.portworxVolume : createio_k8s_api_core_v1_PortworxVolumeSource(),
-   vsphereVolume: data?.vsphereVolume !== undefined ? data.vsphereVolume : createio_k8s_api_core_v1_VsphereVirtualDiskVolumeSource(),
-   cephfs: data?.cephfs !== undefined ? data.cephfs : createio_k8s_api_core_v1_CephFSPersistentVolumeSource(),
    iscsi: data?.iscsi !== undefined ? data.iscsi : createio_k8s_api_core_v1_ISCSIPersistentVolumeSource(),
-   persistentVolumeReclaimPolicy: data?.persistentVolumeReclaimPolicy !== undefined ? data.persistentVolumeReclaimPolicy : '',
-   fc: data?.fc !== undefined ? data.fc : createio_k8s_api_core_v1_FCVolumeSource(),
    flexVolume: data?.flexVolume !== undefined ? data.flexVolume : createio_k8s_api_core_v1_FlexPersistentVolumeSource(),
-   glusterfs: data?.glusterfs !== undefined ? data.glusterfs : createio_k8s_api_core_v1_GlusterfsPersistentVolumeSource(),
-   hostPath: data?.hostPath !== undefined ? data.hostPath : createio_k8s_api_core_v1_HostPathVolumeSource(),
+   flocker: data?.flocker !== undefined ? data.flocker : createio_k8s_api_core_v1_FlockerVolumeSource(),
+   nodeAffinity: data?.nodeAffinity !== undefined ? data.nodeAffinity : createio_k8s_api_core_v1_VolumeNodeAffinity(),
    photonPersistentDisk: data?.photonPersistentDisk !== undefined ? data.photonPersistentDisk : createio_k8s_api_core_v1_PhotonPersistentDiskVolumeSource(),
-   azureFile: data?.azureFile !== undefined ? data.azureFile : createio_k8s_api_core_v1_AzureFilePersistentVolumeSource(),
+   portworxVolume: data?.portworxVolume !== undefined ? data.portworxVolume : createio_k8s_api_core_v1_PortworxVolumeSource(),
+   storageos: data?.storageos !== undefined ? data.storageos : createio_k8s_api_core_v1_StorageOSPersistentVolumeSource(),
+   fc: data?.fc !== undefined ? data.fc : createio_k8s_api_core_v1_FCVolumeSource(),
+   persistentVolumeReclaimPolicy: data?.persistentVolumeReclaimPolicy !== undefined ? data.persistentVolumeReclaimPolicy : '',
+   cephfs: data?.cephfs !== undefined ? data.cephfs : createio_k8s_api_core_v1_CephFSPersistentVolumeSource(),
    quobyte: data?.quobyte !== undefined ? data.quobyte : createio_k8s_api_core_v1_QuobyteVolumeSource(),
    scaleIO: data?.scaleIO !== undefined ? data.scaleIO : createio_k8s_api_core_v1_ScaleIOPersistentVolumeSource(),
-   accessModes: data?.accessModes !== undefined ? data.accessModes : [],
-   capacity: data?.capacity !== undefined ? data.capacity : {},
-   awsElasticBlockStore: data?.awsElasticBlockStore !== undefined ? data.awsElasticBlockStore : createio_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource(),
+   volumeMode: data?.volumeMode !== undefined ? data.volumeMode : '',
+   hostPath: data?.hostPath !== undefined ? data.hostPath : createio_k8s_api_core_v1_HostPathVolumeSource(),
+   gcePersistentDisk: data?.gcePersistentDisk !== undefined ? data.gcePersistentDisk : createio_k8s_api_core_v1_GCEPersistentDiskVolumeSource(),
+   glusterfs: data?.glusterfs !== undefined ? data.glusterfs : createio_k8s_api_core_v1_GlusterfsPersistentVolumeSource(),
    local: data?.local !== undefined ? data.local : createio_k8s_api_core_v1_LocalVolumeSource(),
+   nfs: data?.nfs !== undefined ? data.nfs : createio_k8s_api_core_v1_NFSVolumeSource(),
+   vsphereVolume: data?.vsphereVolume !== undefined ? data.vsphereVolume : createio_k8s_api_core_v1_VsphereVirtualDiskVolumeSource(),
+   azureFile: data?.azureFile !== undefined ? data.azureFile : createio_k8s_api_core_v1_AzureFilePersistentVolumeSource(),
+   capacity: data?.capacity !== undefined ? data.capacity : {},
+   cinder: data?.cinder !== undefined ? data.cinder : createio_k8s_api_core_v1_CinderPersistentVolumeSource(),
+   claimRef: data?.claimRef !== undefined ? data.claimRef : createio_k8s_api_core_v1_ObjectReference(),
+   csi: data?.csi !== undefined ? data.csi : createio_k8s_api_core_v1_CSIPersistentVolumeSource(),
    mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
-   nodeAffinity: data?.nodeAffinity !== undefined ? data.nodeAffinity : createio_k8s_api_core_v1_VolumeNodeAffinity(),
-   rbd: data?.rbd !== undefined ? data.rbd : createio_k8s_api_core_v1_RBDPersistentVolumeSource(),
+   awsElasticBlockStore: data?.awsElasticBlockStore !== undefined ? data.awsElasticBlockStore : createio_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource(),
+   azureDisk: data?.azureDisk !== undefined ? data.azureDisk : createio_k8s_api_core_v1_AzureDiskVolumeSource(),
+   storageClassName: data?.storageClassName !== undefined ? data.storageClassName : '',
+   accessModes: data?.accessModes !== undefined ? data.accessModes : [],
  };
 }
 // Required imports

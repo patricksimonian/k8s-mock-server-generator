@@ -5,20 +5,6 @@
 */
 export interface io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec {
 /**
-* MatchResources declares what resources match this binding and will be validated by it. Note that this is intersected with the policy's matchConstraints, so only requests that are matched by the policy can be selected by this. If this is unset, all resources matched by the policy are validated by this binding When resourceRules is unset, it does not constrain resource matching. If a resource is matched by the other fields of this object, it will be validated. Note that this is differs from ValidatingAdmissionPolicy matchConstraints, where resourceRules are required.
-* @references io.k8s.api.admissionregistration.v1.MatchResources
-*/
-matchResources?: io_k8s_api_admissionregistration_v1_MatchResources;
-/**
-* paramRef specifies the parameter resource used to configure the admission control policy. It should point to a resource of the type specified in ParamKind of the bound ValidatingAdmissionPolicy. If the policy specifies a ParamKind and the resource referred to by ParamRef does not exist, this binding is considered mis-configured and the FailurePolicy of the ValidatingAdmissionPolicy applied. If the policy does not specify a ParamKind then this field is ignored, and the rules are evaluated without a param.
-* @references io.k8s.api.admissionregistration.v1.ParamRef
-*/
-paramRef?: io_k8s_api_admissionregistration_v1_ParamRef;
-/**
-* PolicyName references a ValidatingAdmissionPolicy name which the ValidatingAdmissionPolicyBinding binds to. If the referenced resource does not exist, this binding is considered invalid and will be ignored Required.
-*/
-policyName?: string;
-/**
 * validationActions declares how Validations of the referenced ValidatingAdmissionPolicy are enforced. If a validation evaluates to false it is always enforced according to these actions.
 
 Failures defined by the ValidatingAdmissionPolicy's FailurePolicy are enforced according to these actions only if the FailurePolicy is set to Fail, otherwise the failures are ignored. This includes compilation errors, runtime errors and misconfigurations of the policy.
@@ -41,6 +27,20 @@ Required.
 * @isArray
 */
 validationActions?: 'Audit' | 'Deny' | 'Warn'[];
+/**
+* MatchResources declares what resources match this binding and will be validated by it. Note that this is intersected with the policy's matchConstraints, so only requests that are matched by the policy can be selected by this. If this is unset, all resources matched by the policy are validated by this binding When resourceRules is unset, it does not constrain resource matching. If a resource is matched by the other fields of this object, it will be validated. Note that this is differs from ValidatingAdmissionPolicy matchConstraints, where resourceRules are required.
+* @references io.k8s.api.admissionregistration.v1.MatchResources
+*/
+matchResources?: io_k8s_api_admissionregistration_v1_MatchResources;
+/**
+* paramRef specifies the parameter resource used to configure the admission control policy. It should point to a resource of the type specified in ParamKind of the bound ValidatingAdmissionPolicy. If the policy specifies a ParamKind and the resource referred to by ParamRef does not exist, this binding is considered mis-configured and the FailurePolicy of the ValidatingAdmissionPolicy applied. If the policy does not specify a ParamKind then this field is ignored, and the rules are evaluated without a param.
+* @references io.k8s.api.admissionregistration.v1.ParamRef
+*/
+paramRef?: io_k8s_api_admissionregistration_v1_ParamRef;
+/**
+* PolicyName references a ValidatingAdmissionPolicy name which the ValidatingAdmissionPolicyBinding binds to. If the referenced resource does not exist, this binding is considered invalid and will be ignored Required.
+*/
+policyName?: string;
 }
 
 /**
@@ -50,10 +50,10 @@ validationActions?: 'Audit' | 'Deny' | 'Warn'[];
 */
 export function createio_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec(data?: Partial<io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec>): io_k8s_api_admissionregistration_v1_ValidatingAdmissionPolicyBindingSpec {
  return {
+   validationActions: data?.validationActions !== undefined ? data.validationActions : [],
    matchResources: data?.matchResources !== undefined ? data.matchResources : createio_k8s_api_admissionregistration_v1_MatchResources(),
    paramRef: data?.paramRef !== undefined ? data.paramRef : createio_k8s_api_admissionregistration_v1_ParamRef(),
    policyName: data?.policyName !== undefined ? data.policyName : '',
-   validationActions: data?.validationActions !== undefined ? data.validationActions : [],
  };
 }
 // Required imports

@@ -5,6 +5,10 @@
 */
 export interface io_k8s_api_authentication_v1_BoundObjectReference {
 /**
+* UID of the referent.
+*/
+uid?: string;
+/**
 * API version of the referent.
 */
 apiVersion?: string;
@@ -16,10 +20,6 @@ kind?: string;
 * Name of the referent.
 */
 name?: string;
-/**
-* UID of the referent.
-*/
-uid?: string;
 }
 
 /**
@@ -29,9 +29,9 @@ uid?: string;
 */
 export function createio_k8s_api_authentication_v1_BoundObjectReference(data?: Partial<io_k8s_api_authentication_v1_BoundObjectReference>): io_k8s_api_authentication_v1_BoundObjectReference {
  return {
+   uid: data?.uid !== undefined ? data.uid : '',
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    name: data?.name !== undefined ? data.name : '',
-   uid: data?.uid !== undefined ? data.uid : '',
  };
 }

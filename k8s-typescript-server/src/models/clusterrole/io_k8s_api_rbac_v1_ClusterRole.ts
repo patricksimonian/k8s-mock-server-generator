@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_rbac_v1_ClusterRole {
 /**
-* Rules holds all the PolicyRules for this ClusterRole
-* @isArray
-*/
-rules?: io_k8s_api_rbac_v1_PolicyRule[];
-/**
 * AggregationRule is an optional field that describes how to build the Rules for this ClusterRole. If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be stomped by the controller.
 * @references io.k8s.api.rbac.v1.AggregationRule
 */
@@ -27,6 +22,11 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
+/**
+* Rules holds all the PolicyRules for this ClusterRole
+* @isArray
+*/
+rules?: io_k8s_api_rbac_v1_PolicyRule[];
 }
 
 /**
@@ -36,11 +36,11 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 */
 export function createio_k8s_api_rbac_v1_ClusterRole(data?: Partial<io_k8s_api_rbac_v1_ClusterRole>): io_k8s_api_rbac_v1_ClusterRole {
  return {
-   rules: data?.rules !== undefined ? data.rules : [],
    aggregationRule: data?.aggregationRule !== undefined ? data.aggregationRule : createio_k8s_api_rbac_v1_AggregationRule(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
+   rules: data?.rules !== undefined ? data.rules : [],
  };
 }
 // Required imports

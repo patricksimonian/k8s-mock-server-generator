@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_apps_v1_ReplicaSetStatus {
 /**
+* Replicas is the most recently observed number of replicas. More info: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/#what-is-a-replicationcontroller
+* @required
+*/
+replicas: number;
+/**
 * The number of available replicas (ready for at least minReadySeconds) for this replica set.
 */
 availableReplicas?: number;
@@ -25,11 +30,6 @@ observedGeneration?: number;
 * readyReplicas is the number of pods targeted by this ReplicaSet with a Ready Condition.
 */
 readyReplicas?: number;
-/**
-* Replicas is the most recently observed number of replicas. More info: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/#what-is-a-replicationcontroller
-* @required
-*/
-replicas: number;
 }
 
 /**
@@ -39,12 +39,12 @@ replicas: number;
 */
 export function createio_k8s_api_apps_v1_ReplicaSetStatus(data?: Partial<io_k8s_api_apps_v1_ReplicaSetStatus>): io_k8s_api_apps_v1_ReplicaSetStatus {
  return {
+   replicas: data?.replicas !== undefined ? data.replicas : 0,
    availableReplicas: data?.availableReplicas !== undefined ? data.availableReplicas : 0,
    conditions: data?.conditions !== undefined ? data.conditions : [],
    fullyLabeledReplicas: data?.fullyLabeledReplicas !== undefined ? data.fullyLabeledReplicas : 0,
    observedGeneration: data?.observedGeneration !== undefined ? data.observedGeneration : 0,
    readyReplicas: data?.readyReplicas !== undefined ? data.readyReplicas : 0,
-   replicas: data?.replicas !== undefined ? data.replicas : 0,
  };
 }
 // Required imports

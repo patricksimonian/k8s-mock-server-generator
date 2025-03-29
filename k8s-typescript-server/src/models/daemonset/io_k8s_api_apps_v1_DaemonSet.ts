@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DaemonSet {
 /**
-* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
-*/
-metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
 * The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 * @references io.k8s.api.apps.v1.DaemonSetSpec
 */
@@ -27,6 +22,11 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+*/
+metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 }
 
 /**
@@ -36,11 +36,11 @@ kind?: string;
 */
 export function createio_k8s_api_apps_v1_DaemonSet(data?: Partial<io_k8s_api_apps_v1_DaemonSet>): io_k8s_api_apps_v1_DaemonSet {
  return {
-   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    spec: data?.spec !== undefined ? data.spec : createio_k8s_api_apps_v1_DaemonSetSpec(),
    status: data?.status !== undefined ? data.status : createio_k8s_api_apps_v1_DaemonSetStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
  };
 }
 // Required imports

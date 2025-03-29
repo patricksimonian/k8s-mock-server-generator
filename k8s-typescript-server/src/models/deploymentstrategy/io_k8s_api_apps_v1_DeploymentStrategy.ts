@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentStrategy {
 /**
-* Rolling update config params. Present only if DeploymentStrategyType = RollingUpdate.
-* @references io.k8s.api.apps.v1.RollingUpdateDeployment
-*/
-rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateDeployment;
-/**
 * Type of deployment. Can be "Recreate" or "RollingUpdate". Default is RollingUpdate.
 
 Possible enum values:
@@ -17,6 +12,11 @@ Possible enum values:
  - `"RollingUpdate"` Replace the old ReplicaSets by new one using rolling update i.e gradually scale down the old ReplicaSets and scale up the new one.
 */
 type?: 'Recreate' | 'RollingUpdate';
+/**
+* Rolling update config params. Present only if DeploymentStrategyType = RollingUpdate.
+* @references io.k8s.api.apps.v1.RollingUpdateDeployment
+*/
+rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateDeployment;
 }
 
 /**
@@ -26,8 +26,8 @@ type?: 'Recreate' | 'RollingUpdate';
 */
 export function createio_k8s_api_apps_v1_DeploymentStrategy(data?: Partial<io_k8s_api_apps_v1_DeploymentStrategy>): io_k8s_api_apps_v1_DeploymentStrategy {
  return {
-   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateDeployment(),
    type: data?.type !== undefined ? data.type : '',
+   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateDeployment(),
  };
 }
 // Required imports

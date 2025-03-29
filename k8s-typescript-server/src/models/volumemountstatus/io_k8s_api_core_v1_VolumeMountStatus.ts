@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_core_v1_VolumeMountStatus {
 /**
-* Name corresponds to the name of the original VolumeMount.
-* @required
-*/
-name: string;
-/**
 * ReadOnly corresponds to the original VolumeMount.
 */
 readOnly?: boolean;
@@ -22,6 +17,11 @@ recursiveReadOnly?: string;
 * @required
 */
 mountPath: string;
+/**
+* Name corresponds to the name of the original VolumeMount.
+* @required
+*/
+name: string;
 }
 
 /**
@@ -31,9 +31,9 @@ mountPath: string;
 */
 export function createio_k8s_api_core_v1_VolumeMountStatus(data?: Partial<io_k8s_api_core_v1_VolumeMountStatus>): io_k8s_api_core_v1_VolumeMountStatus {
  return {
-   name: data?.name !== undefined ? data.name : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    recursiveReadOnly: data?.recursiveReadOnly !== undefined ? data.recursiveReadOnly : '',
    mountPath: data?.mountPath !== undefined ? data.mountPath : '',
+   name: data?.name !== undefined ? data.name : '',
  };
 }

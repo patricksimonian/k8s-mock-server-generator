@@ -259,7 +259,6 @@ func (g *Generator) createTemplateFuncMap() template.FuncMap {
 		},
 		"getSubresource": func(path string) string {
 			segments := strings.Split(path, "/")
-			fmt.Printf("subResource: \n %v", segments[len(segments)-1])
 			return segments[len(segments)-1]
 		},
 		"getDefaultValue": func(schema ir.Schema) string {
@@ -516,7 +515,7 @@ func (g *Generator) Generate() error {
 
 		// 2) Copy the file from config.OpenAPISpecPath to "openapi/openapi.json"
 		dstPath := filepath.Join(openapiDir, "openapi.json")
-		if err := helpers.CopyFile(g.Config.OpenAPISpecPath, dstPath); err != nil {
+		if err := helpers.StripProtoBufFromFile(g.Config.OpenAPISpecPath, dstPath); err != nil {
 			return fmt.Errorf("failed to copy OpenAPI spec: %w", err)
 		}
 
@@ -1357,7 +1356,10 @@ func (g *Generator) generateEndpointRoutes() error {
 	// Process endpoints and group by resource type
 	for _, endpoint := range g.IR.Endpoints {
 		if endpoint.ResourceType == "node" {
-			fmt.Printf("nodes being processed method: %v, endpoint: %v, namespaced: %v \n", endpoint.Method, endpoint.Path, endpoint.Namespaced)
+			// fmt.Printf("nodes being processed method: %v, endpoint: %v, namespaced: %v,\n\n Params: %+v \n\n", endpoint.Method, endpoint.Path, endpoint.Namespaced, endpoint.Parameters)
+		}
+		if endpoint.ResourceType == "namespace" {
+			fmt.Printf("namespace being processed method: %v, endpoint: %v, namespaced: %v,\n\n Params: %+v \n\n", endpoint.Method, endpoint.Path, endpoint.Namespaced, endpoint.Parameters)
 		}
 		// Skip discovery endpoints as they are handled separately
 		if endpoint.ResourceType == "discovery" {

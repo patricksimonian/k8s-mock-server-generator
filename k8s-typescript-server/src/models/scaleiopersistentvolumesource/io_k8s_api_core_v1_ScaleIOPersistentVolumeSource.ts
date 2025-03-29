@@ -5,28 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ScaleIOPersistentVolumeSource {
 /**
-* storageMode indicates whether the storage for a volume should be ThickProvisioned or ThinProvisioned. Default is ThinProvisioned.
-*/
-storageMode?: string;
-/**
-* protectionDomain is the name of the ScaleIO Protection Domain for the configured storage.
-*/
-protectionDomain?: string;
-/**
-* secretRef references to the secret for ScaleIO user and other sensitive information. If this is not provided, Login operation will fail.
-* @required
-* @references io.k8s.api.core.v1.SecretReference
-*/
-secretRef: io_k8s_api_core_v1_SecretReference;
-/**
-* sslEnabled is the flag to enable/disable SSL communication with Gateway, default false
-*/
-sslEnabled?: boolean;
-/**
-* storagePool is the ScaleIO Storage Pool associated with the protection domain.
-*/
-storagePool?: string;
-/**
 * system is the name of the storage system as configured in ScaleIO.
 * @required
 */
@@ -40,14 +18,36 @@ volumeName?: string;
 */
 fsType?: string;
 /**
+* readOnly defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
+*/
+readOnly?: boolean;
+/**
+* secretRef references to the secret for ScaleIO user and other sensitive information. If this is not provided, Login operation will fail.
+* @required
+* @references io.k8s.api.core.v1.SecretReference
+*/
+secretRef: io_k8s_api_core_v1_SecretReference;
+/**
+* sslEnabled is the flag to enable/disable SSL communication with Gateway, default false
+*/
+sslEnabled?: boolean;
+/**
 * gateway is the host address of the ScaleIO API Gateway.
 * @required
 */
 gateway: string;
 /**
-* readOnly defaults to false (read/write). ReadOnly here will force the ReadOnly setting in VolumeMounts.
+* protectionDomain is the name of the ScaleIO Protection Domain for the configured storage.
 */
-readOnly?: boolean;
+protectionDomain?: string;
+/**
+* storageMode indicates whether the storage for a volume should be ThickProvisioned or ThinProvisioned. Default is ThinProvisioned.
+*/
+storageMode?: string;
+/**
+* storagePool is the ScaleIO Storage Pool associated with the protection domain.
+*/
+storagePool?: string;
 }
 
 /**
@@ -57,16 +57,16 @@ readOnly?: boolean;
 */
 export function createio_k8s_api_core_v1_ScaleIOPersistentVolumeSource(data?: Partial<io_k8s_api_core_v1_ScaleIOPersistentVolumeSource>): io_k8s_api_core_v1_ScaleIOPersistentVolumeSource {
  return {
-   storageMode: data?.storageMode !== undefined ? data.storageMode : '',
-   protectionDomain: data?.protectionDomain !== undefined ? data.protectionDomain : '',
-   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretReference(),
-   sslEnabled: data?.sslEnabled !== undefined ? data.sslEnabled : false,
-   storagePool: data?.storagePool !== undefined ? data.storagePool : '',
    system: data?.system !== undefined ? data.system : '',
    volumeName: data?.volumeName !== undefined ? data.volumeName : '',
    fsType: data?.fsType !== undefined ? data.fsType : '',
-   gateway: data?.gateway !== undefined ? data.gateway : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretReference(),
+   sslEnabled: data?.sslEnabled !== undefined ? data.sslEnabled : false,
+   gateway: data?.gateway !== undefined ? data.gateway : '',
+   protectionDomain: data?.protectionDomain !== undefined ? data.protectionDomain : '',
+   storageMode: data?.storageMode !== undefined ? data.storageMode : '',
+   storagePool: data?.storagePool !== undefined ? data.storagePool : '',
  };
 }
 // Required imports

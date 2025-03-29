@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_apps_v1_StatefulSetCondition {
 /**
+* Status of the condition, one of True, False, Unknown.
+* @required
+*/
+status: string;
+/**
+* Type of statefulset condition.
+* @required
+*/
+type: string;
+/**
 * Last time the condition transitioned from one status to another.
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
@@ -17,16 +27,6 @@ message?: string;
 * The reason for the condition's last transition.
 */
 reason?: string;
-/**
-* Status of the condition, one of True, False, Unknown.
-* @required
-*/
-status: string;
-/**
-* Type of statefulset condition.
-* @required
-*/
-type: string;
 }
 
 /**
@@ -36,11 +36,11 @@ type: string;
 */
 export function createio_k8s_api_apps_v1_StatefulSetCondition(data?: Partial<io_k8s_api_apps_v1_StatefulSetCondition>): io_k8s_api_apps_v1_StatefulSetCondition {
  return {
+   status: data?.status !== undefined ? data.status : '',
+   type: data?.type !== undefined ? data.type : '',
    lastTransitionTime: data?.lastTransitionTime !== undefined ? data.lastTransitionTime : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
-   status: data?.status !== undefined ? data.status : '',
-   type: data?.type !== undefined ? data.type : '',
  };
 }
 // Required imports

@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_discovery_v1_EndpointSlice {
 /**
-* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-*/
-apiVersion?: string;
-/**
 * endpoints is a list of unique endpoints in this slice. Each slice may include a maximum of 1000 endpoints.
 * @required
 * @isArray
@@ -38,6 +34,10 @@ Possible enum values:
 * @required
 */
 addressType: 'FQDN' | 'IPv4' | 'IPv6';
+/**
+* APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+*/
+apiVersion?: string;
 }
 
 /**
@@ -47,12 +47,12 @@ addressType: 'FQDN' | 'IPv4' | 'IPv6';
 */
 export function createio_k8s_api_discovery_v1_EndpointSlice(data?: Partial<io_k8s_api_discovery_v1_EndpointSlice>): io_k8s_api_discovery_v1_EndpointSlice {
  return {
-   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    endpoints: data?.endpoints !== undefined ? data.endpoints : [],
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    ports: data?.ports !== undefined ? data.ports : [],
    addressType: data?.addressType !== undefined ? data.addressType : '',
+   apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
  };
 }
 // Required imports

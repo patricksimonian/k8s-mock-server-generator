@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_networking_v1_IngressPortStatus {
 /**
+* port is the port number of the ingress port.
+* @required
+*/
+port: number;
+/**
 * protocol is the protocol of the ingress port. The supported values are: "TCP", "UDP", "SCTP"
 
 Possible enum values:
@@ -21,11 +26,6 @@ protocol: 'SCTP' | 'TCP' | 'UDP';
   format foo.example.com/CamelCase.
 */
 error?: string;
-/**
-* port is the port number of the ingress port.
-* @required
-*/
-port: number;
 }
 
 /**
@@ -35,8 +35,8 @@ port: number;
 */
 export function createio_k8s_api_networking_v1_IngressPortStatus(data?: Partial<io_k8s_api_networking_v1_IngressPortStatus>): io_k8s_api_networking_v1_IngressPortStatus {
  return {
+   port: data?.port !== undefined ? data.port : 0,
    protocol: data?.protocol !== undefined ? data.protocol : '',
    error: data?.error !== undefined ? data.error : '',
-   port: data?.port !== undefined ? data.port : 0,
  };
 }

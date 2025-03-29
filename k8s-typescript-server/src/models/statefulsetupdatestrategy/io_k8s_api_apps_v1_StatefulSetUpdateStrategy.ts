@@ -5,11 +5,6 @@
 */
 export interface io_k8s_api_apps_v1_StatefulSetUpdateStrategy {
 /**
-* RollingUpdate is used to communicate parameters when Type is RollingUpdateStatefulSetStrategyType.
-* @references io.k8s.api.apps.v1.RollingUpdateStatefulSetStrategy
-*/
-rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy;
-/**
 * Type indicates the type of the StatefulSetUpdateStrategy. Default is RollingUpdate.
 
 Possible enum values:
@@ -17,6 +12,11 @@ Possible enum values:
  - `"RollingUpdate"` indicates that update will be applied to all Pods in the StatefulSet with respect to the StatefulSet ordering constraints. When a scale operation is performed with this strategy, new Pods will be created from the specification version indicated by the StatefulSet's updateRevision.
 */
 type?: 'OnDelete' | 'RollingUpdate';
+/**
+* RollingUpdate is used to communicate parameters when Type is RollingUpdateStatefulSetStrategyType.
+* @references io.k8s.api.apps.v1.RollingUpdateStatefulSetStrategy
+*/
+rollingUpdate?: io_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy;
 }
 
 /**
@@ -26,8 +26,8 @@ type?: 'OnDelete' | 'RollingUpdate';
 */
 export function createio_k8s_api_apps_v1_StatefulSetUpdateStrategy(data?: Partial<io_k8s_api_apps_v1_StatefulSetUpdateStrategy>): io_k8s_api_apps_v1_StatefulSetUpdateStrategy {
  return {
-   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy(),
    type: data?.type !== undefined ? data.type : '',
+   rollingUpdate: data?.rollingUpdate !== undefined ? data.rollingUpdate : createio_k8s_api_apps_v1_RollingUpdateStatefulSetStrategy(),
  };
 }
 // Required imports

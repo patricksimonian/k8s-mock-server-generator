@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_EnvFromSource {
 /**
+* The Secret to select from
+* @references io.k8s.api.core.v1.SecretEnvSource
+*/
+secretRef?: io_k8s_api_core_v1_SecretEnvSource;
+/**
 * The ConfigMap to select from
 * @references io.k8s.api.core.v1.ConfigMapEnvSource
 */
@@ -13,11 +18,6 @@ configMapRef?: io_k8s_api_core_v1_ConfigMapEnvSource;
 * An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
 */
 prefix?: string;
-/**
-* The Secret to select from
-* @references io.k8s.api.core.v1.SecretEnvSource
-*/
-secretRef?: io_k8s_api_core_v1_SecretEnvSource;
 }
 
 /**
@@ -27,9 +27,9 @@ secretRef?: io_k8s_api_core_v1_SecretEnvSource;
 */
 export function createio_k8s_api_core_v1_EnvFromSource(data?: Partial<io_k8s_api_core_v1_EnvFromSource>): io_k8s_api_core_v1_EnvFromSource {
  return {
+   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretEnvSource(),
    configMapRef: data?.configMapRef !== undefined ? data.configMapRef : createio_k8s_api_core_v1_ConfigMapEnvSource(),
    prefix: data?.prefix !== undefined ? data.prefix : '',
-   secretRef: data?.secretRef !== undefined ? data.secretRef : createio_k8s_api_core_v1_SecretEnvSource(),
  };
 }
 // Required imports

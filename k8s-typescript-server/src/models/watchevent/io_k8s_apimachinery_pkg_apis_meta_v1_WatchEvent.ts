@@ -5,6 +5,11 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent {
 /**
+* 
+* @required
+*/
+type: string;
+/**
 * Object is:
  * If Type is Added or Modified: the new state of the object.
  * If Type is Deleted: the state of the object immediately before deletion.
@@ -14,11 +19,6 @@ export interface io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent {
 * @references io.k8s.apimachinery.pkg.runtime.RawExtension
 */
 object: io_k8s_apimachinery_pkg_runtime_RawExtension;
-/**
-* 
-* @required
-*/
-type: string;
 }
 
 /**
@@ -28,8 +28,8 @@ type: string;
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent>): io_k8s_apimachinery_pkg_apis_meta_v1_WatchEvent {
  return {
-   object: data?.object !== undefined ? data.object : createio_k8s_apimachinery_pkg_runtime_RawExtension(),
    type: data?.type !== undefined ? data.type : '',
+   object: data?.object !== undefined ? data.object : createio_k8s_apimachinery_pkg_runtime_RawExtension(),
  };
 }
 // Required imports

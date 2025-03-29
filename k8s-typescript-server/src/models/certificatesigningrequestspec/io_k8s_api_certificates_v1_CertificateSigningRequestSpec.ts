@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_certificates_v1_CertificateSigningRequestSpec {
 /**
+* groups contains group membership of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.
+* @isArray
+*/
+groups?: string[];
+/**
+* request contains an x509 certificate signing request encoded in a "CERTIFICATE REQUEST" PEM block. When serialized as JSON or YAML, the data is additionally base64-encoded.
+* @required
+*/
+request: string;
+/**
 * signerName indicates the requested signer, and is a qualified name.
 
 List/watch requests for CertificateSigningRequests can filter on this field using a "spec.signerName=NAME" fieldSelector.
@@ -74,16 +84,6 @@ expirationSeconds?: number;
 * extra contains extra attributes of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.
 */
 extra?: Record<string, any>;
-/**
-* groups contains group membership of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.
-* @isArray
-*/
-groups?: string[];
-/**
-* request contains an x509 certificate signing request encoded in a "CERTIFICATE REQUEST" PEM block. When serialized as JSON or YAML, the data is additionally base64-encoded.
-* @required
-*/
-request: string;
 }
 
 /**
@@ -93,13 +93,13 @@ request: string;
 */
 export function createio_k8s_api_certificates_v1_CertificateSigningRequestSpec(data?: Partial<io_k8s_api_certificates_v1_CertificateSigningRequestSpec>): io_k8s_api_certificates_v1_CertificateSigningRequestSpec {
  return {
+   groups: data?.groups !== undefined ? data.groups : [],
+   request: data?.request !== undefined ? data.request : '',
    signerName: data?.signerName !== undefined ? data.signerName : '',
    uid: data?.uid !== undefined ? data.uid : '',
    usages: data?.usages !== undefined ? data.usages : [],
    username: data?.username !== undefined ? data.username : '',
    expirationSeconds: data?.expirationSeconds !== undefined ? data.expirationSeconds : 0,
    extra: data?.extra !== undefined ? data.extra : {},
-   groups: data?.groups !== undefined ? data.groups : [],
-   request: data?.request !== undefined ? data.request : '',
  };
 }

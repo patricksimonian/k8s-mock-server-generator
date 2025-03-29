@@ -5,22 +5,6 @@
 */
 export interface io_k8s_api_storage_v1_CSIDriverSpec {
 /**
-* requiresRepublish indicates the CSI driver wants `NodePublishVolume` being periodically called to reflect any possible change in the mounted volume. This field defaults to false.
-
-Note: After a successful initial NodePublishVolume call, subsequent calls to NodePublishVolume should only update the contents of the volume. New mount points will not be seen by a running container.
-*/
-requiresRepublish?: boolean;
-/**
-* seLinuxMount specifies if the CSI driver supports "-o context" mount option.
-
-When "true", the CSI driver must ensure that all volumes provided by this CSI driver can be mounted separately with different `-o context` options. This is typical for storage backends that provide volumes as filesystems on block devices or as independent shared volumes. Kubernetes will call NodeStage / NodePublish with "-o context=xyz" mount option when mounting a ReadWriteOncePod volume used in Pod that has explicitly set SELinux context. In the future, it may be expanded to other volume AccessModes. In any case, Kubernetes will ensure that the volume is mounted only with a single SELinux context.
-
-When "false", Kubernetes won't pass any special SELinux mount options to the driver. This is typical for volumes that represent subdirectories of a bigger shared filesystem.
-
-Default is "false".
-*/
-seLinuxMount?: boolean;
-/**
 * storageCapacity indicates that the CSI volume driver wants pod scheduling to consider the storage capacity that the driver deployment will report by creating CSIStorageCapacity objects with capacity information, if set to true.
 
 The check can be enabled immediately when deploying a driver. In that case, provisioning new volumes with late binding will pause until the driver deployment has published some suitable CSIStorageCapacity object.
@@ -81,6 +65,22 @@ The following VolumeContext will be passed if podInfoOnMount is set to true. Thi
 This field was immutable in Kubernetes < 1.29 and now is mutable.
 */
 podInfoOnMount?: boolean;
+/**
+* requiresRepublish indicates the CSI driver wants `NodePublishVolume` being periodically called to reflect any possible change in the mounted volume. This field defaults to false.
+
+Note: After a successful initial NodePublishVolume call, subsequent calls to NodePublishVolume should only update the contents of the volume. New mount points will not be seen by a running container.
+*/
+requiresRepublish?: boolean;
+/**
+* seLinuxMount specifies if the CSI driver supports "-o context" mount option.
+
+When "true", the CSI driver must ensure that all volumes provided by this CSI driver can be mounted separately with different `-o context` options. This is typical for storage backends that provide volumes as filesystems on block devices or as independent shared volumes. Kubernetes will call NodeStage / NodePublish with "-o context=xyz" mount option when mounting a ReadWriteOncePod volume used in Pod that has explicitly set SELinux context. In the future, it may be expanded to other volume AccessModes. In any case, Kubernetes will ensure that the volume is mounted only with a single SELinux context.
+
+When "false", Kubernetes won't pass any special SELinux mount options to the driver. This is typical for volumes that represent subdirectories of a bigger shared filesystem.
+
+Default is "false".
+*/
+seLinuxMount?: boolean;
 }
 
 /**
@@ -90,14 +90,14 @@ podInfoOnMount?: boolean;
 */
 export function createio_k8s_api_storage_v1_CSIDriverSpec(data?: Partial<io_k8s_api_storage_v1_CSIDriverSpec>): io_k8s_api_storage_v1_CSIDriverSpec {
  return {
-   requiresRepublish: data?.requiresRepublish !== undefined ? data.requiresRepublish : false,
-   seLinuxMount: data?.seLinuxMount !== undefined ? data.seLinuxMount : false,
    storageCapacity: data?.storageCapacity !== undefined ? data.storageCapacity : false,
    tokenRequests: data?.tokenRequests !== undefined ? data.tokenRequests : [],
    volumeLifecycleModes: data?.volumeLifecycleModes !== undefined ? data.volumeLifecycleModes : [],
    attachRequired: data?.attachRequired !== undefined ? data.attachRequired : false,
    fsGroupPolicy: data?.fsGroupPolicy !== undefined ? data.fsGroupPolicy : '',
    podInfoOnMount: data?.podInfoOnMount !== undefined ? data.podInfoOnMount : false,
+   requiresRepublish: data?.requiresRepublish !== undefined ? data.requiresRepublish : false,
+   seLinuxMount: data?.seLinuxMount !== undefined ? data.seLinuxMount : false,
  };
 }
 // Required imports

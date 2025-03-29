@@ -118,65 +118,24 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
     }
   });
 
-//read status of the specified PersistentVolume
-  router.get('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
- 
-  // the subresourcestatus
-      try {
-        const name = req.params.name;
-        const namespace = null;
-        logger.info(`Getting status ${name}`);
-        
-        const resource = await storage.getResource('status', name, namespace);
-        
-        if (!resource) {
-          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
-        }
-        res.json(resource);
-      } catch (error) {
-        next(error);
-      }
-  
-   
-  });
-//replace status of the specified PersistentVolume
-  router.put('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
+//watch changes to an object of kind PersistentVolume. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/api/v1/watch/persistentvolumes/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating persistentvolume ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('persistentvolume', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
       const namespace = null;
       logger.info(`Getting persistentvolume ${name}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('persistentvolume', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
+      
+      const resource = await storage.getResource('persistentvolume', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`persistentvolume ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
     } catch (error) {
       next(error);
     }
+  
+   
   });
 
 //list or watch objects of kind PersistentVolume
@@ -253,6 +212,67 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
     }
   });
 
+//read status of the specified PersistentVolume
+  router.get('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = null;
+        logger.info(`Getting status ${name}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
+  });
+//replace status of the specified PersistentVolume
+  router.put('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating persistentvolume ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('persistentvolume', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/api/v1/persistentvolumes/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting persistentvolume ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('persistentvolume', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //watch individual changes to a list of PersistentVolume. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/api/v1/watch/persistentvolumes', async (req, res, next) => {
     try {
@@ -272,26 +292,6 @@ export function createpersistentvolumeRoutes(storage: Storage): express.Router {
     } catch (error) {
       next(error);
     }
-  });
-
-//watch changes to an object of kind PersistentVolume. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/api/v1/watch/persistentvolumes/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting persistentvolume ${name}`);
-      
-      const resource = await storage.getResource('persistentvolume', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`persistentvolume ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
   });
 
   return router;

@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_core_v1_ContainerStateTerminated {
 /**
-* Container's ID in the format '<type>://<container_id>'
-*/
-containerID?: string;
-/**
 * Exit status from the last termination of the container
 * @required
 */
@@ -35,6 +31,10 @@ signal?: number;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.Time
 */
 startedAt?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
+/**
+* Container's ID in the format '<type>://<container_id>'
+*/
+containerID?: string;
 }
 
 /**
@@ -44,13 +44,13 @@ startedAt?: io_k8s_apimachinery_pkg_apis_meta_v1_Time;
 */
 export function createio_k8s_api_core_v1_ContainerStateTerminated(data?: Partial<io_k8s_api_core_v1_ContainerStateTerminated>): io_k8s_api_core_v1_ContainerStateTerminated {
  return {
-   containerID: data?.containerID !== undefined ? data.containerID : '',
    exitCode: data?.exitCode !== undefined ? data.exitCode : 0,
    finishedAt: data?.finishedAt !== undefined ? data.finishedAt : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
    message: data?.message !== undefined ? data.message : '',
    reason: data?.reason !== undefined ? data.reason : '',
    signal: data?.signal !== undefined ? data.signal : 0,
    startedAt: data?.startedAt !== undefined ? data.startedAt : createio_k8s_apimachinery_pkg_apis_meta_v1_Time(),
+   containerID: data?.containerID !== undefined ? data.containerID : '',
  };
 }
 // Required imports

@@ -7,32 +7,6 @@ StorageClasses are non-namespaced; the name of the storage class according to et
 */
 export interface io_k8s_api_storage_v1_StorageClass {
 /**
-* parameters holds the parameters for the provisioner that should create volumes of this storage class.
-*/
-parameters?: Record<string, any>;
-/**
-* provisioner indicates the type of the provisioner.
-* @required
-*/
-provisioner: string;
-/**
-* volumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.  When unset, VolumeBindingImmediate is used. This field is only honored by servers that enable the VolumeScheduling feature.
-
-Possible enum values:
- - `"Immediate"` indicates that PersistentVolumeClaims should be immediately provisioned and bound. This is the default mode.
- - `"WaitForFirstConsumer"` indicates that PersistentVolumeClaims should not be provisioned and bound until the first Pod is created that references the PeristentVolumeClaim. The volume provisioning and binding will occur during Pod scheduing.
-*/
-volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
-/**
-* allowVolumeExpansion shows whether the storage class allow volume expand.
-*/
-allowVolumeExpansion?: boolean;
-/**
-* allowedTopologies restrict the node topologies where volumes can be dynamically provisioned. Each volume plugin defines its own supported topology specifications. An empty TopologySelectorTerm list means there is no topology restriction. This field is only honored by servers that enable the VolumeScheduling feature.
-* @isArray
-*/
-allowedTopologies?: io_k8s_api_core_v1_TopologySelectorTerm[];
-/**
 * Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
@@ -52,6 +26,18 @@ Possible enum values:
 */
 reclaimPolicy?: 'Delete' | 'Recycle' | 'Retain';
 /**
+* volumeBindingMode indicates how PersistentVolumeClaims should be provisioned and bound.  When unset, VolumeBindingImmediate is used. This field is only honored by servers that enable the VolumeScheduling feature.
+
+Possible enum values:
+ - `"Immediate"` indicates that PersistentVolumeClaims should be immediately provisioned and bound. This is the default mode.
+ - `"WaitForFirstConsumer"` indicates that PersistentVolumeClaims should not be provisioned and bound until the first Pod is created that references the PeristentVolumeClaim. The volume provisioning and binding will occur during Pod scheduing.
+*/
+volumeBindingMode?: 'Immediate' | 'WaitForFirstConsumer';
+/**
+* allowVolumeExpansion shows whether the storage class allow volume expand.
+*/
+allowVolumeExpansion?: boolean;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -59,6 +45,20 @@ apiVersion?: string;
 * Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 */
 kind?: string;
+/**
+* allowedTopologies restrict the node topologies where volumes can be dynamically provisioned. Each volume plugin defines its own supported topology specifications. An empty TopologySelectorTerm list means there is no topology restriction. This field is only honored by servers that enable the VolumeScheduling feature.
+* @isArray
+*/
+allowedTopologies?: io_k8s_api_core_v1_TopologySelectorTerm[];
+/**
+* parameters holds the parameters for the provisioner that should create volumes of this storage class.
+*/
+parameters?: Record<string, any>;
+/**
+* provisioner indicates the type of the provisioner.
+* @required
+*/
+provisioner: string;
 }
 
 /**
@@ -68,16 +68,16 @@ kind?: string;
 */
 export function createio_k8s_api_storage_v1_StorageClass(data?: Partial<io_k8s_api_storage_v1_StorageClass>): io_k8s_api_storage_v1_StorageClass {
  return {
-   parameters: data?.parameters !== undefined ? data.parameters : {},
-   provisioner: data?.provisioner !== undefined ? data.provisioner : '',
-   volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
-   allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
-   allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    mountOptions: data?.mountOptions !== undefined ? data.mountOptions : [],
    reclaimPolicy: data?.reclaimPolicy !== undefined ? data.reclaimPolicy : '',
+   volumeBindingMode: data?.volumeBindingMode !== undefined ? data.volumeBindingMode : '',
+   allowVolumeExpansion: data?.allowVolumeExpansion !== undefined ? data.allowVolumeExpansion : false,
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
+   allowedTopologies: data?.allowedTopologies !== undefined ? data.allowedTopologies : [],
+   parameters: data?.parameters !== undefined ? data.parameters : {},
+   provisioner: data?.provisioner !== undefined ? data.provisioner : '',
  };
 }
 // Required imports

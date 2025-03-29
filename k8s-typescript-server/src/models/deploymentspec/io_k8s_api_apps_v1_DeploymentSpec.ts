@@ -5,6 +5,12 @@
 */
 export interface io_k8s_api_apps_v1_DeploymentSpec {
 /**
+* Template describes the pods that will be created. The only allowed template.spec.restartPolicy value is "Always".
+* @required
+* @references io.k8s.api.core.v1.PodTemplateSpec
+*/
+template: io_k8s_api_core_v1_PodTemplateSpec;
+/**
 * Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available. Defaults to 0 (pod will be considered available as soon as it is ready)
 */
 minReadySeconds?: number;
@@ -35,12 +41,6 @@ selector: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
 * @references io.k8s.api.apps.v1.DeploymentStrategy
 */
 strategy?: io_k8s_api_apps_v1_DeploymentStrategy;
-/**
-* Template describes the pods that will be created. The only allowed template.spec.restartPolicy value is "Always".
-* @required
-* @references io.k8s.api.core.v1.PodTemplateSpec
-*/
-template: io_k8s_api_core_v1_PodTemplateSpec;
 }
 
 /**
@@ -50,6 +50,7 @@ template: io_k8s_api_core_v1_PodTemplateSpec;
 */
 export function createio_k8s_api_apps_v1_DeploymentSpec(data?: Partial<io_k8s_api_apps_v1_DeploymentSpec>): io_k8s_api_apps_v1_DeploymentSpec {
  return {
+   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
    minReadySeconds: data?.minReadySeconds !== undefined ? data.minReadySeconds : 0,
    paused: data?.paused !== undefined ? data.paused : false,
    progressDeadlineSeconds: data?.progressDeadlineSeconds !== undefined ? data.progressDeadlineSeconds : 0,
@@ -57,7 +58,6 @@ export function createio_k8s_api_apps_v1_DeploymentSpec(data?: Partial<io_k8s_ap
    revisionHistoryLimit: data?.revisionHistoryLimit !== undefined ? data.revisionHistoryLimit : 0,
    selector: data?.selector !== undefined ? data.selector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    strategy: data?.strategy !== undefined ? data.strategy : createio_k8s_api_apps_v1_DeploymentStrategy(),
-   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
  };
 }
 // Required imports

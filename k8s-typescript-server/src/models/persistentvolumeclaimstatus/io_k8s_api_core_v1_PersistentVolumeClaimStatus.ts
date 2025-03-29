@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_PersistentVolumeClaimStatus {
 /**
+* conditions is the current Condition of persistent volume claim. If underlying persistent volume is being resized then the Condition will be set to 'Resizing'.
+* @isArray
+*/
+conditions?: io_k8s_api_core_v1_PersistentVolumeClaimCondition[];
+/**
 * currentVolumeAttributesClassName is the current name of the VolumeAttributesClass the PVC is using. When unset, there is no VolumeAttributeClass applied to this PersistentVolumeClaim This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
 */
 currentVolumeAttributesClassName?: string;
@@ -78,11 +83,6 @@ allocatedResources?: Record<string, any>;
 * capacity represents the actual resources of the underlying volume.
 */
 capacity?: Record<string, any>;
-/**
-* conditions is the current Condition of persistent volume claim. If underlying persistent volume is being resized then the Condition will be set to 'Resizing'.
-* @isArray
-*/
-conditions?: io_k8s_api_core_v1_PersistentVolumeClaimCondition[];
 }
 
 /**
@@ -92,6 +92,7 @@ conditions?: io_k8s_api_core_v1_PersistentVolumeClaimCondition[];
 */
 export function createio_k8s_api_core_v1_PersistentVolumeClaimStatus(data?: Partial<io_k8s_api_core_v1_PersistentVolumeClaimStatus>): io_k8s_api_core_v1_PersistentVolumeClaimStatus {
  return {
+   conditions: data?.conditions !== undefined ? data.conditions : [],
    currentVolumeAttributesClassName: data?.currentVolumeAttributesClassName !== undefined ? data.currentVolumeAttributesClassName : '',
    modifyVolumeStatus: data?.modifyVolumeStatus !== undefined ? data.modifyVolumeStatus : createio_k8s_api_core_v1_ModifyVolumeStatus(),
    phase: data?.phase !== undefined ? data.phase : '',
@@ -99,7 +100,6 @@ export function createio_k8s_api_core_v1_PersistentVolumeClaimStatus(data?: Part
    allocatedResourceStatuses: data?.allocatedResourceStatuses !== undefined ? data.allocatedResourceStatuses : {},
    allocatedResources: data?.allocatedResources !== undefined ? data.allocatedResources : {},
    capacity: data?.capacity !== undefined ? data.capacity : {},
-   conditions: data?.conditions !== undefined ? data.conditions : [],
  };
 }
 // Required imports

@@ -5,6 +5,15 @@
 */
 export interface io_k8s_api_core_v1_VolumeMount {
 /**
+* mountPropagation determines how mounts are propagated from the host to container and the other way around. When not set, MountPropagationNone is used. This field is beta in 1.10. When RecursiveReadOnly is set to IfPossible or to Enabled, MountPropagation must be None or unspecified (which defaults to None).
+
+Possible enum values:
+ - `"Bidirectional"` means that the volume in a container will receive new mounts from the host or other containers, and its own mounts will be propagated from the container to the host or other containers. Note that this mode is recursively applied to all mounts in the volume ("rshared" in Linux terminology).
+ - `"HostToContainer"` means that the volume in a container will receive new mounts from the host or other containers, but filesystems mounted inside the container won't be propagated to the host or other containers. Note that this mode is recursively applied to all mounts in the volume ("rslave" in Linux terminology).
+ - `"None"` means that the volume in a container will not receive new mounts from the host or other containers, and filesystems mounted inside the container won't be propagated to the host or other containers. Note that this mode corresponds to "private" in Linux terminology.
+*/
+mountPropagation?: 'Bidirectional' | 'HostToContainer' | 'None';
+/**
 * This must match the Name of a Volume.
 * @required
 */
@@ -38,15 +47,6 @@ subPathExpr?: string;
 * @required
 */
 mountPath: string;
-/**
-* mountPropagation determines how mounts are propagated from the host to container and the other way around. When not set, MountPropagationNone is used. This field is beta in 1.10. When RecursiveReadOnly is set to IfPossible or to Enabled, MountPropagation must be None or unspecified (which defaults to None).
-
-Possible enum values:
- - `"Bidirectional"` means that the volume in a container will receive new mounts from the host or other containers, and its own mounts will be propagated from the container to the host or other containers. Note that this mode is recursively applied to all mounts in the volume ("rshared" in Linux terminology).
- - `"HostToContainer"` means that the volume in a container will receive new mounts from the host or other containers, but filesystems mounted inside the container won't be propagated to the host or other containers. Note that this mode is recursively applied to all mounts in the volume ("rslave" in Linux terminology).
- - `"None"` means that the volume in a container will not receive new mounts from the host or other containers, and filesystems mounted inside the container won't be propagated to the host or other containers. Note that this mode corresponds to "private" in Linux terminology.
-*/
-mountPropagation?: 'Bidirectional' | 'HostToContainer' | 'None';
 }
 
 /**
@@ -56,12 +56,12 @@ mountPropagation?: 'Bidirectional' | 'HostToContainer' | 'None';
 */
 export function createio_k8s_api_core_v1_VolumeMount(data?: Partial<io_k8s_api_core_v1_VolumeMount>): io_k8s_api_core_v1_VolumeMount {
  return {
+   mountPropagation: data?.mountPropagation !== undefined ? data.mountPropagation : '',
    name: data?.name !== undefined ? data.name : '',
    readOnly: data?.readOnly !== undefined ? data.readOnly : false,
    recursiveReadOnly: data?.recursiveReadOnly !== undefined ? data.recursiveReadOnly : '',
    subPath: data?.subPath !== undefined ? data.subPath : '',
    subPathExpr: data?.subPathExpr !== undefined ? data.subPathExpr : '',
    mountPath: data?.mountPath !== undefined ? data.mountPath : '',
-   mountPropagation: data?.mountPropagation !== undefined ? data.mountPropagation : '',
  };
 }

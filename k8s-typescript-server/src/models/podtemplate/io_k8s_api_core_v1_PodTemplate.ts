@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_PodTemplate {
 /**
+* Template defines the pods that will be created from this pod template. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.PodTemplateSpec
+*/
+template?: io_k8s_api_core_v1_PodTemplateSpec;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -17,11 +22,6 @@ kind?: string;
 * @references io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
 */
 metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
-/**
-* Template defines the pods that will be created from this pod template. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.core.v1.PodTemplateSpec
-*/
-template?: io_k8s_api_core_v1_PodTemplateSpec;
 }
 
 /**
@@ -31,10 +31,10 @@ template?: io_k8s_api_core_v1_PodTemplateSpec;
 */
 export function createio_k8s_api_core_v1_PodTemplate(data?: Partial<io_k8s_api_core_v1_PodTemplate>): io_k8s_api_core_v1_PodTemplate {
  return {
+   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
-   template: data?.template !== undefined ? data.template : createio_k8s_api_core_v1_PodTemplateSpec(),
  };
 }
 // Required imports

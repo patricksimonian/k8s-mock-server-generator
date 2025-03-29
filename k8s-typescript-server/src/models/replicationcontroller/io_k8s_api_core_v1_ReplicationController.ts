@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_ReplicationController {
 /**
+* Status is the most recently observed status of the replication controller. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+* @references io.k8s.api.core.v1.ReplicationControllerStatus
+*/
+status?: io_k8s_api_core_v1_ReplicationControllerStatus;
+/**
 * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 */
 apiVersion?: string;
@@ -22,11 +27,6 @@ metadata?: io_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta;
 * @references io.k8s.api.core.v1.ReplicationControllerSpec
 */
 spec?: io_k8s_api_core_v1_ReplicationControllerSpec;
-/**
-* Status is the most recently observed status of the replication controller. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-* @references io.k8s.api.core.v1.ReplicationControllerStatus
-*/
-status?: io_k8s_api_core_v1_ReplicationControllerStatus;
 }
 
 /**
@@ -36,11 +36,11 @@ status?: io_k8s_api_core_v1_ReplicationControllerStatus;
 */
 export function createio_k8s_api_core_v1_ReplicationController(data?: Partial<io_k8s_api_core_v1_ReplicationController>): io_k8s_api_core_v1_ReplicationController {
  return {
+   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_ReplicationControllerStatus(),
    apiVersion: data?.apiVersion !== undefined ? data.apiVersion : '',
    kind: data?.kind !== undefined ? data.kind : '',
    metadata: data?.metadata !== undefined ? data.metadata : createio_k8s_apimachinery_pkg_apis_meta_v1_ObjectMeta(),
    spec: data?.spec !== undefined ? data.spec : createio_k8s_api_core_v1_ReplicationControllerSpec(),
-   status: data?.status !== undefined ? data.status : createio_k8s_api_core_v1_ReplicationControllerStatus(),
  };
 }
 // Required imports

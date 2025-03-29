@@ -5,10 +5,6 @@
 */
 export interface io_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement {
 /**
-* Restricts the check for exit codes to the container with the specified name. When null, the rule applies to all containers. When specified, it should match one the container or initContainer names in the pod template.
-*/
-containerName?: string;
-/**
 * Represents the relationship between the container exit code(s) and the specified values. Containers completed with success (exit code 0) are excluded from the requirement check. Possible values are:
 
 - In: the requirement is satisfied if at least one container exit code
@@ -31,6 +27,10 @@ operator: 'In' | 'NotIn';
 * @isArray
 */
 values: number[];
+/**
+* Restricts the check for exit codes to the container with the specified name. When null, the rule applies to all containers. When specified, it should match one the container or initContainer names in the pod template.
+*/
+containerName?: string;
 }
 
 /**
@@ -40,8 +40,8 @@ values: number[];
 */
 export function createio_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement(data?: Partial<io_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement>): io_k8s_api_batch_v1_PodFailurePolicyOnExitCodesRequirement {
  return {
-   containerName: data?.containerName !== undefined ? data.containerName : '',
    operator: data?.operator !== undefined ? data.operator : '',
    values: data?.values !== undefined ? data.values : [],
+   containerName: data?.containerName !== undefined ? data.containerName : '',
  };
 }

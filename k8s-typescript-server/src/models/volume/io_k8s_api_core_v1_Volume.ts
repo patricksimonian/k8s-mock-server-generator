@@ -5,30 +5,54 @@
 */
 export interface io_k8s_api_core_v1_Volume {
 /**
-* scaleIO represents a ScaleIO persistent volume attached and mounted on Kubernetes nodes. Deprecated: ScaleIO is deprecated and the in-tree scaleIO type is no longer supported.
-* @references io.k8s.api.core.v1.ScaleIOVolumeSource
+* azureDisk represents an Azure Data Disk mount on the host and bind mount to the pod. Deprecated: AzureDisk is deprecated. All operations for the in-tree azureDisk type are redirected to the disk.csi.azure.com CSI driver.
+* @references io.k8s.api.core.v1.AzureDiskVolumeSource
 */
-scaleIO?: io_k8s_api_core_v1_ScaleIOVolumeSource;
+azureDisk?: io_k8s_api_core_v1_AzureDiskVolumeSource;
 /**
-* azureFile represents an Azure File Service mount on the host and bind mount to the pod. Deprecated: AzureFile is deprecated. All operations for the in-tree azureFile type are redirected to the file.csi.azure.com CSI driver.
-* @references io.k8s.api.core.v1.AzureFileVolumeSource
+* gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Deprecated: GCEPersistentDisk is deprecated. All operations for the in-tree gcePersistentDisk type are redirected to the pd.csi.storage.gke.io CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
+* @references io.k8s.api.core.v1.GCEPersistentDiskVolumeSource
 */
-azureFile?: io_k8s_api_core_v1_AzureFileVolumeSource;
+gcePersistentDisk?: io_k8s_api_core_v1_GCEPersistentDiskVolumeSource;
 /**
-* downwardAPI represents downward API about the pod that should populate this volume
-* @references io.k8s.api.core.v1.DownwardAPIVolumeSource
+* image represents an OCI object (a container image or artifact) pulled and mounted on the kubelet's host machine. The volume is resolved at pod startup depending on which PullPolicy value is provided:
+
+- Always: the kubelet always attempts to pull the reference. Container creation will fail If the pull fails. - Never: the kubelet never pulls the reference and only uses a local image or artifact. Container creation will fail if the reference isn't present. - IfNotPresent: the kubelet pulls if the reference isn't already present on disk. Container creation will fail if the reference isn't present and the pull fails.
+
+The volume gets re-resolved if the pod gets deleted and recreated, which means that new remote content will become available on pod recreation. A failure to resolve or pull the image during pod startup will block containers from starting and may add significant latency. Failures will be retried using normal volume backoff and will be reported on the pod reason and message. The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field. The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images. The volume will be mounted read-only (ro) and non-executable files (noexec). Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath). The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
+* @references io.k8s.api.core.v1.ImageVolumeSource
 */
-downwardAPI?: io_k8s_api_core_v1_DownwardAPIVolumeSource;
-/**
-* gitRepo represents a git repository at a particular revision. Deprecated: GitRepo is deprecated. To provision a container with a git repo, mount an EmptyDir into an InitContainer that clones the repo using git, then mount the EmptyDir into the Pod's container.
-* @references io.k8s.api.core.v1.GitRepoVolumeSource
-*/
-gitRepo?: io_k8s_api_core_v1_GitRepoVolumeSource;
+image?: io_k8s_api_core_v1_ImageVolumeSource;
 /**
 * iscsi represents an ISCSI Disk resource that is attached to a kubelet's host machine and then exposed to the pod. More info: https://examples.k8s.io/volumes/iscsi/README.md
 * @references io.k8s.api.core.v1.ISCSIVolumeSource
 */
 iscsi?: io_k8s_api_core_v1_ISCSIVolumeSource;
+/**
+* cinder represents a cinder volume attached and mounted on kubelets host machine. Deprecated: Cinder is deprecated. All operations for the in-tree cinder type are redirected to the cinder.csi.openstack.org CSI driver. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
+* @references io.k8s.api.core.v1.CinderVolumeSource
+*/
+cinder?: io_k8s_api_core_v1_CinderVolumeSource;
+/**
+* fc represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
+* @references io.k8s.api.core.v1.FCVolumeSource
+*/
+fc?: io_k8s_api_core_v1_FCVolumeSource;
+/**
+* projected items for all in one resources secrets, configmaps, and downward API
+* @references io.k8s.api.core.v1.ProjectedVolumeSource
+*/
+projected?: io_k8s_api_core_v1_ProjectedVolumeSource;
+/**
+* secret represents a secret that should populate this volume. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret
+* @references io.k8s.api.core.v1.SecretVolumeSource
+*/
+secret?: io_k8s_api_core_v1_SecretVolumeSource;
+/**
+* cephFS represents a Ceph FS mount on the host that shares a pod's lifetime. Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer supported.
+* @references io.k8s.api.core.v1.CephFSVolumeSource
+*/
+cephfs?: io_k8s_api_core_v1_CephFSVolumeSource;
 /**
 * ephemeral represents a volume that is handled by a cluster storage driver. The volume's lifecycle is tied to the pod that defines it - it will be created before the pod starts, and deleted when the pod is removed.
 
@@ -48,10 +72,15 @@ A pod can use both types of ephemeral volumes and persistent volumes at the same
 */
 ephemeral?: io_k8s_api_core_v1_EphemeralVolumeSource;
 /**
-* storageOS represents a StorageOS volume attached and mounted on Kubernetes nodes. Deprecated: StorageOS is deprecated and the in-tree storageos type is no longer supported.
-* @references io.k8s.api.core.v1.StorageOSVolumeSource
+* hostPath represents a pre-existing file or directory on the host machine that is directly exposed to the container. This is generally used for system agents or other privileged things that are allowed to see the host machine. Most containers will NOT need this. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
+* @references io.k8s.api.core.v1.HostPathVolumeSource
 */
-storageos?: io_k8s_api_core_v1_StorageOSVolumeSource;
+hostPath?: io_k8s_api_core_v1_HostPathVolumeSource;
+/**
+* nfs represents an NFS mount on the host that shares a pod's lifetime More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
+* @references io.k8s.api.core.v1.NFSVolumeSource
+*/
+nfs?: io_k8s_api_core_v1_NFSVolumeSource;
 /**
 * photonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine. Deprecated: PhotonPersistentDisk is deprecated and the in-tree photonPersistentDisk type is no longer supported.
 * @references io.k8s.api.core.v1.PhotonPersistentDiskVolumeSource
@@ -63,119 +92,90 @@ photonPersistentDisk?: io_k8s_api_core_v1_PhotonPersistentDiskVolumeSource;
 */
 quobyte?: io_k8s_api_core_v1_QuobyteVolumeSource;
 /**
-* rbd represents a Rados Block Device mount on the host that shares a pod's lifetime. Deprecated: RBD is deprecated and the in-tree rbd type is no longer supported. More info: https://examples.k8s.io/volumes/rbd/README.md
-* @references io.k8s.api.core.v1.RBDVolumeSource
-*/
-rbd?: io_k8s_api_core_v1_RBDVolumeSource;
-/**
-* cephFS represents a Ceph FS mount on the host that shares a pod's lifetime. Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer supported.
-* @references io.k8s.api.core.v1.CephFSVolumeSource
-*/
-cephfs?: io_k8s_api_core_v1_CephFSVolumeSource;
-/**
 * emptyDir represents a temporary directory that shares a pod's lifetime. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
 * @references io.k8s.api.core.v1.EmptyDirVolumeSource
 */
 emptyDir?: io_k8s_api_core_v1_EmptyDirVolumeSource;
-/**
-* glusterfs represents a Glusterfs mount on the host that shares a pod's lifetime. Deprecated: Glusterfs is deprecated and the in-tree glusterfs type is no longer supported. More info: https://examples.k8s.io/volumes/glusterfs/README.md
-* @references io.k8s.api.core.v1.GlusterfsVolumeSource
-*/
-glusterfs?: io_k8s_api_core_v1_GlusterfsVolumeSource;
-/**
-* image represents an OCI object (a container image or artifact) pulled and mounted on the kubelet's host machine. The volume is resolved at pod startup depending on which PullPolicy value is provided:
-
-- Always: the kubelet always attempts to pull the reference. Container creation will fail If the pull fails. - Never: the kubelet never pulls the reference and only uses a local image or artifact. Container creation will fail if the reference isn't present. - IfNotPresent: the kubelet pulls if the reference isn't already present on disk. Container creation will fail if the reference isn't present and the pull fails.
-
-The volume gets re-resolved if the pod gets deleted and recreated, which means that new remote content will become available on pod recreation. A failure to resolve or pull the image during pod startup will block containers from starting and may add significant latency. Failures will be retried using normal volume backoff and will be reported on the pod reason and message. The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field. The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images. The volume will be mounted read-only (ro) and non-executable files (noexec). Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath). The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
-* @references io.k8s.api.core.v1.ImageVolumeSource
-*/
-image?: io_k8s_api_core_v1_ImageVolumeSource;
-/**
-* configMap represents a configMap that should populate this volume
-* @references io.k8s.api.core.v1.ConfigMapVolumeSource
-*/
-configMap?: io_k8s_api_core_v1_ConfigMapVolumeSource;
-/**
-* hostPath represents a pre-existing file or directory on the host machine that is directly exposed to the container. This is generally used for system agents or other privileged things that are allowed to see the host machine. Most containers will NOT need this. More info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
-* @references io.k8s.api.core.v1.HostPathVolumeSource
-*/
-hostPath?: io_k8s_api_core_v1_HostPathVolumeSource;
-/**
-* name of the volume. Must be a DNS_LABEL and unique within the pod. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-* @required
-*/
-name: string;
-/**
-* vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine. Deprecated: VsphereVolume is deprecated. All operations for the in-tree vsphereVolume type are redirected to the csi.vsphere.vmware.com CSI driver.
-* @references io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource
-*/
-vsphereVolume?: io_k8s_api_core_v1_VsphereVirtualDiskVolumeSource;
-/**
-* awsElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Deprecated: AWSElasticBlockStore is deprecated. All operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
-* @references io.k8s.api.core.v1.AWSElasticBlockStoreVolumeSource
-*/
-awsElasticBlockStore?: io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource;
-/**
-* azureDisk represents an Azure Data Disk mount on the host and bind mount to the pod. Deprecated: AzureDisk is deprecated. All operations for the in-tree azureDisk type are redirected to the disk.csi.azure.com CSI driver.
-* @references io.k8s.api.core.v1.AzureDiskVolumeSource
-*/
-azureDisk?: io_k8s_api_core_v1_AzureDiskVolumeSource;
-/**
-* gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Deprecated: GCEPersistentDisk is deprecated. All operations for the in-tree gcePersistentDisk type are redirected to the pd.csi.storage.gke.io CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
-* @references io.k8s.api.core.v1.GCEPersistentDiskVolumeSource
-*/
-gcePersistentDisk?: io_k8s_api_core_v1_GCEPersistentDiskVolumeSource;
-/**
-* secret represents a secret that should populate this volume. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret
-* @references io.k8s.api.core.v1.SecretVolumeSource
-*/
-secret?: io_k8s_api_core_v1_SecretVolumeSource;
-/**
-* fc represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
-* @references io.k8s.api.core.v1.FCVolumeSource
-*/
-fc?: io_k8s_api_core_v1_FCVolumeSource;
-/**
-* flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin. Deprecated: FlexVolume is deprecated. Consider using a CSIDriver instead.
-* @references io.k8s.api.core.v1.FlexVolumeSource
-*/
-flexVolume?: io_k8s_api_core_v1_FlexVolumeSource;
 /**
 * persistentVolumeClaimVolumeSource represents a reference to a PersistentVolumeClaim in the same namespace. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
 * @references io.k8s.api.core.v1.PersistentVolumeClaimVolumeSource
 */
 persistentVolumeClaim?: io_k8s_api_core_v1_PersistentVolumeClaimVolumeSource;
 /**
-* portworxVolume represents a portworx volume attached and mounted on kubelets host machine. Deprecated: PortworxVolume is deprecated. All operations for the in-tree portworxVolume type are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate is on.
-* @references io.k8s.api.core.v1.PortworxVolumeSource
+* vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine. Deprecated: VsphereVolume is deprecated. All operations for the in-tree vsphereVolume type are redirected to the csi.vsphere.vmware.com CSI driver.
+* @references io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource
 */
-portworxVolume?: io_k8s_api_core_v1_PortworxVolumeSource;
+vsphereVolume?: io_k8s_api_core_v1_VsphereVirtualDiskVolumeSource;
 /**
-* cinder represents a cinder volume attached and mounted on kubelets host machine. Deprecated: Cinder is deprecated. All operations for the in-tree cinder type are redirected to the cinder.csi.openstack.org CSI driver. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
-* @references io.k8s.api.core.v1.CinderVolumeSource
+* configMap represents a configMap that should populate this volume
+* @references io.k8s.api.core.v1.ConfigMapVolumeSource
 */
-cinder?: io_k8s_api_core_v1_CinderVolumeSource;
+configMap?: io_k8s_api_core_v1_ConfigMapVolumeSource;
+/**
+* azureFile represents an Azure File Service mount on the host and bind mount to the pod. Deprecated: AzureFile is deprecated. All operations for the in-tree azureFile type are redirected to the file.csi.azure.com CSI driver.
+* @references io.k8s.api.core.v1.AzureFileVolumeSource
+*/
+azureFile?: io_k8s_api_core_v1_AzureFileVolumeSource;
+/**
+* gitRepo represents a git repository at a particular revision. Deprecated: GitRepo is deprecated. To provision a container with a git repo, mount an EmptyDir into an InitContainer that clones the repo using git, then mount the EmptyDir into the Pod's container.
+* @references io.k8s.api.core.v1.GitRepoVolumeSource
+*/
+gitRepo?: io_k8s_api_core_v1_GitRepoVolumeSource;
+/**
+* rbd represents a Rados Block Device mount on the host that shares a pod's lifetime. Deprecated: RBD is deprecated and the in-tree rbd type is no longer supported. More info: https://examples.k8s.io/volumes/rbd/README.md
+* @references io.k8s.api.core.v1.RBDVolumeSource
+*/
+rbd?: io_k8s_api_core_v1_RBDVolumeSource;
+/**
+* scaleIO represents a ScaleIO persistent volume attached and mounted on Kubernetes nodes. Deprecated: ScaleIO is deprecated and the in-tree scaleIO type is no longer supported.
+* @references io.k8s.api.core.v1.ScaleIOVolumeSource
+*/
+scaleIO?: io_k8s_api_core_v1_ScaleIOVolumeSource;
 /**
 * csi (Container Storage Interface) represents ephemeral storage that is handled by certain external CSI drivers.
 * @references io.k8s.api.core.v1.CSIVolumeSource
 */
 csi?: io_k8s_api_core_v1_CSIVolumeSource;
 /**
+* downwardAPI represents downward API about the pod that should populate this volume
+* @references io.k8s.api.core.v1.DownwardAPIVolumeSource
+*/
+downwardAPI?: io_k8s_api_core_v1_DownwardAPIVolumeSource;
+/**
+* glusterfs represents a Glusterfs mount on the host that shares a pod's lifetime. Deprecated: Glusterfs is deprecated and the in-tree glusterfs type is no longer supported. More info: https://examples.k8s.io/volumes/glusterfs/README.md
+* @references io.k8s.api.core.v1.GlusterfsVolumeSource
+*/
+glusterfs?: io_k8s_api_core_v1_GlusterfsVolumeSource;
+/**
+* name of the volume. Must be a DNS_LABEL and unique within the pod. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+* @required
+*/
+name: string;
+/**
+* portworxVolume represents a portworx volume attached and mounted on kubelets host machine. Deprecated: PortworxVolume is deprecated. All operations for the in-tree portworxVolume type are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate is on.
+* @references io.k8s.api.core.v1.PortworxVolumeSource
+*/
+portworxVolume?: io_k8s_api_core_v1_PortworxVolumeSource;
+/**
+* awsElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod. Deprecated: AWSElasticBlockStore is deprecated. All operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver. More info: https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
+* @references io.k8s.api.core.v1.AWSElasticBlockStoreVolumeSource
+*/
+awsElasticBlockStore?: io_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource;
+/**
+* flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin. Deprecated: FlexVolume is deprecated. Consider using a CSIDriver instead.
+* @references io.k8s.api.core.v1.FlexVolumeSource
+*/
+flexVolume?: io_k8s_api_core_v1_FlexVolumeSource;
+/**
 * flocker represents a Flocker volume attached to a kubelet's host machine. This depends on the Flocker control service being running. Deprecated: Flocker is deprecated and the in-tree flocker type is no longer supported.
 * @references io.k8s.api.core.v1.FlockerVolumeSource
 */
 flocker?: io_k8s_api_core_v1_FlockerVolumeSource;
 /**
-* nfs represents an NFS mount on the host that shares a pod's lifetime More info: https://kubernetes.io/docs/concepts/storage/volumes#nfs
-* @references io.k8s.api.core.v1.NFSVolumeSource
+* storageOS represents a StorageOS volume attached and mounted on Kubernetes nodes. Deprecated: StorageOS is deprecated and the in-tree storageos type is no longer supported.
+* @references io.k8s.api.core.v1.StorageOSVolumeSource
 */
-nfs?: io_k8s_api_core_v1_NFSVolumeSource;
-/**
-* projected items for all in one resources secrets, configmaps, and downward API
-* @references io.k8s.api.core.v1.ProjectedVolumeSource
-*/
-projected?: io_k8s_api_core_v1_ProjectedVolumeSource;
+storageos?: io_k8s_api_core_v1_StorageOSVolumeSource;
 }
 
 /**
@@ -185,37 +185,37 @@ projected?: io_k8s_api_core_v1_ProjectedVolumeSource;
 */
 export function createio_k8s_api_core_v1_Volume(data?: Partial<io_k8s_api_core_v1_Volume>): io_k8s_api_core_v1_Volume {
  return {
-   scaleIO: data?.scaleIO !== undefined ? data.scaleIO : createio_k8s_api_core_v1_ScaleIOVolumeSource(),
-   azureFile: data?.azureFile !== undefined ? data.azureFile : createio_k8s_api_core_v1_AzureFileVolumeSource(),
-   downwardAPI: data?.downwardAPI !== undefined ? data.downwardAPI : createio_k8s_api_core_v1_DownwardAPIVolumeSource(),
-   gitRepo: data?.gitRepo !== undefined ? data.gitRepo : createio_k8s_api_core_v1_GitRepoVolumeSource(),
-   iscsi: data?.iscsi !== undefined ? data.iscsi : createio_k8s_api_core_v1_ISCSIVolumeSource(),
-   ephemeral: data?.ephemeral !== undefined ? data.ephemeral : createio_k8s_api_core_v1_EphemeralVolumeSource(),
-   storageos: data?.storageos !== undefined ? data.storageos : createio_k8s_api_core_v1_StorageOSVolumeSource(),
-   photonPersistentDisk: data?.photonPersistentDisk !== undefined ? data.photonPersistentDisk : createio_k8s_api_core_v1_PhotonPersistentDiskVolumeSource(),
-   quobyte: data?.quobyte !== undefined ? data.quobyte : createio_k8s_api_core_v1_QuobyteVolumeSource(),
-   rbd: data?.rbd !== undefined ? data.rbd : createio_k8s_api_core_v1_RBDVolumeSource(),
-   cephfs: data?.cephfs !== undefined ? data.cephfs : createio_k8s_api_core_v1_CephFSVolumeSource(),
-   emptyDir: data?.emptyDir !== undefined ? data.emptyDir : createio_k8s_api_core_v1_EmptyDirVolumeSource(),
-   glusterfs: data?.glusterfs !== undefined ? data.glusterfs : createio_k8s_api_core_v1_GlusterfsVolumeSource(),
-   image: data?.image !== undefined ? data.image : createio_k8s_api_core_v1_ImageVolumeSource(),
-   configMap: data?.configMap !== undefined ? data.configMap : createio_k8s_api_core_v1_ConfigMapVolumeSource(),
-   hostPath: data?.hostPath !== undefined ? data.hostPath : createio_k8s_api_core_v1_HostPathVolumeSource(),
-   name: data?.name !== undefined ? data.name : '',
-   vsphereVolume: data?.vsphereVolume !== undefined ? data.vsphereVolume : createio_k8s_api_core_v1_VsphereVirtualDiskVolumeSource(),
-   awsElasticBlockStore: data?.awsElasticBlockStore !== undefined ? data.awsElasticBlockStore : createio_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource(),
    azureDisk: data?.azureDisk !== undefined ? data.azureDisk : createio_k8s_api_core_v1_AzureDiskVolumeSource(),
    gcePersistentDisk: data?.gcePersistentDisk !== undefined ? data.gcePersistentDisk : createio_k8s_api_core_v1_GCEPersistentDiskVolumeSource(),
-   secret: data?.secret !== undefined ? data.secret : createio_k8s_api_core_v1_SecretVolumeSource(),
-   fc: data?.fc !== undefined ? data.fc : createio_k8s_api_core_v1_FCVolumeSource(),
-   flexVolume: data?.flexVolume !== undefined ? data.flexVolume : createio_k8s_api_core_v1_FlexVolumeSource(),
-   persistentVolumeClaim: data?.persistentVolumeClaim !== undefined ? data.persistentVolumeClaim : createio_k8s_api_core_v1_PersistentVolumeClaimVolumeSource(),
-   portworxVolume: data?.portworxVolume !== undefined ? data.portworxVolume : createio_k8s_api_core_v1_PortworxVolumeSource(),
+   image: data?.image !== undefined ? data.image : createio_k8s_api_core_v1_ImageVolumeSource(),
+   iscsi: data?.iscsi !== undefined ? data.iscsi : createio_k8s_api_core_v1_ISCSIVolumeSource(),
    cinder: data?.cinder !== undefined ? data.cinder : createio_k8s_api_core_v1_CinderVolumeSource(),
-   csi: data?.csi !== undefined ? data.csi : createio_k8s_api_core_v1_CSIVolumeSource(),
-   flocker: data?.flocker !== undefined ? data.flocker : createio_k8s_api_core_v1_FlockerVolumeSource(),
-   nfs: data?.nfs !== undefined ? data.nfs : createio_k8s_api_core_v1_NFSVolumeSource(),
+   fc: data?.fc !== undefined ? data.fc : createio_k8s_api_core_v1_FCVolumeSource(),
    projected: data?.projected !== undefined ? data.projected : createio_k8s_api_core_v1_ProjectedVolumeSource(),
+   secret: data?.secret !== undefined ? data.secret : createio_k8s_api_core_v1_SecretVolumeSource(),
+   cephfs: data?.cephfs !== undefined ? data.cephfs : createio_k8s_api_core_v1_CephFSVolumeSource(),
+   ephemeral: data?.ephemeral !== undefined ? data.ephemeral : createio_k8s_api_core_v1_EphemeralVolumeSource(),
+   hostPath: data?.hostPath !== undefined ? data.hostPath : createio_k8s_api_core_v1_HostPathVolumeSource(),
+   nfs: data?.nfs !== undefined ? data.nfs : createio_k8s_api_core_v1_NFSVolumeSource(),
+   photonPersistentDisk: data?.photonPersistentDisk !== undefined ? data.photonPersistentDisk : createio_k8s_api_core_v1_PhotonPersistentDiskVolumeSource(),
+   quobyte: data?.quobyte !== undefined ? data.quobyte : createio_k8s_api_core_v1_QuobyteVolumeSource(),
+   emptyDir: data?.emptyDir !== undefined ? data.emptyDir : createio_k8s_api_core_v1_EmptyDirVolumeSource(),
+   persistentVolumeClaim: data?.persistentVolumeClaim !== undefined ? data.persistentVolumeClaim : createio_k8s_api_core_v1_PersistentVolumeClaimVolumeSource(),
+   vsphereVolume: data?.vsphereVolume !== undefined ? data.vsphereVolume : createio_k8s_api_core_v1_VsphereVirtualDiskVolumeSource(),
+   configMap: data?.configMap !== undefined ? data.configMap : createio_k8s_api_core_v1_ConfigMapVolumeSource(),
+   azureFile: data?.azureFile !== undefined ? data.azureFile : createio_k8s_api_core_v1_AzureFileVolumeSource(),
+   gitRepo: data?.gitRepo !== undefined ? data.gitRepo : createio_k8s_api_core_v1_GitRepoVolumeSource(),
+   rbd: data?.rbd !== undefined ? data.rbd : createio_k8s_api_core_v1_RBDVolumeSource(),
+   scaleIO: data?.scaleIO !== undefined ? data.scaleIO : createio_k8s_api_core_v1_ScaleIOVolumeSource(),
+   csi: data?.csi !== undefined ? data.csi : createio_k8s_api_core_v1_CSIVolumeSource(),
+   downwardAPI: data?.downwardAPI !== undefined ? data.downwardAPI : createio_k8s_api_core_v1_DownwardAPIVolumeSource(),
+   glusterfs: data?.glusterfs !== undefined ? data.glusterfs : createio_k8s_api_core_v1_GlusterfsVolumeSource(),
+   name: data?.name !== undefined ? data.name : '',
+   portworxVolume: data?.portworxVolume !== undefined ? data.portworxVolume : createio_k8s_api_core_v1_PortworxVolumeSource(),
+   awsElasticBlockStore: data?.awsElasticBlockStore !== undefined ? data.awsElasticBlockStore : createio_k8s_api_core_v1_AWSElasticBlockStoreVolumeSource(),
+   flexVolume: data?.flexVolume !== undefined ? data.flexVolume : createio_k8s_api_core_v1_FlexVolumeSource(),
+   flocker: data?.flocker !== undefined ? data.flocker : createio_k8s_api_core_v1_FlockerVolumeSource(),
+   storageos: data?.storageos !== undefined ? data.storageos : createio_k8s_api_core_v1_StorageOSVolumeSource(),
  };
 }
 // Required imports

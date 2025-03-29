@@ -5,6 +5,17 @@
 */
 export interface io_k8s_api_core_v1_VolumeProjection {
 /**
+* ClusterTrustBundle allows a pod to access the `.spec.trustBundle` field of ClusterTrustBundle objects in an auto-updating file.
+
+Alpha, gated by the ClusterTrustBundleProjection feature gate.
+
+ClusterTrustBundle objects can either be selected by name, or by the combination of signer name and a label selector.
+
+Kubelet performs aggressive normalization of the PEM contents written into the pod filesystem.  Esoteric PEM features such as inter-block comments and block headers are stripped.  Certificates are deduplicated. The ordering of certificates within the file is arbitrary, and Kubelet may change the order over time.
+* @references io.k8s.api.core.v1.ClusterTrustBundleProjection
+*/
+clusterTrustBundle?: io_k8s_api_core_v1_ClusterTrustBundleProjection;
+/**
 * configMap information about the configMap data to project
 * @references io.k8s.api.core.v1.ConfigMapProjection
 */
@@ -24,17 +35,6 @@ secret?: io_k8s_api_core_v1_SecretProjection;
 * @references io.k8s.api.core.v1.ServiceAccountTokenProjection
 */
 serviceAccountToken?: io_k8s_api_core_v1_ServiceAccountTokenProjection;
-/**
-* ClusterTrustBundle allows a pod to access the `.spec.trustBundle` field of ClusterTrustBundle objects in an auto-updating file.
-
-Alpha, gated by the ClusterTrustBundleProjection feature gate.
-
-ClusterTrustBundle objects can either be selected by name, or by the combination of signer name and a label selector.
-
-Kubelet performs aggressive normalization of the PEM contents written into the pod filesystem.  Esoteric PEM features such as inter-block comments and block headers are stripped.  Certificates are deduplicated. The ordering of certificates within the file is arbitrary, and Kubelet may change the order over time.
-* @references io.k8s.api.core.v1.ClusterTrustBundleProjection
-*/
-clusterTrustBundle?: io_k8s_api_core_v1_ClusterTrustBundleProjection;
 }
 
 /**
@@ -44,11 +44,11 @@ clusterTrustBundle?: io_k8s_api_core_v1_ClusterTrustBundleProjection;
 */
 export function createio_k8s_api_core_v1_VolumeProjection(data?: Partial<io_k8s_api_core_v1_VolumeProjection>): io_k8s_api_core_v1_VolumeProjection {
  return {
+   clusterTrustBundle: data?.clusterTrustBundle !== undefined ? data.clusterTrustBundle : createio_k8s_api_core_v1_ClusterTrustBundleProjection(),
    configMap: data?.configMap !== undefined ? data.configMap : createio_k8s_api_core_v1_ConfigMapProjection(),
    downwardAPI: data?.downwardAPI !== undefined ? data.downwardAPI : createio_k8s_api_core_v1_DownwardAPIProjection(),
    secret: data?.secret !== undefined ? data.secret : createio_k8s_api_core_v1_SecretProjection(),
    serviceAccountToken: data?.serviceAccountToken !== undefined ? data.serviceAccountToken : createio_k8s_api_core_v1_ServiceAccountTokenProjection(),
-   clusterTrustBundle: data?.clusterTrustBundle !== undefined ? data.clusterTrustBundle : createio_k8s_api_core_v1_ClusterTrustBundleProjection(),
  };
 }
 // Required imports

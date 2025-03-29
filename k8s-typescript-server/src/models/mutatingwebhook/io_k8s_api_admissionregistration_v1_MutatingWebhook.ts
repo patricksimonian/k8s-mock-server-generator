@@ -5,12 +5,6 @@
 */
 export interface io_k8s_api_admissionregistration_v1_MutatingWebhook {
 /**
-* AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects. API server will try to use first version in the list which it supports. If none of the versions specified in this list supported by API server, validation will fail for this object. If a persisted webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail and be subject to the failure policy.
-* @required
-* @isArray
-*/
-admissionReviewVersions: string[];
-/**
 * ClientConfig defines how to communicate with the hook. Required
 * @required
 * @references io.k8s.api.admissionregistration.v1.WebhookClientConfig
@@ -24,16 +18,6 @@ Possible enum values:
  - `"Ignore"` means that an error calling the webhook is ignored.
 */
 failurePolicy?: 'Fail' | 'Ignore';
-/**
-* ObjectSelector decides whether to run the webhook based on if the object has matching labels. objectSelector is evaluated against both the oldObject and newObject that would be sent to the webhook, and is considered to match if either object matches the selector. A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match. Use the object selector only if the webhook is opt-in, because end users may skip the admission webhook by setting the labels. Default to the empty LabelSelector, which matches everything.
-* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
-*/
-objectSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
-/**
-* Rules describes what operations on what resources/subresources the webhook cares about. The webhook cares about an operation if it matches _any_ Rule. However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.
-* @isArray
-*/
-rules?: io_k8s_api_admissionregistration_v1_RuleWithOperations[];
 /**
 * MatchConditions is a list of conditions that must be met for a request to be sent to this webhook. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.
 
@@ -65,6 +49,21 @@ matchPolicy?: 'Equivalent' | 'Exact';
 * @required
 */
 name: string;
+/**
+* ObjectSelector decides whether to run the webhook based on if the object has matching labels. objectSelector is evaluated against both the oldObject and newObject that would be sent to the webhook, and is considered to match if either object matches the selector. A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match. Use the object selector only if the webhook is opt-in, because end users may skip the admission webhook by setting the labels. Default to the empty LabelSelector, which matches everything.
+* @references io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
+*/
+objectSelector?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector;
+/**
+* TimeoutSeconds specifies the timeout for this webhook. After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy. The timeout value must be between 1 and 30 seconds. Default to 10 seconds.
+*/
+timeoutSeconds?: number;
+/**
+* AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects. API server will try to use first version in the list which it supports. If none of the versions specified in this list supported by API server, validation will fail for this object. If a persisted webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail and be subject to the failure policy.
+* @required
+* @isArray
+*/
+admissionReviewVersions: string[];
 /**
 * NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the webhook.
 
@@ -115,6 +114,11 @@ Possible enum values:
 */
 reinvocationPolicy?: 'IfNeeded' | 'Never';
 /**
+* Rules describes what operations on what resources/subresources the webhook cares about. The webhook cares about an operation if it matches _any_ Rule. However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.
+* @isArray
+*/
+rules?: io_k8s_api_admissionregistration_v1_RuleWithOperations[];
+/**
 * SideEffects states whether this webhook has side effects. Acceptable values are: None, NoneOnDryRun (webhooks created via v1beta1 may also specify Some or Unknown). Webhooks with side effects MUST implement a reconciliation system, since a request may be rejected by a future step in the admission chain and the side effects therefore need to be undone. Requests with the dryRun attribute will be auto-rejected if they match a webhook with sideEffects == Unknown or Some.
 
 Possible enum values:
@@ -125,10 +129,6 @@ Possible enum values:
 * @required
 */
 sideEffects: 'None' | 'NoneOnDryRun' | 'Some' | 'Unknown';
-/**
-* TimeoutSeconds specifies the timeout for this webhook. After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy. The timeout value must be between 1 and 30 seconds. Default to 10 seconds.
-*/
-timeoutSeconds?: number;
 }
 
 /**
@@ -138,18 +138,18 @@ timeoutSeconds?: number;
 */
 export function createio_k8s_api_admissionregistration_v1_MutatingWebhook(data?: Partial<io_k8s_api_admissionregistration_v1_MutatingWebhook>): io_k8s_api_admissionregistration_v1_MutatingWebhook {
  return {
-   admissionReviewVersions: data?.admissionReviewVersions !== undefined ? data.admissionReviewVersions : [],
    clientConfig: data?.clientConfig !== undefined ? data.clientConfig : createio_k8s_api_admissionregistration_v1_WebhookClientConfig(),
    failurePolicy: data?.failurePolicy !== undefined ? data.failurePolicy : '',
-   objectSelector: data?.objectSelector !== undefined ? data.objectSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
-   rules: data?.rules !== undefined ? data.rules : [],
    matchConditions: data?.matchConditions !== undefined ? data.matchConditions : [],
    matchPolicy: data?.matchPolicy !== undefined ? data.matchPolicy : '',
    name: data?.name !== undefined ? data.name : '',
+   objectSelector: data?.objectSelector !== undefined ? data.objectSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
+   timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
+   admissionReviewVersions: data?.admissionReviewVersions !== undefined ? data.admissionReviewVersions : [],
    namespaceSelector: data?.namespaceSelector !== undefined ? data.namespaceSelector : createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(),
    reinvocationPolicy: data?.reinvocationPolicy !== undefined ? data.reinvocationPolicy : '',
+   rules: data?.rules !== undefined ? data.rules : [],
    sideEffects: data?.sideEffects !== undefined ? data.sideEffects : '',
-   timeoutSeconds: data?.timeoutSeconds !== undefined ? data.timeoutSeconds : 0,
  };
 }
 // Required imports

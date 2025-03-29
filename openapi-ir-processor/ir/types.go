@@ -70,6 +70,7 @@ type Endpoint struct {
 	Namespaced   bool
 	Operational  bool // the endpoint is operational one of "finalize", "binding", "eviction", "scale", "status", "token", "approval", "log", "exec", "attach", "portforward", "proxy", "redirect", "watch", "connect", "bind", "metrics", "metrics/proxy", "metrics/portforward",
 	Responses    map[string]IRResponse
+	ContentTypes string // content types supported by the endpoint
 }
 
 type IRParameter struct {

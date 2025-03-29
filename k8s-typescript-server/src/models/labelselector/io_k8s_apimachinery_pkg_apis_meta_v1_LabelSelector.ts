@@ -5,14 +5,14 @@
 */
 export interface io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector {
 /**
-* matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
-*/
-matchLabels?: Record<string, any>;
-/**
 * matchExpressions is a list of label selector requirements. The requirements are ANDed.
 * @isArray
 */
 matchExpressions?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelectorRequirement[];
+/**
+* matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+*/
+matchLabels?: Record<string, any>;
 }
 
 /**
@@ -22,8 +22,8 @@ matchExpressions?: io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelectorRequirement
 */
 export function createio_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector(data?: Partial<io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector>): io_k8s_apimachinery_pkg_apis_meta_v1_LabelSelector {
  return {
-   matchLabels: data?.matchLabels !== undefined ? data.matchLabels : {},
    matchExpressions: data?.matchExpressions !== undefined ? data.matchExpressions : [],
+   matchLabels: data?.matchLabels !== undefined ? data.matchLabels : {},
  };
 }
 // Required imports

@@ -5,6 +5,16 @@
 */
 export interface io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec {
 /**
+* maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas.
+* @required
+*/
+maxReplicas: number;
+/**
+* metrics contains the specifications for which to use to calculate the desired replica count (the maximum replica count across all metrics will be used).  The desired replica count is calculated multiplying the ratio between the target value and the current value by the current number of pods.  Ergo, metrics used must decrease as the pod count is increased, and vice-versa.  See the individual metric source types for more information about how each type of metric must respond. If not set, the default metric will be set to 80% average CPU utilization.
+* @isArray
+*/
+metrics?: io_k8s_api_autoscaling_v2_MetricSpec[];
+/**
 * minReplicas is the lower limit for the number of replicas to which the autoscaler can scale down.  It defaults to 1 pod.  minReplicas is allowed to be 0 if the alpha feature gate HPAScaleToZero is enabled and at least one Object or External metric is configured.  Scaling is active as long as at least one metric value is available.
 */
 minReplicas?: number;
@@ -19,16 +29,6 @@ scaleTargetRef: io_k8s_api_autoscaling_v2_CrossVersionObjectReference;
 * @references io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerBehavior
 */
 behavior?: io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerBehavior;
-/**
-* maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas.
-* @required
-*/
-maxReplicas: number;
-/**
-* metrics contains the specifications for which to use to calculate the desired replica count (the maximum replica count across all metrics will be used).  The desired replica count is calculated multiplying the ratio between the target value and the current value by the current number of pods.  Ergo, metrics used must decrease as the pod count is increased, and vice-versa.  See the individual metric source types for more information about how each type of metric must respond. If not set, the default metric will be set to 80% average CPU utilization.
-* @isArray
-*/
-metrics?: io_k8s_api_autoscaling_v2_MetricSpec[];
 }
 
 /**
@@ -38,11 +38,11 @@ metrics?: io_k8s_api_autoscaling_v2_MetricSpec[];
 */
 export function createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec(data?: Partial<io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec>): io_k8s_api_autoscaling_v2_HorizontalPodAutoscalerSpec {
  return {
+   maxReplicas: data?.maxReplicas !== undefined ? data.maxReplicas : 0,
+   metrics: data?.metrics !== undefined ? data.metrics : [],
    minReplicas: data?.minReplicas !== undefined ? data.minReplicas : 0,
    scaleTargetRef: data?.scaleTargetRef !== undefined ? data.scaleTargetRef : createio_k8s_api_autoscaling_v2_CrossVersionObjectReference(),
    behavior: data?.behavior !== undefined ? data.behavior : createio_k8s_api_autoscaling_v2_HorizontalPodAutoscalerBehavior(),
-   maxReplicas: data?.maxReplicas !== undefined ? data.maxReplicas : 0,
-   metrics: data?.metrics !== undefined ? data.metrics : [],
  };
 }
 // Required imports

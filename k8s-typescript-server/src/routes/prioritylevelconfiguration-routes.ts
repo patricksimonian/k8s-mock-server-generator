@@ -8,26 +8,6 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 export function createprioritylevelconfigurationRoutes(storage: Storage): express.Router {
   const router = express.Router();
 
-//watch changes to an object of kind PriorityLevelConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/flowcontrol.apiserver.k8s.io/v1/watch/prioritylevelconfigurations/:name', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const namespace = null;
-      logger.info(`Getting prioritylevelconfiguration ${name}`);
-      
-      const resource = await storage.getResource('prioritylevelconfiguration', name, namespace);
-      
-      if (!resource) {
-        return handleResourceError(new Error(`prioritylevelconfiguration ${name} not found in namespace ${namespace}`), res);
-      }
-         res.json(resource);
-    } catch (error) {
-      next(error);
-    }
-  
-   
-  });
-
 //list or watch objects of kind PriorityLevelConfiguration
   router.get('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations', async (req, res, next) => {
     try {
@@ -97,67 +77,6 @@ export function createprioritylevelconfigurationRoutes(storage: Storage): expres
           kind: 'prioritylevelconfiguration'
         }
       });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-//read status of the specified PriorityLevelConfiguration
-  router.get('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations/:name/status', async (req, res, next) => {
- 
-  // the subresourcestatus
-      try {
-        const name = req.params.name;
-        const namespace = null;
-        logger.info(`Getting status ${name}`);
-        
-        const resource = await storage.getResource('status', name, namespace);
-        
-        if (!resource) {
-          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
-        }
-        res.json(resource);
-      } catch (error) {
-        next(error);
-      }
-  
-   
-  });
-//replace status of the specified PriorityLevelConfiguration
-  router.put('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
-      const namespace = null;
-      logger.info(`Updating prioritylevelconfiguration ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-      const subresource = "status";
-      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('prioritylevelconfiguration', name, subresource, resource, namespace);
-      
-      res.json(updatedResource);
-    } catch (error) {
-      next(error);
-    }
-  });
-  router.patch('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations/:name/status', async (req, res, next) => {
-    try {
-      const name = req.params.name;
-      const patchData = req.body;
-      const contentType = req.get('Content-Type');
-      const namespace = null;
-      logger.info(`Getting prioritylevelconfiguration ${name}`);
-      const subresource = "status";
-
-      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('prioritylevelconfiguration', name, subresource, patchData, namespace);
-      return res.json(updatedResource);
     } catch (error) {
       next(error);
     }
@@ -273,6 +192,67 @@ export function createprioritylevelconfigurationRoutes(storage: Storage): expres
     }
   });
 
+//read status of the specified PriorityLevelConfiguration
+  router.get('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations/:name/status', async (req, res, next) => {
+ 
+  // the subresourcestatus
+      try {
+        const name = req.params.name;
+        const namespace = null;
+        logger.info(`Getting status ${name}`);
+        
+        const resource = await storage.getResource('status', name, namespace);
+        
+        if (!resource) {
+          return handleResourceError(new Error(`status ${name} not found in namespace ${namespace}`), res);
+        }
+        res.json(resource);
+      } catch (error) {
+        next(error);
+      }
+  
+   
+  });
+//replace status of the specified PriorityLevelConfiguration
+  router.put('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating prioritylevelconfiguration ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+      const subresource = "status";
+      const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('prioritylevelconfiguration', name, subresource, resource, namespace);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+  router.patch('/apis/flowcontrol.apiserver.k8s.io/v1/prioritylevelconfigurations/:name/status', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const patchData = req.body;
+      const contentType = req.get('Content-Type');
+      const namespace = null;
+      logger.info(`Getting prioritylevelconfiguration ${name}`);
+      const subresource = "status";
+
+      const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
+      const updatedResource = await storage.updateSubresource('prioritylevelconfiguration', name, subresource, patchData, namespace);
+      return res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
+  });
+
 //watch individual changes to a list of PriorityLevelConfiguration. deprecated: use the 'watch' parameter with a list operation instead.
   router.get('/apis/flowcontrol.apiserver.k8s.io/v1/watch/prioritylevelconfigurations', async (req, res, next) => {
     try {
@@ -292,6 +272,26 @@ export function createprioritylevelconfigurationRoutes(storage: Storage): expres
     } catch (error) {
       next(error);
     }
+  });
+
+//watch changes to an object of kind PriorityLevelConfiguration. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/flowcontrol.apiserver.k8s.io/v1/watch/prioritylevelconfigurations/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const namespace = null;
+      logger.info(`Getting prioritylevelconfiguration ${name}`);
+      
+      const resource = await storage.getResource('prioritylevelconfiguration', name, namespace);
+      
+      if (!resource) {
+        return handleResourceError(new Error(`prioritylevelconfiguration ${name} not found in namespace ${namespace}`), res);
+      }
+         res.json(resource);
+    } catch (error) {
+      next(error);
+    }
+  
+   
   });
 
   return router;

@@ -5,6 +5,11 @@
 */
 export interface io_k8s_api_core_v1_ServicePort {
 /**
+* Number or name of the port to access on the pods targeted by the service. Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME. If this is a string, it will be looked up as a named port in the target Pod's container ports. If this is not specified, the value of the 'port' field is used (an identity map). This field is ignored for services with clusterIP=None, and should be omitted or set equal to the 'port' field. More info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
+* @references io.k8s.apimachinery.pkg.util.intstr.IntOrString
+*/
+targetPort?: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
+/**
 * The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:
 
 * Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).
@@ -39,11 +44,6 @@ Possible enum values:
  - `"UDP"` is the UDP protocol.
 */
 protocol?: 'SCTP' | 'TCP' | 'UDP';
-/**
-* Number or name of the port to access on the pods targeted by the service. Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME. If this is a string, it will be looked up as a named port in the target Pod's container ports. If this is not specified, the value of the 'port' field is used (an identity map). This field is ignored for services with clusterIP=None, and should be omitted or set equal to the 'port' field. More info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
-* @references io.k8s.apimachinery.pkg.util.intstr.IntOrString
-*/
-targetPort?: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
 }
 
 /**
@@ -53,12 +53,12 @@ targetPort?: io_k8s_apimachinery_pkg_util_intstr_IntOrString;
 */
 export function createio_k8s_api_core_v1_ServicePort(data?: Partial<io_k8s_api_core_v1_ServicePort>): io_k8s_api_core_v1_ServicePort {
  return {
+   targetPort: data?.targetPort !== undefined ? data.targetPort : createio_k8s_apimachinery_pkg_util_intstr_IntOrString(),
    appProtocol: data?.appProtocol !== undefined ? data.appProtocol : '',
    name: data?.name !== undefined ? data.name : '',
    nodePort: data?.nodePort !== undefined ? data.nodePort : 0,
    port: data?.port !== undefined ? data.port : 0,
    protocol: data?.protocol !== undefined ? data.protocol : '',
-   targetPort: data?.targetPort !== undefined ? data.targetPort : createio_k8s_apimachinery_pkg_util_intstr_IntOrString(),
  };
 }
 // Required imports

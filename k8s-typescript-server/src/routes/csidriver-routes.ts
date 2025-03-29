@@ -7,27 +7,6 @@ import { getPrimaryContainer, handleResourceError } from '../utils';
 
 export function createcsidriverRoutes(storage: Storage): express.Router {
   const router = express.Router();
-
-//list or watch objects of kind CSIDriver
-  router.get('/apis/storage.k8s.io/v1/csidrivers', async (req, res, next) => {
-    try {
-      const labelSelector = req.query.labelSelector as string | undefined;
-      const fieldSelector = req.query.fieldSelector as string | undefined;
-      const limit = req.query.limit ? Number(req.query.limit) : undefined;
-      const cont = req.query.continue as string | undefined;
-      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
-      const namespace = null;
-      logger.info(`Listing csidriver`);
-      
-      const resourceList = await storage.listResources('csidriver', namespace, listOpts);
-      
-
-      
-      res.json(resourceList);
-    } catch (error) {
-      next(error);
-    }
-  });
   //create a CSIDriver
   router.post('/apis/storage.k8s.io/v1/csidrivers', async (req, res, next) => {
 
@@ -82,8 +61,8 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch individual changes to a list of CSIDriver. deprecated: use the 'watch' parameter with a list operation instead.
-  router.get('/apis/storage.k8s.io/v1/watch/csidrivers', async (req, res, next) => {
+//list or watch objects of kind CSIDriver
+  router.get('/apis/storage.k8s.io/v1/csidrivers', async (req, res, next) => {
     try {
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
@@ -103,8 +82,8 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
     }
   });
 
-//watch changes to an object of kind CSIDriver. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
-  router.get('/apis/storage.k8s.io/v1/watch/csidrivers/:name', async (req, res, next) => {
+//read the specified CSIDriver
+  router.get('/apis/storage.k8s.io/v1/csidrivers/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
       const namespace = null;
@@ -121,6 +100,28 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
     }
   
    
+  });
+//replace the specified CSIDriver
+  router.put('/apis/storage.k8s.io/v1/csidrivers/:name', async (req, res, next) => {
+    try {
+      const name = req.params.name;
+      const resource = req.body;
+      // Ensure resource has metadata
+      if (!resource.metadata) {
+        resource.metadata = {};
+      }
+      const namespace = null;
+      logger.info(`Updating csidriver ${name}`);
+
+      // Set name and namespace in metadata
+      resource.metadata.name = name;
+
+      const updatedResource = await storage.updateResource('csidriver', name, resource, namespace, resource.metadata.resourceVersion);
+      
+      res.json(updatedResource);
+    } catch (error) {
+      next(error);
+    }
   });
 
 //delete a CSIDriver
@@ -191,8 +192,8 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
     }
   });
 
-//read the specified CSIDriver
-  router.get('/apis/storage.k8s.io/v1/csidrivers/:name', async (req, res, next) => {
+//watch changes to an object of kind CSIDriver. deprecated: use the 'watch' parameter with a list operation instead, filtered to a single item with the 'fieldSelector' parameter.
+  router.get('/apis/storage.k8s.io/v1/watch/csidrivers/:name', async (req, res, next) => {
     try {
       const name = req.params.name;
       const namespace = null;
@@ -210,24 +211,23 @@ export function createcsidriverRoutes(storage: Storage): express.Router {
   
    
   });
-//replace the specified CSIDriver
-  router.put('/apis/storage.k8s.io/v1/csidrivers/:name', async (req, res, next) => {
+
+//watch individual changes to a list of CSIDriver. deprecated: use the 'watch' parameter with a list operation instead.
+  router.get('/apis/storage.k8s.io/v1/watch/csidrivers', async (req, res, next) => {
     try {
-      const name = req.params.name;
-      const resource = req.body;
-      // Ensure resource has metadata
-      if (!resource.metadata) {
-        resource.metadata = {};
-      }
+      const labelSelector = req.query.labelSelector as string | undefined;
+      const fieldSelector = req.query.fieldSelector as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+      const cont = req.query.continue as string | undefined;
+      const listOpts = { labelSelector, fieldSelector, limit, continue: cont };
       const namespace = null;
-      logger.info(`Updating csidriver ${name}`);
-
-      // Set name and namespace in metadata
-      resource.metadata.name = name;
-
-      const updatedResource = await storage.updateResource('csidriver', name, resource, namespace, resource.metadata.resourceVersion);
+      logger.info(`Listing csidriver`);
       
-      res.json(updatedResource);
+      const resourceList = await storage.listResources('csidriver', namespace, listOpts);
+      
+
+      
+      res.json(resourceList);
     } catch (error) {
       next(error);
     }

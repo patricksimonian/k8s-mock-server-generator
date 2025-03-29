@@ -7,11 +7,11 @@ export interface io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_Extern
 /**
 * 
 */
-url?: string;
+description?: string;
 /**
 * 
 */
-description?: string;
+url?: string;
 }
 
 /**
@@ -21,7 +21,7 @@ description?: string;
 */
 export function createio_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation(data?: Partial<io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation>): io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation {
  return {
-   url: data?.url !== undefined ? data.url : '',
    description: data?.description !== undefined ? data.description : '',
+   url: data?.url !== undefined ? data.url : '',
  };
 }
