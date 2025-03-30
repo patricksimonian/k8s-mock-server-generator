@@ -19,6 +19,10 @@ All you really need to get started is to work off of the [k8s-server-generator](
 
 ![alt text](image-1.png)
 
+(sample generated server)
+
+![image](https://github.com/user-attachments/assets/90f4f8e0-d85a-446d-804a-49597f23131c)
+
 ## Contributions
 
 This code requires a large amount of refactoring before its ready for contributions. I'll address that over the next few monthes. Please drop issues for feature ideas if you're interested so they can be tracked. I am a fulltime engineering consultant and so my time for consistent updates are limited! I'm hoping for the community to take this on if there's interest. 
