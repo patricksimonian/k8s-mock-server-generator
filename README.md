@@ -15,6 +15,9 @@ This project contains tooling to generate a Express.JS/Typescript mock api serve
 
 All you really need to get started is to work off of the [k8s-server-generator](./k8s-server-generator/README.md) package. 
 
+![alt text](image.png)
+
+![alt text](image-1.png)
 
 ## Contributions
 

@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/getkin/kin-openapi v0.130.0 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/inflection v1.0.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 

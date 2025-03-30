@@ -17,7 +17,6 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
 
   // Override the resolvePath method to tell protobufjs where to find import targets
   protoRoot.resolvePath = function (origin, target) {
-    console.log('target', target)
     const fullPath = path.resolve(__dirname, "../protos", target.replace('k8s.io', 'k8s/io'));
     return fullPath;
   };

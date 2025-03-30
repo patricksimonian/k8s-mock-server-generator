@@ -135,7 +135,7 @@ func GenerateIR(spec SwaggerSpec) IR {
 	// Process models from Definitions.
 	for name, rawDef := range spec.Definitions {
 		var schema Schema
-		fmt.Printf("Checking model defintiions %v\n", name)
+
 		if err := json.Unmarshal(rawDef, &schema); err != nil {
 			fmt.Printf("Error parsing definition %s: %v\n", name, err)
 			continue
@@ -156,7 +156,7 @@ func GenerateIR(spec SwaggerSpec) IR {
 	// Process each path.
 	for path, raw := range spec.Paths {
 		var rawMap map[string]json.RawMessage
-		fmt.Println(path)
+
 		if err := json.Unmarshal(raw, &rawMap); err != nil {
 			fmt.Printf("Error unmarshalling path %q: %v\n", path, err)
 			continue
@@ -218,7 +218,7 @@ func GenerateIR(spec SwaggerSpec) IR {
 				} else {
 					kind = strings.Title(kind)
 				}
-				fmt.Printf("pm not found changind to %v\n", kind)
+
 				pm = fmt.Sprintf("io.k8s.api.core.v1.%v", kind)
 			}
 			// fmt.Printf("path %v, modelName %v, pm: %v\n", path, kind, pm)

@@ -137,7 +137,6 @@ func main() {
 				log.Printf("Failed to fetch proto files for group version %s", gv)
 
 				for _, endpoint := range groupVersions[gv] {
-					log.Printf("setting proto import path to empty for endpoint %s", endpoint.Path)
 					endpoint.ProtoImportPath = ""
 					endpoint.ProtoMessage = ""
 				}
