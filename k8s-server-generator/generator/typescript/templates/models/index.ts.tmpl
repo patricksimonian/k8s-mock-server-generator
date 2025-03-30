@@ -1,0 +1,75 @@
+/**
+ * Kubernetes API Models
+ * 
+ * This file exports all models organized by resource type.
+ * Each resource type has its own directory with model definitions.
+ */
+
+// Export all models grouped by resource type
+{{- range $resourceType, $models := .ModelsByResourceType }}
+/**
+ * {{ $resourceType | title }} Models
+ * 
+ * This module exports all models related to the {{ $resourceType }} resource type.
+ * @packageDocumentation
+ */
+export * from './{{ $resourceType | sanitizeResourceType }}';
+{{ end }}
+
+/**
+ * Type Helpers
+ */
+
+/**
+ * K8sList is a generic type for Kubernetes list objects
+ */
+export interface K8sList<T> {
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    resourceVersion: string;
+    selfLink?: string;
+    continue?: string;
+  };
+  items: T[];
+}
+
+/**
+ * K8sMetadata is a common type for Kubernetes object metadata
+ */
+export interface K8sMetadata {
+  name: string;
+  namespace?: string;
+  labels?: Record<string, string>;
+  annotations?: Record<string, string>;
+  resourceVersion?: string;
+  uid?: string;
+  creationTimestamp?: string;
+  deletionTimestamp?: string;
+  generation?: number;
+  selfLink?: string;
+}
+
+/**
+ * K8sStatus is a common type for Kubernetes status responses
+ */
+export interface K8sStatus {
+  kind: string;
+  apiVersion: string;
+  metadata: {};
+  status: string;
+  message: string;
+  reason?: string;
+  details?: {
+    name?: string;
+    group?: string;
+    kind?: string;
+    uid?: string;
+    causes?: Array<{
+      reason?: string;
+      message?: string;
+      field?: string;
+    }>;
+  };
+  code?: number;
+}

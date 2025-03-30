@@ -1,0 +1,35 @@
+# Path to the OpenAPI specification file
+openAPISpecPath: "../k8s-fixtures/k8s_kind_swagger_1.32.json"
+
+# Output directory for the generated code
+outputDir: "../k8s-typescript-server"
+
+# Server configuration
+server:
+  # Port to run the server on
+  port: 9091
+
+# Storage configuration
+storage:
+  # Type of storage to use (memory, file, firestore)
+  type: "memory"
+  
+  # Uncomment the following for file storage
+  # type: "file"
+  # filePath: "./data/k8s-state.json"
+  
+  # Uncomment the following for Firestore storage
+  # type: "firestore"
+  # firestoreProject: "my-project-id"
+  # firestoreCollectionPrefix: "k8s"
+
+# Initial state configuration
+initialState:
+  # Type of initial state (empty, default, custom)
+  type: "default"
+  
+  # Uncomment the following for custom initial state
+  # type: "custom"
+  # path: "./custom-state.json"
+
+fetchProtos: true

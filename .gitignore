@@ -1,0 +1,8 @@
+**/node_modules
+**/venv
+**/dereferenced_spec.json
+**/cluster-config.yaml
+**/config.yaml
+**/admin-key.json
+.env
+k8s-typescript-server

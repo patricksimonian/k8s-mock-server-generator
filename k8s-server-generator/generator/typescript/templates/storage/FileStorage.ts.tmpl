@@ -1,0 +1,299 @@
+import { Storage } from './Storage';
+import { StorageError } from './StorageError';
+import { logger } from '../logger';
+import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs-extra';
+import * as path from 'path';
+
+/**
+* File-based implementation of the Storage interface
+*/
+export class FileStorage implements Storage {
+ private filePath: string;
+ private data: Record<string, Record<string, Record<string, any>>> = {};
+ private initialized: boolean = false;
+
+ /**
+  * Create a new FileStorage instance
+  * 
+  * @param filePath Path to the file to store data in
+  */
+ constructor(filePath: string) {
+   this.filePath = filePath;
+   
+   // Initialize data structure
+   this.data = {
+     namespaces: {}
+   };
+   
+   // Create default namespace
+   this.data.namespaces['default'] = {};
+   
+   // Load data from file if it exists
+   this.loadData();
+   
+   logger.info(`File storage initialized with file path ${filePath}`);
+ }
+
+ /**
+  * Load data from file
+  */
+ private loadData(): void {
+   try {
+     if (fs.existsSync(this.filePath)) {
+       const fileData = fs.readFileSync(this.filePath, 'utf8');
+       this.data = JSON.parse(fileData);
+       
+       // Check if initialization marker exists
+       this.initialized = !!this.data._internal?.initialized;
+       
+       logger.info('Data loaded from file');
+     } else {
+       logger.info('No existing data file found, starting with empty data');
+     }
+   } catch (error) {
+     logger.error('Error loading data from file:', error);
+     // Continue with empty data
+   }
+ }
+
+ /**
+  * Save data to file
+  */
+ private async saveData(): Promise<void> {
+   try {
+     // Create directory if it doesn't exist
+     const dir = path.dirname(this.filePath);
+     await fs.ensureDir(dir);
+     
+     // Save data to file
+     await fs.writeFile(this.filePath, JSON.stringify(this.data, null, 2));
+   } catch (error) {
+     logger.error('Error saving data to file:', error);
+     throw StorageError.internal('Failed to save data to file', error as Error);
+   }
+ }
+
+ /**
+  * Check if the storage has been initialized
+  */
+ async isInitialized(): Promise<boolean> {
+   return this.initialized;
+ }
+
+ /**
+  * Mark the storage as initialized
+  */
+ async markInitialized(): Promise<void> {
+   // Create _internal section if it doesn't exist
+   if (!this.data._internal) {
+     this.data._internal = {};
+   }
+   
+   // Set initialization marker
+   this.data._internal.initialized = true;
+   this.data._internal.timestamp = new Date().toISOString();
+   
+   this.initialized = true;
+   
+   // Save data to file
+   await this.saveData();
+ }
+
+ /**
+  * Get a namespace or create it if it doesn't exist
+  */
+ private getOrCreateNamespace(namespace: string): Record<string, Record<string, any>> {
+   if (!this.data.namespaces[namespace]) {
+     this.data.namespaces[namespace] = {};
+   }
+   return this.data.namespaces[namespace];
+ }
+
+ /**
+  * Get or create a collection in a namespace
+  */
+ private getOrCreateCollection(namespace: string, kind: string): Record<string, any> {
+   const ns = this.getOrCreateNamespace(namespace);
+   const collectionName = `${kind.toLowerCase()}s`;
+   
+   if (!ns[collectionName]) {
+     ns[collectionName] = {};
+   }
+   return ns[collectionName];
+ }
+
+ /**
+  * Get a resource by kind, name, and namespace
+  */
+ async getResource(kind: string, name: string, namespace: string = 'default'): Promise<any> {
+   const collection = this.getOrCreateCollection(namespace, kind);
+   const resource = collection[name];
+   
+   if (!resource) {
+     throw StorageError.notFound(kind, name, namespace);
+   }
+   
+   return { ...resource };
+ }
+ 
+ /**
+  * List resources by kind and namespace
+  */
+ async listResources(kind: string, namespace: string = 'default'): Promise<any[]> {
+   const collection = this.getOrCreateCollection(namespace, kind);
+   return Object.values(collection).map(resource => ({ ...resource }));
+ }
+ 
+ /**
+  * Create a resource
+  */
+ async createResource(resource: any, namespace: string = 'default'): Promise<any> {
+   const kind = resource.kind;
+   if (!kind) {
+     throw StorageError.missingField('kind');
+   }
+   
+   const name = resource.metadata?.name;
+   if (!name) {
+     throw StorageError.missingField('metadata.name');
+   }
+   
+   const collection = this.getOrCreateCollection(namespace, kind);
+   
+   // Check if resource already exists
+   if (collection[name]) {
+     throw StorageError.alreadyExists(kind, name, namespace);
+   }
+   
+   // Add resource metadata
+   const now = new Date().toISOString();
+   const newResource = {
+     ...resource,
+     metadata: {
+       ...resource.metadata,
+       creationTimestamp: now,
+       resourceVersion: uuidv4(),
+       namespace: namespace
+     }
+   };
+   
+   // Store resource
+   collection[name] = newResource;
+   
+   // Save data to file
+   await this.saveData();
+   
+   return { ...newResource };
+ }
+ 
+ /**
+  * Update a resource
+  */
+ async updateResource(kind: string, name: string, resource: any, namespace: string = 'default'): Promise<any> {
+   const collection = this.getOrCreateCollection(namespace, kind);
+   
+   // Check if resource exists
+   if (!collection[name]) {
+     throw StorageError.notFound(kind, name, namespace);
+   }
+   
+   // Update resource metadata
+   const existing = collection[name];
+   const updatedResource = {
+     ...resource,
+     metadata: {
+       ...resource.metadata,
+       creationTimestamp: existing.metadata.creationTimestamp,
+       resourceVersion: uuidv4(),
+       namespace: namespace
+     }
+   };
+   
+   // Store updated resource
+   collection[name] = updatedResource;
+   
+   // Save data to file
+   await this.saveData();
+   
+   return { ...updatedResource };
+ }
+ 
+ /**
+  * Delete a resource
+  */
+ async deleteResource(kind: string, name: string, namespace: string = 'default'): Promise<boolean> {
+   const collection = this.getOrCreateCollection(namespace, kind);
+   
+   // Check if resource exists
+   if (!collection[name]) {
+     throw StorageError.notFound(kind, name, namespace);
+   }
+   
+   // Delete resource
+   delete collection[name];
+   
+   // Save data to file
+   await this.saveData();
+   return true;
+ }
+
+ /**
+  * Patch a resource
+  */
+async patchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
+  const collection = this.getOrCreateCollection(namespace, kind);
+  
+  // Check if resource exists
+  if (!collection[name]) {
+    throw StorageError.notFound(kind, name, namespace);
+  }
+  
+  // Get existing resource
+  const existing = collection[name];
+  
+  // Apply patch (simple deep merge)
+  const patched = this.deepMerge(existing, patch);
+  
+  // Update resource metadata
+  patched.metadata = {
+    ...patched.metadata,
+    resourceVersion: uuidv4()
+  };
+  
+  // Store patched resource
+  collection[name] = patched;
+  
+  // Save data to file
+  await this.saveData();
+  
+  return { ...patched };
+}
+
+/**
+ * Deep merge two objects
+ */
+private deepMerge(target: any, source: any): any {
+  const output = { ...target };
+  
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key] = this.deepMerge(target[key], source[key]);
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  
+  return output;
+  
+  function isObject(item: any): boolean {
+    return item && typeof item === 'object' && !Array.isArray(item);
+  }
+}
+}

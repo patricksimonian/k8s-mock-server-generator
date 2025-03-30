@@ -1,0 +1,213 @@
+{
+  "namespaces": {
+    "default": {
+      "pods": {},
+      "services": {},
+      "deployments": {},
+      "configmaps": {},
+      "secrets": {}
+    },
+    "kube-system": {
+      "pods": {
+        "kube-dns": {
+          "apiVersion": "v1",
+          "kind": "Pod",
+          "metadata": {
+            "name": "kube-dns",
+            "namespace": "kube-system",
+            "creationTimestamp": "2023-01-01T00:00:00Z",
+            "resourceVersion": "1",
+            "uid": "00000000-0000-0000-0000-000000000001",
+            "labels": {
+              "k8s-app": "kube-dns"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "kubedns",
+                "image": "k8s.gcr.io/k8s-dns-kube-dns:1.14.13",
+                "ports": [
+                  {
+                    "containerPort": 53,
+                    "protocol": "UDP"
+                  },
+                  {
+                    "containerPort": 53,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ]
+          },
+          "status": {
+            "phase": "Running",
+            "conditions": [
+              {
+                "type": "Ready",
+                "status": "True"
+              }
+            ]
+          }
+        },
+        "kube-apiserver": {
+          "apiVersion": "v1",
+          "kind": "Pod",
+          "metadata": {
+            "name": "kube-apiserver",
+            "namespace": "kube-system",
+            "creationTimestamp": "2023-01-01T00:00:00Z",
+            "resourceVersion": "3",
+            "uid": "00000000-0000-0000-0000-000000000003",
+            "labels": {
+              "component": "kube-apiserver",
+              "tier": "control-plane"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "kube-apiserver",
+                "image": "k8s.gcr.io/kube-apiserver:v1.24.0",
+                "ports": [
+                  {
+                    "containerPort": 6443,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ]
+          },
+          "status": {
+            "phase": "Running",
+            "conditions": [
+              {
+                "type": "Ready",
+                "status": "True"
+              }
+            ]
+          }
+        }
+      },
+      "services": {
+        "kube-dns": {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "kube-dns",
+            "namespace": "kube-system",
+            "creationTimestamp": "2023-01-01T00:00:00Z",
+            "resourceVersion": "2",
+            "uid": "00000000-0000-0000-0000-000000000002",
+            "labels": {
+              "k8s-app": "kube-dns"
+            }
+          },
+          "spec": {
+            "selector": {
+              "k8s-app": "kube-dns"
+            },
+            "ports": [
+              {
+                "name": "dns",
+                "port": 53,
+                "protocol": "UDP"
+              },
+              {
+                "name": "dns-tcp",
+                "port": 53,
+                "protocol": "TCP"
+              }
+            ],
+            "clusterIP": "10.96.0.10"
+          }
+        }
+      }
+    }
+  },
+  "cluster": {
+    "namespaces": {
+      "default": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "default",
+          "creationTimestamp": "2023-01-01T00:00:00Z",
+          "resourceVersion": "4",
+          "uid": "00000000-0000-0000-0000-000000000004"
+        },
+        "spec": {
+          "finalizers": [
+            "kubernetes"
+          ]
+        },
+        "status": {
+          "phase": "Active"
+        }
+      },
+      "kube-system": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "kube-system",
+          "creationTimestamp": "2023-01-01T00:00:00Z",
+          "resourceVersion": "5",
+          "uid": "00000000-0000-0000-0000-000000000005",
+          "labels": {
+            "kubernetes.io/metadata.name": "kube-system"
+          }
+        },
+        "spec": {
+          "finalizers": [
+            "kubernetes"
+          ]
+        },
+        "status": {
+          "phase": "Active"
+        }
+      },
+      "kube-public": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "kube-public",
+          "creationTimestamp": "2023-01-01T00:00:00Z",
+          "resourceVersion": "6",
+          "uid": "00000000-0000-0000-0000-000000000006",
+          "labels": {
+            "kubernetes.io/metadata.name": "kube-public"
+          }
+        },
+        "spec": {
+          "finalizers": [
+            "kubernetes"
+          ]
+        },
+        "status": {
+          "phase": "Active"
+        }
+      },
+      "kube-node-lease": {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "kube-node-lease",
+          "creationTimestamp": "2023-01-01T00:00:00Z",
+          "resourceVersion": "7",
+          "uid": "00000000-0000-0000-0000-000000000007",
+          "labels": {
+            "kubernetes.io/metadata.name": "kube-node-lease"
+          }
+        },
+        "spec": {
+          "finalizers": [
+            "kubernetes"
+          ]
+        },
+        "status": {
+          "phase": "Active"
+        }
+      }
+    }
+  }
+}

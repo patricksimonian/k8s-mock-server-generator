@@ -1,0 +1,48 @@
+import express from 'express';
+import { createDiscoveryRoutes } from './discovery-routes';
+import { createOpenAPIRoutes } from './openapi-routes';
+import { createUtilityRoutes } from './utility-routes';
+import storage from '../storage';
+
+// Import all route handlers
+{{- $resourceTypes := dict }}
+
+// Group endpoints by resource type
+{{- range .Endpoints }}
+{{- if ne .ResourceType "discovery" }}
+{{- $resourceType := .ResourceType }}
+{{- if eq $resourceType "" }}
+{{- if gt (len .Tags) 0 }}
+{{- $resourceType = index .Tags 0 }}
+{{- else }}
+{{- $resourceType = "resource" }}
+{{- end }}
+{{- end }}
+{{- $sanitizedResourceType := $resourceType | sanitizeResourceType }}
+{{- $resourceTypes = set $resourceTypes $sanitizedResourceType (list $resourceType) }}
+{{- end }}
+{{- end }}
+
+// Import route handlers
+{{- range $sanitizedResourceType, $resourceTypeList := $resourceTypes }}
+import { create{{ $sanitizedResourceType }}Routes } from './{{ $sanitizedResourceType }}-routes';
+{{- end }}
+
+/**
+* Create all routes for the API server
+*/
+export async function createRoutes(): Promise<express.Router> {
+    const router = express.Router();
+    // Add utility routes
+    router.use('/', await createUtilityRoutes(storage));
+    router.use(express.json())
+    // Add discovery routes
+    router.use('/', await createDiscoveryRoutes(storage));
+    // Add OpenAPI routes
+    router.use('/', await createOpenAPIRoutes());
+    // Add resource routes
+    {{- range $sanitizedResourceType, $resourceTypeList := $resourceTypes }}
+    router.use('/', await create{{ $sanitizedResourceType }}Routes(storage));
+    {{- end }}
+    return router;
+}

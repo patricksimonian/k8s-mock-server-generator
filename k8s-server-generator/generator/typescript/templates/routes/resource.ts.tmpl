@@ -1,0 +1,377 @@
+import { Router, Request, Response, NextFunction } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import { Storage, K8sResource } from '../storage/Storage';
+import { StorageError } from '../storage/StorageError';
+import { logger } from '../logger';
+import { authenticate } from '../middleware/auth';
+
+/**
+ * Create a Kubernetes-style error response
+ */
+function createErrorResponse(reason: string, message: string, code: number, details?: any) {
+  return {
+    kind: 'Status',
+    apiVersion: 'v1',
+    metadata: {},
+    status: 'Failure',
+    message,
+    reason,
+    code,
+    details
+  };
+}
+
+/**
+ * Wrap a route handler with error handling and logging
+ */
+function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const requestId = uuidv4();
+    const startTime = Date.now();
+    
+    try {
+      logger.debug('Request received', {
+        requestId,
+        method: req.method,
+        path: req.path,
+        params: req.params,
+        query: req.query
+      });
+      
+      await fn(req, res, next);
+      
+    } catch (error) {
+      logger.error('Error in route handler', {
+        requestId,
+        error,
+        method: req.method,
+        path: req.path
+      });
+      
+      if (error instanceof StorageError) {
+        return res.status(error.getStatusCode()).json(error.toStatus());
+      }
+      
+      return res.status(500).json(createErrorResponse(
+        'InternalError',
+        'An internal server error occurred',
+        500
+      ));
+    } finally {
+      logger.debug('Request completed', {
+        requestId,
+        responseTime: Date.now() - startTime
+      });
+    }
+  };
+}
+
+export function register{{.ResourceName}}Routes(app: Router, storage: Storage) {
+ const router = Router();
+ 
+ // Apply authentication middleware
+ router.use(authenticate);
+ 
+ // List {{.ResourceName}}
+ router.get('{{.ListPath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const { labelSelector, fieldSelector, limit, continue: continueToken } = req.query;
+   
+   const resources = await storage.list('{{.Kind}}', {
+     namespace,
+     labelSelector: labelSelector as string,
+     fieldSelector: fieldSelector as string,
+     limit: limit ? parseInt(limit as string) : undefined,
+     continue: continueToken as string
+   });
+   
+   res.json({
+     kind: '{{.Kind}}List',
+     apiVersion: '{{.APIVersion}}',
+     metadata: {
+       resourceVersion: Date.now().toString(),
+       continue: ''
+     },
+     items: resources
+   });
+ }));
+ 
+ // Watch {{.ResourceName}}
+ router.get('{{.WatchPath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const { labelSelector, fieldSelector, resourceVersion, timeoutSeconds } = req.query;
+   
+   // Set headers for streaming response
+   res.setHeader('Content-Type', 'application/json');
+   res.setHeader('Transfer-Encoding', 'chunked');
+   
+   // Create watch iterator
+   const watchIterator = storage.watch('{{.Kind}}', {
+     namespace,
+     labelSelector: labelSelector as string,
+     fieldSelector: fieldSelector as string,
+     resourceVersion: resourceVersion as string,
+     timeoutSeconds: timeoutSeconds ? parseInt(timeoutSeconds as string) : undefined
+   });
+   
+   // Handle client disconnect
+   req.on('close', () => {
+     watchIterator.return?.();
+   });
+   
+   // Stream watch events
+   try {
+     for await (const event of watchIterator) {
+       // Check if client is still connected
+       if (res.writableEnded) break;
+       
+       res.write(JSON.stringify(event) + '\n');
+     }
+   } catch (error) {
+     // Only log the error if the client is still connected
+     if (!res.writableEnded) {
+       logger.error('Error streaming watch events', { error });
+       
+       // Try to send an error event if possible
+       try {
+         res.write(JSON.stringify({
+           type: 'ERROR',
+           object: createErrorResponse(
+             'WatchError',
+             'Error watching resources',
+             500
+           )
+         }) + '\n');
+       } catch (writeError) {
+         // Ignore write errors at this point
+       }
+     }
+   }
+   
+   // End the response if not already ended
+   if (!res.writableEnded) {
+     res.end();
+   }
+ }));
+ 
+ // Get {{.ResourceName}}
+ router.get('{{.GetPath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const name = req.params.name;
+   
+   if (!name) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Name parameter is required',
+       400
+     ));
+   }
+   
+   const resource = await storage.get('{{.Kind}}', namespace, name);
+   
+   if (!resource) {
+     return res.status(404).json(createErrorResponse(
+       'NotFound',
+       `{{.Kind}} "${name}" not found`,
+       404,
+       {
+         kind: '{{.Kind}}',
+         name: name,
+         {{if .Namespaced}}namespace: namespace{{end}}
+       }
+     ));
+   }
+   
+   res.json(resource);
+ }));
+ 
+ // Create {{.ResourceName}}
+ router.post('{{.CreatePath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const resource = req.body;
+   
+   if (!resource) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Request body is required',
+       400
+     ));
+   }
+   
+   // Validate resource kind
+   if (resource.kind !== '{{.Kind}}') {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       `Resource kind must be '{{.Kind}}'`,
+       400,
+       { kind: resource.kind }
+     ));
+   }
+   
+   // Ensure namespace is set if namespaced resource
+   {{if .Namespaced}}
+   if (!resource.metadata) {
+     resource.metadata = {};
+   }
+   resource.metadata.namespace = namespace;
+   {{end}}
+   
+   const created = await storage.create(resource);
+   res.status(201).json(created);
+ }));
+ 
+ // Update {{.ResourceName}}
+ router.put('{{.UpdatePath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const name = req.params.name;
+   const resource = req.body;
+   
+   if (!name) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Name parameter is required',
+       400
+     ));
+   }
+   
+   if (!resource) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Request body is required',
+       400
+     ));
+   }
+   
+   // Validate resource kind
+   if (resource.kind !== '{{.Kind}}') {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       `Resource kind must be '{{.Kind}}'`,
+       400,
+       { kind: resource.kind }
+     ));
+   }
+   
+   // Ensure name and namespace are set
+   if (!resource.metadata) {
+     resource.metadata = {};
+   }
+   resource.metadata.name = name;
+   {{if .Namespaced}}
+   resource.metadata.namespace = namespace;
+   {{end}}
+   
+   const updated = await storage.update(resource);
+   res.json(updated);
+ }));
+ 
+ // Patch {{.ResourceName}}
+ router.patch('{{.PatchPath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const name = req.params.name;
+   const patch = req.body;
+   
+   if (!name) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Name parameter is required',
+       400
+     ));
+   }
+   
+   if (!patch || typeof patch !== 'object') {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Patch body must be a valid JSON object',
+       400
+     ));
+   }
+   
+   const patched = await storage.patch('{{.Kind}}', namespace, name, patch);
+   res.json(patched);
+ }));
+ 
+ // Delete {{.ResourceName}}
+ router.delete('{{.DeletePath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if .Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const name = req.params.name;
+   
+   if (!name) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Name parameter is required',
+       400
+     ));
+   }
+   
+   const deleted = await storage.delete('{{.Kind}}', namespace, name);
+   
+   if (!deleted) {
+     return res.status(404).json(createErrorResponse(
+       'NotFound',
+       `{{.Kind}} "${name}" not found`,
+       404,
+       {
+         kind: '{{.Kind}}',
+         name: name,
+         {{if .Namespaced}}namespace: namespace{{end}}
+       }
+     ));
+   }
+   
+   res.json({
+     kind: 'Status',
+     apiVersion: 'v1',
+     metadata: {},
+     status: 'Success',
+     code: 200
+   });
+ }));
+ 
+ {{range .Subresources}}
+ // {{.Name}} subresource
+ router.get('{{.GetPath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if $.Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const name = req.params.name;
+   
+   if (!name) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Name parameter is required',
+       400
+     ));
+   }
+   
+   const subresource = await storage.getSubresource('{{$.Kind}}', namespace, name, '{{.Name}}');
+   res.json(subresource);
+ }));
+ 
+ router.put('{{.UpdatePath}}', asyncHandler(async (req, res) => {
+   const namespace = {{if $.Namespaced}}req.params.namespace{{else}}undefined{{end}};
+   const name = req.params.name;
+   const data = req.body;
+   
+   if (!name) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Name parameter is required',
+       400
+     ));
+   }
+   
+   if (!data) {
+     return res.status(400).json(createErrorResponse(
+       'BadRequest',
+       'Request body is required',
+       400
+     ));
+   }
+   
+   const updated = await storage.updateSubresource('{{$.Kind}}', namespace, name, '{{.Name}}', data);
+   res.json(updated);
+ }));
+ {{end}}
+ 
+ // Register routes
+ app.use(router);
+}

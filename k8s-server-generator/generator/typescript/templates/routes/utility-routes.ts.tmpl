@@ -1,0 +1,93 @@
+import express from 'express';
+import { getPrimaryContainer } from '../utils/resource-utils';
+import { logger } from '../logger';
+import { Storage } from '../storage/Storage';
+import { v4 as uuidv4 } from "uuid";
+
+export async function createUtilityRoutes(storage: Storage): Promise<express.Router> {
+  const router = express.Router();
+  // Root path handler
+  router.post('/k8s.emulator.v1.core/namespaces/:namespace/pods/:name/logs', async (req, res, next) => {
+    req.setEncoding('utf8')
+    const sessionId = uuidv4();
+    const { namespace, name } = req.params;
+
+    logger.info(`[${sessionId}] Receiving stream for pod ${name} in namespace ${namespace}`);
+
+    const contentType = req.headers['content-type'] || '';
+    if (!contentType.includes('application/json')) {
+      return res.status(415).send('Expected application/json');
+    }
+
+    let container = req.query.container;
+    if (!container) {
+      try {
+        const resource = await storage.getResource("Pod", name, namespace);
+        if (resource.kind === "Pod") {
+          container = getPrimaryContainer(resource);
+        } else {
+          return res.status(resource.code).json(resource)
+        }
+      } catch (error) {
+        console.error("Error getting pod resource:", error);
+        return res.status(500).send("Error getting pod resource.");
+      }
+    }
+
+    let buffer = "";
+    req.setEncoding("utf8");
+
+    req.on("data", async (chunk) => {
+      buffer += chunk;
+
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || ""; // Keep any partial line
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+
+        try {
+          const parsed = JSON.parse(line);
+          const stdout = parsed.stdout || "";
+          const stderr = parsed.stderr || "";
+          logger.debug({
+            sessionId,
+            event: 'writeLogs',
+            pod: name,
+            namespace,
+            container,
+            stdout,
+            stderr,
+          });
+
+          const result = await storage.writeLogs(
+            name,
+            namespace,
+            container as string,
+            stdout,
+            stderr,
+            "default"
+          );
+
+          if (typeof result !== "boolean") {
+            logger.warn(`[${sessionId}] Log write failed: ${JSON.stringify(result)}`);
+
+          }
+        } catch (err) {
+          logger.error(`[${sessionId}] Failed to parse streamed JSON line: ${line}`, err);
+        }
+      }
+    });
+
+    req.on("end", () => {
+      logger.info(`[${sessionId}] Finished receiving logs for pod ${name} (${container})`);
+      res.status(200).send("Exec stream complete.");
+    });
+
+    req.on("error", (err) => {
+      logger.error(`[${sessionId}] Exec stream error:`, err);
+      res.status(500).send("Error while streaming exec logs.");
+    });
+  });
+  return router;
+}

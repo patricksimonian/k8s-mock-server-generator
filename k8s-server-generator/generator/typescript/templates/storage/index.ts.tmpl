@@ -1,0 +1,75 @@
+import config from '../config';
+import { Storage } from './Storage';
+import { StorageError } from './StorageError';
+import { logger } from '../logger';
+
+// Export the Storage interface and StorageError
+export * from './Storage';
+export * from './StorageError';
+
+// Dynamically import storage implementations based on configuration
+{{- if eq .Storage.Type "memory" }}
+import { InMemoryStorage } from './InMemoryStorage';
+export * from './InMemoryStorage';
+{{- end }}
+
+{{- if eq .Storage.Type "file" }}
+import { FileStorage } from './FileStorage';
+export * from './FileStorage';
+{{- end }}
+
+{{- if eq .Storage.Type "firestore" }}
+import { FirestoreStorage } from './FirestoreStorage';
+export * from './FirestoreStorage';
+{{- end }}
+
+/**
+ * Create and return the appropriate storage implementation based on configuration
+ */
+export function createStorage(): Storage {
+  const storageType = config.storage.type;
+  
+  logger.info(`Initializing ${storageType} storage`);
+  
+  switch (storageType) {
+    case 'memory':
+      {{- if eq .Storage.Type "memory" }}
+      return new InMemoryStorage();
+      {{- else }}
+      throw new Error('In-memory storage is not available. Please regenerate the server with in-memory storage support.');
+      {{- end }}
+      
+    case 'file':
+      {{- if eq .Storage.Type "file" }}
+      if (!config.storage.filePath) {
+        throw new Error('File path is required for file storage');
+      }
+      return new FileStorage(config.storage.filePath);
+      {{- else }}
+      throw new Error('File storage is not available. Please regenerate the server with file storage support.');
+      {{- end }}
+      
+    case 'firestore':
+      {{- if eq .Storage.Type "firestore" }}
+      if (!config.storage.firestoreProject) {
+        throw new Error('Firestore project ID is required for Firestore storage');
+      }
+      return new FirestoreStorage(
+        config.storage.firestoreProject,
+        config.storage.firestoreCollectionPrefix || 'k8s'
+      );
+      {{- else }}
+      throw new Error('Firestore storage is not available. Please regenerate the server with Firestore support.');
+      {{- end }}
+      
+    default:
+      throw new Error(`Unsupported storage type: ${storageType}`);
+  }
+}
+
+// Create the storage instance
+const storage = createStorage();
+
+// Export the storage instance as default
+export default storage;
+

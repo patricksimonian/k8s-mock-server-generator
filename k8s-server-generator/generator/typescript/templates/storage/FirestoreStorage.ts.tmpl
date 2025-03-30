@@ -1,0 +1,305 @@
+import { Storage } from './Storage';
+import { StorageError } from './StorageError';
+import { logger } from '../logger';
+import config from '../config';
+import { v4 as uuidv4 } from 'uuid';
+import admin from 'firebase-admin';
+
+
+/**
+* Firestore implementation of the Storage interface
+*/
+export class FirestoreStorage implements Storage {
+ private db: any;
+ private initialized: boolean = false;
+ private readonly collectionPrefix: string;
+
+ /**
+  * Create a new FirestoreStorage instance
+  * 
+  * @param projectId Firestore project ID
+  * @param collectionPrefix Prefix for Firestore collections (default: 'k8s')
+  */
+ constructor(projectId: string, collectionPrefix: string = 'k8s') {
+   if (!admin) {
+     throw new Error('firebase-admin package is required for Firestore storage');
+   }
+
+   // Initialize Firebase
+   try {
+     admin.initializeApp({
+       projectId: projectId,
+       credential: admin.credential.applicationDefault()
+     });
+     
+     this.db = admin.firestore();
+     this.collectionPrefix = collectionPrefix || 'k8s';
+     
+     logger.info(`Firestore storage initialized with project ID ${projectId} and collection prefix ${this.collectionPrefix}`);
+   } catch (error) {
+     logger.error('Failed to initialize Firestore:', error);
+     throw new Error('Failed to initialize Firestore: ' + (error as Error).message);
+   }
+ }
+
+ /**
+  * Check if the storage has been initialized
+  */
+ async isInitialized(): Promise<boolean> {
+   try {
+     const doc = await this.db.collection(`${this.collectionPrefix}_internal`).doc('initialization').get();
+     return doc.exists && doc.data()?.initialized === true;
+   } catch (error) {
+     logger.error('Error checking initialization status:', error);
+     return false;
+   }
+ }
+
+ /**
+  * Mark the storage as initialized
+  */
+ async markInitialized(): Promise<void> {
+   try {
+     await this.db.collection(`${this.collectionPrefix}_internal`).doc('initialization').set({
+       initialized: true,
+       timestamp: admin.firestore.FieldValue.serverTimestamp()
+     });
+     this.initialized = true;
+   } catch (error) {
+     logger.error('Error marking storage as initialized:', error);
+     throw StorageError.internal('Failed to mark storage as initialized', error as Error);
+   }
+ }
+
+ /**
+  * Get a resource by kind, name, and namespace
+  */
+ async getResource(kind: string, name: string, namespace: string = 'default'): Promise<any> {
+   try {
+     const collectionName = `${kind.toLowerCase()}s`;
+     const doc = await this.db
+       .collection(`${this.collectionPrefix}_namespaces`)
+       .doc(namespace)
+       .collection(collectionName)
+       .doc(name)
+       .get();
+       
+     if (!doc.exists) {
+       throw StorageError.notFound(kind, name, namespace);
+     }
+     
+     return doc.data();
+   } catch (error) {
+     if (error instanceof StorageError) {
+       throw error;
+     }
+     logger.error(`Error getting ${kind}:`, error);
+     throw StorageError.internal(`Failed to get ${kind} "${name}"`, error as Error);
+   }
+ }
+ 
+ /**
+  * List resources by kind and namespace
+  */
+ async listResources(kind: string, namespace: string = 'default'): Promise<any[]> {
+   try {
+     const collectionName = `${kind.toLowerCase()}s`;
+     const snapshot = await this.db
+       .collection(`${this.collectionPrefix}_namespaces`)
+       .doc(namespace)
+       .collection(collectionName)
+       .get();
+       
+     return snapshot.docs.map((doc: any) => doc.data());
+   } catch (error) {
+     logger.error(`Error listing ${kind}s:`, error);
+     throw StorageError.internal(`Failed to list ${kind}s in namespace "${namespace}"`, error as Error);
+   }
+ }
+ 
+ /**
+  * Create a resource
+  */
+ async createResource(resource: any, namespace: string = 'default'): Promise<any> {
+   try {
+     const kind = resource.kind;
+     if (!kind) {
+       throw StorageError.missingField('kind');
+     }
+     
+     const name = resource.metadata?.name;
+     if (!name) {
+       throw StorageError.missingField('metadata.name');
+     }
+     
+     const collectionName = `${kind.toLowerCase()}s`;
+     
+     // Check if resource already exists
+     const docRef = this.db
+       .collection(`${this.collectionPrefix}_namespaces`)
+       .doc(namespace)
+       .collection(collectionName)
+       .doc(name);
+       
+     const doc = await docRef.get();
+     if (doc.exists) {
+       throw StorageError.alreadyExists(kind, name, namespace);
+     }
+     
+     // Add resource metadata
+     const now = new Date().toISOString();
+     resource.metadata = {
+       ...resource.metadata,
+       creationTimestamp: now,
+       resourceVersion: uuidv4(),
+       namespace: namespace
+     };
+     
+     // Create resource
+     await docRef.set(resource);
+     
+     return resource;
+   } catch (error) {
+     if (error instanceof StorageError) {
+       throw error;
+     }
+     logger.error(`Error creating resource:`, error);
+     throw StorageError.internal(`Failed to create resource`, error as Error);
+   }
+ }
+ 
+ /**
+  * Update a resource
+  */
+ async updateResource(kind: string, name: string, resource: any, namespace: string = 'default'): Promise<any> {
+   try {
+     const collectionName = `${kind.toLowerCase()}s`;
+     
+     // Check if resource exists
+     const docRef = this.db
+       .collection(`${this.collectionPrefix}_namespaces`)
+       .doc(namespace)
+       .collection(collectionName)
+       .doc(name);
+       
+     const doc = await docRef.get();
+     if (!doc.exists) {
+       throw StorageError.notFound(kind, name, namespace);
+     }
+     
+     // Update resource metadata
+     const existing = doc.data();
+     resource.metadata = {
+       ...resource.metadata,
+       creationTimestamp: existing.metadata.creationTimestamp,
+       resourceVersion: uuidv4(),
+       namespace: namespace
+     };
+     
+     // Update resource
+     await docRef.set(resource);
+     
+     return resource;
+   } catch (error) {
+     if (error instanceof StorageError) {
+       throw error;
+     }
+     logger.error(`Error updating ${kind}:`, error);
+     throw StorageError.internal(`Failed to update ${kind} "${name}"`, error as Error);
+   }
+ }
+ 
+ /**
+  * Delete a resource
+  */
+ async deleteResource(kind: string, name: string, namespace: string = 'default'): Promise<boolean> {
+   try {
+     const collectionName = `${kind.toLowerCase()}s`;
+     
+     // Check if resource exists
+     const docRef = this.db
+       .collection(`${this.collectionPrefix}_namespaces`)
+       .doc(namespace)
+       .collection(collectionName)
+       .doc(name);
+       
+     const doc = await docRef.get();
+     if (!doc.exists) {
+       throw StorageError.notFound(kind, name, namespace);
+     }
+     
+     // Delete resource
+     await docRef.delete();
+     return true;
+   } catch (error) {
+     if (error instanceof StorageError) {
+       throw error;
+     }
+     logger.error(`Error deleting ${kind}:`, error);
+    
+     throw StorageError.internal(`Failed to delete ${kind} "${name}"`, error as Error);
+   }
+ }
+
+ /**
+  * Patch a resource
+  */
+ async patchResource(kind: string, name: string, patch: any, namespace: string = 'default'): Promise<any> {
+   try {
+     const collectionName = `${kind.toLowerCase()}s`;
+     
+     // Check if resource exists
+     const docRef = this.db
+       .collection(`${this.collectionPrefix}_namespaces`)
+       .doc(namespace)
+       .collection(collectionName)
+       .doc(name);
+       
+     const doc = await docRef.get();
+     if (!doc.exists) {
+       throw StorageError.notFound(kind, name, namespace);
+     }
+     
+     // Get existing resource
+     const existing = doc.data();
+     
+     // Apply patch (using Firestore's update method with dot notation for nested fields)
+     const flattenedPatch = this.flattenObject(patch);
+     await docRef.update(flattenedPatch);
+     
+     // Get the updated document
+     const updatedDoc = await docRef.get();
+     const updated = updatedDoc.data();
+     
+     // Update resource version
+     await docRef.update({
+       'metadata.resourceVersion': uuidv4()
+     });
+     
+     // Get the final document
+     const finalDoc = await docRef.get();
+     return finalDoc.data();
+   } catch (error) {
+     if (error instanceof StorageError) {
+       throw error;
+     }
+     logger.error(`Error patching ${kind}:`, error);
+     throw StorageError.internal(`Failed to patch ${kind} "${name}"`, error as Error);
+   }
+ }
+
+ /**
+  * Flatten an object into dot notation for Firestore updates
+  */
+ private flattenObject(obj: any, prefix: string = ''): Record<string, any> {
+   return Object.keys(obj).reduce((acc, key) => {
+     const pre = prefix.length ? `${prefix}.` : '';
+     if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+       Object.assign(acc, this.flattenObject(obj[key], `${pre}${key}`));
+     } else {
+       acc[`${pre}${key}`] = obj[key];
+     }
+     return acc;
+   }, {} as Record<string, any>);
+ }
+}

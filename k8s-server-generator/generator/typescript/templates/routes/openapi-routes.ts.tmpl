@@ -1,0 +1,28 @@
+import express from 'express';
+import path from 'path'
+
+export async function createOpenAPIRoutes(): Promise<express.Router> {
+  const router = express.Router();
+  // Root path handler
+  router.get('/openapi/v2', async (req, res, next) => {
+    try {
+      const accept = req.headers['accept'] || '';
+      
+      // If the client requests proto only, we can't serve it. We either:
+      // 1) Force them to get JSON anyway, or
+      // 2) Return 406 Not Acceptable (or 415 Unsupported Media Type)
+      if (accept.includes('com.github.proto') && !accept.includes('application/json')) {
+        return res.status(406).send({
+          message: 'This mock server only serves OpenAPI as JSON, not protobuf.'
+        });
+      }
+      
+      // Otherwise, serve JSON
+      res.type('application/json');
+      res.sendFile(path.join(__dirname, '..', '..', 'openapi', 'openapi.json'));
+    } catch (error) {
+      next(error);
+    }
+  });
+  return router;
+}

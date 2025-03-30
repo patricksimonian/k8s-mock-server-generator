@@ -1,0 +1,49 @@
+/**
+* {{ .Model.Description | escapeComment }}
+* @resourceType {{ .Model.ResourceType }}
+* @kind {{ .Model.DisplayName }}
+*/
+export interface {{ .ModelName }} {
+{{- range .Model.Properties }}
+/**
+* {{ .Description | escapeComment }}
+{{- if .IsRequired }}
+* @required
+{{- end }}
+{{- if .IsArray }}
+* @isArray
+{{- end }}
+{{- if .IsObject }}
+* @isObject
+{{- end }}
+{{- if .IsReference }}
+* @references {{ .OriginalRefName }}
+{{- end }}
+*/
+{{ .Name }}{{ if not .IsRequired }}?{{ end }}: {{ .Type }};
+{{- end }}
+}
+
+/**
+* Create a new {{ .Model.DisplayName }} with default values
+* @param data - Optional partial data to override defaults
+* @returns A new {{ .ModelName }} instance with defaults applied
+*/
+export function create{{ .ModelName }}(data?: Partial<{{ .ModelName }}>): {{ .ModelName }} {
+ return {
+{{- range .Model.Properties }}
+   {{ .Name }}: data?.{{ .Name }} !== undefined ? data.{{ .Name }} : {{ .DefaultValue }},
+{{- end }}
+ };
+}
+
+{{- if gt (len .Model.Imports) 0 }}
+// Required imports
+{{- range $import, $path := .Model.Imports }}
+{{- if eq $path $import }}
+import { {{ $import }}, create{{ $import }} } from './{{ $import }}';
+{{- else }}
+import { {{ $import }}, create{{ $import }} } from '../{{ $path }}';
+{{- end }}
+{{- end }}
+{{- end }}
