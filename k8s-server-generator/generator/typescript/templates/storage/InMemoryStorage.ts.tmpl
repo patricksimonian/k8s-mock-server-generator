@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { applyPatch } from "fast-json-patch";
 import { isClusterScoped, createStatusFailure, matchesFieldSelector, matchesLabelSelector, merge, capitalize } from "../utils";
 import { Readable } from "stream";
+
 // ----------------------------------------------------------------
 // Pagination: base64-encoded tokens with offset + resourceVersion
 // ----------------------------------------------------------------
@@ -43,7 +44,7 @@ function parseContinueToken(token?: string): { offset: number; rv: string } | nu
 export class InMemoryStorage implements Storage {
   private initialized = false;
   private eventEmitter = new EventEmitter();
-
+  private readonly defaultClusterName = "default_cluster";
   /**
    * data layout:
    *
@@ -61,7 +62,7 @@ export class InMemoryStorage implements Storage {
    * }
    */
   private data: Record<string, Record<string, Record<string, KubeResource>>> = {
-    "__cluster__": {}
+    [this.defaultClusterName]: {}
   };
 
   private logStore: Record<string, Record<string, {
@@ -69,7 +70,7 @@ export class InMemoryStorage implements Storage {
     stderr: LogEntry[];
     emitter: EventEmitter;
   }>> = {
-      "default_cluster": {}
+      [this.defaultClusterName]: {}
     };
 
   private getLogKey(namespace: string, podName: string, container: string): string {
@@ -109,7 +110,7 @@ export class InMemoryStorage implements Storage {
     container: string,
     stdout: string,
     stderr: string,
-    cluster: string = "default_cluster"
+    cluster: string = this.defaultClusterName
   ): Promise<true | Status> {
     const key = this.getLogKey(namespace, name, container);
     try {
@@ -151,7 +152,7 @@ export class InMemoryStorage implements Storage {
     name: string,
     namespace: string,
     container: string,
-    cluster: string = "default_cluster",
+    cluster: string = this.defaultClusterName,
     options?: { follow?: boolean; stderr?: boolean; stdout?: boolean }
   ): Promise<Readable | Status> {
     const key = this.getLogKey(namespace, name, container);
@@ -203,43 +204,56 @@ export class InMemoryStorage implements Storage {
   // ---------------------------------------------------------------------------
   private resolveNamespace(kind: string, requestedNS: string | null): string | Status {
     const clusterScoped = isClusterScoped(kind);
-    if (clusterScoped && requestedNS) {
-      return createStatusFailure(
-        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
-        400,
-        "BadRequest"
-      );
-    }
+
     if (!clusterScoped && !requestedNS) {
       // default
       return "default";
     }
     if (clusterScoped) {
-      return "__cluster__";
+      return "";
     }
     return requestedNS || "default";
   }
 
-  private getOrCreateNamespace(ns: string) {
-    if (!this.data[ns]) {
-      this.data[ns] = {};
+  private getOrCreateNamespace(cluster: string, ns: string) {
+    if (!this.data[cluster][ns]) {
+      this.data[cluster][ns] = {};
     }
-    return this.data[ns];
+    return this.data[cluster][ns];
   }
-
-  private getCollection(ns: string, kind: string) {
-    const nsData = this.data[ns];
+  private getOrCreateCluster(cluster: string) {
+    if (!this.data[cluster]) {
+      this.data[cluster] = {};
+    }
+    return this.data[cluster];
+  }
+  private getNamespacedCollection(cluster: string, ns: string, kind: string) {
+    const nsData = this.data[cluster][ns];
     if (!nsData) return undefined;
     return nsData[kind.toLowerCase()];
   }
+  private getClusterCollection(cluster: string, kind: string) {
+    const nsData = this.data[cluster][kind.toLowerCase()];
+    if (!nsData) return undefined;
+    return nsData;
+  }
 
-  private getOrCreateCollection(ns: string, kind: string) {
-    const nsData = this.getOrCreateNamespace(ns);
+  private getOrCreateCollection(cluster: string, ns: string, kind: string) {
+    const nsData = this.getOrCreateNamespace(cluster, ns);
     const key = kind.toLowerCase();
     if (!nsData[key]) {
-      nsData[key] = {};
+      nsData[cluster][key] = {};
     }
-    return nsData[key];
+    return nsData[cluster][key];
+  }
+
+  private getOrCreateClusterCollection(cluster: string, kind: string) {
+
+    const key = kind.toLowerCase();
+    if (!this.data[cluster][key]) {
+      this.data[cluster][key] = {};
+    }
+    return this.data[cluster][key];
   }
 
   private generateResourceVersion(): string {
@@ -250,8 +264,9 @@ export class InMemoryStorage implements Storage {
   // Finalizer logic: if resource is marked for deletion (deletionTimestamp)
   // and has no finalizers left, remove it from store and emit DELETED.
   // ---------------------------------------------------------------------------
-  private finalizeIfNeeded(ns: string, kind: string, name: string): boolean {
-    const collection = this.getCollection(ns, kind);
+  private finalizeIfNeeded(cluster, ns: string, kind: string, name: string): boolean {
+
+    const collection = this.getNamespacedCollection(cluster, ns, kind);
     if (!collection) return false;
 
     const existing = collection[name];
@@ -273,21 +288,48 @@ export class InMemoryStorage implements Storage {
   // ---------------------------------------------------------------------------
   // GET RESOURCE
   // ---------------------------------------------------------------------------
-  async getResource(kind: string, name: string, namespace: string | null = null): Promise<KubeResource | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") {
-      return resolved;
-    }
-    const collection = this.getCollection(resolved, kind);
-    if (!collection || !collection[name]) {
+  async getResource(
+    kind: string,
+    name: string,
+    namespace: string | null = null,
+    cluster: string = this.defaultClusterName
+  ): Promise<KubeResource | Status> {
+    const clusterScoped = isClusterScoped(kind);
+
+    if (clusterScoped && namespace) {
       return createStatusFailure(
-        `Resource ${kind}/${name} not found in ${resolved === "__cluster__" ? "(cluster)" : resolved}`,
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
+    }
+
+    const getCollection = () => {
+      if (clusterScoped) {
+        return this.getClusterCollection(cluster, kind);
+      }
+
+      const resolved = this.resolveNamespace(kind, namespace);
+      if (typeof resolved !== "string") {
+        return resolved; // Status object
+      }
+
+      return this.getNamespacedCollection(cluster, resolved, kind) || {};
+    };
+
+    const collection = getCollection();
+    if (!collection || typeof collection !== "object" || !(name in collection)) {
+      const location = clusterScoped ? "" : (namespace ?? "(cluster)");
+      return createStatusFailure(
+        `Resource ${kind}/${name} not found${clusterScoped ? "" : ` in ${location}`}`,
         404,
         "NotFound"
       );
     }
+
     return JSON.parse(JSON.stringify(collection[name]));
   }
+
 
   // ---------------------------------------------------------------------------
   // LIST RESOURCES
@@ -295,26 +337,50 @@ export class InMemoryStorage implements Storage {
   async listResources(
     kind: string,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     options?: ListOptions
   ): Promise<KubeList<KubeResource> | Status> {
-    const resolved = this.resolveNamespace(capitalize(kind), namespace);
-    if (typeof resolved !== "string") {
-      return resolved;
+    const clusterScoped = isClusterScoped(kind);
+    const kindCapitalized = capitalize(kind);
+
+    const getCollection = () => {
+      if (clusterScoped) {
+        if (namespace) {
+          return createStatusFailure(
+            `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+            400,
+            "BadRequest"
+          );
+        }
+        return this.getClusterCollection(cluster, kind) || {};
+      }
+
+      const resolved = this.resolveNamespace(kindCapitalized, namespace);
+      if (typeof resolved !== "string") {
+        return resolved; // Status object
+      }
+
+      return this.getNamespacedCollection(cluster, resolved, kind) || {};
+    };
+
+    const collection = getCollection();
+    if (typeof collection !== "object") {
+      return collection; // A Status object from getCollection()
     }
 
-    const collection = this.getCollection(resolved, kind) || {};
     let allItems = Object.values(collection);
 
-    // Filter by labelSelector
+    // Apply labelSelector filtering
     if (options?.labelSelector) {
       allItems = allItems.filter(item => matchesLabelSelector(item, options.labelSelector!));
     }
-    // Filter by fieldSelector
+
+    // Apply fieldSelector filtering
     if (options?.fieldSelector) {
       allItems = allItems.filter(item => matchesFieldSelector(item, options.fieldSelector!));
     }
 
-    // Sort for stable pagination (e.g. by creationTimestamp => name)
+    // Sort for stable pagination
     allItems.sort((a, b) => {
       const aTime = a.metadata.creationTimestamp || "";
       const bTime = b.metadata.creationTimestamp || "";
@@ -324,88 +390,105 @@ export class InMemoryStorage implements Storage {
       return aTime.localeCompare(bTime);
     });
 
-    // Parse continue token
+    // Pagination logic
     const parsedToken = parseContinueToken(options?.continue);
-    let startIndex = 0;
-    if (parsedToken) {
-      startIndex = parsedToken.offset;
-      // Could compare parsedToken.rv with some store rv if implementing consistent reads
-    }
-
-    let endIndex = allItems.length;
-    if (typeof options?.limit === "number") {
-      endIndex = Math.min(endIndex, startIndex + options.limit);
-    }
+    const startIndex = parsedToken?.offset ?? 0;
+    const limit = typeof options?.limit === "number" ? options.limit : allItems.length;
+    const endIndex = Math.min(startIndex + limit, allItems.length);
 
     const paginated = allItems.slice(startIndex, endIndex);
 
-    // ResourceVersion can be the highest among the returned items
-    let highestRV = "0";
-    for (const item of paginated) {
+    // Compute highest resourceVersion
+    let highestRV = paginated.reduce((max, item) => {
       const rv = item.metadata.resourceVersion || "0";
-      if (rv.localeCompare(highestRV) > 0) {
-        highestRV = rv;
-      }
-    }
+      return rv.localeCompare(max) > 0 ? rv : max;
+    }, "0");
+
     if (highestRV === "0") {
       highestRV = this.generateResourceVersion();
     }
 
-    let nextContinue: string | undefined;
-    if (endIndex < allItems.length) {
-      nextContinue = createContinueToken(endIndex, highestRV);
-    }
+    const nextContinue = endIndex < allItems.length
+      ? createContinueToken(endIndex, highestRV)
+      : undefined;
 
-    const list: KubeList<KubeResource> = {
-      kind: `${capitalize(kind)}List`,
+    return {
+      kind: `${kindCapitalized}List`,
       apiVersion: "v1",
       metadata: {
         resourceVersion: highestRV,
         continue: nextContinue
       },
-      items: paginated.map(r => JSON.parse(JSON.stringify(r)))
+      items: paginated.map(item => JSON.parse(JSON.stringify(item)))
     };
-
-    return list;
   }
+
 
   // ---------------------------------------------------------------------------
   // CREATE RESOURCE
   // ---------------------------------------------------------------------------
-  async createResource(resource: KubeResource, namespace: string | null = null): Promise<KubeResource | Status> {
-    if (!resource.kind) {
+  async createResource(
+    resource: KubeResource,
+    namespace: string | null = null,
+    cluster: string = this.defaultClusterName
+  ): Promise<KubeResource | Status> {
+    const { kind, metadata } = resource;
+
+    if (!kind) {
       return createStatusFailure(`Missing resource.kind`, 400, "BadRequest");
     }
-    if (!resource.metadata?.name) {
+
+    if (!metadata?.name) {
       return createStatusFailure(`Missing resource.metadata.name`, 400, "BadRequest");
     }
 
-    // Resolve final namespace
-    const resolved = this.resolveNamespace(resource.kind, namespace ?? resource.metadata.namespace ?? null);
-    if (typeof resolved !== "string") {
-      return resolved;
+    const clusterScoped = isClusterScoped(kind);
+    const name = metadata.name;
+
+    if (clusterScoped && (namespace || metadata.namespace)) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
     }
 
-    const name = resource.metadata.name;
-    const collection = this.getOrCreateCollection(resolved, resource.kind.toLowerCase());
+    // Determine final namespace (if applicable)
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace ?? metadata.namespace ?? null);
+
+    if (typeof resolvedNamespace !== "string") {
+      return resolvedNamespace; // Status object
+    }
+
+    // Get cluster store and collection
+    this.getOrCreateCluster(cluster);
+    const collection = clusterScoped
+      ? this.getOrCreateClusterCollection(cluster, kind)
+      : this.getOrCreateCollection(cluster, resolvedNamespace, kind.toLowerCase());
 
     if (collection[name]) {
+      const location = clusterScoped ? "(cluster)" : resolvedNamespace;
       return createStatusFailure(
-        `Resource ${resource.kind}/${name} already exists in ${resolved === "__cluster__" ? "(cluster)" : resolved}`,
+        `Resource ${kind}/${name} already exists in ${location}`,
         409,
         "AlreadyExists"
       );
     }
 
-    // Set final metadata fields
-    resource.metadata.namespace = isClusterScoped(resource.kind) ? undefined : resolved;
+    // Finalize metadata
+    resource.metadata.namespace = clusterScoped ? undefined : resolvedNamespace;
     resource.metadata.creationTimestamp = new Date().toISOString();
     resource.metadata.resourceVersion = this.generateResourceVersion();
 
+    // Store and emit event
     collection[name] = JSON.parse(JSON.stringify(resource));
-    this.emitWatchEvent(WatchEventType.ADDED, resource);
+    this.emitWatchEvent(WatchEventType.ADDED, resource, cluster);
+
     return JSON.parse(JSON.stringify(resource));
   }
+
 
   // ---------------------------------------------------------------------------
   // UPDATE RESOURCE
@@ -415,20 +498,48 @@ export class InMemoryStorage implements Storage {
     name: string,
     resource: KubeResource,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     expectedResourceVersion?: string
   ): Promise<KubeResource | Status> {
-    const resolved = this.resolveNamespace(kind, namespace ?? resource.metadata.namespace ?? null);
-    if (typeof resolved !== "string") {
-      return resolved;
+    if (!resource || !resource.metadata) {
+      return createStatusFailure(`Invalid resource object`, 400, "BadRequest");
     }
 
-    const collection = this.getOrCreateCollection(resolved, kind);
+    const clusterScoped = isClusterScoped(kind);
+
+    if (clusterScoped && (namespace || resource.metadata.namespace)) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
+    }
+
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace ?? resource.metadata.namespace ?? null);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return resolvedNamespace; // Return error status
+    }
+
+    // Ensure cluster data is initialized
+    this.getOrCreateCluster(cluster);
+
+    const collection = clusterScoped
+      ? this.getOrCreateClusterCollection(cluster, kind)
+      : this.getOrCreateCollection(cluster, resolvedNamespace as string, kind.toLowerCase());
+
     const existing = collection[name];
     if (!existing) {
-      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+      return createStatusFailure(
+        `Resource ${kind}/${name} not found${clusterScoped ? "" : ` in ${resolvedNamespace}`}`,
+        404,
+        "NotFound"
+      );
     }
 
-    // concurrency check
+    // Optimistic concurrency check
     if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
       return createStatusFailure(
         `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
@@ -437,26 +548,29 @@ export class InMemoryStorage implements Storage {
       );
     }
 
-    // preserve creationTimestamp, deletionTimestamp if set
+    // Preserve immutable and system-managed fields
     resource.metadata.creationTimestamp = existing.metadata.creationTimestamp;
     if (existing.metadata.deletionTimestamp) {
       resource.metadata.deletionTimestamp = existing.metadata.deletionTimestamp;
     }
-    // preserve existing finalizers if not provided
     if (!resource.metadata.finalizers) {
       resource.metadata.finalizers = existing.metadata.finalizers || [];
     }
 
     resource.metadata.resourceVersion = this.generateResourceVersion();
-    resource.metadata.namespace = isClusterScoped(kind) ? undefined : resolved;
+    resource.metadata.namespace = clusterScoped ? undefined : resolvedNamespace as string;
 
     collection[name] = JSON.parse(JSON.stringify(resource));
-    this.emitWatchEvent(WatchEventType.MODIFIED, resource);
+    this.emitWatchEvent(WatchEventType.MODIFIED, resource, cluster);
 
-    // check finalizers if resource is pending deletion
-    this.finalizeIfNeeded(resolved, kind, name);
+    if (!clusterScoped) {
+      this.finalizeIfNeeded(cluster, resolvedNamespace as string, kind, name);
+    }
+
     return JSON.parse(JSON.stringify(resource));
   }
+
+
 
   // ---------------------------------------------------------------------------
   // MERGE PATCH
@@ -466,17 +580,38 @@ export class InMemoryStorage implements Storage {
     name: string,
     patch: any,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     expectedResourceVersion?: string
   ): Promise<KubeResource | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") return resolved;
+    const clusterScoped = isClusterScoped(kind);
 
-    const collection = this.getCollection(resolved, kind);
+    if (clusterScoped && namespace) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
+    }
+
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return resolvedNamespace; // Status object
+    }
+
+    const collection = clusterScoped
+      ? this.getClusterCollection(cluster, kind)
+      : this.getNamespacedCollection(cluster, resolvedNamespace as string, kind);
+
     if (!collection || !collection[name]) {
-      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+      const location = clusterScoped ? "(cluster)" : resolvedNamespace;
+      return createStatusFailure(`Resource ${kind}/${name} not found in ${location}`, 404, "NotFound");
     }
 
     const existing = collection[name];
+
     if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
       return createStatusFailure(
         `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
@@ -486,24 +621,26 @@ export class InMemoryStorage implements Storage {
     }
 
     const merged = merge(existing, patch);
+
+    // Preserve immutable/system-managed metadata
     merged.metadata.resourceVersion = this.generateResourceVersion();
+    merged.metadata.creationTimestamp = existing.metadata.creationTimestamp;
+    merged.metadata.deletionTimestamp ??= existing.metadata.deletionTimestamp;
+    merged.metadata.finalizers ??= existing.metadata.finalizers || [];
+    merged.metadata.namespace = clusterScoped ? undefined : resolvedNamespace;
 
-    // preserve deletionTimestamp if any
-    if (existing.metadata.deletionTimestamp) {
-      merged.metadata.deletionTimestamp = existing.metadata.deletionTimestamp;
+    const cloned = JSON.parse(JSON.stringify(merged));
+    collection[name] = cloned;
+
+    this.emitWatchEvent(WatchEventType.MODIFIED, cloned, cluster);
+
+    if (!clusterScoped) {
+      this.finalizeIfNeeded(cluster, resolvedNamespace as string, kind, name);
     }
-    // preserve finalizers if patch didn't provide them
-    if (!merged.metadata.finalizers) {
-      merged.metadata.finalizers = existing.metadata.finalizers || [];
-    }
 
-    merged.metadata.namespace = isClusterScoped(kind) ? undefined : resolved;
-    collection[name] = JSON.parse(JSON.stringify(merged));
-
-    this.emitWatchEvent(WatchEventType.MODIFIED, merged);
-    this.finalizeIfNeeded(resolved, kind, name);
-    return JSON.parse(JSON.stringify(merged));
+    return JSON.parse(JSON.stringify(cloned));
   }
+
 
   // ---------------------------------------------------------------------------
   // JSON PATCH
@@ -513,17 +650,38 @@ export class InMemoryStorage implements Storage {
     name: string,
     patch: any,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     expectedResourceVersion?: string
   ): Promise<KubeResource | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") return resolved;
+    const clusterScoped = isClusterScoped(kind);
 
-    const collection = this.getCollection(resolved, kind);
+    if (clusterScoped && namespace) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
+    }
+
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return resolvedNamespace; // Status object
+    }
+
+    const collection = clusterScoped
+      ? this.getClusterCollection(cluster, kind)
+      : this.getNamespacedCollection(cluster, resolvedNamespace as string, kind);
+
     if (!collection || !collection[name]) {
-      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+      const location = clusterScoped ? "(cluster)" : resolvedNamespace;
+      return createStatusFailure(`Resource ${kind}/${name} not found in ${location}`, 404, "NotFound");
     }
 
     const existing = collection[name];
+
     if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
       return createStatusFailure(
         `Conflict: expected resourceVersion=${expectedResourceVersion}, got=${existing.metadata.resourceVersion}`,
@@ -533,21 +691,24 @@ export class InMemoryStorage implements Storage {
     }
 
     const patched = applyPatch(existing, patch).newDocument;
+
+    // Preserve and set metadata fields
     patched.metadata.resourceVersion = this.generateResourceVersion();
+    patched.metadata.creationTimestamp = existing.metadata.creationTimestamp;
+    patched.metadata.deletionTimestamp ??= existing.metadata.deletionTimestamp;
+    patched.metadata.finalizers ??= existing.metadata.finalizers || [];
+    patched.metadata.namespace = clusterScoped ? undefined : resolvedNamespace;
 
-    if (existing.metadata.deletionTimestamp) {
-      patched.metadata.deletionTimestamp = existing.metadata.deletionTimestamp;
+    const cloned = JSON.parse(JSON.stringify(patched));
+    collection[name] = cloned;
+
+    this.emitWatchEvent(WatchEventType.MODIFIED, cloned, cluster);
+
+    if (!clusterScoped) {
+      this.finalizeIfNeeded(cluster, resolvedNamespace as string, kind, name);
     }
-    if (!patched.metadata.finalizers) {
-      patched.metadata.finalizers = existing.metadata.finalizers || [];
-    }
 
-    patched.metadata.namespace = isClusterScoped(kind) ? undefined : resolved;
-    collection[name] = JSON.parse(JSON.stringify(patched));
-
-    this.emitWatchEvent(WatchEventType.MODIFIED, patched);
-    this.finalizeIfNeeded(resolved, kind, name);
-    return JSON.parse(JSON.stringify(patched));
+    return JSON.parse(JSON.stringify(cloned));
   }
 
   // ---------------------------------------------------------------------------
@@ -559,15 +720,36 @@ export class InMemoryStorage implements Storage {
     subresource: string,
     patch: any,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     expectedResourceVersion?: string
   ): Promise<KubeResource | KubeScale | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") return resolved;
+    const clusterScoped = isClusterScoped(kind);
 
-    const collection = this.getCollection(resolved, kind);
-    if (!collection || !collection[name]) {
-      return createStatusFailure(`Resource ${kind}/${name} not found`, 404, "NotFound");
+    if (clusterScoped && namespace) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
     }
+
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return resolvedNamespace;
+    }
+
+    const collection = clusterScoped
+      ? this.getClusterCollection(cluster, kind)
+      : this.getNamespacedCollection(cluster, resolvedNamespace as string, kind);
+
+    if (!collection || !collection[name]) {
+      const location = clusterScoped ? "(cluster)" : resolvedNamespace;
+      return createStatusFailure(`Resource ${kind}/${name} not found in ${location}`, 404, "NotFound");
+    }
+
     const existing = collection[name];
 
     if (expectedResourceVersion && existing.metadata.resourceVersion !== expectedResourceVersion) {
@@ -578,62 +760,61 @@ export class InMemoryStorage implements Storage {
       );
     }
 
-    if (subresource === "status") {
-      // only patch the status field
-      existing.status = merge(existing.status || {}, patch);
-      existing.metadata.resourceVersion = this.generateResourceVersion();
+    let modified: KubeResource = { ...existing };
 
-      collection[name] = JSON.parse(JSON.stringify(existing));
-      this.emitWatchEvent(WatchEventType.MODIFIED, existing);
-      this.finalizeIfNeeded(resolved, kind, name);
-      return JSON.parse(JSON.stringify(existing));
+    if (subresource === "status") {
+      modified.status = merge(existing.status || {}, patch);
     } else if (subresource === "scale") {
-      // interpret patch as a Scale object
-      // e.g. { apiVersion: "autoscaling/v1", kind: "Scale", spec: { replicas: 5 } }
-      if (patch.spec && typeof patch.spec.replicas === "number") {
-        existing.spec = existing.spec || {};
-        existing.spec.replicas = patch.spec.replicas;
-        existing.status = existing.status || {};
-        existing.status.replicas = patch.spec.replicas; // optional
+      if (patch?.spec?.replicas != null && typeof patch.spec.replicas === "number") {
+        modified.spec = { ...(existing.spec || {}), replicas: patch.spec.replicas };
+        modified.status = { ...(existing.status || {}), replicas: patch.spec.replicas };
       }
 
-      existing.metadata.resourceVersion = this.generateResourceVersion();
-      collection[name] = JSON.parse(JSON.stringify(existing));
-      this.emitWatchEvent(WatchEventType.MODIFIED, existing);
-      this.finalizeIfNeeded(resolved, kind, name);
+      modified.metadata.resourceVersion = this.generateResourceVersion();
+      modified.metadata.namespace = clusterScoped ? undefined : resolvedNamespace as string;
 
-      // Return a KubeScale object (mimicking real K8s)
+      const cloned = JSON.parse(JSON.stringify(modified));
+      collection[name] = cloned;
+      this.emitWatchEvent(WatchEventType.MODIFIED, cloned, cluster);
+
+      if (!clusterScoped) {
+        this.finalizeIfNeeded(cluster, resolvedNamespace as string, kind, name);
+      }
+
       const scale: KubeScale = {
         apiVersion: "autoscaling/v1",
         kind: "Scale",
         metadata: {
-          name: existing.metadata.name,
-          namespace: existing.metadata.namespace
+          name: cloned.metadata.name,
+          namespace: cloned.metadata.namespace
         },
         spec: {
-          replicas: existing.spec?.replicas
+          replicas: cloned.spec?.replicas
         },
         status: {
-          replicas: existing.status?.replicas
-          // you could also set a .selector here, etc.
+          replicas: cloned.status?.replicas
         }
       };
       return scale;
     } else {
-      // default subresource => store it under existing[subresource]
-      if (!existing[subresource]) {
-        existing[subresource] = {};
-      }
-      existing[subresource] = merge(existing[subresource], patch);
-      existing.metadata.resourceVersion = this.generateResourceVersion();
-
-      collection[name] = JSON.parse(JSON.stringify(existing));
-      this.emitWatchEvent(WatchEventType.MODIFIED, existing);
-      this.finalizeIfNeeded(resolved, kind, name);
-
-      return JSON.parse(JSON.stringify(existing));
+      modified[subresource] = merge(existing[subresource] || {}, patch);
     }
+
+    modified.metadata.resourceVersion = this.generateResourceVersion();
+    modified.metadata.namespace = clusterScoped ? undefined : resolvedNamespace as string;
+
+    const finalClone = JSON.parse(JSON.stringify(modified));
+    collection[name] = finalClone;
+
+    this.emitWatchEvent(WatchEventType.MODIFIED, finalClone, cluster);
+
+    if (!clusterScoped) {
+      this.finalizeIfNeeded(cluster, resolvedNamespace as string, kind, name);
+    }
+
+    return JSON.parse(JSON.stringify(finalClone));
   }
+
 
   // ---------------------------------------------------------------------------
   // DELETE RESOURCE
@@ -641,39 +822,57 @@ export class InMemoryStorage implements Storage {
   async deleteResource(
     kind: string,
     name: string,
-    namespace: string | null = null
+    namespace: string | null = null,
+    cluster: string = this.defaultClusterName
   ): Promise<true | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") return resolved;
+    const clusterScoped = isClusterScoped(kind);
 
-    const collection = this.getCollection(resolved, kind);
-    if (!collection || !collection[name]) {
+    if (clusterScoped && namespace) {
       return createStatusFailure(
-        `Resource ${kind}/${name} not found in ${resolved === "__cluster__" ? "(cluster)" : resolved}`,
-        404,
-        "NotFound"
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
       );
+    }
+
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return resolvedNamespace;
+    }
+
+    const collection = clusterScoped
+      ? this.getClusterCollection(cluster, kind)
+      : this.getNamespacedCollection(cluster, resolvedNamespace as string, kind);
+
+    if (!collection || !collection[name]) {
+      const location = clusterScoped ? "(cluster)" : resolvedNamespace;
+      return createStatusFailure(`Resource ${kind}/${name} not found in ${location}`, 404, "NotFound");
     }
 
     const existing = collection[name];
     const finalizers = existing.metadata.finalizers || [];
+
     if (finalizers.length === 0) {
-      // remove immediately
-      const copy = JSON.parse(JSON.stringify(existing));
+      const deletedCopy = JSON.parse(JSON.stringify(existing));
       delete collection[name];
-      this.emitWatchEvent(WatchEventType.DELETED, copy);
-      return true;
-    } else {
-      // mark deletionTimestamp if not set
-      if (!existing.metadata.deletionTimestamp) {
-        existing.metadata.deletionTimestamp = new Date().toISOString();
-        existing.metadata.resourceVersion = this.generateResourceVersion();
-        collection[name] = JSON.parse(JSON.stringify(existing));
-        this.emitWatchEvent(WatchEventType.MODIFIED, existing);
-      }
+      this.emitWatchEvent(WatchEventType.DELETED, deletedCopy, cluster);
       return true;
     }
+
+    if (!existing.metadata.deletionTimestamp) {
+      existing.metadata.deletionTimestamp = new Date().toISOString();
+      existing.metadata.resourceVersion = this.generateResourceVersion();
+      const updatedCopy = JSON.parse(JSON.stringify(existing));
+      collection[name] = updatedCopy;
+      this.emitWatchEvent(WatchEventType.MODIFIED, updatedCopy, cluster);
+    }
+
+    return true;
   }
+
 
   // ---------------------------------------------------------------------------
   // DELETE ALL RESOURCES
@@ -681,41 +880,64 @@ export class InMemoryStorage implements Storage {
   async deleteAllResources(
     kind: string,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     opts?: { labelSelector?: string; fieldSelector?: string }
   ): Promise<true | Status> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") return resolved;
+    const clusterScoped = isClusterScoped(kind);
 
-    const collection = this.getCollection(resolved, kind);
+    if (clusterScoped && namespace) {
+      return createStatusFailure(
+        `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
+        400,
+        "BadRequest"
+      );
+    }
+
+    const resolvedNamespace = clusterScoped
+      ? null
+      : this.resolveNamespace(kind, namespace);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return resolvedNamespace;
+    }
+
+    const collection = clusterScoped
+      ? this.getClusterCollection(cluster, kind)
+      : this.getNamespacedCollection(cluster, resolvedNamespace as string, kind);
+
     if (!collection) {
-      return true; // no resources to delete
+      return true; // No resources to delete
     }
 
     let resources = Object.values(collection);
+
     if (opts?.labelSelector) {
       resources = resources.filter(r => matchesLabelSelector(r, opts.labelSelector!));
     }
+
     if (opts?.fieldSelector) {
       resources = resources.filter(r => matchesFieldSelector(r, opts.fieldSelector!));
     }
 
     for (const r of resources) {
+      const name = r.metadata.name;
       const finalizers = r.metadata.finalizers || [];
+
       if (finalizers.length === 0) {
-        // remove now
-        const copy = JSON.parse(JSON.stringify(r));
-        delete collection[r.metadata.name];
-        this.emitWatchEvent(WatchEventType.DELETED, copy);
+        const deletedCopy = JSON.parse(JSON.stringify(r));
+        delete collection[name];
+        this.emitWatchEvent(WatchEventType.DELETED, deletedCopy, cluster);
       } else {
-        // set deletionTimestamp
         if (!r.metadata.deletionTimestamp) {
           r.metadata.deletionTimestamp = new Date().toISOString();
           r.metadata.resourceVersion = this.generateResourceVersion();
-          collection[r.metadata.name] = JSON.parse(JSON.stringify(r));
-          this.emitWatchEvent(WatchEventType.MODIFIED, r);
+          const updatedCopy = JSON.parse(JSON.stringify(r));
+          collection[name] = updatedCopy;
+          this.emitWatchEvent(WatchEventType.MODIFIED, updatedCopy, cluster);
         }
       }
     }
+
     return true;
   }
 
@@ -725,59 +947,66 @@ export class InMemoryStorage implements Storage {
   async watchResources(
     kind: string,
     namespace: string | null = null,
+    cluster: string = this.defaultClusterName,
     options?: WatchOptions,
     onEvent?: (eventType: WatchEventType, resource: KubeResource | Status) => void
   ): Promise<() => void> {
-    const resolved = this.resolveNamespace(kind, namespace);
-    if (typeof resolved !== "string") {
-      // invalid watch target => no-op
+    const clusterScoped = isClusterScoped(kind);
+
+    if (clusterScoped && namespace) {
+      // invalid usage: cluster-scoped resources can't be namespaced
       return async () => { };
     }
 
-    const eventName = `${resolved}:${kind.toLowerCase()}`;
+    const resolvedNamespace = clusterScoped
+      ? `__cluster__${cluster}`
+      : this.resolveNamespace(kind, namespace);
+
+    if (!clusterScoped && typeof resolvedNamespace !== "string") {
+      return async () => { };
+    }
+
+    const eventName = `${resolvedNamespace}:${kind.toLowerCase()}`;
+
     const handler = (evtType: WatchEventType, resource: KubeResource) => {
-      // labelSelector
-      if (options?.labelSelector && !matchesLabelSelector(resource, options.labelSelector)) {
-        return;
-      }
-      // fieldSelector
-      if (options?.fieldSelector && !matchesFieldSelector(resource, options.fieldSelector)) {
-        return;
-      }
-      // resourceVersion
-      if (options?.resourceVersion && resource.metadata.resourceVersion! <= options.resourceVersion) {
-        return;
-      }
+      const { labelSelector, fieldSelector, resourceVersion } = options ?? {};
+
+      if (labelSelector && !matchesLabelSelector(resource, labelSelector)) return;
+      if (fieldSelector && !matchesFieldSelector(resource, fieldSelector)) return;
+      if (resourceVersion && resource.metadata.resourceVersion! <= resourceVersion) return;
 
       onEvent?.(evtType, JSON.parse(JSON.stringify(resource)));
     };
 
     this.eventEmitter.on(eventName, handler);
 
-    // Send initial ADDED events for existing resources matching selectors
-    const listResp = await this.listResources(kind, namespace, {
+    // Emit initial ADDED events for matching items
+    const listResp = await this.listResources(kind, namespace, cluster, {
       labelSelector: options?.labelSelector,
       fieldSelector: options?.fieldSelector
     });
+
     if ("items" in listResp) {
+      const minVersion = options?.resourceVersion;
       for (const item of listResp.items) {
-        if (!options?.resourceVersion || item.metadata.resourceVersion! > options.resourceVersion) {
-          onEvent?.(WatchEventType.ADDED, item);
+        if (!minVersion || item.metadata.resourceVersion! > minVersion) {
+          onEvent?.(WatchEventType.ADDED, JSON.parse(JSON.stringify(item)));
         }
       }
     }
 
-    // Return unsubscribe
+    // Return unsubscribe function
     return () => {
       this.eventEmitter.removeListener(eventName, handler);
     };
   }
 
+
   // ---------------------------------------------------------------------------
   // INTERNAL: EMIT WATCH EVENTS
   // ---------------------------------------------------------------------------
-  private emitWatchEvent(type: WatchEventType, resource: KubeResource) {
-    const ns = resource.metadata.namespace || "__cluster__";
+  private emitWatchEvent(type: WatchEventType, resource: KubeResource, cluster: string = this.defaultClusterName) {
+    const ns = resource.metadata.namespace || `__cluster__${cluster}`;
     const eventName = `${ns}:${resource.kind.toLowerCase()}`;
     this.eventEmitter.emit(eventName, type, resource);
   }

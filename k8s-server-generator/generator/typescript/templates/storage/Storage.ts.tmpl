@@ -104,7 +104,7 @@ export interface Storage {
     container: string,
     stdout: string,
     stderr: string,
-    cluster: string 
+    cluster: string
   ): Promise<true | Status>;
 
   readLogs(
@@ -121,16 +121,25 @@ export interface Storage {
       stderr?: boolean;
     }
   ): Promise<Readable | Status>;
+  
+  getResource(
+    kind: string,
+    name: string,
+    namespace?: string | null,
+    cluster?: string,
+  ): Promise<KubeResource | Status>;
 
   listResources(
     kind: string,
     namespace?: string | null,
+    cluster?: string,
     options?: ListOptions
   ): Promise<KubeList<KubeResource> | Status>;
 
   createResource(
     resource: KubeResource,
-    namespace?: string | null
+    namespace?: string | null,
+    cluster?: string,
   ): Promise<KubeResource | Status>;
 
   updateResource(
@@ -138,14 +147,26 @@ export interface Storage {
     name: string,
     resource: KubeResource,
     namespace?: string | null,
+    cluster?: string,
     expectedResourceVersion?: string
   ): Promise<KubeResource | Status>;
+  
+  updateSubResource(
+    kind: string,
+    name: string,
+    subresource: string,
+    patch: any,
+    namespace: string | null,
+    cluster: string,
+    expectedResourceVersion?: string
+  ): Promise<KubeResource | KubeScale | Status>;
 
   mergePatchResource(
     kind: string,
     name: string,
     patch: any,
     namespace?: string | null,
+    cluster?: string,
     expectedResourceVersion?: string
   ): Promise<KubeResource | Status>;
 
@@ -154,6 +175,7 @@ export interface Storage {
     name: string,
     patch: any,
     namespace?: string | null,
+    cluster?: string,
     expectedResourceVersion?: string
   ): Promise<KubeResource | Status>;
 
@@ -163,24 +185,28 @@ export interface Storage {
     subresource: string,
     patch: any,
     namespace?: string | null,
+    cluster?: string,
     expectedResourceVersion?: string
   ): Promise<KubeResource | KubeScale | Status>;
 
   deleteResource(
     kind: string,
     name: string,
-    namespace?: string | null
+    namespace?: string | null,
+    cluster?: string,
   ): Promise<true | Status>;
 
   deleteAllResources(
     kind: string,
     namespace?: string | null,
+    cluster?: string,
     opts?: { labelSelector?: string; fieldSelector?: string }
   ): Promise<true | Status>;
 
   watchResources(
     kind: string,
     namespace?: string | null,
+    cluster?: string,
     options?: WatchOptions,
     onEvent?: (eventType: WatchEventType, resource: KubeResource | Status) => void
   ): Promise<() => void>;
@@ -191,5 +217,5 @@ export interface Storage {
  * Real K8s has more (e.g. ClusterRole, PersistentVolume, etc.).
  */
 export const clusterScopedKinds = new Set([
-"Namespace", "Node", "ClusterRole", "ClusterRoleBinding"
+  "Namespace", "Node", "ClusterRole", "ClusterRoleBinding"
 ]);
