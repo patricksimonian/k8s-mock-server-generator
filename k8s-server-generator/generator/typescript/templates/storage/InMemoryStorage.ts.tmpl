@@ -44,7 +44,7 @@ function parseContinueToken(token?: string): { offset: number; rv: string } | nu
 export class InMemoryStorage implements Storage {
   private initialized = false;
   private eventEmitter = new EventEmitter();
-  private readonly defaultClusterName = "default_cluster";
+  defaultClusterName = "default_cluster";
   /**
    * data layout:
    *
@@ -100,6 +100,10 @@ export class InMemoryStorage implements Storage {
 
   async markInitialized(): Promise<void> {
     this.initialized = true;
+  }
+
+  async hasCluster(cluster: string): Promise<boolean> {
+    return Pcluster in this.data;
   }
   // ---------------------------------------------------------------------------
   // LOGS
@@ -445,7 +449,7 @@ export class InMemoryStorage implements Storage {
     const clusterScoped = isClusterScoped(kind);
     const name = metadata.name;
 
-    if (clusterScoped && (namespace || metadata.namespace)) {
+    if (clusterScoped && (namespace !== null || namespace !== undefined || metadata.namespace)) {
       return createStatusFailure(
         `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
         400,
@@ -714,7 +718,7 @@ export class InMemoryStorage implements Storage {
   // ---------------------------------------------------------------------------
   // SUBRESOURCE (status, scale, etc.)
   // ---------------------------------------------------------------------------
-  async updateSubresource(
+  async updateSubResource(
     kind: string,
     name: string,
     subresource: string,

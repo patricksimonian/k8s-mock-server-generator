@@ -1,11 +1,15 @@
 /**
  * Cluster Handler middleware
  * 
- * This middleware checks for the X-Emulated-Cluster-Name custom header and binds that to the request
+ * This middleware checks for the X-Cluster-Name custom header and binds that to the request
  * object. This is used to determine which cluster to use for the request.
  */
-import { Request, Response, NextFunction } from 'express';
 
+
+import { logger } from '../logger';
+import { Request, Response, NextFunction } from 'express';
+import storage from '../storage';
+import { initNamedCluster } from '../init-cluster';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -13,13 +17,18 @@ declare module 'express-serve-static-core' {
   }
 }
 
-export function clusterHandler(req: Request, res: Response, next: NextFunction) {
+export async function clusterHandler(req: Request, res: Response, next: NextFunction) {
   // Skip authentication and pass through all requests
-  const clusterName = req.header('X-Emulated-Cluster-Name');
-  if (clusterName) {
-    req.clusterName = clusterName;
-  } else {
-    req.clusterName = 'default';
+  let clusterName = "default"
+  logger.info(`Cluster request headers: ${JSON.stringify(req.headers)}`)
+  if (req.headers['X-Cluster-Name']) {
+    clusterName = req.headers['X-Cluster-Name'] as string
+
   }
+  if (!await storage.hasCluster(clusterName)) {
+    // reinitialize cluster if it does not exist
+    await initNamedCluster(clusterName);
+  }
+  req.clusterName = clusterName
   next();
 }

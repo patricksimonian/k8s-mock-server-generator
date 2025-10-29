@@ -95,9 +95,9 @@ export interface KubeScale {
 export interface Storage {
   isInitialized(): Promise<boolean>;
   markInitialized(): Promise<void>;
-
+  defaultClusterName: string;
   getResource(kind: string, name: string, namespace?: string | null): Promise<KubeResource | Status>;
-
+  hasCluster(cluster: string): Promise<boolean>;
   writeLogs(
     name: string,
     namespace: string,
