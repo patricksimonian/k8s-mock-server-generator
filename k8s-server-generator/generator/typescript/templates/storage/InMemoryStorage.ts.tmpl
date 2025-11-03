@@ -449,7 +449,7 @@ export class InMemoryStorage implements Storage {
     const clusterScoped = isClusterScoped(kind);
     const name = metadata.name;
 
-    if (clusterScoped && (namespace !== null || namespace !== undefined || metadata.namespace)) {
+    if (clusterScoped &&  kind !== "Namespace" && (namespace !== null || namespace !== undefined || metadata.namespace)) {
       return createStatusFailure(
         `Resource ${kind} is cluster-scoped, so namespace must be empty.`,
         400,
@@ -462,15 +462,16 @@ export class InMemoryStorage implements Storage {
       ? null
       : this.resolveNamespace(kind, namespace ?? metadata.namespace ?? null);
 
-    if (typeof resolvedNamespace !== "string") {
+    if (typeof resolvedNamespace !== "string" && kind !== "Namespace") {
       return resolvedNamespace; // Status object
     }
+
 
     // Get cluster store and collection
     this.getOrCreateCluster(cluster);
     const collection = clusterScoped
       ? this.getOrCreateClusterCollection(cluster, kind)
-      : this.getOrCreateCollection(cluster, resolvedNamespace, kind.toLowerCase());
+      : this.getOrCreateCollection(cluster, resolvedNamespace as string, kind.toLowerCase());
 
     if (collection[name]) {
       const location = clusterScoped ? "(cluster)" : resolvedNamespace;
@@ -482,7 +483,7 @@ export class InMemoryStorage implements Storage {
     }
 
     // Finalize metadata
-    resource.metadata.namespace = clusterScoped ? undefined : resolvedNamespace;
+    resource.metadata.namespace = clusterScoped ? undefined : resolvedNamespace as string;
     resource.metadata.creationTimestamp = new Date().toISOString();
     resource.metadata.resourceVersion = this.generateResourceVersion();
 

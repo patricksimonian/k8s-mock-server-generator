@@ -77,7 +77,7 @@ function isObject(item: any): boolean {
 
 /** Check if a resource kind is cluster-scoped */
 export function isClusterScoped(kind: string): boolean {
-  return clusterScopedKinds.has(kind);
+  return clusterScopedKinds.has(kind.toLowerCase());
 }
 
 /** Create a Kubernetes "Status" object for errors/failures */
