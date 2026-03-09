@@ -66,3 +66,8 @@ const id = req.params.id;
   } else {
     return res.status(415).json({ error: 'Unsupported Media Type' });
   }
+
+
+November 2 2025
+
+ I believe I should be able to better handle protobuffs. Right now i'm forcing to --validate false for kubectl create and applies. 
