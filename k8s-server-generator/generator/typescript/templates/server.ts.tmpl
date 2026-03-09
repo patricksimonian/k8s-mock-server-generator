@@ -24,6 +24,21 @@ export async function createServer() {
   // Error handler
   app.use(errorHandler);
 
+  // Version
+  app.get('/version', (req, res) => {
+    // hard coded for now
+    res.status(200).json({
+      "major": "1",
+      "minor": "29",
+      "gitVersion": "v1.29.3",
+      "gitCommit": "f2f2a7e7e6e83c9c44ff918b21f1cb9c2d52a4b8",
+      "gitTreeState": "clean",
+      "buildDate": "2024-03-12T21:28:09Z",
+      "goVersion": "go1.21.8",
+      "compiler": "gc",
+      "platform": "linux/amd64"
+    })
+  })
   // Health check
   app.get('/healthz', (req, res) => {
     res.status(200).json({ status: 'ok' });

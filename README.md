@@ -2,6 +2,9 @@
 
 This project contains tooling to generate a Express.JS/Typescript mock api server for K8s based on a real K8s OpenApi (v2) Spec and the proto files from the official sources. 
 
+## Dependancies
+
+Please note this depends on a custom kubectl build that enables the --custom-headers feature. This feature is in dispute. I'm read to make the PR with my fork when its given the go ahead
 ## Projects
 
 - cluster-runbooks: These are a series of shell scripts that fetch complete open api specs from target k8s clusters. Currently there is only a script to get a spec from a KiND cluster

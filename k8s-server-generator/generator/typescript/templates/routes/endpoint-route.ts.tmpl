@@ -35,6 +35,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
   router.patch('{{ .Path }}', async (req, res, next) => {
     try {
       const name = req.params.name;
+      const cluster = req.clusterName; 
       const patchData = req.body;
       const contentType = req.get('Content-Type');
       {{- if .Namespaced }}
@@ -49,7 +50,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       const subresource = "{{ getSubresource .Path }}";
 
       const resourceVersion = patchData.metadata && patchData.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('{{ $.ResourceType }}', name, subresource, patchData, namespace);
+      const updatedResource = await storage.updateSubresource('{{ $.ResourceType }}', name, subresource, patchData, namespace, cluster);
       return res.json(updatedResource);
       {{- else }}
       const resource = await storage.getResource('{{ $.ResourceType }}', name, namespace);
@@ -110,7 +111,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
     return;
     {{- else if (eq $subResource "log") }}
         const { namespace, name } = req.params;
-        const cluster = "default"; // or extract if you support multi-cluster
+        const cluster = req.clusterName; 
         let container = req.query.container as string;
 
         const follow = req.query.follow === 'true';
@@ -120,7 +121,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
         try {
           // Get container if not specified
           if (!container) {
-            const pod = await storage.getResource("Pod", name, namespace);
+            const pod = await storage.getResource("Pod", name, namespace, cluster);
             if ("status" in pod) {
               return res.status(pod.code || 500).json(pod);
             }
@@ -145,6 +146,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
         }
     {{- else }}
       try {
+        const cluster = req.clusterName; 
         const name = req.params.name;
         {{- if .Namespaced }}
         const namespace = req.params.namespace;
@@ -154,7 +156,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
         logger.info(`Getting {{ $subResource }} ${name}`);
         {{- end }}
         
-        const resource = await storage.getResource('{{ $subResource }}', name, namespace);
+        const resource = await storage.getResource('{{ $subResource }}', name, namespace, cluster);
         
         if (!resource) {
           return handleResourceError(new Error(`{{ $subResource }} ${name} not found in namespace ${namespace}`), res);
@@ -166,6 +168,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
     {{- end }}
     {{- else }}
     try {
+      const cluster = req.clusterName; 
       const name = req.params.name;
       {{- if .Namespaced }}
       const namespace = req.params.namespace;
@@ -175,7 +178,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       logger.info(`Getting {{ $.ResourceType }} ${name}`);
       {{- end }}
       
-      const resource = await storage.getResource('{{ $.ResourceType }}', name, namespace);
+      const resource = await storage.getResource('{{ $.ResourceType }}', name, namespace, cluster);
       
       if (!resource) {
         return handleResourceError(new Error(`{{ $.ResourceType }} ${name} not found in namespace ${namespace}`), res);
@@ -193,6 +196,8 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
 // {{- .Description }}
   router.get('{{ .Path }}', async (req, res, next) => {
     try {
+      const cluster = req.clusterName; 
+      
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       const limit = req.query.limit ? Number(req.query.limit) : undefined;
@@ -206,7 +211,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       logger.info(`Listing {{ $.ResourceType }}`);
       {{- end }}
       
-      const resourceList = await storage.listResources('{{ $.ResourceType }}', namespace, listOpts);
+      const resourceList = await storage.listResources('{{ $.ResourceType }}', namespace, cluster, listOpts);
       
 
       
@@ -236,20 +241,22 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
     });
     return;
     {{- else }}
-     const resource = req.body;
-     // Ensure resource has metadata
+      const cluster = req.clusterName; 
+      const resource = req.body;
+      // Ensure resource has metadata
       if (!resource.metadata) {
         resource.metadata = {};
       }
       const namespace = req.params.namespace;
       logger.info(`Creating ${resource.kind} in namespace ${namespace}`);
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      const createdResource = await storage.createResource(resource as KubeResource, namespace, cluster);
       res.status(201).json(createdResource); 
     {{- end }}
   {{- else }}
 
     try {
       let resource: KubeResource | undefined;
+      const cluster = req.clusterName; 
       {{- if and (eq $protosUsed true) (ne $ep.ProtoImportPath "") }}
       
       if (req.is('application/vnd.kubernetes.protobuf')) {
@@ -289,7 +296,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
         const namespace = null;
       {{- end }}
 
-        const createdResource = await storage.createResource(resource as KubeResource, namespace);
+        const createdResource = await storage.createResource(resource as KubeResource, namespace, cluster);
         res.status(201).json(createdResource);
       });
       } else {
@@ -308,7 +315,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       {{- end }}
       
       
-      const createdResource = await storage.createResource(resource as KubeResource, namespace);
+      const createdResource = await storage.createResource(resource as KubeResource, namespace, cluster);
       
       res.status(201).json(createdResource);
       }
@@ -326,6 +333,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
 // {{- .Description }}
   router.put('{{ .Path }}', async (req, res, next) => {
     try {
+      const cluster = req.clusterName; 
       const name = req.params.name;
       const resource = req.body;
       // Ensure resource has metadata
@@ -346,10 +354,9 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       {{- if .Operational }}
       const subresource = "{{ getSubresource .Path }}";
       const resourceVersion = resource.metadata && resource.metadata.resourceVersion || undefined; 
-      const updatedResource = await storage.updateSubresource('{{ $.ResourceType }}', name, subresource, resource, namespace);
+      const updatedResource = await storage.updateSubresource('{{ $.ResourceType }}', name, subresource, resource, namespace, cluster);
       {{- else }}
-
-      const updatedResource = await storage.updateResource('{{ $.ResourceType }}', name, resource, namespace, resource.metadata.resourceVersion);
+      const updatedResource = await storage.updateResource('{{ $.ResourceType }}', name, resource, namespace, cluster, resource.metadata.resourceVersion);
       {{- end }}
       
       res.json(updatedResource);
@@ -368,6 +375,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
   router.delete('{{ .Path }}', async (req, res, next) => {
     try {
       const name = req.params.name;
+      const cluster = req.clusterName;
       {{- if .Namespaced }}
       const namespace = req.params.namespace;
       logger.info(`Deleting {{ $.ResourceType }} ${name} in namespace ${namespace}`);
@@ -377,7 +385,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       {{- end }}
       try {
 
-        const deleted = await storage.deleteResource('{{ $.ResourceType }}', name, namespace);
+        const deleted = await storage.deleteResource('{{ $.ResourceType }}', name, namespace, cluster);
         
         if (!deleted) {
           return handleResourceError(new Error(`{{ $.ResourceType }} ${name} not found in namespace ${namespace}`), res);
@@ -405,6 +413,8 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
 // {{- .Description }}
   router.delete('{{ .Path }}', async (req, res, next) => {
     try {
+      const cluster = req.clusterName; 
+    
       const labelSelector = req.query.labelSelector as string | undefined;
       const fieldSelector = req.query.fieldSelector as string | undefined;
       {{- if .Namespaced }}
@@ -416,7 +426,7 @@ export async function create{{ .ResourceType }}Routes(storage: Storage): Promise
       {{- end }}
       try {
 
-        const deleted = await storage.deleteAllResources('{{ $.ResourceType }}', namespace, { labelSelector, fieldSelector });
+        const deleted = await storage.deleteAllResources('{{ $.ResourceType }}', namespace, cluster, { labelSelector, fieldSelector });
         
         if (!deleted) {
           return handleResourceError(new Error(`{{ $.ResourceType }} not found in namespace ${namespace}`), res);
